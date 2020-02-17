@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-3.0.xsd">
+
+	<import resource="abstract/eGovBase.xml" />
+
+    <bean id="egovJobShellStepListener" class="egovframework.rte.bat.support.EgovJobVariableListener">
+
+		<property name="pros">
+			<props>
+				<!-- # Windows의 경우 사용 -->
+				<prop key="encoding">MS949</prop>
+				<prop key="shellScript">
+				    <![CDATA[
+					dir /a
+					echo "Shell Script Execution Completed !!!"
+					rem copy aa bb
+					exit 0
+					]]>
+				</prop>
+				<!-- # Unix, Linux, MacOS 등의 경우 사용 -->
+				<!-- <prop key="encoding">UTF-8</prop>
+				<prop key="shellScript">
+				    <![CDATA[
+					ls -al
+					echo "Shell Script Execution Completed !!!"
+					echo cp aa bb
+					echo exit 0
+					]]>
+				</prop> -->
+			</props>
+		</property>
+    </bean>
+
+	<job id="delimitedToDelimitedJob-ShellStep" parent="eGovBaseJob" xmlns="http://www.springframework.org/schema/batch">
+		<listeners>
+			<listener ref="egovJobShellStepListener" />
+		</listeners>
+		
+		<step id="stepShell">
+			<tasklet ref="taskletShell" />
+		</step>
+		
+	</job>
+
+	<bean id="taskletShell" class="egovframework.rte.bat.core.step.TaskletShellStep" scope="step">
+		<!-- <property name="jobVariable" value="#{jobExecutionContext[JobVariableKey1]}" /> -->
+		<!-- property name="directory" value="file:./src/main/resources/egovframework/batch/data/inputs/" / -->
+		<property name="shellScript" value="#{jobExecutionContext[shellScript]}" />
+		<property name="encoding" value="#{jobExecutionContext[encoding]}" />
+	</bean>
+	
+	<bean class="org.springframework.batch.core.scope.StepScope" />
+	<bean class="org.springframework.batch.core.scope.JobScope" />
+
+</beans>

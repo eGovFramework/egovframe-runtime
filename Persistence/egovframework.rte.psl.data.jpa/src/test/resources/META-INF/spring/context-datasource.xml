@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xsi:schemaLocation="http://www.springframework.org/schema/jdbc 
+		http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+<!--  
+	<jdbc:embedded-database id="dataSource" type="H2" />
+ -->
+<!-- 
+ 		<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+			<property name="driverClassName" value="org.hsqldb.jdbcDriver" />
+			<property name="url" value="jdbc:hsqldb:mem:testdb" />
+			<property name="username" value="sa" />
+			<property name="password" value="" />
+		</bean>
+  -->
+<!-- 	
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="${jdbc.driver}"/>
+		<property name="url" value="${jdbc.dburl}"/>
+		<property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <property name="defaultAutoCommit" value="false"/>
+        <property name="poolPreparedStatements" value="true"/>
+	</bean>
+-->
+
+	<jdbc:embedded-database id="dataSource" type="HSQL"/>
+
+
+</beans>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.rte.psl.dataaccess.EmpMapper">
+
+	<parameterMap id="empParam" type="egovframework.rte.psl.dataaccess.vo.EmpVO">
+		<parameter property="empNo" javaType="decimal" jdbcType="NUMERIC" />
+		<parameter property="empName" javaType="string" jdbcType="VARCHAR"  />
+		<parameter property="job" javaType="string" jdbcType="VARCHAR" />
+		<parameter property="mgr" javaType="decimal" jdbcType="NUMERIC" />
+		<parameter property="hireDate" javaType="date" jdbcType="DATE" />
+		<parameter property="sal" javaType="decimal" jdbcType="NUMERIC" />
+		<parameter property="comm" javaType="decimal" 	jdbcType="NUMERIC" />
+		<parameter property="deptNo" javaType="decimal" jdbcType="NUMERIC" />
+	</parameterMap>
+ 
+	<insert id="insertEmpUsingParameterMap" parameterMap="empParam">
+		<![CDATA[
+			insert into EMP
+			           (EMP_NO,
+			            EMP_NAME,
+			            JOB,
+			            MGR,
+			            HIRE_DATE,
+			            SAL,
+			            COMM,
+			            DEPT_NO)
+			values     (?,
+			            ?,
+			            ?,
+			            ?,
+			            ?,
+			            ?,
+			            ?,
+			            ?)
+		]]>
+	</insert>
+
+	<insert id="insertEmptUsingInLineParam">
+		<![CDATA[
+			insert into EMP
+			           (EMP_NO,
+			            EMP_NAME,
+			            JOB,
+			            MGR,
+			            HIRE_DATE,
+			            SAL,
+			            COMM,
+			            DEPT_NO)
+			values     (#{empNo,jdbcType=NUMERIC},
+			            #{empName,jdbcType=VARCHAR},
+			            #{job,jdbcType=VARCHAR},	/* inline parameter 에서는 empty String 을 nullValue로 대체할 수 없음 - cf.) oracle인 경우는 "" 가 null 임 */
+			            #{mgr,jdbcType=NUMERIC},
+			            #{hireDate,jdbcType=DATE},
+			            #{sal,jdbcType=NUMERIC},	
+			            #{comm,javaType=decimal,jdbcType=NUMERIC,mode=IN},
+			            #{deptNo,jdbcType=NUMERIC})
+		]]>
+	</insert>
+
+	<select id="selectEmp" parameterType="egovframework.rte.psl.dataaccess.vo.EmpVO" resultType="egovframework.rte.psl.dataaccess.vo.EmpVO">
+		<![CDATA[
+			select EMP_NO as empNo,
+			       EMP_NAME as empName,
+			       JOB as job,
+			       MGR as mgr,
+			       HIRE_DATE as hireDate,
+			       SAL as sal,
+			       COMM as comm,
+			       DEPT_NO as deptNo
+			from   EMP
+			where  EMP_NO = #{empNo}
+		]]>
+	</select>
+</mapper>

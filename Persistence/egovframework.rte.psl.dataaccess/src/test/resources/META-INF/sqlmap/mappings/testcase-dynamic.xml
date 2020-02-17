@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="JobHistDynamic">
+
+	<typeAlias alias="jobHistVO" type="egovframework.rte.psl.dataaccess.vo.JobHistVO" />
+	<typeAlias alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap" />
+	<typeAlias alias="empIncludesEmpListVO" type="egovframework.rte.psl.dataaccess.vo.EmpIncludesEmpListVO" />
+
+	<select id="selectJobHistListUsingDynamicElement" parameterClass="jobHistVO" resultClass="jobHistVO">
+		<![CDATA[
+			select EMP_NO     as empNo,
+			       START_DATE as startDate,
+			       END_DATE   as endDate,
+			       JOB        as job,
+			       SAL        as sal,
+			       COMM       as comm,
+			       DEPT_NO    as deptNo
+			from   JOBHIST
+		]]>
+		<dynamic prepend="where">
+			<isNotNull property="empNo" prepend="and">
+				EMP_NO = #empNo#
+			</isNotNull>		
+		</dynamic>
+			order by EMP_NO, START_DATE
+	</select>
+
+	<select id="selectDynamicUnary" parameterClass="map" remapResults="true" resultClass="egovMap">
+		select
+		<dynamic>
+			<isEmpty property="testEmptyString">
+				'empty String' as IS_EMPTY_STRING
+			</isEmpty>
+			<isNotEmpty property="testEmptyString">
+				'not empty String' as IS_EMPTY_STRING
+			</isNotEmpty>
+			<isEmpty prepend=", " property="testEmptyCollection">
+				'empty Collection' as IS_EMPTY_COLLECTION
+			</isEmpty>
+			<isNotEmpty prepend=", " property="testEmptyCollection">
+				'not empty Collection' as IS_EMPTY_COLLECTION
+			</isNotEmpty>
+			<isNull prepend=", " property="testNull">
+				'null' as IS_NULL
+			</isNull>
+			<isNotNull prepend=", " property="testNull">
+				'not null' as IS_NULL
+			</isNotNull>
+			<isPropertyAvailable prepend=", " property="testProperty">
+				'testProperty Available' as	TEST_PROPERTY_AVAILABLE
+			</isPropertyAvailable>
+			<isNotPropertyAvailable prepend=", " property="testProperty">
+				'testProperty Not Available' as TEST_PROPERTY_AVAILABLE
+			</isNotPropertyAvailable>
+		</dynamic>
+		from dual
+	</select>
+	
+	<select id="selectDynamicBinary" parameterClass="map" remapResults="true" resultClass="egovMap">
+		select
+		<dynamic>
+			<isEqual property="testString" compareValue="test">
+				'$testString$' as TEST_STRING, 'test : equals' as IS_EQUAL
+			</isEqual>
+			<isNotEqual property="testString" compareValue="test">
+				'$testString$' as TEST_STRING, 'test : not equals' as IS_EQUAL
+			</isNotEqual>
+			<isPropertyAvailable property="testNumeric">
+				<isEqual property="testNumeric" prepend=", " compareValue="10">
+					cast($testNumeric$ as $castTypeScale$) as TEST_NUMERIC, '10 : equals' as IS_EQUAL_NUMERIC
+				</isEqual>
+				<isNotEqual property="testNumeric" prepend=", " compareValue="10">
+					cast($testNumeric$ as $castTypeScale$) as TEST_NUMERIC, '10 : not equals' as IS_EQUAL_NUMERIC
+				</isNotEqual>
+			</isPropertyAvailable>
+			<isGreaterEqual property="testNumeric" prepend=", " compareValue="10">
+				'10 <![CDATA[<=]]> $testNumeric$' as IS_GREATER_EQUAL
+			</isGreaterEqual>
+			<isGreaterThan property="testNumeric" prepend=", " compareValue="10">
+				'10 <![CDATA[<]]> $testNumeric$' as IS_GREATER_THAN
+			</isGreaterThan>
+			<isLessEqual property="testNumeric" prepend=", " compareValue="10">
+				'10 <![CDATA[>=]]> $testNumeric$' as IS_LESS_EQUAL
+			</isLessEqual>
+			<isLessThan property="testNumeric" prepend=", " compareValue="10">
+				'10 <![CDATA[>]]> $testNumeric$' as IS_LESS_THAN
+			</isLessThan>
+			<!-- checkMore -->
+			<isPropertyAvailable property="testOtherString">
+				<isEqual property="testOtherString" prepend=", " compareProperty="testString">
+					'$testOtherString$' as TEST_OTHER_STRING, 'test : testOtherString equals testString' as COMPARE_PROPERTY_EQUAL
+				</isEqual>
+				<isNotEqual property="testOtherString" prepend=", " compareProperty="testString">
+					'$testOtherString$' as TEST_OTHER_STRING, 'test : testOtherString not equals testString' as COMPARE_PROPERTY_EQUAL
+				</isNotEqual>
+				<isGreaterEqual property="testOtherString" prepend=", " compareProperty="testString">
+					'''$testOtherString$'' <![CDATA[>=]]> ''$testString$''' as COMPARE_PROPERTY_GREATER_EQUAL
+				</isGreaterEqual>
+				<isGreaterThan property="testOtherString" prepend=", " compareProperty="testString">
+					'''$testOtherString$'' <![CDATA[>]]> ''$testString$''' as COMPARE_PROPERTY_GREATER_THAN
+				</isGreaterThan>
+				<isLessEqual property="testOtherString" prepend=", " compareProperty="testString">
+					'''$testOtherString$'' <![CDATA[<=]]> ''$testString$''' as COMPARE_PROPERTY_LESS_EQUAL
+				</isLessEqual>
+				<isLessThan property="testOtherString" prepend=", " compareProperty="testString">
+					'''$testOtherString$'' <![CDATA[<]]> ''$testString$''' as COMPARE_PROPERTY_LESS_THAN
+				</isLessThan>
+			</isPropertyAvailable>
+		</dynamic>
+		from dual
+	</select>
+	
+	<select id="selectDynamicParameterPresent" parameterClass="map" remapResults="true" resultClass="egovMap">
+		select 
+			<isParameterPresent>
+				'parameter object exist' as IS_PARAMETER_PRESENT
+			</isParameterPresent>
+			<isNotParameterPresent>
+				'parameter object not exist' as IS_PARAMETER_PRESENT
+			</isNotParameterPresent>
+		from dual
+	</select>
+	
+	<select id="selectJobHistListUsingDynamicIterate" parameterClass="empIncludesEmpListVO" resultClass="jobHistVO">
+		<![CDATA[
+			select EMP_NO     as empNo,
+			       START_DATE as startDate,
+			       END_DATE   as endDate,
+			       JOB        as job,
+			       SAL        as sal,
+			       COMM       as comm,
+			       DEPT_NO    as deptNo
+			from   JOBHIST
+		]]>
+		<dynamic prepend="where">
+			<iterate property="empList" open="EMP_NO in (" conjunction=", " close=")">
+				#empList[].empNo#
+			</iterate>		
+		</dynamic>
+			order by EMP_NO, START_DATE
+	</select>
+	
+	<!-- parameterClass 는 명시하지 않았음. Map 에 collection 이란 key 로 List 를 넘긴 경우와 바로 List를 넘긴 경우로 구분하여 테스트 -->
+	<!-- iterate 요소가 검색조건 등의 입력 파라메터 바인딩 변수로 사용될 경우는 #collection[]# 과 같이 사용하면 됨 -->
+	<select id="selectDynamicIterateSimple" resultClass="egovMap">
+		select 
+			<isPropertyAvailable property="collection">
+				<iterate property="collection" conjunction=", ">
+					'$collection[]$' as $collection[]$
+				</iterate>
+			</isPropertyAvailable>
+			<!-- List 를 바로 넘긴 경우 -->
+			<isNotPropertyAvailable property="collection">
+				<iterate conjunction=", ">
+					'$[]$' as $[]$
+				</iterate>
+			</isNotPropertyAvailable>
+		from dual
+	</select>
+	
+	<select id="selectJobHistListUsingDynamicNestedIterate" parameterClass="map" resultClass="jobHistVO">
+		<![CDATA[
+			select EMP_NO     as empNo,
+			       START_DATE as startDate,
+			       END_DATE   as endDate,
+			       JOB        as job,
+			       SAL        as sal,
+			       COMM       as comm,
+			       DEPT_NO    as deptNo
+			from   JOBHIST
+		]]>
+		<dynamic prepend="where">
+			<iterate property="condition" open="(" conjunction="and" close=")">
+				$condition[].columnName$ $condition[].columnOperation$ 
+				<isEqual property="condition[].nested" compareValue="true">
+					<iterate property="condition[].columnValue" open="(" conjunction="," close=")">
+						#condition[].columnValue[]#
+					</iterate>
+				</isEqual>
+				<isNotEqual property="condition[].nested" compareValue="true">
+					#condition[].columnValue#
+				</isNotEqual>
+			</iterate>		
+		</dynamic>
+			order by EMP_NO, START_DATE
+	</select>
+
+
+</sqlMap>

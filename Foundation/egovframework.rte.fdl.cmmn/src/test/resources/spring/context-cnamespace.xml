@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:c="http://www.springframework.org/schema/c"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+
+	<bean id="bar" class="egovframework.rte.fdl.cmmn.cnamespace.Bar"/>
+	<bean id="baz" class="egovframework.rte.fdl.cmmn.cnamespace.Baz" />
+
+	<!-- 'traditional' declaration
+	<bean id="foo" class="springframework.cnamespace.Foo">
+		<constructor-arg ref="bar" />
+		<constructor-arg ref="baz" />
+		<constructor-arg value="foo@bar.com" />
+	</bean>
+-->
+
+	<!-- 'c-namespace' declaration -->
+	<bean id="foo" class="egovframework.rte.fdl.cmmn.cnamespace.Foo" c:bar-ref="bar" c:baz-ref="baz" c:email="foo@bar.com" />
+
+</beans>

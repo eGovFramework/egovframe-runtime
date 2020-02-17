@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.rte.psl.dataaccess.mapper.EmployerMapper">
+
+	<resultMap id="lobTestResult" type="egovframework.rte.psl.dataaccess.vo.LobTestVO">
+		<result property="id" column="ID" />
+		<result property="blobType" column="BLOB_TYPE" />
+		<result property="clobType" column="CLOB_TYPE" />
+	</resultMap>
+
+	<insert id="insertLobTest" parameterType="egovframework.rte.psl.dataaccess.vo.LobTestVO">
+		<![CDATA[
+			insert into LOBTEST
+			           (ID,
+			            BLOB_TYPE,
+			            CLOB_TYPE)
+			values     (#{id},
+						#{blobType, jdbcType=BLOB},
+						#{clobType, jdbcType=CLOB}
+			            )
+		]]>
+	</insert>
+
+	<select id="selectLobTest" parameterType="egovframework.rte.psl.dataaccess.vo.LobTestVO"
+		resultMap="lobTestResult">
+		<![CDATA[
+			select ID,
+			       BLOB_TYPE,
+			       CLOB_TYPE
+			from   LOBTEST
+			where  ID = #{id}
+		]]>
+	</select>
+
+</mapper>

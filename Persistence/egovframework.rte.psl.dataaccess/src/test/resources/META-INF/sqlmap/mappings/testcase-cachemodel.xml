@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="EmpCacheModel">
+
+	<typeAlias alias="empVO" type="egovframework.rte.psl.dataaccess.vo.EmpVO" />
+		<resultMap id="EmpResult.empResult" class="egovframework.rte.psl.dataaccess.vo.EmpVO" >
+		<result property="empNo" column="EMP_NO" javaType="decimal" jdbcType="NUMERIC" />
+		<result property="empName" column="EMP_NAME" javaType="string" jdbcType="VARCHAR"  />
+		<result property="job" column="JOB" javaType="string" jdbcType="VARCHAR" />
+		<result property="mgr" column="MGR" javaType="decimal" jdbcType="NUMERIC" />
+		<result property="hireDate" column="HIRE_DATE" javaType="date" jdbcType="DATE" />
+		<result property="sal" column="SAL" javaType="decimal" jdbcType="NUMERIC" />
+		<result property="comm" column="COMM" javaType="decimal" 	jdbcType="NUMERIC" nullValue="0"/>
+		<result property="deptNo" column="DEPT_NO" javaType="decimal" jdbcType="NUMERIC" />
+	</resultMap>
+	<cacheModel id="cacheEmpLRU" type="LRU" readOnly="true"
+		serialize="false">
+		<flushInterval hours="24" />
+		<flushOnExecute statement="insertEmpUsingSelectKey" />
+		<flushOnExecute statement="deleteEmpAll" />
+		<property name="cache-size" value="1000" />
+	</cacheModel>
+
+	<cacheModel id="cacheEmpMEMORY" type="MEMORY">
+		<flushInterval hours="24" />
+		<flushOnExecute statement="insertEmpUsingSelectKey" />
+		<flushOnExecute statement="deleteEmpAll" />
+		<property name="reference-type" value="WEAK" />
+	</cacheModel>
+
+	<cacheModel id="cacheEmpFIFO" type="FIFO">
+		<flushInterval hours="24" />
+		<flushOnExecute statement="insertEmpUsingSelectKey" />
+		<flushOnExecute statement="deleteEmpAll" />
+		<property name="cache-size" value="1000" />
+	</cacheModel>
+
+	<!--
+		이 외에도 OSCACHE 타입을 설정할 수 있으며, 이 때는 oscache jar 가 추가로 필요하며
+		oscache.properties 이 classpath root에 있어야 함
+	-->
+	<cacheModel id="cacheEmpOSCACHE" type="OSCACHE">
+		<flushInterval hours="24" />
+		<flushOnExecute statement="insertEmpUsingSelectKey" />
+		<flushOnExecute statement="deleteEmpAll" />
+	</cacheModel>
+	
+	<sql id="selectEmpReuse">
+		select EMP_NO,
+		EMP_NAME,
+		JOB,
+		MGR,
+		HIRE_DATE,
+		SAL,
+		COMM,
+		DEPT_NO
+		from EMP
+		where 1=1
+		<include refid="empWhereEmpNo"/>
+	</sql>
+
+	<sql id="empWhereEmpNo">
+		<isNotNull prepend="and" property="empNo">
+			EMP_NO = #empNo#
+		</isNotNull>
+	</sql>
+
+	<select id="selectEmpUsingCacheModelLRU" parameterClass="empVO"
+		resultMap="EmpResult.empResult" cacheModel="cacheEmpLRU">
+		<include refid="selectEmpReuse" />
+	</select>
+
+	<select id="selectEmpUsingCacheModelMEMORY" parameterClass="empVO"
+		resultMap="EmpResult.empResult" cacheModel="cacheEmpMEMORY">
+		<include refid="selectEmpReuse" />
+	</select>
+
+	<select id="selectEmpUsingCacheModelFIFO" parameterClass="empVO"
+		resultMap="EmpResult.empResult" cacheModel="cacheEmpFIFO">
+		<include refid="selectEmpReuse" />
+	</select>
+	
+	<select id="selectEmpUsingCacheModelOSCACHE" parameterClass="empVO"
+		resultMap="EmpResult.empResult" cacheModel="cacheEmpOSCACHE">
+		<include refid="selectEmpReuse" />
+	</select>
+
+
+</sqlMap>

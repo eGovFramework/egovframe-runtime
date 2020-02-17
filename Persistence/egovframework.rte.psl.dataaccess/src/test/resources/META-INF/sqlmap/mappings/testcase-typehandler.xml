@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="TypeTest">
+
+	<typeAlias alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap" />
+
+	<!-- CalendarTypeHandler, StringDateTypeHandler 는 sql-map-config.xml 에 등록하였음 -->
+	<typeAlias alias="calendarTypeHandler" type="egovframework.rte.psl.dataaccess.typehandler.CalendarTypeHandler"/>
+	<typeAlias alias="stringTimestampTypeHandler" type="egovframework.rte.psl.dataaccess.typehandler.StringTimestampTypeHandler"/>
+
+	<resultMap id="typeHanlderTestResult" class="egovMap">
+		<result property="ID" column="ID" javaType="int" jdbcType="decimal" />
+		<result property="STR_DATE" column="DATE_TYPE" typeHandler="stringTimestampTypeHandler" />
+		<result property="CALENDAR_TYPE" column="CALENDAR_TYPE" typeHandler="calendarTypeHandler" />
+	</resultMap>
+
+	<insert id="insertTypeHandlerTest" parameterClass="map">
+		<![CDATA[
+			insert into TYPETEST
+			           (ID,
+			            DATE_TYPE,
+			            CALENDAR_TYPE)
+			values     (#id#,
+			            #strDate,handler=stringTimestampTypeHandler#,
+			            #calendarType,handler=calendarTypeHandler#)
+		]]>
+	</insert>
+
+	<select id="selectTypeHandlerTest" parameterClass="map"
+		resultMap="typeHanlderTestResult">
+		<![CDATA[
+			select ID,
+			       DATE_TYPE,
+			       CALENDAR_TYPE
+			from   TYPETEST
+			where  ID = #id#
+		]]>
+	</select>
+
+</sqlMap>

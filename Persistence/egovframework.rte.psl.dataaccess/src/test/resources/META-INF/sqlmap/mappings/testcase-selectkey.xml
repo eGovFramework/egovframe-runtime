@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="EmpSelectKey">
+
+	<typeAlias alias="empVO" type="egovframework.rte.psl.dataaccess.vo.EmpVO" />
+
+	<!-- resultMap EmpResult.empResult 참고 -->
+	<!-- select 쿼리 EmpResult.selectEmpUsingResultMap 참고 -->
+
+	<insert id="insertEmpUsingSelectKey" parameterClass="empVO">
+	     <selectKey resultClass="decimal" keyProperty="empNo">
+			select	case when MAX_EMP_NO is null then 1000 
+						 else (MAX_EMP_NO + 1) 
+					end
+			from (select MAX(EMP_NO) MAX_EMP_NO from EMP) MAX_EMP
+	     </selectKey>
+	     
+		<![CDATA[
+			insert into EMP
+					   (EMP_NO,
+						EMP_NAME,
+						JOB,
+						MGR,
+						HIRE_DATE,
+						SAL,
+						COMM,
+						DEPT_NO)
+			values	   (#empNo#,
+						#empName#,
+						#job#,
+						#mgr#,
+						#hireDate#,
+						#sal#,
+						#comm#,
+						#deptNo#)
+		]]>
+	</insert>
+	
+	<delete id="deleteEmpAll">
+		<![CDATA[
+			delete from EMP
+		]]>
+	</delete>
+
+</sqlMap>

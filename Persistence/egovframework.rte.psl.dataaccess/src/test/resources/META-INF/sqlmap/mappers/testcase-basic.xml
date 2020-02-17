@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.rte.psl.dataaccess.DeptMapper">
+
+	<resultMap id="deptResult" type="egovframework.rte.psl.dataaccess.vo.DeptVO">
+		<result property="deptNo" column="DEPT_NO" />
+		<result property="deptName" column="DEPT_NAME" />
+		<result property="loc" column="LOC" />
+	</resultMap>
+
+	<parameterMap id="deptParam" type="egovframework.rte.psl.dataaccess.vo.DeptVO">
+		<parameter property="deptNo" mode="IN" javaType="decimal" jdbcType="NUMERIC" />
+		<parameter property="deptName" mode="IN" javaType="string" 	jdbcType="VARCHAR" />
+		<parameter property="loc" mode="IN" javaType="string" jdbcType="VARCHAR" />
+	</parameterMap>
+  
+	<insert id="insertDept" parameterType="egovframework.rte.psl.dataaccess.vo.DeptVO">
+		<![CDATA[
+			insert into DEPT
+			           (DEPT_NO,
+			            DEPT_NAME,
+			            LOC)
+			values     (#{deptNo},
+			            #{deptName},
+			            #{loc})
+		]]>
+	</insert>
+
+	<select id="selectDept" parameterType="egovframework.rte.psl.dataaccess.vo.DeptVO" resultMap="deptResult">
+		<![CDATA[
+			select DEPT_NO,
+			       DEPT_NAME,
+			       LOC
+			from   DEPT
+			where  DEPT_NO = #{deptNo}
+		]]>
+	</select>
+
+	<update id="updateDept" parameterType="egovframework.rte.psl.dataaccess.vo.DeptVO">
+		<![CDATA[
+			update DEPT
+			set    DEPT_NAME = #{deptName},
+			       LOC = #{loc}
+			where  DEPT_NO = #{deptNo}
+		]]>
+	</update>
+	
+	<delete id="deleteDept" parameterType="egovframework.rte.psl.dataaccess.vo.DeptVO">
+		<![CDATA[
+			delete from DEPT
+			where       DEPT_NO = #{deptNo}
+		]]>
+	</delete>
+
+	<select id="selectDeptList" parameterType="egovframework.rte.psl.dataaccess.vo.DeptVO" resultMap="deptResult">
+		<![CDATA[
+			select DEPT_NO,
+			       DEPT_NAME,
+			       LOC
+			from   DEPT
+		]]>
+		<where>
+			<if test="deptNo != null">
+				DEPT_NO = #{deptNo}
+			</if>
+			<if test="deptName != null">
+				DEPT_NAME LIKE '%' || #{deptName} || '%'
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectDeptListMysql" parameterType="egovframework.rte.psl.dataaccess.vo.DeptVO" resultMap="deptResult">
+		<![CDATA[
+			select DEPT_NO,
+			       DEPT_NAME,
+			       LOC
+			from DEPT
+		]]>
+		<where>
+			<if test="deptNo != null">
+				DEPT_NO = #{deptNo}
+			</if>
+			<if test="deptName != null">
+				DEPT_NAME LIKE CONCAT('%', #{deptName}, '%')
+			</if>
+		</where>
+	</select>
+	
+	<insert id="insertDeptUsingParameterMap" parameterMap="deptParam">
+		<![CDATA[
+			insert into DEPT
+			           (DEPT_NO,
+			            DEPT_NAME,
+			            LOC)
+			values     (?,
+			            ?,
+			            ?)
+		]]>
+	</insert>
+
+	<insert id="insertDeptUsingParameterClass" parameterType="egovframework.rte.psl.dataaccess.vo.DeptVO">
+		<![CDATA[
+			insert into DEPT
+			           (DEPT_NO,
+			            DEPT_NAME,
+			            LOC)
+			values     (#{deptNo},
+			            #{deptName},
+			            #{loc})
+		]]>
+	</insert>
+
+	<insert id="insertDeptUsingInLineParamWithDBType">
+		<![CDATA[
+			insert into DEPT
+			           (DEPT_NO,
+			            DEPT_NAME,
+			            LOC)
+			values     (#{deptNo,jdbcType=NUMERIC},
+			            #{deptName,jdbcType=VARCHAR},
+			            #{loc,jdbcType=VARCHAR})
+		]]>
+	</insert>
+
+	<select id="selectDeptUsingParameterClass" parameterType="egovframework.rte.psl.dataaccess.vo.DeptVO" resultMap="deptResult">
+		<![CDATA[
+			select DEPT_NO,
+			       DEPT_NAME,
+			       LOC
+			from   DEPT
+			where  DEPT_NO = #{deptNo}
+		]]>
+	</select>
+
+	<select id="selectDeptUsingResultClass" parameterType="egovframework.rte.psl.dataaccess.vo.DeptVO" resultType="egovframework.rte.psl.dataaccess.vo.DeptVO">
+		<![CDATA[
+			select DEPT_NO   as deptNo,
+			       DEPT_NAME as deptName,
+			       LOC       as loc
+			from   DEPT
+			where  DEPT_NO = #{deptNo}
+		]]>
+	</select>
+
+</mapper>

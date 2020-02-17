@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="LobTest">
+
+	<typeAlias alias="lobTestVO"
+		type="egovframework.rte.psl.dataaccess.vo.LobTestVO" />
+
+	<resultMap id="lobTestResult" class="lobTestVO">
+		<result property="id" column="ID" />
+		<result property="blobType" column="BLOB_TYPE" />
+		<result property="clobType" column="CLOB_TYPE" />
+	</resultMap>
+
+	<insert id="insertLobTest" parameterClass="lobTestVO">
+		<![CDATA[
+			insert into LOBTEST
+			           (ID,
+			            BLOB_TYPE,
+			            CLOB_TYPE)
+			values     (#id#,
+						#blobType:BLOB#,
+						#clobType:CLOB#
+			            )
+		]]>
+	</insert>
+
+	<select id="selectLobTest" parameterClass="lobTestVO"
+		resultMap="lobTestResult">
+		<![CDATA[
+			select ID,
+			       BLOB_TYPE,
+			       CLOB_TYPE
+			from   LOBTEST
+			where  ID = #id#
+		]]>
+	</select>
+
+</sqlMap>

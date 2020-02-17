@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.rte.psl.dataaccess.EmpMapper">
+
+	<insert id="insertEmpUsingBatch" parameterType="egovframework.rte.psl.dataaccess.vo.EmpVO">
+		<![CDATA[
+			insert into EMP
+					   (EMP_NO,
+						EMP_NAME,
+						JOB,
+						MGR,
+						HIRE_DATE,
+						SAL,
+						COMM,
+						DEPT_NO)
+			values	   (#{empNo},
+						#{empName},
+						#{job},
+						#{mgr,jdbcType=NUMERIC},
+						#{hireDate,jdbcType=DATE},
+						#{sal,jdbcType=NUMERIC},
+						#{comm,jdbcType=NUMERIC},
+						#{deptNo,jdbcType=NUMERIC})
+		]]>
+	</insert>
+
+</mapper>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="DeptMapType">
+
+	<insert id="insertDeptUsingMap">
+		<![CDATA[
+			insert into DEPT
+			           (DEPT_NO,
+			            DEPT_NAME,
+			            LOC)
+			values     (#deptNo#,
+			            #deptName#,
+			            #loc#)
+		]]>
+	</insert>
+
+	<select id="selectDeptUsingMap" resultClass="hashmap">
+		<![CDATA[
+			select DEPT_NO   as deptNo,
+			       DEPT_NAME as deptName,
+			       LOC       as loc
+			from   DEPT
+			where  DEPT_NO = #deptNo#
+		]]>
+	</select>
+
+	<!--
+		EgovMap 은 ListOrderedMap 을 extends 하고 있으며 key 를 camel case 변환(ex.
+		DEPT_NO -> deptNo, LOC -> loc) 하여 처리함
+	-->
+	<select id="selectDeptUsingEgovMap" resultClass="egovframework.rte.psl.dataaccess.util.EgovMap">
+		<![CDATA[
+			select DEPT_NO,
+			       DEPT_NAME,
+			       LOC
+			from   DEPT
+			where  DEPT_NO = #deptNo#
+		]]>
+	</select>
+
+	<update id="updateDeptUsingMap">
+		<![CDATA[
+			update DEPT
+			set    DEPT_NAME = #deptName#,
+			       LOC = #loc#
+			where  DEPT_NO = #deptNo#
+		]]>
+	</update>
+
+	<delete id="deleteDeptUsingMap">
+		<![CDATA[
+			delete from DEPT
+			where       DEPT_NO = #deptNo#
+		]]>
+	</delete>
+
+</sqlMap>

@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Configuration status="error">
+
+	<Properties>
+	    <!-- SMTPAppender를 위한 프로퍼티 설정 -->
+		<Property name="smtp.subject">Error Log</Property>
+		<Property name="smtp.to" >logging@egovframe.com</Property>
+		<Property name="smtp.from" >log4j@log4j.org</Property>
+		<Property name="smtp.host" >egovframe.com</Property>
+		<Property name="smtp.port" >25</Property>
+	</Properties>
+	
+	<Appenders>
+		<Console name="sysout" target="SYSTEM_OUT">
+			<PatternLayout />
+		</Console>
+
+		<Console name="console" target="SYSTEM_OUT">
+			<PatternLayout	pattern="%d %5p [%c] %m%n" />
+		</Console>
+
+		<File name="file" fileName="./logs/file/sample.log" append="false">
+			<PatternLayout pattern="%d %5p [%c] %m%n" />
+		</File>
+
+		<File name="mdcFile" fileName="./logs/file/mdcSample.log" append="false">
+			<PatternLayout>
+				<Pattern>%d %5p [%c] [%X{class} %X{method} %X{testKey}] %m%n
+				</Pattern>
+			</PatternLayout>
+		</File>
+
+		<!-- RollingFile Appender 설정
+				*fileName=target파일이름, filePattern=history파일 생성규칙, append=true(default) -->
+		<RollingFile name="rollingFile" fileName="./logs/rolling/rollingSample.log"
+			filePattern="./logs/rolling/rollingSample.%i.log">
+			<PatternLayout>
+				<Pattern>%d %5p [%c] %m%n</Pattern>
+			</PatternLayout>
+			<!-- TriggeringPolicy 설정 - 로그 생성에 대한 규칙을 나타냄
+					*size 단위 생략시 Byte -->
+			<Policies>
+				<SizeBasedTriggeringPolicy size="1000" />
+			</Policies>
+			<!-- RolloverStrategy(DefaultRolloverStrategy) 설정 - 파일 생성에 대한 규칙을 나타냄
+					*fileIndex=max(default), min=1(default), max 속성 지정 -->
+			<DefaultRolloverStrategy max="3" fileIndex="min" />
+		</RollingFile>
+
+		<!-- DailyRolling을 위한 RollingFile Appender 설정
+				*fileName=target파일이름, filePattern=history파일 생성규칙, append=true(default) -->
+		<RollingFile name="dailyRollingFile" fileName="./logs/daily/dailyRollingSample.log"
+			filePattern="./logs/daily/dailyRollingSample.log.%d{yyyy-MM-dd-HH-mm-ss}">
+			<PatternLayout>
+				<Pattern>%d %5p [%c] %m%n</Pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy />
+			</Policies>
+		</RollingFile>
+		
+		<!-- JDBC Appender 설정
+				*tableName=로깅할 테이블명 -->
+				
+		<!-- 
+		<JDBC name="db" tableName="db_log">
+		
+			<ConnectionFactory class="egovframework.rte.fdl.logging.db.EgovConnectionFactory" method="getDatabaseConnection" />
+			
+			<Column name="eventDate" isEventTimestamp="true" />
+			<Column name="level" pattern="%p" />
+			<Column name="logger" pattern="%c" />
+			<Column name="message" pattern="%m" />
+			<Column name="exception" pattern="%ex{full}" />
+		</JDBC>
+		 -->
+		
+		<!-- Socket Appender 설정
+				*객체 형태로 로그를 전달 -->
+		<!-- 
+		<Socket name="socket" host="localhost" port="4448" protocol="TCP"
+			reconnectionDelay="5000">
+			<SerializedLayout />
+		</Socket>
+		 -->
+
+		<!-- SMPT Appender 설정 
+				* log4j2.xml 맨 위의 <Properties> 설정을 확인하고 변경한다 -->
+		<!-- 
+		<SMTP name="mail" subject="${smtp.subject}" to="${smtp.to}" from="${smtp.from}"
+			smtpHost="${smtp.host}" smtpPort="${smtp.port}" bufferSize="100">
+		</SMTP>
+		 -->
+		
+		<!-- FlowTracingTest 관련 Appender -->
+		<File name="markerFilter_FLOW" fileName="./logs/file/flowtracing/markerFilter_FLOW.log" append="false">
+			<MarkerFilter marker="FLOW" onMatch="ACCEPT" onMismatch="DENY"/>
+			<!-- <MarkerFilter marker="ENTER" onMatch="ACCEPT" onMismatch="DENY"/> -->
+			<!-- <MarkerFilter marker="EXIT" onMatch="ACCEPT" onMismatch="DENY"/> -->
+			<PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %class{36} %L %M - %m%n" />
+		</File>
+		<File name="markerFilter_EXCEPTION" fileName="./logs/file/flowtracing/markerFilter_EXCEPTION.log" append="false">
+			<MarkerFilter marker="EXCEPTION" onMatch="ACCEPT" onMismatch="DENY"/>
+			<!-- <MarkerFilter marker="CATCHING" onMatch="ACCEPT" onMismatch="DENY"/> -->
+			<PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %class{36} %L %M - %m%n" />
+		</File>
+		
+		<!-- FilterTest 관련 -->
+		<File name="thresholdFilter" fileName="./logs/file/filter/ThresholdFilter.log" append="false">
+			<ThresholdFilter level="error" onMatch="ACCEPT" onMisMatch="DENY" />
+			<PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %class{36} %L %M - %m%n" />
+		</File>
+		<File name="dynamicThresholdFilter" fileName="./logs/file/filter/DynamicThresholdFilter.log" append="false">
+			<DynamicThresholdFilter key="loginId" defaultThreshold="error" onMatch="ACCEPT" onMisMatch="DENY">
+				<KeyValuePair key="admin1" value="debug" />
+				<KeyValuePair key="admin2" value="warn" />
+			</DynamicThresholdFilter>
+			<PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %class{36} %L %M - %m%n" />
+		</File>
+		<File name="markerFilter" fileName="./logs/file/filter/MarkerFilter.log" append="false">
+			<MarkerFilter marker="INSERT" onMatch="ACCEPT" onMismatch="DENY"/>
+			<PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %class{36} %L %marker %M - %m%n" />
+		</File>
+		<File name="regexFilter" fileName="./logs/file/filter/RegexFilter.log" append="false">
+			 <RegexFilter regex=".* Test .*" onMatch="ACCEPT" onMismatch="DENY"/>
+			<PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %class{36} %L %M - %m%n" />
+		</File>
+	</Appenders>
+
+	<Loggers>
+
+		<Logger name="egovframework" level="debug" additivity="false">
+			<AppenderRef ref="console" />
+		</Logger>
+		
+		<Logger name="sysoutLogger" level="debug" additivity="false">
+			<AppenderRef ref="sysout" />
+		</Logger>
+
+		<Logger name="mdcLogger" level="debug" additivity="false">
+			<AppenderRef ref="mdcFile" />
+		</Logger>
+
+		<Logger name="rollingLogger" level="debug" additivity="false">
+			<AppenderRef ref="rollingFile" />
+		</Logger>
+
+		<Logger name="dailyLogger" level="debug" additivity="false">
+			<AppenderRef ref="dailyRollingFile" />
+		</Logger>
+		<!-- 
+		<Logger name="dbLogger" level="error" additivity="false">
+			<AppenderRef ref="db" />
+		</Logger>
+		 -->
+
+
+		<Logger name="egovframework.rte.fdl.logging.sample.LogLayoutSample" level="debug" additivity="false">
+			<AppenderRef ref="file" />
+		</Logger>
+
+		<Logger name="egovframework.rte.fdl.logging.sample.LogLevelDebug" level="debug" additivity="false">
+			<AppenderRef ref="file" />
+		</Logger>
+
+		<Logger name="egovframework.rte.fdl.logging.sample.LogLevelInfo" level="info" additivity="false">
+			<AppenderRef ref="file" />
+		</Logger>
+
+		<Logger name="egovframework.rte.fdl.logging.sample.LogLevelWarn" level="warn" additivity="false">
+			<AppenderRef ref="file" />
+		</Logger>
+
+		<Logger name="egovframework.rte.fdl.logging.sample.LogLevelError" level="error" additivity="false">
+			<AppenderRef ref="file" />
+		</Logger>
+
+		<Logger name="egovframework.rte.fdl.logging.sample.LogLevelFatal" level="fatal" additivity="false">
+			<AppenderRef ref="file" />
+		</Logger>
+	
+		<!-- 
+		<Logger name="socketLogger" level="debug" additivity="false">
+			<AppenderRef ref="socket" />
+		</Logger>
+		
+		<Logger name="mailLogger" level="error" additivity="false">
+			<AppenderRef ref="mail" />
+		</Logger>
+		 -->
+		
+		<Logger name="flowTracingLogger" level="trace" additivity="false">
+			<AppenderRef ref="console" />
+			<AppenderRef ref="markerFilter_EXCEPTION" />			
+			<AppenderRef ref="markerFilter_FLOW" />
+		</Logger>
+		
+		<Logger name="thresholdFilterLogger" level="debug" additivity="false">
+			<AppenderRef ref="console" />
+			<AppenderRef ref="thresholdFilter" />
+		</Logger>
+		
+		<Logger name="dynamicThresholdFilterLogger" level="debug" additivity="false">
+			<AppenderRef ref="dynamicThresholdFilter" />
+		</Logger>
+		
+		<Logger name="markerFilterLogger" level="debug" additivity="false">
+			<AppenderRef ref="markerFilter" />
+		</Logger>
+		
+		<Logger name="regexFilterLogger" level="debug" additivity="false">
+			<AppenderRef ref="regexFilter" />
+		</Logger>
+		
+		<Root level="error">
+			<AppenderRef ref="console" />
+		</Root>
+		
+	</Loggers>
+</Configuration>

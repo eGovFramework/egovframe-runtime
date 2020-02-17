@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="euc-kr"?>
+<root>
+        <sql id="getList"><![CDATA[
+                SELECT * FROM SIBBOARD WHERE BOARDNAME=?
+                        ORDER BY PARENT DESC,REPLYSTEP
+                ]]>
+        </sql>
+
+        <sql id="insert1"><![CDATA[
+                INSERT INTO SIBBOARD(BOARDNAME,TITLE,CONTENT,AUTHOR,EMAIL,HOMEPAGE,PASSWD,WRITEDATE) 
+                        VALUES(?,?,?,?,?,?,PASSWORD(?),CURRENT_TIMESTAMP)
+                ]]>
+        </sql>
+
+        <sql id="insert2"><![CDATA[
+                UPDATE SIBBOARD SET PARENT=LAST_INSERT_ID() 
+                        WHERE SEQ=LAST_INSERT_ID()
+                ]]>
+        </sql>
+
+        <sql id="insertReply1"><![CDATA[
+                UPDATE SIBBOARD SET REPLYSTEP=? 
+                        WHERE PARENT=? AND REPLYSTEP=?
+                ]]>
+        </sql>
+
+        <sql id="insertReply2"><![CDATA[
+                INSERT INTO SIBBOARD(TITLE,PARENT,REPLYSTEP,DEPTH,BOARDNAME,CONTENT,AUTHOR,PASSWD,EMAIL,HOMEPAGE,WRITEDATE) 
+                        VALUES(?,?,?,?,?,?,?,PASSWORD(?),?,?,CURRENT_TIMESTAMP )
+                ]]>
+        </sql>
+
+
+        <sql id="getReplyNum"><![CDATA[
+                SELECT COUNT(*) FROM SIBBOARD WHERE PARENT=?
+                ]]>
+        </sql>
+
+        <sql id="update"><![CDATA[
+                UPDATE SIBBOARD SET TITLE=?,CONTENT=? WHERE SEQ=?
+                ]]>
+        </sql>
+
+
+
+        <sql id="delete1"><![CDATA[
+                DELETE FROM SIBBOARD WHERE SEQ=?
+                ]]>
+        </sql>
+
+        <sql id="delete2"><![CDATA[
+                UPDATE SIBBOARD SET REPLYSTEP=? 
+                        WHERE PARENT=? AND REPLYSTEP=?
+                ]]>
+        </sql>
+
+
+
+        <sql id="getContent"><![CDATA[
+                SELECT AUTHOR,BOARDNAME,CONTENT,COUNT,WRITEDATE,DEPTH,IFNULL(EMAIL,"") EMAIL 
+                        ,IFNULL(HOMEPAGE,"") HOMEPAGE ,PARENT,PASSWD,RECOMMEND,REPLYSTEP,SEQ,TITLE 
+                    FROM SIBBOARD 
+                        WHERE SEQ=?
+                ]]>
+        </sql>
+
+
+        <sql id="getCount"><![CDATA[
+                SELECT COUNT(*) COUNT FROM SIBBOARD WHERE BOARDNAME=?
+                ]]>
+        </sql>
+
+
+</root>

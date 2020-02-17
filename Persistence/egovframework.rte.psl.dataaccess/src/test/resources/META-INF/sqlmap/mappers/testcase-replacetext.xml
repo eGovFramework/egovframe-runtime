@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.rte.psl.dataaccess.EmpMapper">
+
+	<select id="selectUsingReplacedOrderBy" parameterType="map" resultType="egovframework.rte.psl.dataaccess.util.EgovMap">
+		<![CDATA[
+			select DEPT_NO,
+			       DEPT_NAME,
+			       LOC
+			from   DEPT
+			order by ${orderExpr}
+		]]>
+	</select>
+	
+	<select id="selectUsingReplacedTable" parameterType="map" resultType="egovframework.rte.psl.dataaccess.util.EgovMap">
+		<![CDATA[
+			select *
+			from   ${table}
+		]]>
+		<if test="orderExpr != null">
+			order by ${orderExpr}
+		</if>
+	</select>
+	
+	<select id="selectUsingReplacedAllQuery" parameterType="map" resultType="egovframework.rte.psl.dataaccess.util.EgovMap">
+		<![CDATA[
+			${selectQuery}
+		]]>
+	</select>
+	
+	<select id="selectUsingReplacedAllQueryUsingRemapResults" parameterType="map" resultType="egovframework.rte.psl.dataaccess.util.EgovMap">
+		<![CDATA[
+			${selectQuery}
+		]]>
+	</select>
+
+</mapper>

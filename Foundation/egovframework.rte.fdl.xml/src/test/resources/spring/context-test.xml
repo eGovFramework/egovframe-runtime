@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<information>
+    <person id="1">
+        <name>Deep</name>
+        <age>34</age>
+        <gender>Male</gender>
+    </person>
+ 
+     <person id="2">
+        <name>Kumar</name>
+        <age>24</age>
+        <gender>Male</gender>
+    </person>
+ 
+    <person1 id="3">
+        <name>Deepali</name>
+        <age>19</age>
+        <gender>Female</gender>
+    </person1>
+
+    <!-- more persons... -->
+</information> 

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="EmpMapper">
+
+<!-- TODO [Step 3-2] lab-mapper-interface.xml 작성 (Mapper Interface) -->
+	<resultMap id="empResult" type="empVO">
+		<id property="empNo" column="EMP_NO" />
+		<result property="empName" column="EMP_NAME" />
+		<result property="job" column="JOB" />
+		<result property="mgr" column="MGR" />
+		<result property="hireDate" column="HIRE_DATE" />
+		<result property="sal" column="SAL" />
+		<result property="comm" column="COMM" />
+		<result property="deptNo" column="DEPT_NO" />
+	</resultMap>
+
+	<insert id="insertEmp" parameterType="empVO">
+			<![CDATA[
+				insert into EMP (EMP_NO, EMP_NAME, JOB, MGR, HIRE_DATE, SAL, COMM, DEPT_NO)
+				values	(#{empNo}, #{empName}, #{job}, #{mgr}, #{hireDate}, #{sal}, #{comm}, #{deptNo})
+			]]>
+	</insert>
+
+	<update id="updateEmp" parameterType="empVO">
+			<![CDATA[
+				update	EMP
+				set			EMP_NAME = #{empName},
+								JOB = #{job},
+								MGR = #{mgr},
+								HIRE_DATE = #{hireDate},
+								SAL = #{sal},
+								COMM = #{comm},
+								DEPT_NO = #{deptNo}
+				where		EMP_NO = #{empNo}
+			]]>
+	</update>
+
+	<update id="updateEmp1" parameterType="empVO">
+			<![CDATA[
+				update EMP set MGR = #{mgrR}
+				where		EMP_NO = #{empNo}
+			]]>
+	</update>
+	
+	<delete id="deleteEmp" parameterType="empVO">
+			<![CDATA[
+				delete from EMP
+				where EMP_NO = #{empNo}
+			]]>
+	</delete>
+
+	<select id="selectEmp" parameterType="empVO" resultMap="empResult">
+			<![CDATA[
+				select	EMP_NO, EMP_NAME, JOB, MGR, HIRE_DATE, SAL, COMM, DEPT_NO
+				from	EMP
+				where	EMP_NO = #{empNo}
+			]]>
+	</select>
+
+	<select id="selectEmpList" parameterType="empVO" resultMap="empResult">
+			<![CDATA[
+				select	EMP_NO, EMP_NAME, JOB, MGR, HIRE_DATE, SAL, COMM, DEPT_NO
+				from	EMP	
+				where 1 = 1
+			]]>
+		<if test="empNo != null">
+			AND EMP_NO = #{empNo}
+		</if>
+		<if test="empName != null">
+			AND EMP_NAME LIKE '%' || #{empName} || '%'
+		</if>
+	</select>
+</mapper>

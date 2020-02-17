@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-3.0.xsd">
+
+	<import resource="abstract/eGovBase.xml" />
+
+   	<job id="delimitedToDelimitedJob-IndexReaderJob" xmlns="http://www.springframework.org/schema/batch">
+
+	    <step id="delimitedToDelimitedStep-IndexResource">
+			<tasklet>
+				<chunk reader="fileIndex-delimitedItemReader"
+					processor=""
+					writer="fileIndex-delimitedItemWriter"
+					commit-interval="2" />
+			</tasklet>
+		</step>
+		
+	</job>
+
+ 	<bean id="fileIndex-delimitedItemReader"
+		class="egovframework.rte.bat.core.item.file.EgovIndexFileReader">
+		<!-- <property name="resource" value="~~~~~#{jobParameters['inputFile1']}" /> -->
+		<!-- <property name="resource" value="classpath:egovframework/batch/data/inputs/csvData.csv" /> -->
+		<!-- <property name="resource" value="file:./src/main/resources/egovframework/batch/data/inputs/csvData.csv" /> -->
+		<property name="indexResource" value="file:./src/test/resources/egovframework/data/input/index/csvData_NDX(-1)" />
+	    <property name="lineMapper">
+			<bean class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
+				<property name="lineTokenizer">
+					<bean
+						class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
+						<property name="delimiter" value="," />
+						<property name="names" value="name,credit" />
+					</bean>
+				</property>
+				<property name="fieldSetMapper">
+					<bean
+						class="org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper">
+						<property name="targetType"
+							value="egovframework.rte.bat.domain.CustomerCredit" />
+					</bean>
+				</property>
+			</bean>
+		</property>
+	</bean>
+
+ 	
+	<bean
+		id="fileIndex-delimitedItemWriter"
+		class="egovframework.rte.bat.core.item.file.EgovIndexFileWriter" scope="step">
+		<!-- <property name="resource"
+			value="file:./target/test-outputs/csvOutput_Index_#{new java.text.SimpleDateFormat('yyyyMMddHHmmssSS').format(new java.util.Date())}.csv" /> -->
+		<property name="indexResource" value="file:./src/test/resources/egovframework/data/input/index/csvData_NDX(+1)" />
+		<property name="lineAggregator">
+			<bean
+				class="org.springframework.batch.item.file.transform.DelimitedLineAggregator">
+				<property name="delimiter" value="," />
+				<property name="fieldExtractor">
+					<bean
+						class="egovframework.rte.bat.core.item.file.transform.EgovFieldExtractor">
+						<property name="names" value="name,credit" />
+					</bean>
+				</property>
+			</bean>
+		</property>
+	</bean>
+	
+	
+	<!-- <bean id="fileIndex-customItemProcessor"
+				class="egovframework.example.bat.domain.trade.CustomerCreditIncreaseProcessor" scope="step">
+		<property name="stepExecution" value="#{stepExecution}" />
+	</bean> -->
+	
+	<bean class="org.springframework.batch.core.scope.StepScope" />
+	<bean class="org.springframework.batch.core.scope.JobScope" />
+
+</beans>

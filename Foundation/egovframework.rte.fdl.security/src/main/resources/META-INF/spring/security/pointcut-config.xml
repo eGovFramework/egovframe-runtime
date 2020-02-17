@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans  xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+						http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.2.xsd
+						http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+						http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+    
+	<!-- pointcut -->
+	<!-- if no map, there is a error that "this map must not be empty; it must contain at least one entry" -->
+	<!-- so there will be dummy entry -->
+ 	<beans:bean id="protectPointcutPostProcessor" class="org.springframework.security.config.method.ProtectPointcutPostProcessor">
+		<beans:constructor-arg ref="methodSecurityMetadataSources" />
+		<beans:property name="pointcutMap" ref="pointcutMap"/>
+	</beans:bean>
+
+	<beans:bean id="pointcutMap" class="egovframework.rte.fdl.security.intercept.MethodResourcesMapFactoryBean" init-method="init">
+		<beans:property name="securedObjectService" ref="securedObjectService"/>
+		<beans:property name="resourceType" value="pointcut"/>
+	</beans:bean>
+	<!--  -->
+    
+</beans:beans>

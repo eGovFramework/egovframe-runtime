@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="JobHistInclude">
+
+	<typeAlias alias="jobHistVO" type="egovframework.rte.psl.dataaccess.vo.JobHistVO" />
+	<typeAlias alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap" />
+
+	<sql id="selectJobHistFragment">
+		<![CDATA[
+			select EMP_NO     as empNo,
+			       START_DATE as startDate,
+			       END_DATE   as endDate,
+			       JOB        as job,
+			       SAL        as sal,
+			       COMM       as comm,
+			       DEPT_NO    as deptNo
+			from   JOBHIST
+		]]>
+	</sql>
+
+	<select id="selectJobHistListUsingIncludeA" parameterClass="jobHistVO" resultClass="jobHistVO">
+		<include refid="selectJobHistFragment"/>
+		
+		<dynamic prepend="where">
+			<isNotNull property="empNo" prepend="and">
+				EMP_NO = #empNo#
+			</isNotNull>		
+		</dynamic>
+			order by EMP_NO, START_DATE
+	</select>
+	
+
+	
+	<select id="selectJobHistListUsingIncludeB" parameterClass="empIncludesEmpListVO" resultClass="jobHistVO">
+		<include refid="selectJobHistFragment"/>
+		
+		<dynamic prepend="where">
+			<iterate property="empList" open="EMP_NO in (" conjunction=", " close=")">
+				#empList[].empNo#
+			</iterate>		
+		</dynamic>
+			order by EMP_NO, START_DATE
+	</select>
+	
+	<select id="selectJobHistListUsingIncludeC" parameterClass="map" resultClass="jobHistVO">
+		<include refid="selectJobHistFragment"/>
+		
+		<dynamic prepend="where">
+			<iterate property="condition" open="(" conjunction="and" close=")">
+				$condition[].columnName$ $condition[].columnOperation$ 
+				<isEqual property="condition[].nested" compareValue="true">
+					<iterate property="condition[].columnValue" open="(" conjunction="," close=")">
+						#condition[].columnValue[]#
+					</iterate>
+				</isEqual>
+				<isNotEqual property="condition[].nested" compareValue="true">
+					#condition[].columnValue#
+				</isNotEqual>
+			</iterate>		
+		</dynamic>
+			order by EMP_NO, START_DATE
+	</select>
+
+</sqlMap>

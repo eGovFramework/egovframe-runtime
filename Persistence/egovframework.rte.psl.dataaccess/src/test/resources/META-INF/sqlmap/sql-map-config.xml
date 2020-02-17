@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMapConfig PUBLIC "-//iBATIS.com//DTD SQL Map Config 2.0//EN"
+    "http://www.ibatis.com/dtd/sql-map-config-2.dtd">
+
+<sqlMapConfig>
+	<settings useStatementNamespaces="false" 
+				defaultStatementTimeout="100"
+	/>
+	
+	<typeHandler javaType="java.util.Calendar" jdbcType="TIMESTAMP"
+		callback="egovframework.rte.psl.dataaccess.typehandler.CalendarTypeHandler" />
+		
+	<typeHandler javaType="string" jdbcType="TIMESTAMP"
+		callback="egovframework.rte.psl.dataaccess.typehandler.StringTimestampTypeHandler" />
+		
+	<sqlMap resource="META-INF/sqlmap/mappings/testcase-basic.xml" />
+	<sqlMap resource="META-INF/sqlmap/mappings/testcase-simple.xml" />
+	<sqlMap resource="META-INF/sqlmap/mappings/testcase-map.xml" />
+	<sqlMap resource="META-INF/sqlmap/mappings/testcase-parametermap.xml" />
+	<sqlMap resource="META-INF/sqlmap/mappings/testcase-resultmap.xml" />
+	<sqlMap resource="META-INF/sqlmap/mappings/testcase-resultmap-complex.xml" />
+	<sqlMap resource="META-INF/sqlmap/mappings/testcase-replacetext.xml" />
+	<sqlMap resource="META-INF/sqlmap/mappings/testcase-dynamic.xml" />
+	<sqlMap resource="META-INF/sqlmap/mappings/testcase-include.xml" />
+	<sqlMap resource="META-INF/sqlmap/mappings/testcase-datatype.xml" />
+	<sqlMap resource="META-INF/sqlmap/mappings/testcase-lob.xml" />
+	<sqlMap resource="META-INF/sqlmap/mappings/testcase-selectkey.xml" />
+	<sqlMap resource="META-INF/sqlmap/mappings/testcase-cachemodel.xml" />
+	<sqlMap resource="META-INF/sqlmap/mappings/testcase-resultsettype-fetchsize-timeout.xml" />
+	<sqlMap resource="META-INF/sqlmap/mappings/testcase-typehandler.xml" />
+	<sqlMap resource="META-INF/sqlmap/mappings/testcase-batch.xml" />
+	<sqlMap resource="META-INF/sqlmap/mappings/testcase-procedure.xml" />
+	<sqlMap resource="META-INF/sqlmap/mappings/testcase-rowhandler.xml" />
+</sqlMapConfig>

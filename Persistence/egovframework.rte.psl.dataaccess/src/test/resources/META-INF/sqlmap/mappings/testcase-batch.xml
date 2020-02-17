@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="EmpBatchInsert">
+
+	<typeAlias alias="empVO" type="egovframework.rte.psl.dataaccess.vo.EmpVO" />
+
+	<insert id="insertEmpUsingBatch" parameterClass="empVO">
+		<![CDATA[
+			insert into EMP
+					   (EMP_NO,
+						EMP_NAME,
+						JOB,
+						MGR,
+						HIRE_DATE,
+						SAL,
+						COMM,
+						DEPT_NO)
+			values	   (#empNo#,
+						#empName#,
+						#job#,
+						#mgr#,
+						#hireDate#,
+						#sal#,
+						#comm#,
+						#deptNo#)
+		]]>
+	</insert>
+
+</sqlMap>

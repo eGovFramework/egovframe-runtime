@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+        
+	<!-- <context:component-scan base-package="egovframework.rte.ptl.mvc.bind"/> -->
+	<!-- <mvc:annotation-driven>
+            <mvc:argument-resolvers>
+                <bean class="egovframework.rte.ptl.mvc.bind.CommandMapMethodArgumentResolver"/>
+            </mvc:argument-resolvers>
+         </mvc:annotation-driven> -->
+	<bean class="egovframework.rte.ptl.mvc.bind.annotation.EgovRequestMappingHandlerAdapter">
+		<property name="customArgumentResolvers">
+			<list>
+				<bean class="egovframework.rte.ptl.mvc.bind.AnnotationCommandMapArgumentResolver" />
+			</list>
+		</property>
+	</bean>
+	<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"/>
+	<context:component-scan base-package="egovframework.rte.ptl.mvc.bind" />
+
+	<!-- <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+            <property name="customArgumentResolvers">
+                <list>
+                    <bean class="egovframework.rte.ptl.mvc.bind.CommandMapArgumentResolver"/>
+		        </list>
+	        </property>
+        </bean> -->
+	<!-- <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+            <property name="customArgumentResolvers">
+                <list>
+                    <bean class="egovframework.rte.ptl.mvc.bind.CommandMapMethodArgumentResolver"/>
+                </list>
+            </property>
+            <property name="order" value="-1"/>
+        </bean> -->
+	<!-- <bean id="annotationMapper" class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"/> -->
+</beans>

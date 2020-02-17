@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Configuration status="error">
+	<Appenders>
+		<!-- Socket을 통해 보낸 로그를 받는쪽: 객체로 받아서 pattern대로 출력한다 -->
+		<Console name="console" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d %5p [%c] %m%n" />
+		</Console>
+		<File name="remoteFile" fileName="./remote/logs/remoteSample.log"	append="false">
+			<PatternLayout pattern="%d %5p [%c] %m%n" />
+		</File>
+	</Appenders>
+	<Loggers>
+		<Logger name="socketLogger" level="debug" additivity="false">
+			<AppenderRef ref="console" />
+			<AppenderRef ref="remoteFile" />
+		</Logger>
+		<Root level="error">
+			<AppenderRef ref="console" />
+		</Root>
+	</Loggers>
+</Configuration>
+	

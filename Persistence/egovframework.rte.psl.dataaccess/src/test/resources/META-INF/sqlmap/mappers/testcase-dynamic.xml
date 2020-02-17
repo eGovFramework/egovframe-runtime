@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.rte.psl.dataaccess.JobHistDynamicMapper">
+
+	<resultMap id="jobHistVO" type="egovframework.rte.psl.dataaccess.vo.JobHistVO" />
+	<resultMap id="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap" />
+	<resultMap id="empIncludesEmpListVO" type="egovframework.rte.psl.dataaccess.vo.EmpIncludesEmpListVO" />
+	
+	<!--  임시로 
+	<resultMap id="empVO" type="egovframework.rte.psl.dataaccess.vo.EmpVO" />
+	
+	<resultMap id="empIncludesSameMgrMoreSalaryEmpListResult" type="egovframework.rte.psl.dataaccess.vo.EmpIncludesEmpListVO" extends="getEmpResult">
+		<collection property="empList" column="{empNo=EMP_NO, mgr=MGR, sal=SAL}" select="selectSameMgrMoreSalaryEmpList"></collection>
+	</resultMap>
+	
+	<resultMap id="getEmpResult" type="egovframework.rte.psl.dataaccess.vo.EmpVO">
+		<result property="empNo" column="EMP_NO" />
+		<result property="empName" column="EMP_NAME" />
+		<result property="job" column="JOB" />
+		<result property="mgr" column="MGR" />
+		<result property="hireDate" column="HIRE_DATE" />
+		<result property="sal" column="SAL" />
+		<result property="comm" column="COMM" />
+		<result property="deptNo" column="DEPT_NO" />
+	</resultMap>
+	-->
+	
+	
+	<select id="selectJobHistListUsingDynamicElement" parameterType="egovframework.rte.psl.dataaccess.vo.JobHistVO" resultMap="jobHistVO">
+		<![CDATA[
+			select EMP_NO     as empNo,
+			       START_DATE as startDate,
+			       END_DATE   as endDate,
+			       JOB        as job,
+			       SAL        as sal,
+			       COMM       as comm,
+			       DEPT_NO    as deptNo
+			from   JOBHIST
+		]]>
+		<where>
+			<if test="empNo != null">
+				EMP_NO = #{empNo}
+			</if>		
+		</where>
+			order by EMP_NO, START_DATE
+	</select>
+
+	<select id="selectDynamicUnary" parameterType="egovframework.rte.psl.dataaccess.util.EgovMap" resultMap="egovMap">
+		select
+			<trim suffixOverrides=",">
+				<if test="@egovframework.rte.psl.dataaccess.utils.CompareUtil@isEmpty(testEmptyString)" >
+					'empty String' as IS_EMPTY_STRING,
+				</if>
+				<if test="@egovframework.rte.psl.dataaccess.utils.CompareUtil@isNotEmpty(testEmptyString)">
+					'not empty String' as IS_EMPTY_STRING,
+				</if>
+				<if test="@egovframework.rte.psl.dataaccess.utils.CompareUtil@isEmpty(testEmptyCollection)" >
+					'empty Collection' as IS_EMPTY_COLLECTION,
+				</if>
+				<if test="@egovframework.rte.psl.dataaccess.utils.CompareUtil@isNotEmpty(testEmptyCollection)">
+					'not empty Collection' as IS_EMPTY_COLLECTION,
+				</if>
+				<if test="testNull == null">
+					'null' as IS_NULL,
+				</if>
+				<if test="testNull != null">
+					'not null' as IS_NULL,
+				</if>
+				<!-- MyBatis는 isPropertyAvailable를 제공하지 않음
+				<if test="containsKey(testProperty)"> 
+					'testProperty Available' as	TEST_PROPERTY_AVAILABLE,
+				</if>
+				<if test="containsKey(testProperty)">
+					'testProperty Not Available' as TEST_PROPERTY_AVAILABLE,
+				</if>
+				-->
+			</trim>
+		from dual
+	</select>
+	
+	<select id="selectDynamicBinary" parameterType="egovframework.rte.psl.dataaccess.util.EgovMap" resultMap="egovMap">
+		select
+		<trim suffixOverrides=",">
+			<if test='testString == "test"'>
+				'${testString}' as TEST_STRING, 'test : equals' as IS_EQUAL,
+			</if>
+			<if test='testString != "test"'>
+				'${testString}' as TEST_STRING, 'test : not equals' as IS_EQUAL,
+			</if>
+			<if test="@egovframework.rte.psl.dataaccess.utils.CompareUtil@isNotEmpty(testNumeric)">
+				<if test="testNumeric == 10">
+					cast(${testNumeric} as ${castTypeScale}) as TEST_NUMERIC, '10 : equals' as IS_EQUAL_NUMERIC,
+				</if>
+				<if test="testNumeric != 10">
+					cast(${testNumeric} as ${castTypeScale}) as TEST_NUMERIC, '10 : not equals' as IS_EQUAL_NUMERIC,
+				</if>
+			</if>
+			<if test="testNumeric &gt;= 10">
+				'10 <![CDATA[<=]]> ${testNumeric}' as IS_GREATER_EQUAL,
+			</if>
+
+			<if test="testNumeric &gt; 10">
+				'10 <![CDATA[<]]> ${testNumeric}' as IS_GREATER_THAN,
+			</if>
+			<if test="testNumeric &lt;= 10">
+				'10 <![CDATA[>=]]> ${testNumeric}' as IS_LESS_EQUAL,
+			</if>
+			<if test="testNumeric &lt; 10">
+				'10 <![CDATA[>]]> ${testNumeric}' as IS_LESS_THAN,
+			</if>
+			<!-- checkMore -->
+			<if test="@egovframework.rte.psl.dataaccess.utils.CompareUtil@isNotEmpty(testOtherString)">
+				<if test='testOtherString == "testString"'>
+					'${testOtherString}' as TEST_OTHER_STRING, 'test : testOtherString equals testString' as COMPARE_PROPERTY_EQUAL,
+				</if>
+				<if test='testOtherString != "testString"'>
+					'${testOtherString}' as TEST_OTHER_STRING, 'test : testOtherString not equals testString' as COMPARE_PROPERTY_EQUAL,
+				</if>
+				<if test="testOtherString &gt;= 'testString'">
+					'''${testOtherString}'' <![CDATA[>=]]> ''${testString}''' as COMPARE_PROPERTY_GREATER_EQUAL,
+				</if>
+				<if test="testOtherString &gt; 'testString'">
+					'''${testOtherString}'' <![CDATA[>]]> ''${testString}''' as COMPARE_PROPERTY_GREATER_THAN,
+				</if>
+				<if test="testOtherString &lt;= 'testString'">
+					'''${testOtherString}'' <![CDATA[<=]]> ''${testString}''' as COMPARE_PROPERTY_LESS_EQUAL,
+				</if>
+				<if test="testOtherString &lt; 'testString'">
+					'''${testOtherString}'' <![CDATA[<]]> ''${testString}''' as COMPARE_PROPERTY_LESS_THAN,
+				</if>
+			</if>
+		</trim>
+		from dual
+	</select>
+	
+	<select id="selectDynamicParameterPresent" parameterType="map" resultMap="egovMap">
+		select 
+			<if test="_parameter != null"> 
+				'parameter object exist' as IS_PARAMETER_PRESENT
+			</if>
+			<if test="_parameter == null"> 
+				'parameter object not exist' as IS_PARAMETER_PRESENT
+			</if>
+		from dual
+	</select>
+	
+	<select id="selectJobHistListUsingDynamicIterate" parameterType="egovframework.rte.psl.dataaccess.vo.EmpIncludesEmpListVO" resultMap="jobHistVO">
+		<![CDATA[
+			select EMP_NO     as empNo,
+			       START_DATE as startDate,
+			       END_DATE   as endDate,
+			       JOB        as job,
+			       SAL        as sal,
+			       COMM       as comm,
+			       DEPT_NO    as deptNo
+			from   JOBHIST
+		]]>
+			where
+			<foreach collection="empList" item="item" index="" open="EMP_NO in (" separator=", " close=")" >
+				#{item.empNo}
+			</foreach>		
+			order by EMP_NO, START_DATE
+	</select>
+	
+	<!-- parameterClass 는 명시하지 않았음. Map 에 collection 이란 key 로 List 를 넘긴 경우와 바로 List를 넘긴 경우로 구분하여 테스트 -->
+	<!-- iterate 요소가 검색조건 등의 입력 파라메터 바인딩 변수로 사용될 경우는 #collection[]# 과 같이 사용하면 됨 -->
+	<select id="selectDynamicIterateSimple1" parameterType="map" resultMap="egovMap">
+		select 
+			<!-- List 를 바로 넘긴 경우 -->
+			<foreach collection="list" item="item" separator=", ">
+				'${item}' as ${item}
+			</foreach>
+		from dual
+	</select>
+	<select id="selectDynamicIterateSimple2" parameterType="map" resultMap="egovMap">
+		select 
+			
+			<if test="@egovframework.rte.psl.dataaccess.utils.CompareUtil@isNotEmpty(collection)">
+				<foreach collection="collection" item="item" separator=", ">
+					'${item}' as ${item}
+				</foreach>
+			</if>
+		from dual
+	</select>
+		
+	<select id="selectJobHistListUsingDynamicNestedIterate" parameterType="egovframework.rte.psl.dataaccess.util.EgovMap" resultMap="jobHistVO">
+		<![CDATA[
+			select EMP_NO     as empNo,
+			       START_DATE as startDate,
+			       END_DATE   as endDate,
+			       JOB        as job,
+			       SAL        as sal,
+			       COMM       as comm,
+			       DEPT_NO    as deptNo
+			from   JOBHIST
+		]]>
+			where
+			<foreach collection="condition" item="item" open="(" separator="and" close=")">
+				${item.columnName} ${item.columnOperation} 
+				<if test="item.nested == 'true'">
+					<foreach item="item2" index="index" collection="item.columnValue" open="(" separator="," close=")">
+					      '${item2}'
+					</foreach>
+				</if>
+				<if test="item.nested != 'true'">
+					#{item.columnValue}
+				</if>
+			</foreach>		
+			order by EMP_NO, START_DATE
+	</select>
+
+<!--
+select EMP_NO     as empNo,           
+START_DATE as startDate,           
+END_DATE   as endDate,           
+JOB        as job,           
+SAL        as sal,           
+COMM       as comm,           
+DEPT_NO    as deptNo    
+from   JOBHIST      
+where    (     DEPT_NO =                 ?         
+and     SAL <                 ?         
+and     JOB in            (       ?      ,       ?      )              )         
+order by EMP_NO, START_DATE  
+ -->
+<!--  임시로 넣어놈 resultmap-complex 
+<select id="selectEmpIncludesSameMgrMoreSalaryEmpList" parameterType="egovframework.rte.psl.dataaccess.vo.EmpVO" resultMap="empIncludesSameMgrMoreSalaryEmpListResult">
+		<![CDATA[
+			select   EMP_NO,
+			         EMP_NAME,
+			         JOB,
+			         MGR,
+			         HIRE_DATE,
+			         SAL,
+			         COMM,
+			         DEPT_NO
+			from     EMP
+			where    EMP_NO = #{empNo}
+		]]>
+	</select>
+	<select id="selectSameMgrMoreSalaryEmpList" parameterType="egovframework.rte.psl.dataaccess.vo.EmpVO" resultMap="getEmpResult">
+		<![CDATA[
+			select   EMP_NO,
+			         EMP_NAME,
+			         JOB,
+			         MGR,
+			         HIRE_DATE,
+			         SAL,
+			         COMM,
+			         DEPT_NO
+			from     EMP
+			where    MGR = #{mgr}		/* 같은 관리자에 속해 있으면서 */
+			and      SAL >= #{sal}		/* 본인 급여 이상을 받는 사람 */
+			and      EMP_NO <> #{empNo}  /* 본인은 제외 */
+			order by SAL desc
+		]]>
+	</select>
+	-->
+</mapper>

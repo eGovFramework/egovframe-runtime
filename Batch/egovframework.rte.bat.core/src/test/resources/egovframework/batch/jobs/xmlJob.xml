@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd
+        http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-3.0.xsd">
+
+	<job id="xmlJob"  xmlns="http://www.springframework.org/schema/batch">
+		<step id="xmlStep1">
+			<tasklet>
+				<chunk reader="itemReader" processor="itemProcessor" writer="itemWriter" commit-interval="2"/>
+			</tasklet>
+		</step>
+	</job>
+	<bean id="itemReader" class="org.springframework.batch.item.xml.StaxEventItemReader" scope="step">
+		<property name="fragmentRootElementName" value="customer" />
+		<property name="resource" value="#{jobParameters[inputFile]}" />
+		
+		<property name="unmarshaller" ref="customerCreditMarshaller" />
+	</bean>
+	
+	<bean id="itemProcessor" class="egovframework.brte.sample.common.domain.trade.CustomerCreditIncreaseProcessor" />
+
+	<bean id="itemWriter" class="org.springframework.batch.item.xml.StaxEventItemWriter">
+		<property name="resource" ref="outputResource" />
+		<property name="marshaller" ref="customerCreditMarshaller" />
+		<property name="rootTagName" value="customers" />
+		<property name="overwriteOutput" value="true" />
+	</bean>
+
+	<bean id="customerCreditMarshaller" class="org.springframework.oxm.xstream.XStreamMarshaller">
+		<property name="aliases">
+			<util:map id="aliases">
+				<entry key="customer" value="egovframework.brte.sample.common.domain.trade.CustomerCredit" />
+				<entry key="id" value="int" />
+				<entry key="credit" value="java.math.BigDecimal" />
+				<entry key="name" value="java.lang.String" />
+			</util:map>
+		</property>
+	</bean>
+
+	<bean id="outputResource" class="org.springframework.core.io.FileSystemResource">
+		<constructor-arg value="target/test-outputs/output.xml" />
+	</bean>
+
+</beans>

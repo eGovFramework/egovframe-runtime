@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="EmpParameter">
+
+	<typeAlias alias="empVO" type="egovframework.rte.psl.dataaccess.vo.EmpVO" />
+
+	<parameterMap id="empParam" class="empVO">
+		<parameter property="empNo" mode="IN" javaType="decimal"
+			jdbcType="NUMERIC" />
+		<parameter property="empName" mode="IN" javaType="string"
+			jdbcType="VARCHAR" nullValue="blank" />
+		<parameter property="job" mode="IN" javaType="string"
+			jdbcType="VARCHAR" nullValue=""/>
+		<parameter property="mgr" mode="IN" javaType="decimal"
+			jdbcType="NUMERIC" />
+		<parameter property="hireDate" mode="IN" javaType="date"
+			jdbcType="DATE" />
+		<parameter property="sal" mode="IN" javaType="decimal"
+			jdbcType="NUMERIC" />
+		<parameter property="comm" mode="IN" javaType="decimal"
+			jdbcType="NUMERIC" nullValue="-99999"/>
+		<parameter property="deptNo" mode="IN" javaType="decimal"
+			jdbcType="NUMERIC"/>
+	</parameterMap>
+	
+	<insert id="insertEmpUsingParameterMap" parameterMap="empParam">
+		<![CDATA[
+			insert into EMP
+			           (EMP_NO,
+			            EMP_NAME,
+			            JOB,
+			            MGR,
+			            HIRE_DATE,
+			            SAL,
+			            COMM,
+			            DEPT_NO)
+			values     (?,
+			            ?,
+			            ?,
+			            ?,
+			            ?,
+			            ?,
+			            ?,
+			            ?)
+		]]>
+	</insert>
+
+	<insert id="insertEmptUsingInLineParam">
+		<![CDATA[
+			insert into EMP
+			           (EMP_NO,
+			            EMP_NAME,
+			            JOB,
+			            MGR,
+			            HIRE_DATE,
+			            SAL,
+			            COMM,
+			            DEPT_NO)
+			values     (#empNo:NUMERIC#,
+			            #empName:VARCHAR:blank#,
+			            #job:VARCHAR:""#,	/* inline parameter 에서는 empty String 을 nullValue로 대체할 수 없음 - cf.) oracle인 경우는 "" 가 null 임 */
+			            #mgr:NUMERIC#,
+			            #hireDate:DATE#,
+			            #sal:NUMERIC#,	
+			            #comm,javaType=decimal,jdbcType=NUMERIC,mode=IN,nullValue=-99999#,
+			            #deptNo:NUMERIC#)
+		]]>
+	</insert>
+	
+	<select id="selectEmp" parameterClass="empVO" resultClass="empVO">
+		<![CDATA[
+			select EMP_NO as empNo,
+			       EMP_NAME as empName,
+			       JOB as job,
+			       MGR as mgr,
+			       HIRE_DATE as hireDate,
+			       SAL as sal,
+			       COMM as comm,
+			       DEPT_NO as deptNo
+			from   EMP
+			where  EMP_NO = #empNo#
+		]]>
+	</select>
+
+</sqlMap>

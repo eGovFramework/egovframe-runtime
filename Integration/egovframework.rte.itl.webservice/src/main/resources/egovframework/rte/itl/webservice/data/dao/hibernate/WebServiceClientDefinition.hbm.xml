@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+      "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="egovframework.rte.itl.webservice.data">
+
+    <class name="WebServiceClientDefinition" table="WEB_SERVICE_CLIENT">
+     
+        <id name="key" type="string" column="SERVICE_KEY"/>
+
+        <one-to-one name="serviceDefinition"
+                    class="egovframework.rte.itl.integration.metadata.ServiceDefinition"
+                    constrained="true"
+                    lazy="false"/>
+        
+        <property name="wsdlAddress" type="string" column="WSDL_ADDRESS" not-null="true"/>
+        
+        <property name="namespace" type="string" column="NAMESPACE" not-null="true"/>
+        
+        <property name="serviceName" type="string" column="SERVICE_NAME" not-null="true"/>
+        
+        <property name="portName" type="string" column="PORT_NAME" not-null="true"/>
+        
+        <property name="operationName" type="string" column="OPERATION_NAME" not-null="true"/>
+        
+        <map name="requestMappingInfos" table="WEB_SERVICE_MAPPING_INFO"
+             order-by="ARGUMENT_INDEX asc"
+             where="MESSAGE_TYPE = 'REQ'"
+             lazy="false">
+            <key column="SERVICE_KEY" not-null="true"/>
+            <map-key column="FIELD_NAME" type="string"/>
+            <composite-element class="MappingInfo">
+                <property name="type" type="string" column="MESSAGE_TYPE" not-null="true"/>
+                <property name="index" type="int" column="ARGUMENT_INDEX" not-null="true"/>
+                <property name="argumentName" type="string" column="ARGUMENT_NAME" not-null="true"/>
+                <property name="header" type="yes_no" column="HEADER_YN" not-null="true"/>
+            </composite-element>
+        </map>
+        
+        <map name="responseMappingInfos" table="WEB_SERVICE_MAPPING_INFO"
+             order-by="ARGUMENT_INDEX asc"
+             where="MESSAGE_TYPE = 'RES'"
+             lazy="false">
+            <key column="SERVICE_KEY" not-null="true"/>
+            <map-key column="FIELD_NAME" type="string"/>
+            <composite-element class="MappingInfo">
+                <property name="type" type="string" column="MESSAGE_TYPE" not-null="true"/>
+                <property name="index" type="int" column="ARGUMENT_INDEX" not-null="true"/>
+                <property name="argumentName" type="string" column="ARGUMENT_NAME" not-null="true"/>
+                <property name="header" type="yes_no" column="HEADER_YN" not-null="true"/>
+            </composite-element>
+        </map>
+        
+    </class>
+
+</hibernate-mapping>

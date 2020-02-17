@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:p="http://www.springframework.org/schema/p"  
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd"> 
+    
+    
+<!-- 	<bean id="egovPropertyConfigurer" class="egovframework.rte.fdl.cmmn.config.EgovPropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath:/META-INF/spring/config/globals.properties</value>
+            </list>
+        </property>
+    </bean> -->
+    
+	<bean name="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="useCodeAsDefaultMessage">
+			<value>true</value>
+		</property>
+		<property name="basenames">
+			<list>
+				<value>classpath:/egovframework/rte/fdl/property/messages/properties</value>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="egovPropertyConfigurer" class="egovframework.rte.fdl.property.impl.EgovPropertyServiceImpl">
+	<property name="extFileName">
+		<set>
+			<map>
+				<entry key="encoding" value="UTF-8"/>
+				<entry key="filename" value="classpath:/META-INF/spring/config/globals.properties"/>
+			</map>
+		</set>
+	</property>
+	</bean>
+     
+	<bean id="egov.passwordEncoder" class="egovframework.rte.fdl.cryptography.EgovPasswordEncoder">
+		<property name="algorithm" value="#{egovPropertyConfigurer.getString('Globals.db.CryptoAlgorithm')}"/>
+		<property name="hashedPassword" value="#{egovPropertyConfigurer.getString('Globals.db.CryptoAlgorithmKeyHash')}"/>
+	</bean>
+	
+	<bean id="egov.ariaCryptoService" class="egovframework.rte.fdl.cryptography.impl.EgovARIACryptoServiceImpl">
+		<property name="passwordEncoder" ref="egov.passwordEncoder"/>
+		<property name="blockSize" value="#{new Integer(egovPropertyConfigurer.getString('Globals.db.CryptoBlockSize'))}"/>
+	</bean>
+	
+
+
+	<bean id="egov.envCryptoService" class="egovframework.rte.fdl.cryptography.impl.EgovEnvCryptoServiceImpl"  init-method="init">
+		<property name="passwordEncoder" ref="egov.passwordEncoder"/>
+		<property name="cryptoService" ref="egov.ariaCryptoService"/>
+		<property name="cryptoConfigurer" ref="egovPropertyConfigurer"/>
+		
+		<property name="crypto" value="#{new Boolean(egovPropertyConfigurer.getString('Globals.db.Crypto'))}"/>
+		<property name="cryptoAlgorithm" value="#{egovPropertyConfigurer.getString('Globals.db.CryptoAlgorithm')}"/>
+		<property name="cyptoAlgorithmKey" value="#{egovPropertyConfigurer.getString('Globals.db.CryptoAlgorithmKey')}"/>
+		<property name="cyptoAlgorithmKeyHash" value="#{egovPropertyConfigurer.getString('Globals.db.CryptoAlgorithmKeyHash')}"/>
+		<property name="cryptoBlockSize" value="#{new Integer(egovPropertyConfigurer.getString('Globals.db.CryptoBlockSize'))}"/>
+	</bean>
+
+</beans> 

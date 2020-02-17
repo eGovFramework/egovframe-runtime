@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+	   http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd">
+
+	<aop:config>
+		<aop:pointcut id="serviceMethod" expression="execution(* egovframework.rte.bsl..*(..))" />
+		<aop:aspect ref="exceptionTransfer">
+			<aop:after-throwing throwing="exception" pointcut-ref="serviceMethod" method="transfer" />
+		</aop:aspect>
+	</aop:config>
+
+	<bean id="exceptionTransfer" class="egovframework.rte.fdl.cmmn.aspect.ExceptionTransfer">
+		<property name="exceptionHandlerService">
+			<list>
+				<ref bean="defaultExceptionHandleManager" />
+				<ref bean="otherExceptionHandleManager" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="defaultExceptionHandleManager" class="egovframework.rte.fdl.cmmn.exception.manager.DefaultExceptionHandleManager">
+		<property name="patterns">
+			<list>
+				<value>**exception.*</value>
+			</list>
+		</property>
+		<property name="handlers">
+			<list>
+				<ref bean="egovHandler" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="otherExceptionHandleManager" class="egovframework.rte.fdl.cmmn.exception.manager.DefaultExceptionHandleManager">
+		<property name="patterns">
+			<list>
+				<value>**exception.*</value>
+			</list>
+		</property>
+		<property name="handlers">
+			<list>
+				<ref bean="otherHandler" />
+			</list>
+		</property>
+	</bean>
+
+
+	<bean id="egovHandler" class="egovframework.rte.fdl.exception.handler.EgovServiceExceptionHandler" />
+	<bean id="otherHandler" class="egovframework.rte.fdl.exception.handler.OthersServiceExceptionHandler" />
+
+    <!--
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl"
+		p:host="smtp.gmail.com" p:port="465" p:username="egovframe@gmail.com"
+		p:password="egovframe1q2w3e" /> -->
+
+	<bean id="otherSSLMailSender" class="egovframework.rte.mail.SimpleSSLMail"
+		p:host="smtp.gmail.com" p:port="465" p:username="egovframe@gmail.com"
+		p:password="egovframe1q2w3e">
+		<property name="receivers">
+			<list>
+				<value>horanghi@hanmail.net</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="helloService" class="egovframework.rte.bsl.exception.HelloServiceImpl" />
+	<bean id="ohterService" class="egovframework.rte.bsl.exception.HelloServiceImpl" />
+
+</beans>

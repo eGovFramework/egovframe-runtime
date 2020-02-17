@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+
+	<bean name="UUIdGenerationService" class="egovframework.rte.fdl.idgnr.impl.EgovUUIdGnrServiceImpl">
+		<property name="address">
+			<value>00:00:F0:79:19:5B</value>
+		</property>
+	</bean>
+
+	<bean name="UUIdGenerationServiceWithoutAddress" class="egovframework.rte.fdl.idgnr.impl.EgovUUIdGnrServiceImpl"/>
+
+	<bean name="UUIdGenerationServiceWithIP" class="egovframework.rte.fdl.idgnr.impl.EgovUUIdGnrServiceImpl">
+		<property name="address">
+			<value>100.128.120.107</value>
+		</property>
+	</bean>
+
+</beans>

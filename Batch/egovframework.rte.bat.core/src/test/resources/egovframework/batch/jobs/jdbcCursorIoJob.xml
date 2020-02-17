@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-3.0.xsd">
+	
+	<job id="jdbcCursorIoJob" xmlns="http://www.springframework.org/schema/batch">
+		<step id="jdbcCursorIoStep1">
+			<tasklet>
+				<chunk reader="itemReader" processor="itemProcessor" writer="itemWriter"
+					commit-interval="2"/>
+			</tasklet>
+		</step>
+	</job>
+	
+	<bean id="itemProcessor" class="egovframework.brte.sample.common.domain.trade.CustomerCreditIncreaseProcessor" />
+		
+	<bean id="itemReader" class="org.springframework.batch.item.database.JdbcCursorItemReader">
+		<property name="dataSource" ref="dataSource"/>
+		<property name="sql" value="select ID, NAME, CREDIT from CUSTOMER"/>
+		<property name="verifyCursorPosition" value="true"/>
+		<property name="rowMapper">
+			<bean class="egovframework.brte.sample.common.domain.trade.CustomerCreditRowMapper"/>
+		</property>
+	</bean>
+
+	<bean id="itemWriter" class="org.springframework.batch.item.database.JdbcBatchItemWriter">
+		<property name="assertUpdates" value="true" />
+		<property name="itemSqlParameterSourceProvider">
+			<bean class="org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider" />
+		</property>
+		<property name="sql" value="UPDATE CUSTOMER set credit = :credit where id = :id" />
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+</beans>

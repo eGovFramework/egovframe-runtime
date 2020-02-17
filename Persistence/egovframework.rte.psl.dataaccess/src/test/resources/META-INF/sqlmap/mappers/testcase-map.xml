@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.rte.psl.dataaccess.EmpMapper">
+
+	<insert id="insertDeptUsingMap">
+		<![CDATA[
+			insert into DEPT
+			           (DEPT_NO,
+			            DEPT_NAME,
+			            LOC)
+			values     (#{deptNo},
+			            #{deptName},
+			            #{loc})
+		]]>
+	</insert>
+
+	<select id="selectDeptUsingMap" resultType="hashmap">
+		<![CDATA[
+			select DEPT_NO   as deptNo,
+			       DEPT_NAME as deptName,
+			       LOC       as loc
+			from   DEPT
+			where  DEPT_NO = #{deptNo}
+		]]>
+	</select>
+
+	<!--
+		EgovMap 은 ListOrderedMap 을 extends 하고 있으며 key 를 camel case 변환(ex.
+		DEPT_NO -> deptNo, LOC -> loc) 하여 처리함
+	-->
+	<select id="selectDeptUsingEgovMap" resultType="egovframework.rte.psl.dataaccess.util.EgovMap">
+		<![CDATA[
+			select DEPT_NO,
+			       DEPT_NAME,
+			       LOC
+			from   DEPT
+			where  DEPT_NO = #{deptNo}
+		]]>
+	</select>
+
+	<update id="updateDeptUsingMap">
+		<![CDATA[
+			update DEPT
+			set    DEPT_NAME = #{deptName},
+			       LOC = #{loc}
+			where  DEPT_NO = #{deptNo}
+		]]>
+	</update>
+
+	<delete id="deleteDeptUsingMap">
+		<![CDATA[
+			delete from DEPT
+			where       DEPT_NO = #{deptNo}
+		]]>
+	</delete>
+
+</mapper>

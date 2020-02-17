@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="TypeTest">
+
+	<typeAlias alias="typeTestVO"
+		type="egovframework.rte.psl.dataaccess.vo.TypeTestVO" />
+
+	<!-- CalendarTypeHandler 는 sql-map-config.xml 에 등록하였음 -->
+	<typeAlias alias="calendarTypeHandler" type="egovframework.rte.psl.dataaccess.typehandler.CalendarTypeHandler"/>
+
+	<resultMap id="typeTestResult" class="typeTestVO">
+		<result property="id" column="ID" />
+		<result property="bigdecimalType" column="BIGDECIMAL_TYPE" />
+		<result property="booleanType" column="BOOLEAN_TYPE" />
+		<result property="byteType" column="BYTE_TYPE" />
+		<result property="charType" column="CHAR_TYPE" />
+		<result property="doubleType" column="DOUBLE_TYPE" />
+		<result property="floatType" column="FLOAT_TYPE" />
+		<result property="intType" column="INT_TYPE" />
+		<result property="longType" column="LONG_TYPE" />
+		<result property="shortType" column="SHORT_TYPE" />
+		<result property="stringType" column="STRING_TYPE" />
+		<result property="dateType" column="DATE_TYPE" />
+		<result property="sqlDateType" column="SQL_DATE_TYPE" />
+		<result property="sqlTimeType" column="SQL_TIME_TYPE" />
+		<result property="sqlTimestampType" column="SQL_TIMESTAMP_TYPE" />
+		<result property="calendarType" column="CALENDAR_TYPE" typeHandler="calendarTypeHandler" />
+	</resultMap>
+
+	<insert id="insertTypeTest" parameterClass="typeTestVO">
+		<![CDATA[
+			insert into TYPETEST
+			           (ID,
+			            BIGDECIMAL_TYPE,
+			            BOOLEAN_TYPE,
+			            BYTE_TYPE,
+			            CHAR_TYPE,
+			            DOUBLE_TYPE,
+			            FLOAT_TYPE,
+			            INT_TYPE,
+			            LONG_TYPE,
+			            SHORT_TYPE,
+			            STRING_TYPE,
+			            DATE_TYPE,
+			            SQL_DATE_TYPE,
+			            SQL_TIME_TYPE,
+			            SQL_TIMESTAMP_TYPE,
+			            CALENDAR_TYPE)
+			values     (#id#,
+			            #bigdecimalType#,
+			            #booleanType#,
+			            #byteType#,
+			            #charType:CHAR#,
+			            #doubleType#,
+			            #floatType#,
+			            #intType#,
+			            #longType#,
+			            #shortType#,
+			            #stringType#,
+			            #dateType#,
+			            #sqlDateType#,
+			            #sqlTimeType#,
+			            #sqlTimestampType#,
+			            #calendarType,handler=calendarTypeHandler#)
+		]]>
+	</insert>
+
+	<select id="selectTypeTest" parameterClass="typeTestVO"
+		resultMap="typeTestResult">
+		<![CDATA[
+			select ID,
+			       BIGDECIMAL_TYPE,
+			       BOOLEAN_TYPE,
+			       BYTE_TYPE,
+			       CHAR_TYPE,
+			       DOUBLE_TYPE,
+			       FLOAT_TYPE,
+			       INT_TYPE,
+			       LONG_TYPE,
+			       SHORT_TYPE,
+			       STRING_TYPE,
+			       DATE_TYPE,
+			       SQL_DATE_TYPE,
+			       SQL_TIME_TYPE,
+			       SQL_TIMESTAMP_TYPE,
+			       CALENDAR_TYPE
+			from   TYPETEST
+			where  ID = #id#
+		]]>
+	</select>
+
+</sqlMap>

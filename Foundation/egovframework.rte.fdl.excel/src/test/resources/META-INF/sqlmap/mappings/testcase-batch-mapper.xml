@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.rte.fdl.excel.EmpBatchInsert">
+
+	<insert id="insertEmpUsingBatch" parameterType="egovframework.rte.fdl.excel.vo.EmpVO">
+		<![CDATA[
+			insert into emp
+					   (emp_no,
+						emp_name,
+						job,
+						mgr,
+						hire_date,
+						sal,
+						comm,
+						dept_no)
+			values	   (#{empNo},
+						#{empName},
+						#{job},
+						#{mgr},
+						#{hireDate},
+						#{sal},
+						#{comm},
+						#{deptNo})
+		]]>
+	</insert>
+
+	<insert id="insertZipUsingBatch" parameterType="egovframework.rte.fdl.excel.vo.ZipVO">
+		<![CDATA[
+			insert into zip
+					   (zip_no,
+						ser_no,
+						sido_nm,
+						cgg_nm,
+						umd_nm,
+						bd_nm,
+						jibun,
+						reg_id)
+			values	   (#{zipNo},
+						#{serNo},
+						#{sidoNm},
+						#{cggNm},
+						#{umdNm},
+						#{bdNm},
+						#{jibun},
+						#{regId})
+		]]>
+	</insert>
+</mapper>

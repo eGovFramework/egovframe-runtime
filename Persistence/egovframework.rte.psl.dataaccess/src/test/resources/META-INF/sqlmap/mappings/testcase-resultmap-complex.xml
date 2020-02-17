@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="EmpComplexResult">
+
+	<typeAlias alias="empIncludesDeptVO" type="egovframework.rte.psl.dataaccess.vo.EmpIncludesDeptVO" />
+	<typeAlias alias="deptIncludesEmpListVO" type="egovframework.rte.psl.dataaccess.vo.DeptIncludesEmpListVO" />
+	<typeAlias alias="deptVO" type="egovframework.rte.psl.dataaccess.vo.DeptVO" />
+	<typeAlias alias="empVO" type="egovframework.rte.psl.dataaccess.vo.EmpVO" />
+	<typeAlias alias="empIncludesMgrVO" type="egovframework.rte.psl.dataaccess.vo.EmpIncludesMgrVO" />
+	<typeAlias alias="empIncludesEmpListVO" type="egovframework.rte.psl.dataaccess.vo.EmpIncludesEmpListVO" />
+
+	<!--
+	<resultMap id="resultMapName" class="some.domain.Class" 
+		[extends="parent-resultMap"] [groupBy="some property list"]>
+		<result property="propertyName" column="COLUMN_NAME" 
+			[columnIndex="1"] [javaType="int"] [jdbcType="NUMERIC"] [nullValue="-999999"]
+			[select="someOtherStatement"] [resultMap="someOtherResultMap"]
+			[typeHandler="com.mydomain.MyTypehandler"] />
+		<result … />
+		<result … />
+		<result … />
+	</resultMap>
+	-->
+
+	<resultMap id="empIncludesDeptResult" class="empIncludesDeptVO">
+		<result property="empNo" column="EMP_NO" />
+		<result property="empName" column="EMP_NAME" />
+		<result property="job" column="JOB" />
+		<result property="mgr" column="MGR" />
+		<result property="hireDate" column="HIRE_DATE" />
+		<result property="sal" column="SAL" />
+		<result property="comm" column="COMM" nullValue="0" />
+		<result property="deptNo" column="DEPT_NO" />
+
+		<!--
+			Emp-Dept 1:1 relation
+			테스트 결과 resultMap 의 참조 시 sql-map-config.xml 의
+			useStatementNamespaces="false" 와 상관없이 namespace prefix 를 써야 하는듯
+		-->
+		<result property="deptVO" resultMap="EmpComplexResult.getDeptResult" />
+	</resultMap>
+
+	<resultMap id="getDeptResult" class="deptVO">
+		<result property="deptNo" column="DEPT_NO" />
+		<result property="deptName" column="DEPT_NAME" />
+		<result property="loc" column="LOC" />
+	</resultMap>
+	
+	<!-- 1:N 인 경우 groupBy 속성을 명시 -->
+	<resultMap id="deptIncludesEmpListResult" class="deptIncludesEmpListVO" groupBy="deptNo">
+		<result property="deptNo" column="DEPT_NO" />
+		<result property="deptName" column="DEPT_NAME" />
+		<result property="loc" column="LOC" />
+		
+		<!-- Dept-EmpList 1:N relation -->
+		<result property="empVOList" resultMap="EmpComplexResult.getEmpResult" />
+	</resultMap>
+	
+	<resultMap id="getEmpResult" class="empVO">
+		<result property="empNo" column="EMP_NO" />
+		<result property="empName" column="EMP_NAME" />
+		<result property="job" column="JOB" />
+		<result property="mgr" column="MGR" />
+		<result property="hireDate" column="HIRE_DATE" />
+		<result property="sal" column="SAL" />
+		<result property="comm" column="COMM" nullValue="0" />
+		<result property="deptNo" column="DEPT_NO" />
+	</resultMap>
+	
+	<!-- 1:N 인 경우 N+1 select 형태 - 비추천 -->
+	<resultMap id="deptIncludesEmpListUsingSelectAttrResult" class="deptIncludesEmpListVO">
+		<result property="deptNo" column="DEPT_NO" />
+		<result property="deptName" column="DEPT_NAME" />
+		<result property="loc" column="LOC" />
+		
+		<!-- Dept-EmpList 1:N relation using select attribute -->
+		<result property="empVOList" column="DEPT_NO" select="selectEmpList" />
+	</resultMap>
+	
+	<!-- Hierarchical relation 인 경우 ibatis resultMap select 에 의한 처리 예 -->
+	<resultMap id="empIncludesMgrResult" class="empIncludesMgrVO" extends="getEmpResult">
+		<result property="mgrVO" column="MGR" select="selectMgrHierarchy" />
+	</resultMap>
+	
+	<!-- Composite Key 인 경우 ibatis resultMap select 에 의한 처리 예 -->
+	<resultMap id="empIncludesSameMgrMoreSalaryEmpListResult" class="empIncludesEmpListVO" extends="getEmpResult">
+		<result property="empList" column="{empNo=EMP_NO, mgr=MGR, sal=SAL}" select="selectSameMgrMoreSalaryEmpList" />
+	</resultMap>
+
+	<select id="selectEmpIncludesDeptResultUsingResultMap" parameterClass="empVO" resultMap="empIncludesDeptResult">
+		<![CDATA[
+			select EMP_NO,
+			       EMP_NAME,
+			       JOB,
+			       MGR,
+			       HIRE_DATE,
+			       SAL,
+			       COMM,
+			       A.DEPT_NO as DEPT_NO,
+			       B.DEPT_NAME,
+			       B.LOC
+			from   EMP A, DEPT B
+			where  A.DEPT_NO = B.DEPT_NO
+			and    EMP_NO = #empNo#
+		]]>
+	</select>
+	
+	<select id="selectDeptIncludesEmpListResultUsingResultMap" parameterClass="deptVO" resultMap="deptIncludesEmpListResult">
+		<![CDATA[
+			select   A.DEPT_NO as DEPT_NO,
+			         DEPT_NAME,
+			         LOC,
+			         EMP_NO,
+			         EMP_NAME,
+			         JOB,
+			         MGR,
+			         HIRE_DATE,
+			         SAL,
+			         COMM
+			from     DEPT A,
+			         EMP B
+			where    A.DEPT_NO = B.DEPT_NO
+			         and A.DEPT_NO = #deptNo#
+			order by B.EMP_NO
+		]]>
+	</select>
+	
+	<select id="selectDeptIncludesEmpListResultListUsingResultMap" parameterClass="deptVO" resultMap="deptIncludesEmpListResult">
+		<![CDATA[
+			select   A.DEPT_NO as DEPT_NO,
+			         DEPT_NAME,
+			         LOC,
+			         EMP_NO,
+			         EMP_NAME,
+			         JOB,
+			         MGR,
+			         HIRE_DATE,
+			         SAL,
+			         COMM
+			from     DEPT A
+			         left outer join EMP B
+			           on (A.DEPT_NO = B.DEPT_NO)
+			where    A.DEPT_NAME like '%'||#deptName#||'%'
+			order by A.DEPT_NO,
+			         B.EMP_NO
+		]]>
+	</select>
+	
+	<select id="selectDeptIncludesEmpListResultListUsingResultMapMysql" parameterClass="deptVO" resultMap="deptIncludesEmpListResult">
+		<![CDATA[
+			select   A.DEPT_NO as DEPT_NO,
+			         DEPT_NAME,
+			         LOC,
+			         EMP_NO,
+			         EMP_NAME,
+			         JOB,
+			         MGR,
+			         HIRE_DATE,
+			         SAL,
+			         COMM
+			from     DEPT A
+			         left outer join EMP B
+			           on (A.DEPT_NO = B.DEPT_NO)
+			where    A.DEPT_NAME like concat('%', #deptName#, '%')
+			order by A.DEPT_NO,
+			         B.EMP_NO
+		]]>
+	</select>
+	
+	<select id="selectDeptIncludesEmpListResultListUsingRepetitionSelect" parameterClass="deptVO" resultMap="deptIncludesEmpListUsingSelectAttrResult">
+		<![CDATA[
+			select   DEPT_NO,
+			         DEPT_NAME,
+			         LOC
+			from     DEPT
+			where    DEPT_NAME like '%'||#deptName#||'%'
+			order by DEPT_NO
+		]]>
+	</select>
+	
+	<select id="selectDeptIncludesEmpListResultListUsingRepetitionSelectMysql" parameterClass="deptVO" resultMap="deptIncludesEmpListUsingSelectAttrResult">
+		<![CDATA[
+			select   DEPT_NO,
+			         DEPT_NAME,
+			         LOC
+			from     DEPT
+			where    DEPT_NAME like concat('%', #deptName#, '%')
+			order by DEPT_NO
+		]]>
+	</select>
+	
+	<select id="selectEmpList" parameterClass="decimal" resultMap="getEmpResult">
+		<![CDATA[
+			select   EMP_NO,
+			         EMP_NAME,
+			         JOB,
+			         MGR,
+			         HIRE_DATE,
+			         SAL,
+			         COMM,
+			         DEPT_NO
+			from     EMP
+			where    DEPT_NO = #deptNo#
+			order by EMP_NO
+		]]>
+	</select>
+	
+	<!--
+	<select id="selectEmpWithMgr" parameterClass="empVO" resultMap="empIncludesMgrResult">
+		<![CDATA[
+			select   EMP_NO,
+			         EMP_NAME,
+			         JOB,
+			         MGR,
+			         HIRE_DATE,
+			         SAL,
+			         COMM,
+			         DEPT_NO
+			from     EMP
+			where    EMP_NO = #empNo#
+		]]>
+	</select>
+	
+	<select id="selectMgrHierarchy" parameterClass="decimal" resultMap="empIncludesMgrResult">
+		<![CDATA[
+			select   EMP_NO,
+			         EMP_NAME,
+			         JOB,
+			         MGR,
+			         HIRE_DATE,
+			         SAL,
+			         COMM,
+			         DEPT_NO
+			from     EMP
+			where    EMP_NO = #mgr#
+		]]>
+	</select>
+	-->
+	<!-- 하나의 쿼리를 사용하여 empNo, mgr 속성의 유무에 따라 Hierarchy 반복조회로도 사용토록 변경
+		 parameterClass 는 최초 조회와 resultMap 의 select 조회의 경우 empVO 와 decimal 로 다르기 때문에
+		 따로 명시하지 않고 자동 reflection 에 의해 처리토록 함
+	 -->
+	<select id="selectMgrHierarchy" resultMap="empIncludesMgrResult">
+		<![CDATA[
+			select   EMP_NO,
+			         EMP_NAME,
+			         JOB,
+			         MGR,
+			         HIRE_DATE,
+			         SAL,
+			         COMM,
+			         DEPT_NO
+			from     EMP
+			where    1=1
+		]]>
+		<!-- 최초 - empNo 는 parameter bean 의 property 임-->
+		<isPropertyAvailable property="empNo" prepend="and">
+			EMP_NO = #empNo#
+		</isPropertyAvailable>
+		<!-- 반복 - column="MGR" 에 의한 연결로 empNo 는 property가 아님 -->
+		<isNotPropertyAvailable property="empNo" prepend="and">
+			EMP_NO = #mgr#
+		</isNotPropertyAvailable>
+	</select>
+	
+	<select id="selectEmpIncludesSameMgrMoreSalaryEmpList" parameterClass="empVO" resultMap="empIncludesSameMgrMoreSalaryEmpListResult">
+		<![CDATA[
+			select   EMP_NO,
+			         EMP_NAME,
+			         JOB,
+			         MGR,
+			         HIRE_DATE,
+			         SAL,
+			         COMM,
+			         DEPT_NO
+			from     EMP
+			where    EMP_NO = #empNo#
+		]]>
+	</select>
+	
+	<select id="selectSameMgrMoreSalaryEmpList" resultMap="getEmpResult">
+		<![CDATA[
+			select   EMP_NO,
+			         EMP_NAME,
+			         JOB,
+			         MGR,
+			         HIRE_DATE,
+			         SAL,
+			         COMM,
+			         DEPT_NO
+			from     EMP
+			where    MGR = #mgr#		/* 같은 관리자에 속해 있으면서 */
+			and      SAL >= #sal#		/* 본인 급여 이상을 받는 사람 */
+			and      EMP_NO <> #empNo#  /* 본인은 제외 */
+			order by SAL desc
+		]]>
+	</select>
+
+</sqlMap>

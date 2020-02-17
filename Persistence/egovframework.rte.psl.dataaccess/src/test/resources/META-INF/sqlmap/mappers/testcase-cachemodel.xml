@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.rte.psl.dataaccess.EmpMapper">
+
+	<cache eviction="LRU" flushInterval="600000" size="1000" readOnly="true" />
+
+	<resultMap type="egovframework.rte.psl.dataaccess.vo.EmpVO" id="empVO">
+		<result property="empNo" column="EMP_NO" javaType="decimal" jdbcType="NUMERIC" />
+		<result property="empName" column="EMP_NAME" javaType="string" jdbcType="VARCHAR" />
+		<result property="job" column="JOB" javaType="string" jdbcType="VARCHAR" />
+		<result property="mgr" column="MGR" javaType="decimal" jdbcType="NUMERIC" />
+		<result property="hireDate" column="HIRE_DATE" javaType="date" jdbcType="DATE" />
+		<result property="sal" column="SAL" javaType="decimal" jdbcType="NUMERIC" />
+		<result property="comm" column="COMM" javaType="decimal" 	jdbcType="NUMERIC" />
+		<result property="deptNo" column="DEPT_NO" javaType="decimal" jdbcType="NUMERIC" />
+	</resultMap>
+	
+	<select id="selectEmpUsingCacheModelLRU" parameterType="egovframework.rte.psl.dataaccess.vo.EmpVO" resultMap="empVO">
+		<include refid="selectEmpReuse" />
+	</select>
+	
+	<sql id="selectEmpReuse">
+		select EMP_NO,
+		EMP_NAME,
+		JOB,
+		MGR,
+		HIRE_DATE,
+		SAL,
+		COMM,
+		DEPT_NO
+		from EMP
+		<include refid="empWhereEmpNo" />
+	</sql>
+
+	<sql id="empWhereEmpNo">
+		<where>
+			<if test="empNo != null">
+				EMP_NO = #{empNo}
+			</if>
+		</where>
+	</sql>
+</mapper>

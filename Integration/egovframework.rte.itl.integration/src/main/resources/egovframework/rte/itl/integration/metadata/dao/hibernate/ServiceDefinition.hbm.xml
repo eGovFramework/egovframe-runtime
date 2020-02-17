@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+      "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="egovframework.rte.itl.integration.metadata">
+
+    <class name="ServiceDefinition" table="SERVICE">
+     
+        <id name="key" type="string" column="SERVICE_KEY"/>
+        
+        <natural-id mutable="true">
+            <many-to-one name="system"
+                         class="SystemDefinition"
+                         column="SYSTEM_KEY"
+                         not-null="true"
+                         lazy="false"/>
+            <property name="id"
+                      type="string"
+                      column="SERVICE_ID"
+                      not-null="true"/>
+        </natural-id>
+                
+        <property name="name"
+                  type="string"
+                  column="SERVICE_NAME"
+                  not-null="true"/>
+
+        <property name="requestMessageTypeId"
+                  type="string"
+                  column="REQUEST_MESSAGE_TYPE_ID"
+                  not-null="true"/>
+        
+        <property name="responseMessageTypeId"
+                  type="string"
+                  column="RESPONSE_MESSAGE_TYPE_ID"
+                  not-null="true"/>
+
+        <property name="serviceProviderBeanId"
+                  type="string"
+                  column="SERVICE_PROVIDER_BEAN_ID"
+                  not-null="false"/>
+        
+        <property name="standard"
+                  type="yes_no"
+                  column="SERVICE_STANDARD_YN"/>
+        
+        <property name="using"
+                  type="yes_no"
+                  column="USING_YN"/>
+                
+    </class>
+    
+</hibernate-mapping>

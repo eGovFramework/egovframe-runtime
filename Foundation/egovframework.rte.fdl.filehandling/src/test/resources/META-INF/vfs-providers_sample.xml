@@ -1,0 +1,15 @@
+<providers>
+    <provider class-name="org.apache.commons.vfs2.provider.zip.ZipFileProvider">
+        <scheme name="zip"/>
+    </provider>
+    <extension-map extension="zip" scheme="zip"/>
+    <mime-type-map mime-type="application/zip" scheme="zip"/>
+    <provider class-name="org.apache.commons.vfs2.provider.ftp.FtpFileProvider">
+        <scheme name="ftp"/>
+        <if-available class-name="org.apache.commons.net.ftp.FTPFile"/>
+    </provider>
+    <default-provider class-name="org.apache.commons.vfs2.provider.url.UrlFileProvider"/>
+    <provider class-name="org.apache.commons.vfs2.provider.local.DefaultLocalFileProvider">
+        <scheme name="file"/>
+    </provider>
+</providers>

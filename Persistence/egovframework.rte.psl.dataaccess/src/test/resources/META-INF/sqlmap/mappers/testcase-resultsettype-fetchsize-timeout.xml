@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.rte.psl.dataaccess.EmpMapper">
+
+	<!-- 비권장됨! 예전에 파라미터를 매핑하기 위해 사용되었으나 현재는 사용하지 않음 -->
+  	<!-- <parameterMap id="empVO" type="egovframework.rte.psl.dataaccess.vo.EmpVO" /> -->
+  	
+  	<sql id="selectEmpReuse_noWhere">
+		select EMP_NO,
+		EMP_NAME,
+		JOB,
+		MGR,
+		HIRE_DATE,
+		SAL,
+		COMM,
+		DEPT_NO
+		from EMP
+	</sql>
+  	
+  	
+	<select id="selectEmpUsingResultSetType" parameterType="egovframework.rte.psl.dataaccess.vo.EmpVO"
+		resultMap="empResult" resultSetType="FORWARD_ONLY">
+		<!-- testcase-cachemodel.xml 에 selectEmpReuse sql fragment 재사용. namespace 없음에 유의 -->
+  		<include refid="selectEmpReuse_noWhere" />
+		
+		order by EMP_NO
+	</select>
+
+	<select id="selectEmpUsingResultSetTypeScrollInsensitive" parameterType="egovframework.rte.psl.dataaccess.vo.EmpVO"
+		resultMap="empResult" resultSetType="SCROLL_INSENSITIVE">
+
+		<include refid="selectEmpReuse_noWhere" />
+		
+		order by EMP_NO
+	</select>
+
+	<select id="selectEmpUsingResultSetTypeScrollSensitive" parameterType="egovframework.rte.psl.dataaccess.vo.EmpVO"
+		resultMap="empResult" resultSetType="SCROLL_SENSITIVE">
+
+		<include refid="selectEmpReuse_noWhere" />
+		
+		order by EMP_NO
+	</select>
+	
+	<select id="selectEmpUsingFetchSize" parameterType="egovframework.rte.psl.dataaccess.vo.EmpVO"
+		resultMap="egovframework.rte.psl.dataaccess.EmpMapper.empResult" fetchSize="1000">
+
+		<include refid="egovframework.rte.psl.dataaccess.EmpMapper.selectEmpReuse" />
+		
+		order by EMP_NO
+	</select>
+	
+	<!-- select 인 경우는 timeout 확인 실패 (hsql, oracle10g) -->
+<!--  	<select id="selectTestLargeTimeOut" resultMap="EmpResult.empResult" timeout="1"> -->
+		<!-- 대량 데이터 조회를 위해 조인 조건없이 catesian product 로 14^5 = 537824 건 조회 -->
+		<!--  select a.* from EMP a, EMP b, EMP c, EMP d, EMP e
+	</select> -->
+<!--  	
+	<insert id="insertTestLargeTimeOut" timeout="1">
+		insert into EMP_COPY
+		select a.* from EMP a, EMP b, EMP c, EMP d, EMP e, EMP f
+	</insert>
+-->
+</mapper>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="EmpBatchInsert">
+
+	<typeAlias alias="empVO" type="egovframework.rte.fdl.excel.vo.EmpVO" />
+	<typeAlias alias="zipVO" type="egovframework.rte.fdl.excel.vo.ZipVO" />
+
+	<insert id="insertEmpUsingBatch" parameterClass="empVO">
+		<![CDATA[
+			insert into emp
+					   (emp_no,
+						emp_name,
+						job,
+						mgr,
+						hire_date,
+						sal,
+						comm,
+						dept_no)
+			values	   (#empNo#,
+						#empName#,
+						#job#,
+						#mgr#,
+						#hireDate#,
+						#sal#,
+						#comm#,
+						#deptNo#)
+		]]>
+	</insert>
+
+	<insert id="insertZipUsingBatch" parameterClass="zipVO">
+		<![CDATA[
+			insert into zip
+					   (zip_no,
+						ser_no,
+						sido_nm,
+						cgg_nm,
+						umd_nm,
+						bd_nm,
+						jibun,
+						reg_id)
+			values	   (#zipNo#,
+						#serNo#,
+						#sidoNm#,
+						#cggNm#,
+						#umdNm#,
+						#bdNm#,
+						#jibun#,
+						#regId#)
+		]]>
+	</insert>
+</sqlMap>

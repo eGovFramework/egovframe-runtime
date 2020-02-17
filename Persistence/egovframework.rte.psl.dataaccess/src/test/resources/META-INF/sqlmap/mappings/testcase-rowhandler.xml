@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="EmpRowHandler">
+		<resultMap id="EmpResult.empResult" class="egovframework.rte.psl.dataaccess.vo.EmpVO" >
+		<result property="empNo" column="EMP_NO" javaType="decimal" jdbcType="NUMERIC" />
+		<result property="empName" column="EMP_NAME" javaType="string" jdbcType="VARCHAR"  />
+		<result property="job" column="JOB" javaType="string" jdbcType="VARCHAR" />
+		<result property="mgr" column="MGR" javaType="decimal" jdbcType="NUMERIC" />
+		<result property="hireDate" column="HIRE_DATE" javaType="date" jdbcType="DATE" />
+		<result property="sal" column="SAL" javaType="decimal" jdbcType="NUMERIC" />
+		<result property="comm" column="COMM" javaType="decimal" 	jdbcType="NUMERIC" />
+		<result property="deptNo" column="DEPT_NO" javaType="decimal" jdbcType="NUMERIC" />
+	</resultMap>
+	<!-- 대량데이터 조회 시 rowHandler 를 사용하여 외부 파일로 기록하는 예 -->
+	<select id="selectEmpListToOutFileUsingRowHandler" resultMap="EmpResult.empResult">
+		<!-- 대량 데이터 조회를 위해 조인 조건없이 catesian product 로 14^4 = 38416 건 조회 -->
+		select a.* from EMP a, EMP b, EMP c, EMP d
+	</select>
+
+</sqlMap>

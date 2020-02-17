@@ -1,0 +1,69 @@
+DB기반 PropertySource 사용법
+=============================================================================
+
+1. DB에 부을 sql작성: column명은 PKEY, PVALUE로 설정
+
+
+2. context xml에 DBPropertySource bean설정 (classpath아래 설정)
+... 
+<jdbc:embedded-database id="dataSource" type="HSQL">
+	<jdbc:script location="classpath:db/ddl.sql" />
+	<jdbc:script location="classpath:db/dml.sql" />
+</jdbc:embedded-database>
+	
+<bean id="dbPropertySource" class="egovframework.rte.fdl.property.db.DbPropertySource">
+	<constructor-arg value="dbPropertySource"/>
+	<constructor-arg ref="dataSource"/>
+	<constructor-arg value="SELECT PKEY, PVALUE FROM PROPERTY"/>
+</bean>
+...
+
+
+3. web.xml에 DBPropertySourceInitializer등록, 위에서 설정한 xml파일위치 설정
+...
+<context-param>
+	<param-name>contextInitializerClasses</param-name>
+	<param-value>egovframework.rte.fdl.property.db.initializer.DBPropertySourceInitializer</param-value>
+</context-param>
+
+<context-param>
+	<param-name>propertySourceConfigLocation</param-name>
+	<param-value>classpath:/META-INF/spring/propertysource-context.xml</param-value> 
+</context-param>
+...
+
+
+4. Property값을 제대로 가져오는지 테스트
+
+4-1. xml에서 property쓰기 
+
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+				http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+	<context:property-placeholder/>
+	
+	<!-- 메시지소스빈 설정 -->
+    <bean id="propertyTest" class="egovframework.test.PropertySourceTestInXml">
+        <property name="sample1" value="${egov.test.sample01}"/>
+        <property name="sample2" value="${egov.test.sample02}"/>
+    </bean>
+  
+</beans>
+
+4-2. java코드의 Environment에서 가져오기
+
+@Configuration
+public class PropertySourceTestInCode {
+
+	@Autowired
+	Environment env;
+	
+	@Bean
+	public String config01() {
+		String config = env.getProperty("egov.test.sample01");
+		return config;
+	}
+}
+

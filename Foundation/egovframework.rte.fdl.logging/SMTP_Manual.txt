@@ -1,0 +1,33 @@
+[James 서버 설치]
+1. james 홈페이지에서 james server를 다운로드 한다.
+2. 원하는 곳에 압축을 푼다.
+3. cmd 창을 열고, james가 설치된 경로에서 bin폴더의 run.bat 파일 실행 ex) /james-x.x.x/apps/james/run.bat
+4. 정상적으로 실행된 경우, /james-x.x.x/apps/james/ 폴더에 4개의 폴더가 생성됨
+
+[James 서버 설정]
+5. 그 중 /james-x.x.x/apps/james/SAR-INF/config.xml 파일을 연다.
+6. 아래 태그에 해당하는 값을 변경한 후 저장한다.
+주의) <severname>의 값과 <postmaster>의 @ 이후 값이 동일해야함, <server>값은 지정
+참고) 여기서 지정하는 <servername>과 log4j2.xml의 host 정보가 동일해야함
+- <account login="root" password="root"/>
+- <postmaster>Postmaster@egovframe.com</postmaster>
+- <servername>egovframe.com</servername>
+- <servers><server>로컬IP</server></servers>
+
+[James 서버 접속]
+7. /bin/run.bat 실행
+8.  cmd창을 열고 telnet [ip] 4555로 James 서버에 접속, id/password로 로그인
+여기서는 root/root
+참고) config.xml에 port가 4555로 설정되어 있음)
+
+[James 유저 생성]
+9.  adduser [username] [password] 명령으로 유저 생성
+생성한 계정 확인 (명령어 listusers) --> 명령어가 한 번에 안 먹을 때도 있다. 안나오면 두 번 이상 실행해줄 것
+예를 들어 생성한 유저 id가 logging인 경우, 보낼 메일주소는 logging@egovframe.com(userID@servername)이 된다
+
+[Jamaes SMTP 테스트]
+10. 생성한 계정으로 outlook을 실행
+11. log4j2.xml에 <Poperties>를 확인하고, 설정한 정보에 따라 수정
+12. 테스트케이스 수행 후 outlook에서 메일 확인 (반드시 /bin/run.bat 띄우고 테스트)
+
+

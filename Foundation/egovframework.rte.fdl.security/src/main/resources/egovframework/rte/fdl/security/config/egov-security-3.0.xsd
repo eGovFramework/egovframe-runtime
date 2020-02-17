@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://www.egovframe.go.kr/schema/egov-security"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:beans="http://www.springframework.org/schema/beans"
+    targetNamespace="http://www.egovframe.go.kr/schema/egov-security"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified">
+
+   <xsd:import namespace="http://www.springframework.org/schema/beans"/>
+   
+	<xsd:simpleType name="requestMatcherEnumType">
+		<xsd:annotation>
+			<xsd:documentation>Defines the strategy use for matching incoming requests. 
+			Currently the options are 'ant' (for ant path patterns), 'regex' for regular expressions and 'ciRegex' for case-insensitive regular expressions.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:token">
+			<xsd:enumeration value="regex" />
+			<xsd:enumeration value="ant" />
+			<xsd:enumeration value="ciRegex" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="hashEnumType">
+		<xsd:annotation>
+			<xsd:documentation>Defines the hashing algorithm used on user passwords. sha-256 is recommended.</xsd:documentation>
+		</xsd:annotation>	
+		<xsd:restriction base="xsd:token">
+			<xsd:enumeration value="sha-256" />
+			<xsd:enumeration value="plaintext" />
+			<xsd:enumeration value="sha" />
+			<xsd:enumeration value="md5" />
+			<xsd:enumeration value="bcrypt" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:element name="config">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="beans:identifiedType">
+					<xsd:attribute name="loginUrl" type="xsd:string" use="required">
+						<xsd:annotation>
+							<xsd:documentation>The URL for the login page.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="logoutSuccessUrl" type="xsd:string" use="required" >
+						<xsd:annotation>
+								<xsd:documentation>Specifies the URL to display once the user has logged out.</xsd:documentation>
+							</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="loginFailureUrl" type="xsd:string" use="required">
+						<xsd:annotation>
+								<xsd:documentation>The URL for the login failure page.</xsd:documentation>
+							</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="accessDeniedUrl" type="xsd:string" use="required">
+						<xsd:annotation>
+								<xsd:documentation>The URL for the access denied page.</xsd:documentation>
+							</xsd:annotation>
+					</xsd:attribute>
+
+					<xsd:attribute name="dataSource" type="xsd:string" default="dataSource">
+						<xsd:annotation>
+								<xsd:documentation>Specifies the dataSource bean name.</xsd:documentation>
+							</xsd:annotation>					
+					</xsd:attribute>
+					<xsd:attribute name="jdbcUsersByUsernameQuery" type="xsd:string">
+						<xsd:annotation>
+								<xsd:documentation>An SQL statement to query a username, password, and enabled status given a username.
+                					Default is "select user_id, password, enabled, users.* from users where user_id = ?"</xsd:documentation>
+							</xsd:annotation>						
+					</xsd:attribute>
+					<xsd:attribute name="jdbcAuthoritiesByUsernameQuery" type="xsd:string">
+						<xsd:annotation>
+								<xsd:documentation>An SQL statement to query for a user's granted authorities given a username. 
+									The default is "select user_id, authority from authorites where user_id = ?"</xsd:documentation>
+							</xsd:annotation>						
+					</xsd:attribute>
+					<xsd:attribute name="jdbcMapClass" type="xsd:string" default="egovframework.rte.fdl.security.userdetails.DefaultMapUserDetailsMapping">
+						<xsd:annotation>
+								<xsd:documentation>An EgovUsersByUsernameMapping class to map ResultSet on Object.
+									The default is "egovframework.rte.fdl.security.userdetails.DefaultMapUserDetailsMapping"</xsd:documentation>
+							</xsd:annotation>						
+					</xsd:attribute>
+					
+					<xsd:attribute name="requestMatcherType" type="requestMatcherEnumType" default="regex" />
+					<xsd:attribute name="hash" type="hashEnumType" default="sha-256" />
+					
+					<xsd:attribute name="hashBase64" type="xsd:boolean" default="true" />
+					
+					<xsd:attribute name="concurrentMaxSessons" type="xsd:positiveInteger">
+						<xsd:annotation>
+								<xsd:documentation>The maximum number of sessions a single authenticated user can have open at the same time. Defaults to "999"</xsd:documentation>
+							</xsd:annotation>						
+					</xsd:attribute>
+					<xsd:attribute name="concurrentExpiredUrl" type="xsd:string">
+						<xsd:annotation>
+								<xsd:documentation>The URL a user will be redirected to if they attempt to use a session which has been "expired" because they have logged in again.</xsd:documentation>
+							</xsd:annotation>						
+					</xsd:attribute>
+					
+					<xsd:attribute name="defaultTargetUrl" type="xsd:string">
+						<xsd:annotation>
+								<xsd:documentation>The URL a user will be redirected to if successfully logged in.</xsd:documentation>
+							</xsd:annotation>						
+					</xsd:attribute>
+					
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="initializer">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="beans:identifiedType">
+	               <xsd:attribute name="supportPointcut" type="xsd:boolean" default="false">
+						<xsd:annotation>
+							<xsd:documentation>Specifies whether authority supports pointcut method. The default is false.
+								If it is true and there is no secured resource pattern,  there is a error that "this map must not be empty; it must contain at least one entry", 
+								So there will be dummy entry.
+							</xsd:documentation>
+						</xsd:annotation>	               
+	               </xsd:attribute>
+	               <xsd:attribute name="supportMethod" type="xsd:boolean" default="true">
+						<xsd:annotation>
+							<xsd:documentation>Specifies whether authority supports 'method' method. The default is true.
+							</xsd:documentation>
+						</xsd:annotation>	               
+	               </xsd:attribute>
+	            </xsd:extension>
+         </xsd:complexContent>
+      </xsd:complexType>
+   </xsd:element>
+   
+   	<xsd:element name="secured-object-config">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="beans:identifiedType">
+	               <xsd:attribute name="sqlRolesAndUrl" type="xsd:string">
+						<xsd:annotation>
+							<xsd:documentation></xsd:documentation>
+						</xsd:annotation>	               
+	               </xsd:attribute>
+	               <xsd:attribute name="sqlRolesAndMethod" type="xsd:string">
+						<xsd:annotation>
+							<xsd:documentation></xsd:documentation>
+						</xsd:annotation>	               
+	               </xsd:attribute>
+	               <xsd:attribute name="sqlRolesAndPointcut" type="xsd:string">
+						<xsd:annotation>
+							<xsd:documentation></xsd:documentation>
+						</xsd:annotation>	               
+	               </xsd:attribute>
+	               <xsd:attribute name="sqlRegexMatchedRequestMapping" type="xsd:string">
+						<xsd:annotation>
+							<xsd:documentation></xsd:documentation>
+						</xsd:annotation>	               
+	               </xsd:attribute>
+	               <xsd:attribute name="sqlHierarchicalRoles" type="xsd:string">
+						<xsd:annotation>
+							<xsd:documentation></xsd:documentation>
+						</xsd:annotation>	               
+	               </xsd:attribute>
+	               <xsd:attribute name="roleHierarchyString" type="xsd:string">
+						<xsd:annotation>
+							<xsd:documentation></xsd:documentation>
+						</xsd:annotation>	               
+	               </xsd:attribute>
+	            </xsd:extension>
+         </xsd:complexContent>
+      </xsd:complexType>
+   </xsd:element>
+   
+</xsd:schema>

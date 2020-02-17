@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<customers>
+	<customer>
+		<id>1</id>
+		<name>customer1</name>
+		<credit>10</credit>
+	</customer>
+	<customer>
+		<id>2</id>
+		<name>customer2</name>
+		<credit>20</credit>
+	</customer>
+	<customer>
+		<id>3</id>
+		<name>customer3</name>
+		<credit>30</credit>
+	</customer>
+	<customer>
+		<id>4</id>
+		<name>customer4</name>
+		<credit>40</credit>
+	</customer>
+	<customer>
+		<id>5</id>
+		<name>customer5</name>
+		<credit>50</credit>
+	</customer>
+
+	<customer>
+		<id>6</id>
+		<name>customer6</name>
+		<credit>60</credit>
+	</customer>
+
+	<customer>
+		<id>7</id>
+		<name>customer7</name>
+		<credit>70</credit>
+	</customer>
+</customers>

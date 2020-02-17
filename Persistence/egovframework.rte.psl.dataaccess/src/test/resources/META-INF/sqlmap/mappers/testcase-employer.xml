@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.rte.psl.dataaccess.mapper.EmployerMapper">
+
+	<select id="selectEmployerList" parameterType="egovframework.rte.psl.dataaccess.vo.EmpVO" resultType="egovframework.rte.psl.dataaccess.vo.EmpVO">
+		<![CDATA[
+			select
+				EMP_NO as empNo,
+				EMP_NAME as empName,
+				JOB as job,
+				MGR as mgr,
+				HIRE_DATE as hireDate,
+				SAL as sal,
+				COMM as comm,
+				DEPT_NO as deptNo
+			from EMP
+		]]>
+		<where>
+			<if test="empNo != null">
+				EMP_NO = #{empNo}
+			</if>
+			<if test="empName != null">
+				EMP_NAME LIKE '%' || #{empName} || '%'
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectEmployer" parameterType="bigdecimal" resultType="egovframework.rte.psl.dataaccess.vo.EmpVO">
+		<![CDATA[
+			select
+				EMP_NO as empNo,
+				EMP_NAME as empName,
+				JOB as job,
+				MGR as mgr,
+				HIRE_DATE as hireDate,
+				SAL as sal,
+				COMM as comm,
+				DEPT_NO as deptNo
+			from EMP
+			where EMP_NO = #{empNo}
+		]]>
+	</select>
+	
+	<insert id="insertEmployer">
+		<![CDATA[
+			insert into EMP (EMP_NO, EMP_NAME, JOB, MGR, HIRE_DATE, SAL, COMM, DEPT_NO)
+			values (#{empNo}, #{empName}, #{job}, #{mgr,jdbcType=NUMERIC}, #{hireDate,jdbcType=DATE}, #{sal,jdbcType=NUMERIC}, #{comm,jdbcType=NUMERIC}, #{deptNo,jdbcType=NUMERIC})
+		]]>
+	</insert>
+
+
+	<update id="updateEmployer" parameterType="egovframework.rte.psl.dataaccess.vo.EmpVO">
+		<![CDATA[
+			update EMP set
+				EMP_NAME = #{empName}, 
+				JOB = #{job}, 
+				MGR = #{mgr,jdbcType=NUMERIC}, 
+				HIRE_DATE = #{hireDate,jdbcType=DATE}, 
+				SAL = #{sal,jdbcType=NUMERIC}, 
+				COMM = #{comm,jdbcType=NUMERIC}, 
+				DEPT_NO  = #{deptNo,jdbcType=NUMERIC}
+			where EMP_NO = #{empNo}
+		]]>
+	</update>
+	
+	<delete id="deleteEmployer" parameterType="bigdecimal">
+		<![CDATA[
+			delete from EMP
+			where EMP_NO = #{empNo}
+		]]>
+	</delete>
+
+</mapper>

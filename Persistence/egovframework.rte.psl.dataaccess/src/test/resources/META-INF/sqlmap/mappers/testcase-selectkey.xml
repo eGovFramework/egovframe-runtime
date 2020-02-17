@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.rte.psl.dataaccess.EmpMapper">
+
+	<!-- resultMap EmpResult.empResult 참고 -->
+	<!-- select 쿼리 EmpResult.selectEmpUsingResultMap 참고 -->
+
+	<insert id="insertEmpUsingSelectKey" parameterType="egovframework.rte.psl.dataaccess.vo.EmpVO">
+	     <selectKey resultType="decimal" keyProperty="empNo" order="BEFORE">
+			select	case when MAX_EMP_NO is null then 1000 
+						 else (MAX_EMP_NO + 1) 
+					end
+			from (select MAX(EMP_NO) MAX_EMP_NO from EMP) MAX_EMP
+	     </selectKey>
+	     
+		<![CDATA[
+			insert into EMP
+					   (EMP_NO,
+						EMP_NAME,
+						JOB,
+						MGR,
+						HIRE_DATE,
+						SAL,
+						COMM,
+						DEPT_NO)
+			values	   (#{empNo},
+						#{empName},
+						#{job},
+						#{mgr},
+						#{hireDate},
+						#{sal},
+						#{comm,jdbcType=NUMERIC},
+						#{deptNo})
+		]]>
+	</insert>
+	
+	<delete id="deleteEmpAll">
+		<![CDATA[
+			delete from EMP
+		]]>
+	</delete>
+
+</mapper>

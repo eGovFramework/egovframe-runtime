@@ -1,0 +1,11 @@
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+
+    <bean id="xmlCofig" class="egovframework.rte.fdl.xml.EgovXmlset">
+        <property name="domconcrete" ref="domconcreteCont" />
+        <property name="saxconcrete" ref="saxconcreteCont" />
+    </bean>
+
+    <bean id="domconcreteCont" class="egovframework.rte.fdl.xml.impl.EgovDOMFactoryServiceImpl"/>
+    <bean id="saxconcreteCont" class="egovframework.rte.fdl.xml.impl.EgovSAXFactoryServiceImpl"/>
+</beans>

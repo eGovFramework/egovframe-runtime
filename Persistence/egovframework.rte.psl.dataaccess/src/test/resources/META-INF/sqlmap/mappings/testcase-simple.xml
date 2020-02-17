@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="DeptSimple">
+
+	<typeAlias alias="deptVO" type="egovframework.rte.psl.dataaccess.vo.DeptVO" />
+
+	<insert id="insertDeptSimple">
+		<![CDATA[
+			insert into DEPT
+			           (DEPT_NO,
+			            DEPT_NAME,
+			            LOC)
+			values     (#deptNo#,
+			            #deptName#,
+			            #loc#)
+		]]>
+	</insert>
+
+	<select id="selectDeptSimpleUsingResultClass" resultClass="deptVO">
+		<![CDATA[
+			select DEPT_NO   as deptNo,
+			       DEPT_NAME as deptName,
+			       LOC       as loc
+			from   DEPT
+			where  DEPT_NO = #deptNo#
+		]]>
+	</select>
+
+	<update id="updateDeptSimple">
+		<![CDATA[
+			update DEPT
+			set    DEPT_NAME = #deptName#,
+			       LOC = #loc#
+			where  DEPT_NO = #deptNo#
+		]]>
+	</update>
+
+	<delete id="deleteDeptSimple">
+		<![CDATA[
+			delete from DEPT
+			where       DEPT_NO = #deptNo#
+		]]>
+	</delete>
+
+</sqlMap>

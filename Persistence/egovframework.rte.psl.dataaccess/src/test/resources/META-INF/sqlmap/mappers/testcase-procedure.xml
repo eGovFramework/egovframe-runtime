@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.rte.psl.dataaccess.EmpMapper">
+
+	<!-- 
+	<resultMap id="empResult" type="egovframework.rte.psl.dataaccess.vo.EmpVO" >
+		<result property="empNo" column="EMP_NO" javaType="decimal" jdbcType="NUMERIC" />
+		<result property="empName" column="EMP_NAME" javaType="string" jdbcType="VARCHAR" />
+		<result property="job" column="JOB" javaType="string" jdbcType="VARCHAR" />
+		<result property="mgr" column="MGR" javaType="decimal" jdbcType="NUMERIC" />
+		<result property="hireDate" column="HIRE_DATE" javaType="date" jdbcType="DATE" />
+		<result property="sal" column="SAL" javaType="decimal" jdbcType="NUMERIC" />
+		<result property="comm" column="COMM" javaType="decimal" 	jdbcType="NUMERIC" />
+		<result property="deptNo" column="DEPT_NO" javaType="decimal" jdbcType="NUMERIC" />
+	</resultMap>
+	-->
+
+	<parameterMap id="procParam" type="map">
+		<parameter property="inCondition" jdbcType="INTEGER" javaType="int"	mode="IN" />
+		<parameter property="outResult" jdbcType="VARCHAR" javaType="string" mode="OUT" />
+	</parameterMap>
+	
+	<parameterMap id="cursorParam" type="map">
+		<parameter property="inCondition" jdbcType="VARCHAR" javaType="string" mode="IN" />
+		<parameter property="outResult" jdbcType="CURSOR" mode="OUT" resultMap="empResult" />
+	</parameterMap>
+	
+	<parameterMap id="cursorParamDataExtracted" type="map">
+		<parameter property="inCondition" jdbcType="VARCHAR" javaType="string" mode="IN" />
+		<parameter property="outResult" javaType="java.sql.ResultSet" jdbcType="CURSOR" mode="OUT" resultMap="empResult" />
+	</parameterMap>
+	
+	<parameterMap id="cursorParamDataExtractedWithResultMapAttr" type="map">
+		<parameter property="inCondition" jdbcType="VARCHAR" javaType="string" mode="IN" />
+		<parameter property="outResult" javaType="java.sql.ResultSet" jdbcType="CURSOR" mode="OUT" resultMap="empResult"/>
+	</parameterMap>
+
+	<select id="procGetTimeBefore"  statementType="CALLABLE" parameterMap="procParam">
+		{call PROC_GETTIME_BEFORE (?, ?)}
+	</select>
+	
+	<select id="procGetTimeBeforeUsingInlineParameter" statementType="CALLABLE" parameterType="map">
+		{call PROC_GETTIME_BEFORE (#{inCondition,javaType=int,jdbcType=INTEGER,mode=IN}, 
+									#{outResult,javaType=string,jdbcType=VARCHAR,mode=OUT})}
+	</select>
+	
+	<select id="procGetEmpListUsingOracleRefCursor" statementType="CALLABLE" parameterMap="cursorParam">
+		{call PROC_GET_EMPLIST (?,?)}
+	</select>
+	
+	<select id="procGetEmpListUsingOracleRefCursorInline" statementType="CALLABLE">
+		{call PROC_GET_EMPLIST (#{inCondition,javaType=string,jdbcType=VARCHAR,mode=IN},
+								#{outResult,jdbcType=CURSOR,mode=OUT,resultMap=empResult})}
+	</select>
+	
+	<select id="procGetEmpListUsingOracleRefCursorWithResultMap" statementType="CALLABLE" parameterMap="cursorParamDataExtracted" resultMap="empResult">
+		{call PKG_EMP_REF_CURSOR.PROC_EMP_REF_CURSOR (?,?)}
+	</select>
+	
+	<select id="procGetEmpListUsingOracleRefCursorWithResultMapAttr" statementType="CALLABLE" parameterMap="cursorParamDataExtractedWithResultMapAttr" >
+		{call PKG_EMP_REF_CURSOR.PROC_EMP_REF_CURSOR (?,?)}
+	</select>
+
+</mapper>

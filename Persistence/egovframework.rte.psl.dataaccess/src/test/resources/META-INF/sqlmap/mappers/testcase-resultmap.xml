@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.rte.psl.dataaccess.EmpMapper">
+
+	<resultMap id="empResult" type="egovframework.rte.psl.dataaccess.vo.EmpVO" >
+		<result property="empNo" column="EMP_NO" javaType="decimal" jdbcType="NUMERIC" />
+		<result property="empName" column="EMP_NAME" javaType="string" jdbcType="VARCHAR"  />
+		<result property="job" column="JOB" javaType="string" jdbcType="VARCHAR" />
+		<result property="mgr" column="MGR" javaType="decimal" jdbcType="NUMERIC" />
+		<result property="hireDate" column="HIRE_DATE" javaType="date" jdbcType="DATE" />
+		<result property="sal" column="SAL" javaType="decimal" jdbcType="NUMERIC" />
+		<result property="comm" column="COMM" javaType="decimal" 	jdbcType="NUMERIC" />
+		<result property="deptNo" column="DEPT_NO" javaType="decimal" jdbcType="NUMERIC" />
+	</resultMap>
+
+	<!--
+		cf.) VO 의 상속관계와 resultMap의 상속관계가 같을 필요는 없음. 아래의 empExtendsDeptResult 가
+		empResult (Emp 속성을 가지고 있는 위의 resultMap)를 extends 하고 있지만 실제
+		EmpExtendsDeptVO 는 DeptVO 를 extends 하면서 child가 Emp 속성을 가지게끔 define 했음을 볼
+		수 있음
+	--> 
+	<resultMap id="empExtendsDeptResult" type="egovframework.rte.psl.dataaccess.vo.EmpExtendsDeptVO" extends="empResult">
+		<result property="deptName" column="DEPT_NAME" />
+		<result property="loc" column="LOC"/>
+	</resultMap>
+	
+	<resultMap id="empDeptSimpleComposite" type="egovframework.rte.psl.dataaccess.vo.EmpDeptSimpleCompositeVO" >
+		<result property="empNo" column="EMP_NO"/>
+		<result property="empName" column="EMP_NAME"/>
+		<result property="job" column="JOB"/>
+		<result property="mgr" column="MGR"/>
+		<result property="hireDate" column="HIRE_DATE"/>
+		<result property="sal" column="SAL"/>
+		<result property="comm" column="COMM" />
+		<result property="deptNo" column="DEPT_NO"/>
+		<result property="deptName" column="DEPT_NAME"/>
+		<result property="loc" column="LOC"/>
+	</resultMap>
+
+	<select id="selectEmpUsingResultMap" parameterType="egovframework.rte.psl.dataaccess.vo.EmpVO" resultMap="empResult">
+		<![CDATA[
+			select EMP_NO,
+			       EMP_NAME,
+			       JOB,
+			       MGR,
+			       HIRE_DATE,
+			       SAL,
+			       COMM,
+			       DEPT_NO
+			from   EMP
+			where  EMP_NO = #{empNo}
+		]]>
+	</select>
+	
+	<select id="selectEmpExtendsDeptUsingResultMap" parameterType="egovframework.rte.psl.dataaccess.vo.EmpVO" resultMap="empExtendsDeptResult">
+		<![CDATA[
+			select EMP_NO,
+			       EMP_NAME,
+			       JOB,
+			       MGR,
+			       HIRE_DATE,
+			       SAL,
+			       COMM,
+			       A.DEPT_NO,
+			       B.DEPT_NAME,
+			       B.LOC
+			from   EMP A, DEPT B
+			where  A.DEPT_NO = B.DEPT_NO
+			and    EMP_NO = #{empNo}
+		]]>
+	</select>
+	
+	<select id="selectEmpDeptSimpleCompositeUsingResultMap" parameterType="egovframework.rte.psl.dataaccess.vo.EmpVO" resultMap="empDeptSimpleComposite">
+		<![CDATA[
+			select EMP_NO,
+			       EMP_NAME,
+			       JOB,
+			       MGR,
+			       HIRE_DATE,
+			       SAL,
+			       COMM,
+			       A.DEPT_NO,
+			       B.DEPT_NAME,
+			       B.LOC
+			from   EMP A, DEPT B
+			where  A.DEPT_NO = B.DEPT_NO
+			and    EMP_NO = #{empNo}
+		]]>
+	</select>
+
+</mapper>

@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="EUC-KR" ?>
+<properties>
+  <category name="testTemplate">
+    <property name="ActionDateTime" value="2007/09/20 19:26:18|2007/09/20 19:26:28|"/>
+    <property name="ActionTotalTime" value="13415|13995|9.999"/>
+    <property name="ProjectInfo" value="HLW(보건복지(HLW))"/>
+    <property name="SourceConnectionInfo" value="충남보령[108.3.1.84:ntis]"/>
+    <property name="TargetConnectionInfo" value="충남보령[108.3.1.84:ntis]"/>
+  </category>
+</properties>

@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+      "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="egovframework.rte.itl.integration.metadata">
+
+    <class name="SystemDefinition" table="SYSTEM">
+     
+        <id name="key" type="string" column="SYSTEM_KEY"/>
+        
+        <natural-id mutable="true">
+            <many-to-one name="organization"
+                         column="ORGANIZATION_ID"
+                         not-null="true"
+                         lazy="false"/>
+            <property name="id"
+                      type="string"
+                      column="SYSTEM_ID"
+                      not-null="true"/>
+        </natural-id>
+                
+        <property name="name"
+                  type="string"
+                  column="SYSTEM_NAME"
+                  not-null="true"/>
+        
+        <property name="standard"
+                  type="yes_no"
+                  column="SYSTEM_STANDARD_YN"
+                  not-null="true"/>
+
+        <map name="services" inverse="true" lazy="false">
+            <key column="SYSTEM_KEY" not-null="true"/>
+            <map-key column="SERVICE_ID" type="string"/>
+            <one-to-many class="ServiceDefinition"/>
+        </map>
+        
+    </class>
+    
+</hibernate-mapping>

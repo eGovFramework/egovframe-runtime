@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+      "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="egovframework.rte.itl.webservice.data">
+
+    <class name="WebServiceServerDefinition" table="WEB_SERVICE_SERVER">
+     
+        <id name="key" type="string" column="SERVICE_KEY"/>
+
+        <one-to-one name="serviceDefinition"
+                    class="egovframework.rte.itl.integration.metadata.ServiceDefinition"
+                    constrained="true"
+                    lazy="false"/>
+        
+        <property name="address" type="string" column="ADDRESS" not-null="true"/>
+        
+        <property name="namespace" type="string" column="NAMESPACE" not-null="true"/>
+        
+        <property name="serviceName" type="string" column="SERVICE_NAME" not-null="true"/>
+        
+        <property name="portName" type="string" column="PORT_NAME" not-null="true"/>
+        
+        <property name="operationName" type="string" column="OPERATION_NAME" not-null="true"/>
+        
+    </class>
+
+</hibernate-mapping>

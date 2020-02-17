@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="ReplaceText">
+
+	<typeAlias alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap" />
+
+	<select id="selectUsingReplacedOrderBy" parameterClass="map" resultClass="egovMap">
+		<![CDATA[
+			select DEPT_NO,
+			       DEPT_NAME,
+			       LOC
+			from   DEPT
+			order by $orderExpr$
+		]]>
+	</select>
+	
+	<select id="selectUsingReplacedTable" remapResults="true" parameterClass="map" resultClass="egovMap">
+		<![CDATA[
+			select *
+			from   $table$
+		]]>
+		<isNotEmpty property="orderExpr">
+			order by $orderExpr$
+		</isNotEmpty>
+	</select>
+	
+	<select id="selectUsingReplacedAllQuery" parameterClass="map" resultClass="egovMap">
+		<![CDATA[
+			$selectQuery$
+		]]>
+	</select>
+	
+	<select id="selectUsingReplacedAllQueryUsingRemapResults" remapResults="true" parameterClass="map" resultClass="egovMap">
+		<![CDATA[
+			$selectQuery$
+		]]>
+	</select>
+
+</sqlMap>
