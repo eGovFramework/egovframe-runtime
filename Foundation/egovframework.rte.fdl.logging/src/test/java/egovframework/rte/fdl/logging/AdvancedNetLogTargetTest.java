@@ -19,22 +19,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(locations = { "classpath*:META-INF/spring/context-common.xml" })
 public class AdvancedNetLogTargetTest {
 
-	// @BeforeClass
-	// public static void runRemoteSocketServer() {
-	// try {
-	// // Runtime.getRuntime().exec("runSocketServer.bat", null, new File("."));
-	// Runtime
-	// .getRuntime()
-	// .exec(
-	// "java -classpath ./lib/log4j-1.3alpha-8-374949.jar org.apache.log4j.net.SimpleSocketServer 4448 ./remote/log4j.xml");
-	// } catch (BindException be) {
-	// LogManager.getLogger("sysoutLogger").debug("이미 SimpleSocketServer 가 떠 있습니다.");
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// }
-	// }
-
-	
 	/** testSocketAppender() 테스트 케이스 실행 방법
 	 *  1. 반드시 classpath에 있는 runSocketServer.bat 를 실행한다.
 	 *  2. runSocketServer.bat가 두개 이상 실행되어 있는 경우, 에러를 발생시킨다.
@@ -70,8 +54,7 @@ public class AdvancedNetLogTargetTest {
 		assertTrue(lastLine.contains(sdf.format(new Date())));
 		assertTrue(lastLine.endsWith("SocketAppender test"));
 	}
-	
-	
+
 	/** testSMTPAppender() 테스트 케이스 실행 방법
 	 *  1. 반드시 로컬 pc에 원하는 메일서버를 설치하고, 새로운 계정을 생성한다. (James 메일 서버로 테스트 함) 
 	 *  2. 설치한 서버와 user 정보에 따라 log4j2.xml의 SMTP Appender 설정 정보를 확인하고 변경하여야 한다.  (<Properties>로 설정됨)

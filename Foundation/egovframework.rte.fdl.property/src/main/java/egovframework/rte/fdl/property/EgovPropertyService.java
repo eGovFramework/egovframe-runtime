@@ -29,7 +29,7 @@ import egovframework.rte.fdl.cmmn.exception.FdlException;
  * @author 실행환경 개발팀 김태호
  * @since 2009.02.01
  * @version 1.0
- * @see <pre>
+ * <pre>
  *  == 개정이력(Modification Information) ==
  *
  *   수정일      수정자           수정내용

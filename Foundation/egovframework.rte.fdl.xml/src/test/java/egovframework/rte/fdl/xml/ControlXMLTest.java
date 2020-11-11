@@ -43,12 +43,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @ ---------   ---------   -------------------------------
  * @ 2009.03.18    김종호        최초생성
  *
- * @author 개발프레임웍크 실행환경 개발팀 김종호
+ * @author 표준프레임웍크 실행환경 표준팀 김종호
  * @since 2009. 03.18
  * @version 1.0
- * @see
- *
- *  Copyright (C) by MOPAS All right reserved.
  */
 public class ControlXMLTest {
 
@@ -72,7 +69,6 @@ public class ControlXMLTest {
     /**
      * DOM,SAX Validator 생성
      * @throws UnsupportedException
-     * @see 개발프레임웍크 실행환경 개발팀
      */
     @Test
     public void ModuleTest() throws UnsupportedException
@@ -88,7 +84,6 @@ public class ControlXMLTest {
     /**
      * ModuleControl 생성자
      * @param service - XMLUtility
-     * @see 개발프레임웍크 실행환경 개발팀
      */
     public void ModuleControl(AbstractXMLUtility service)
 	{
@@ -142,7 +137,6 @@ public class ControlXMLTest {
      * @param isvalid - Validation 검사여부
      * @param service - XMLUtility
      * @throws ValidatorException
-     * @see 개발프레임웍크 실행환경 개발팀
      */
     public void WellformedValidate(boolean used,boolean isvalid,AbstractXMLUtility service) throws ValidatorException
     {
@@ -163,7 +157,6 @@ public class ControlXMLTest {
      * @param service - XMLUtility
      * @param doc - Document 객체
      * @throws JDOMException
-     * @see 개발프레임웍크 실행환경 개발팀
      */
     public  void XPathResult(boolean used,AbstractXMLUtility service,Document doc) throws JDOMException
 	{
@@ -184,7 +177,6 @@ public class ControlXMLTest {
 	 * @throws JDOMException
 	 * @throws TransformerException
 	 * @throws FileNotFoundException
-	 * @see 개발프레임웍크 실행환경 개발팀
 	 */
 	public  void addElement(boolean used,AbstractXMLUtility service,Document doc,String EleName,List<?> list,String path)
 	 throws JDOMException,TransformerException,FileNotFoundException,IOException
@@ -203,7 +195,6 @@ public class ControlXMLTest {
 	 * @throws JDOMException
 	 * @throws TransformerException
 	 * @throws FileNotFoundException
-	 * @see 개발프레임웍크 실행환경 개발팀
 	 */
 	public void addTextElement(boolean used,AbstractXMLUtility service,Document doc,String elemName,List<?> list,String path)
 	throws JDOMException,TransformerException,FileNotFoundException,IOException
@@ -221,7 +212,6 @@ public class ControlXMLTest {
 	 * @throws JDOMException
 	 * @throws TransformerException
 	 * @throws FileNotFoundException
-	 * @see 개발프레임웍크 실행환경 개발팀
 	 */
 	public void updTextElement(boolean used,AbstractXMLUtility service,Document doc,List<?> list,String path)
 	throws JDOMException,TransformerException,FileNotFoundException,IOException
@@ -240,7 +230,6 @@ public class ControlXMLTest {
 	 * @throws JDOMException
 	 * @throws TransformerException
 	 * @throws FileNotFoundException
-	 * @see 개발프레임웍크 실행환경 개발팀
 	 */
     public void createNewXML(boolean used,AbstractXMLUtility service,Document doc,String EleName,List<?> list,String path)
     throws JDOMException,TransformerException,FileNotFoundException,IOException
@@ -258,7 +247,6 @@ public class ControlXMLTest {
 	 * @throws JDOMException
 	 * @throws TransformerException
 	 * @throws FileNotFoundException
-	 * @see 개발프레임웍크 실행환경 개발팀
 	 */
     public void delElement(boolean used,AbstractXMLUtility service,Document doc,String EleName,String path)
     throws JDOMException,TransformerException,FileNotFoundException,IOException
@@ -277,7 +265,6 @@ public class ControlXMLTest {
      * @throws JDOMException
      * @throws TransformerException
      * @throws FileNotFoundException
-     * @see 개발프레임웍크 실행환경 개발팀
      */
     public void updElement(boolean used,AbstractXMLUtility service,Document doc,String oldElement, String newElement,String path)
     throws JDOMException,TransformerException,FileNotFoundException,IOException
@@ -288,7 +275,6 @@ public class ControlXMLTest {
     /**
      * List 내용 조회
      * @param list - Element List
-     * @see 개발프레임웍크 실행환경 개발팀
      */
 	public  void viewEelement(List<?> list)
     {
@@ -320,7 +306,6 @@ public class ControlXMLTest {
 	 * XML에 추가할  SharedObject List
 	 * @param sobject - Element
 	 * @return Element List
-	 * @see 개발프레임웍크 실행환경 개발팀
 	 */
 	 public  List<SharedObject> insertObject(List<SharedObject> sobject)
 	  {
@@ -328,9 +313,6 @@ public class ControlXMLTest {
 	  	sobject.add(new SharedObject("손영선","아내"));
 	  	sobject.add(new SharedObject("김재우","아들"));
 	  	sobject.add(new SharedObject("보들이","강아지"));
-
-	//  	for(SharedObject sob:sobject)
-	//  		logger.debug("sobject getValue:" +(String)sob.getValue());
 
 	  	return sobject;
 	  }
@@ -345,10 +327,7 @@ public class ControlXMLTest {
 	  	sobject.add(new SharedObject("Kumar","을지문덕12"));
 	  	sobject.add(new SharedObject("Deepali","신사임당12"));
 	  	sobject.add(new SharedObject("pet","강아지1"));
-	 /*
-	  	for(SharedObject sob:sobject)
-	  		System.out.println("sobject getValue:" +(String)sob.getValue());
-	  */
+
 	  	return sobject;
 	  }
   }

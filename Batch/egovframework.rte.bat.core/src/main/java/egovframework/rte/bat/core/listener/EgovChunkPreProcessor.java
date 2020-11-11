@@ -24,13 +24,11 @@ import org.springframework.batch.core.listener.ChunkListenerSupport;
  * @author 배치실행개발팀
  * @since 2012.06.27
  * @version 1.0
- * @see
  */
 public class EgovChunkPreProcessor extends ChunkListenerSupport {
 	/**
 	 * Chunk 수행 이전에 호출되는 부분
-	 * 
-	 * @see org.springframework.batch.core.domain.ChunkListener#beforeChunk()
+	 *
 	 */
 	public void beforeChunk() {
 

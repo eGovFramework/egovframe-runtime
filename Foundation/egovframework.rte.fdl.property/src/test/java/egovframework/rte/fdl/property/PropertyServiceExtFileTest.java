@@ -12,22 +12,23 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  * Property Service 기본 기능 확인 클래스
+ *
  * @author Vincent Han
- * @since 2014.08.12
  * @version 1.0
  * @see <pre>
  *  == 개정이력(Modification Information) ==
- *   
+ *
  *   수정일      수정자           수정내용
  *  -------    --------    ---------------------------
  *   2014.08.12  Vincent Han          최초 생성
- * 
+ *
  * </pre>
+ * @since 2014.08.12
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
-		"classpath*:/spring/context-common.xml",
- 		"classpath*:/spring/context-extfile.xml" })
+        "classpath*:/spring/context-common.xml",
+        "classpath*:/spring/context-extfile.xml"})
 public class PropertyServiceExtFileTest extends AbstractJUnit4SpringContextTests {
 
     @Resource(name = "propertyService")
@@ -35,6 +36,7 @@ public class PropertyServiceExtFileTest extends AbstractJUnit4SpringContextTests
 
     /**
      * 기본 처리 테스트
+     *
      * @throws Exception fail to test
      */
     @Test

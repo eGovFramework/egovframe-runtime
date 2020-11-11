@@ -64,8 +64,9 @@ public class HibernateServiceDefinitionDao extends HibernateDaoSupport implement
 
 		ServiceDefinition serviceDefinition = null;
 
-		List<ServiceDefinition> result = (List<ServiceDefinition>)getHibernateTemplate().find("from ServiceDefinition as service " + "where service.system.key = ? " + "and service.id = ?",
-				new Object[] { systemKey, serviceId });
+		List<ServiceDefinition> result = (List<ServiceDefinition>)getHibernateTemplate().find(
+				"from ServiceDefinition as service " + "where service.system.key = ?0 "
+						+ "and service.id = ?1", new Object[] { systemKey, serviceId });
 		if (result != null && result.size() > 0) {
 			serviceDefinition = result.get(0);
 			if (result.size() != 1) {
@@ -85,13 +86,12 @@ public class HibernateServiceDefinitionDao extends HibernateDaoSupport implement
 		ServiceDefinition serviceDefinition = null;
 
 		List<ServiceDefinition> result = (List<ServiceDefinition>)getHibernateTemplate().find(
-				"from ServiceDefinition as service " + "where service.system.organization.id = ? " + "and service.system.id = ? " + "and service.id = ?",
-				new Object[] { organizationId, systemId, serviceId });
+				"from ServiceDefinition as service " + "where service.system.organization.id = ?0 "
+						+ "and service.system.id = ?1 " + "and service.id = ?2 ", new Object[] { organizationId, systemId, serviceId });
 		if (result != null && result.size() > 0) {
 			serviceDefinition = result.get(0);
 			if (result.size() != 1) {
-				LOGGER.debug("get ServiceDefinition(organizationId = \"{}\", systemId = \"{}\", serviceId = \"{}\")'size is not 1 ({})", organizationId, systemId, serviceId,
-						result.size());
+				LOGGER.debug("get ServiceDefinition(organizationId = \"{}\", systemId = \"{}\", serviceId = \"{}\")'size is not 1 ({})", organizationId, systemId, serviceId, result.size());
 			}
 		}
 

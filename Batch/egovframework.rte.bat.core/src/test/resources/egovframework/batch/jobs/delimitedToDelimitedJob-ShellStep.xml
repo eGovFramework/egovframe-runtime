@@ -10,7 +10,7 @@
 		<property name="pros">
 			<props>
 				<!-- # Windows의 경우 사용 -->
-				<prop key="encoding">MS949</prop>
+				<!--<prop key="encoding">MS949</prop>
 				<prop key="shellScript">
 				    <![CDATA[
 					dir /a
@@ -18,9 +18,9 @@
 					rem copy aa bb
 					exit 0
 					]]>
-				</prop>
+				</prop>-->
 				<!-- # Unix, Linux, MacOS 등의 경우 사용 -->
-				<!-- <prop key="encoding">UTF-8</prop>
+				<prop key="encoding">UTF-8</prop>
 				<prop key="shellScript">
 				    <![CDATA[
 					ls -al
@@ -28,7 +28,7 @@
 					echo cp aa bb
 					echo exit 0
 					]]>
-				</prop> -->
+				</prop>
 			</props>
 		</property>
     </bean>

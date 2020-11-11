@@ -155,8 +155,6 @@ public class EgovSecurityServiceTest {
     		assertNotNull(logout);
     }
 
-
-
     /**
      * DB에 사용자 정보(id/password)를 유지하여 인증처리 함.
      * DB에 등록된 사용자의 인증 확인 테스트
@@ -165,32 +163,32 @@ public class EgovSecurityServiceTest {
     @Test
     public void testAllowAccessForAuthorizedUser() throws Exception {
 
-       UsernamePasswordAuthenticationToken login = new UsernamePasswordAuthenticationToken("jimi", "jimi");
-       AuthenticationManager authManager = (AuthenticationManager) context.getBean(BeanIds.AUTHENTICATION_MANAGER);
+		UsernamePasswordAuthenticationToken login = new UsernamePasswordAuthenticationToken("jimi", "jimi");
+		AuthenticationManager authManager = (AuthenticationManager) context.getBean(BeanIds.AUTHENTICATION_MANAGER);
 
-       SecurityContextHolder.getContext().setAuthentication(authManager.authenticate(login));
-       LOGGER.debug("### jimi's password is right!!");
+		SecurityContextHolder.getContext().setAuthentication(authManager.authenticate(login));
+		LOGGER.debug("### jimi's password is right!!");
 
-       ///////////
+		///////////
 		login = new UsernamePasswordAuthenticationToken("test", "test");
 		authManager = (AuthenticationManager) context.getBean(BeanIds.AUTHENTICATION_MANAGER);
 
-       SecurityContextHolder.getContext().setAuthentication(authManager.authenticate(login));
-       LOGGER.debug("### test's password is right!!");
+		SecurityContextHolder.getContext().setAuthentication(authManager.authenticate(login));
+		LOGGER.debug("### test's password is right!!");
 
-       ///////////
+		///////////
 		login = new UsernamePasswordAuthenticationToken("user", "user");
 		authManager = (AuthenticationManager) context.getBean(BeanIds.AUTHENTICATION_MANAGER);
 
-       SecurityContextHolder.getContext().setAuthentication(authManager.authenticate(login));
-       LOGGER.debug("### user's password is right!!");
+		SecurityContextHolder.getContext().setAuthentication(authManager.authenticate(login));
+		LOGGER.debug("### user's password is right!!");
 
-       ///////////
-       login = new UsernamePasswordAuthenticationToken("buyer", "buyer");
-       authManager = (AuthenticationManager) context.getBean(BeanIds.AUTHENTICATION_MANAGER);
+		///////////
+		login = new UsernamePasswordAuthenticationToken("buyer", "buyer");
+		authManager = (AuthenticationManager) context.getBean(BeanIds.AUTHENTICATION_MANAGER);
 
-       SecurityContextHolder.getContext().setAuthentication(authManager.authenticate(login));
-       LOGGER.debug("### buyer's password is right!!");
+		SecurityContextHolder.getContext().setAuthentication(authManager.authenticate(login));
+		LOGGER.debug("### buyer's password is right!!");
 
     }
 

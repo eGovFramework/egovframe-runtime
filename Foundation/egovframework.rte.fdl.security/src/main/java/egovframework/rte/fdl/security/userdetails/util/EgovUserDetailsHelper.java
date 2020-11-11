@@ -62,13 +62,8 @@ public final class EgovUserDetailsHelper {
      * @return 사용자 ValueObject
      */
     public static Object getAuthenticatedUser() {
-        SecurityContext context = SecurityContextHolder.getContext();
-        Authentication authentication = context.getAuthentication();
-
-        if (EgovObjectUtil.isNull(authentication)) {
-        	LOGGER.debug("## authentication object is null!!");
-            return null;
-        }
+        Authentication authentication = getAuthentication();
+        if (authentication == null) return null;
 
         if (authentication.getPrincipal() instanceof EgovUserDetails) {
         	EgovUserDetails details = (EgovUserDetails) authentication.getPrincipal();
@@ -95,13 +90,8 @@ public final class EgovUserDetailsHelper {
     public static List<String> getAuthorities() {
         List<String> listAuth = new ArrayList<String>();
 
-        SecurityContext context = SecurityContextHolder.getContext();
-        Authentication authentication = context.getAuthentication();
-
-        if (EgovObjectUtil.isNull(authentication)) {
-        	LOGGER.debug("## authentication object is null!!");
-            return null;
-        }
+        Authentication authentication = getAuthentication();
+        if (authentication == null) return null;
 
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 
@@ -116,6 +106,17 @@ public final class EgovUserDetailsHelper {
         }
 
         return listAuth;
+    }
+
+    protected static Authentication getAuthentication() {
+        SecurityContext context = SecurityContextHolder.getContext();
+        Authentication authentication = context.getAuthentication();
+
+        if (EgovObjectUtil.isNull(authentication)) {
+            LOGGER.debug("## authentication object is null!!");
+            return null;
+        }
+        return authentication;
     }
 
     /**

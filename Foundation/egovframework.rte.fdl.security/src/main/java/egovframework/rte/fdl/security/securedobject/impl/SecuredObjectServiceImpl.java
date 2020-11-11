@@ -90,27 +90,25 @@ public class SecuredObjectServiceImpl implements EgovSecuredObjectService, Appli
 		LinkedHashMap<String, List<ConfigAttribute>> ret = new LinkedHashMap<String, List<ConfigAttribute>>();
 		
 		LinkedHashMap<Object, List<ConfigAttribute>> data = securedObjectDAO.getRolesAndMethod();
-		
-		Set<Object> keys = data.keySet();
-		
-		for (Object key : keys) {
-			ret.put((String) key, data.get(key));
-		}
-		
-		return ret;
+
+		return getRolesAndPath(ret, data);
 	}
 
 	public LinkedHashMap<String, List<ConfigAttribute>> getRolesAndPointcut() throws Exception {
 		LinkedHashMap<String, List<ConfigAttribute>> ret = new LinkedHashMap<String, List<ConfigAttribute>>();
 		
 		LinkedHashMap<Object, List<ConfigAttribute>> data = securedObjectDAO.getRolesAndPointcut();
-		
+
+		return getRolesAndPath(ret, data);
+	}
+
+	protected LinkedHashMap<String, List<ConfigAttribute>> getRolesAndPath(LinkedHashMap<String, List<ConfigAttribute>> ret, LinkedHashMap<Object, List<ConfigAttribute>> data) {
 		Set<Object> keys = data.keySet();
-		
+
 		for (Object key : keys) {
 			ret.put((String) key, data.get(key));
 		}
-		
+
 		return ret;
 	}
 

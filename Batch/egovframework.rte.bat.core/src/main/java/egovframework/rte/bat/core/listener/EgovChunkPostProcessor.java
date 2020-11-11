@@ -24,14 +24,12 @@ import org.springframework.batch.core.listener.ChunkListenerSupport;
  * @author 배치실행개발팀
  * @since 2012.06.27
  * @version 1.0
- * @see
  */
 
 public class EgovChunkPostProcessor extends ChunkListenerSupport {
 	/**
 	 * Chunk 수행 이후에 호출되는 부분
-	 * 
-	 * @see org.springframework.batch.core.domain.ChunkListener#afterChunk()
+	 *
 	 */
 	public void afterChunk() {
 

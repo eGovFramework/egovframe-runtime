@@ -53,7 +53,7 @@ import org.springframework.util.ClassUtils;
  * @version 1.0
  * @see
  *      <pre>
- * << 개정이력(Modification Information) >>
+ * == 개정이력(Modification Information) ==
  *   
  *   수정일               수정자               수정내용
  *  -------      --------     ---------------------------
@@ -263,7 +263,6 @@ public class EgovPartitionFlatFileItemWriter<T> extends
 	 * Close 수행 
 	 * state 의 상태와 fileCount 상태를 판단 후 최종 state를 Close 함
 	 * 여러 쓰레드에서 접근하게 되므로 synchronized 로 선점권 보장
-	 * @see ItemStream#close()
 	 */
 	public synchronized void close() {
 		fileCount--; // increment for close Counting
@@ -305,7 +304,6 @@ public class EgovPartitionFlatFileItemWriter<T> extends
 	 * open 수행 
 	 * 파일을 쓰기 위해서 state 상태를 판단 후 존재하지 않으면  doOpen 호출
 	 * 여러 쓰레드에서 접근하게 되므로 synchronized 로 선점권 보장
-	 * @see ItemStream#close()
 	 */
 	public synchronized void open(ExecutionContext executionContext)
 			throws ItemStreamException {
@@ -321,7 +319,6 @@ public class EgovPartitionFlatFileItemWriter<T> extends
 	/**
 	 * 실질적인 open 이 일어남
 	 * state를 생성하고 BufferedWriter를 초기화 함
-	 * @see ItemStream#close()
 	 */
 	private void doOpen(ExecutionContext executionContext)
 			throws ItemStreamException {
@@ -359,7 +356,6 @@ public class EgovPartitionFlatFileItemWriter<T> extends
 
 	/**
 	 * state의 상태를 갱신하고 다음에 쓰여질 position을 지정
-	 * @see ItemStream#update(ExecutionContext)
 	 */
 	public void update(ExecutionContext executionContext) {
 		if (state == null) {

@@ -32,7 +32,7 @@ import egovframework.rte.fdl.property.EgovPropertyService;
  * @see
  *
  * <pre>
- * << 개정이력(Modification Information) >>
+ * == 개정이력(Modification Information) ==
  *
  *   수정일        수정자           수정내용
  *  -------      -------------  ----------------------
@@ -43,16 +43,14 @@ public interface EgovEnvCryptoService {
 	
 	/**
 	 * 클래스 초기화 메소드.
-	 * 
-	 * @param N/A
+	 *
 	 * @return void
 	 */
 	public void init();
 
 	/**
 	 * EgovPasswordEncoder 클래스 setter
-	 * 
-	 * @param N/A
+	 *
 	 * @return EgovPasswordEncoder
 	 */
 	public EgovPasswordEncoder getPasswordEncoder();
@@ -67,8 +65,7 @@ public interface EgovEnvCryptoService {
 
 	/**
 	 * EgovPasswordEncoder 클래스 getter
-	 * 
-	 * @param N/A
+	 *
 	 * @return EgovCryptoService
 	 */
 	public EgovCryptoService getCryptoService();
@@ -83,8 +80,7 @@ public interface EgovEnvCryptoService {
 	
 	/**
 	 * EgovPropertyService 클래스 getter
-	 * 
-	 * @param N/A
+	 *
 	 * @return EgovPropertyService
 	 */
 	public EgovPropertyService getCryptoConfigurer();
@@ -139,8 +135,7 @@ public interface EgovEnvCryptoService {
 	
 	/**
 	 * 데이터베이스 접속 항목(계정명)에 대한 getter
-	 * 
-	 * @param N/A
+	 *
 	 * @return String
 	 */
 	public String getUsername() throws Exception;
@@ -155,8 +150,7 @@ public interface EgovEnvCryptoService {
 	
 	/**
 	 * 데이터베이스 접속 항목(비밀번호)에 대한 getter
-	 * 
-	 * @param N/A
+	 *
 	 * @return String
 	 */
 	public String getPassword();
@@ -171,16 +165,14 @@ public interface EgovEnvCryptoService {
 	
 	/**
 	 * 데이터베이스 접속 항목(URL)에 대한 setter
-	 * 
-	 * @param N/A
+	 *
 	 * @return String
 	 */
 	public String getUrl();
 
 	/**
 	 * Crypto 사용여부에 대한 getter
-	 * 
-	 * @param N/A
+	 *
 	 * @return boolean
 	 */
 	public boolean isCrypto();
@@ -195,8 +187,7 @@ public interface EgovEnvCryptoService {
 	
 	/**
 	 * Crypto 계정 알고리즘 지정에 대한 setter
-	 * 
-	 * @param N/A
+	 *
 	 * @return String
 	 */
 	public String getCryptoAlgorithm();
@@ -211,8 +202,7 @@ public interface EgovEnvCryptoService {
 
 	/**
 	 * Crypto 계정 알고리즘키에 대한 getter
-	 * 
-	 * @param N/A
+	 *
 	 * @return String
 	 */
 	public String getCyptoAlgorithmKey();
@@ -227,8 +217,7 @@ public interface EgovEnvCryptoService {
 
 	/**
 	 * Crypto 알고리즘 키 Hash에 대한 getter
-	 * 
-	 * @param N/A
+	 *
 	 * @return String
 	 */
 	public String getCyptoAlgorithmKeyHash();
@@ -243,8 +232,7 @@ public interface EgovEnvCryptoService {
 
 	/**
 	 * Crypto 블럭 사이즈에 대한 getter
-	 * 
-	 * @param N/A
+	 *
 	 * @return int
 	 */
 	public int getCryptoBlockSize();

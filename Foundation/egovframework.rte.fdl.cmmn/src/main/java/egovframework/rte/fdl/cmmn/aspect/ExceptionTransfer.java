@@ -48,12 +48,13 @@ import org.springframework.util.PathMatcher;
  * @see
  *
  * <pre>
- * << 개정이력(Modification Information) >>
+ * == 개정이력(Modification Information) ==
  *
- *   수정일      수정자           수정내용
- *  -------    --------    ---------------------------
- *   2009.05.30  Judd Cho        최초 생성
- *   2015.01.31 Vincent Han		코드 품질 개선 및 보완 (processHandling 메소드 Exception 처리)
+ *   수정일			수정자			수정내용
+ *  -----------------------------------------------------------------
+ *   2009.05.30		Judd Cho		최초 생성
+ *   2015.01.31		Vincent Han		코드 품질 개선 및 보완 (processHandling 메소드 Exception 처리)
+ *   2020.08.31		ESFC			시큐어코딩(ES)-Private 배열에 Public 데이터 할당[CWE-496]
  *
  * </pre>
  */
@@ -77,7 +78,11 @@ public class ExceptionTransfer {
 	 * @param exceptionHandlerServices array of HandlerService
 	 */
 	public void setExceptionHandlerService(ExceptionHandlerService[] exceptionHandlerServices) {
-		this.exceptionHandlerServices = exceptionHandlerServices;
+		// 2020.08.31 ESFC 시큐어코딩(ES)-Private 배열에 Public 데이터 할당[CWE-496]
+		this.exceptionHandlerServices = new ExceptionHandlerService[exceptionHandlerServices.length];
+		for (int i = 0; i < exceptionHandlerServices.length; i++) {
+			this.exceptionHandlerServices[i] = exceptionHandlerServices[i];
+		}
 		if (this.exceptionHandlerServices != null) {
 			LOGGER.debug("count of ExceptionHandlerServices = {}", exceptionHandlerServices.length);
 		}
@@ -235,7 +240,7 @@ public class ExceptionTransfer {
 	 * @param methodName Exception 발생 메소드명
 	 * @param exception 발생한 Exception
 	 * @param pm 발생한 PathMatcher(default : AntPathMatcher)
-	 * @param exceptionHandlerServices[] 등록되어 있는 ExceptionHandlerService 리스트
+	 * @param exceptionHandlerServices 등록되어 있는 ExceptionHandlerService 리스트
 	 */
 	protected void processHandling(Class<?> clazz, String methodName, Exception exception, PathMatcher pm, ExceptionHandlerService[] exceptionHandlerServices) {
 

@@ -22,20 +22,19 @@ import java.util.List;
 import org.springframework.batch.item.file.transform.ExtractorLineAggregator;
 import org.springframework.util.Assert;
 
-
 /**
  * Object 배열로 구성된 item 정보들을 Write 하기위해 fixedLength 방식으로 String화 하는 클래스
- * 
  * @author 배치실행개발팀
  * @since 2012. 07.20
  * @version 1.0
  * @see <pre>
- *      개정이력(Modification Information)
- *   
- *    수정일         수정자           수정내용
- *   -------    --------   ----------------
- * 2012.07.20  배치실행개발팀      최초 생성
- *  </pre>
+ * 개정이력(Modification Information)
+ *
+ * 수정일			수정자			수정내용
+ * ----------------------------------------------
+ * 2012.07.20		배치실행개발팀	최초 생성
+ * 2020.11.06		ESFC			시큐어코딩(ES)-Private 배열에 Public 데이터 할당[CWE-496]
+ * </pre>
  */
 public class EgovFixedLengthLineAggregator<T> extends ExtractorLineAggregator<T> {
 
@@ -53,7 +52,7 @@ public class EgovFixedLengthLineAggregator<T> extends ExtractorLineAggregator<T>
 
 	/**
 	 * 사용할 padding의 패턴 set
-	 * @param paddingPattern 사용할 Padding Pattern
+	 * @param padding 사용할 Padding Pattern
 	 */
 	public void setPadding(char padding) {
 		this.padding = padding;
@@ -64,7 +63,11 @@ public class EgovFixedLengthLineAggregator<T> extends ExtractorLineAggregator<T>
 	 * @param fieldRanges 각 field가 차지 할 length 배열
 	 */
 	public void setFieldRanges(int[] fieldRanges) {
-		this.fieldRanges = fieldRanges;
+		// 2020.11.06 ESFC 시큐어코딩(ES)-Private 배열에 Public 데이터 할당[CWE-496]
+		this.fieldRanges = new int[fieldRanges.length];
+		for (int i = 0; i < fieldRanges.length; i++) {
+			this.fieldRanges[i] = fieldRanges[i];
+		}
 	}
 
 	/**
@@ -92,10 +95,8 @@ public class EgovFixedLengthLineAggregator<T> extends ExtractorLineAggregator<T>
 		
 		//1. XML에서 지정한 field 범위 길이 갯수(ranges)와 field 갯수(fields)가 일치하는 지 검사.
 		if (fieldsLength != fieldRanges.length) {
-			Assert.state(fieldsLength == fieldRanges.length, 
-					"The number of field's ranges: " + fieldRanges.length
-					+ " is must match the number of field: "
-					+ fieldsLength);
+			Assert.state(fieldsLength == fieldRanges.length
+					, "The number of field's ranges: " + fieldRanges.length + " is must match the number of field: " + fieldsLength);
 		}
 		StringBuilder value = new StringBuilder();
 		for (int k = 0; k < fieldsLength; k++) {	

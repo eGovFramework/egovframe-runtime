@@ -35,7 +35,7 @@
 			<prop key="empName">ALLEN</prop>
 			<prop key="empNoR">7499</prop>
 			<prop key="empNameR">ALLEN</prop>
-			<prop key="mgrR">7777777777</prop>
+			<prop key="mgrR">7777</prop>
 		</props>
 	</property>
 	</bean>

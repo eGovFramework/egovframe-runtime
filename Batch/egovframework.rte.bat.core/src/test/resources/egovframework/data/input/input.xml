@@ -25,13 +25,11 @@
 		<name>customer5</name>
 		<credit>50</credit>
 	</customer>
-
 	<customer>
 		<id>6</id>
 		<name>customer6</name>
 		<credit>60</credit>
 	</customer>
-
 	<customer>
 		<id>7</id>
 		<name>customer7</name>

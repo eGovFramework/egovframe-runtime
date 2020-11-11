@@ -26,7 +26,7 @@ import java.util.logging.Logger;
  * @see
  *
  * <pre>
- * << 개정이력(Modification Information) >>
+ * == 개정이력(Modification Information) ==
  *   
  *   수정일        수정자       수정내용
  *  -------       --------    ---------------------------
@@ -65,7 +65,6 @@ public final class EgovJdkLogger {
 	 * 기록이나 처리가 불필요한 경우 사용.
 	 * 
 	 * @param message
-	 * @param exception
 	 */
 	public static void ignore(String message) {
 		ignore(message, null);
@@ -89,7 +88,6 @@ public final class EgovJdkLogger {
 	 * 디버그 정보를 기록하는 경우 사용.
 	 * 
 	 * @param message
-	 * @param exception
 	 */
 	public static void debug(String message) {
 		debug(message, null);
@@ -99,7 +97,6 @@ public final class EgovJdkLogger {
 	 * 일반적이 정보를 기록하는 경우 사용.
 	 * 
 	 * @param message
-	 * @param exception
 	 */
 	public static void info(String message) {
 		INFO_LOGGER.log(INFO_INFO_LEVEL, message);

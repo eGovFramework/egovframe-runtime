@@ -53,7 +53,7 @@ public abstract class EgovAbstractLineTokenizer implements EgovLineTokenizer<Obj
 	/**
 	 * doTokenize를 호출하여 Encoding Type에 따라 Token목록을 생성한다. 
 	 * @param line
-	 * @param nameSize
+	 * @param encoding
 	 * @return List String: token 목록 
 	 */
 	public List<String> tokenize(String line, String encoding) throws Exception {

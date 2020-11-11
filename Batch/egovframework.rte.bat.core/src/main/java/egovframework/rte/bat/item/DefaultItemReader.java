@@ -54,7 +54,7 @@ import org.slf4j.LoggerFactory;
  * @see
  *
  * <pre>
- * << 개정이력(Modification Information) >>
+ * == 개정이력(Modification Information) ==
  *
  *   수정일        수정자           수정내용
  *  -------       --------          ---------------------------
@@ -255,13 +255,7 @@ public class DefaultItemReader<T> implements ItemStreamReader<T>{
 		EgovObjectMapper<T> objectMapper = new EgovObjectMapper<T>();
 		objectMapper.setNames(fieldNames);
 		objectMapper.setType(voType);
-		try {
-			objectMapper.afterPropertiesSet();
-		} catch (Exception e) {
-			//2017.02.15 장동한 시큐어코딩(ES)-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
-			LOGGER.error("["+e.getClass()+"] Try/Catch...objectMapper Operation Runing : " + e.getMessage());
-			throw new RuntimeException(e);
-		}
+		objectMapper.afterPropertiesSet();
 		return objectMapper;
 	}
 
@@ -292,11 +286,9 @@ public class DefaultItemReader<T> implements ItemStreamReader<T>{
 			this.reader = new FlatFileItemReader<T>();
 			((FlatFileItemReader<T>)this.reader).setLineMapper(lineMapper);
 			((FlatFileItemReader<T>)this.reader).setResource(resource);
-
 			try {
 				((FlatFileItemReader<T>)this.reader).afterPropertiesSet();
 			} catch (Exception e) {
-				//throw new RuntimeException(this.readerResourceType + " 타입의 File을 read 하기 위한 FlatFileItemReader 생성에 실패 하였습니다.");
 				//2017.02.15 장동한 시큐어코딩(ES)-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
 				throw new RuntimeException("["+e.getClass()+"]"+this.readerResourceType + " 타입의 File을 read 하기 위한 FlatFileItemReader 생성에 실패 하였습니다.("+e.getMessage()+")");
 			}
@@ -312,7 +304,6 @@ public class DefaultItemReader<T> implements ItemStreamReader<T>{
 				((JdbcCursorItemReader)this.reader).setSql(this.sql);
 				((JdbcCursorItemReader)this.reader).afterPropertiesSet();
 			} catch (Exception e) {
-				//throw new RuntimeException(this.readerResourceType + " 타입의 DB을 read 하기 위한 JdbcCursorItemReader 생성에 실패 하였습니다.");
 				//2017.02.15 장동한 시큐어코딩(ES)-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
 				throw new RuntimeException("["+e.getClass()+"]"+this.readerResourceType + " 타입의 DB을 read 하기 위한 JdbcCursorItemReader 생성에 실패 하였습니다.("+e.getMessage()+")");
 			}

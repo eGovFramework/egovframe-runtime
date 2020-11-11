@@ -16,28 +16,25 @@ import org.springframework.cache.CacheManager;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:/spring/context-ehcache.xml" })
+@ContextConfiguration(locations = {"classpath:/spring/context-ehcache.xml"})
 public class CacheableTest {
 
-	@Autowired
-	private CacheManager cacheManager;
+    @Autowired
+    private CacheManager cacheManager;
 
-	@Resource(name="ehcacheCacheableService")
-	CacheableService cacheableService;
+    @Resource(name = "ehcacheCacheableService")
+    CacheableService cacheableService;
 
-	@Test
-	public void testGetCache() {
-		String employeeNum = "01";
-		Employee employee = cacheableService.cacheableMethod(employeeNum);
+    @Test
+    public void testGetCache() {
+        String employeeNum = "01";
+        Employee employee = cacheableService.cacheableMethod(employeeNum);
 
-		Cache cache = cacheManager.getCache("ehcache");
-		ValueWrapper value = cache.get(employeeNum);
-		
-		assertEquals(((Employee)value.get()).getName(), employee.getName());
-	}
+        Cache cache = cacheManager.getCache("ehcache");
+        ValueWrapper value = cache.get(employeeNum);
 
-
+        assertEquals(((Employee) value.get()).getName(), employee.getName());
+    }
 
 }

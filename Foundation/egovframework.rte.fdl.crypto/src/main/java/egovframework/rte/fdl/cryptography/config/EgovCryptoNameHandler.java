@@ -30,7 +30,7 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
  * @see
  *
  * <pre>
- * << 개정이력(Modification Information) >>
+ * == 개정이력(Modification Information) ==
  *
  *   수정일        수정자           수정내용
  *  -------      -------------  ----------------------
@@ -41,8 +41,7 @@ public class EgovCryptoNameHandler extends NamespaceHandlerSupport {
 
 	/**
 	 * 초기화-Crypto 설정간소화 Definition Parser 등록
-	 * 
-	 * @param N/A
+	 *
 	 * @return void
 	 */
     public void init() {

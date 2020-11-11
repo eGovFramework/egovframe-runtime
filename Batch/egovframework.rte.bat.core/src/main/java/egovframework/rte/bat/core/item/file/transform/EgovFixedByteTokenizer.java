@@ -127,7 +127,7 @@ public class EgovFixedByteTokenizer extends EgovAbstractByteLineTokenizer {
 	/**
 	 * 주어진 문자열을 Encoding을 적용하여 잘라서 토큰을 생성 <code>line</code>.
 	 * 
-	 * @param line
+	 * @param byteString
 	 *            the line to be tokenised (can be <code>null</code>)
 	 * @return the resulting tokens (empty if the line is null)
 	 * @throws IncorrectLineLengthException

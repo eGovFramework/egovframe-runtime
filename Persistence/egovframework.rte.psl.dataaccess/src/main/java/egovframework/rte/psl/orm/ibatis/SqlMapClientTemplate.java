@@ -216,12 +216,10 @@ public class SqlMapClientTemplate extends JdbcAccessor implements SqlMapClientOp
 						}
 					}
 				}
-				catch (Throwable ex) {
+				catch (SQLException ex) {
 					logger.debug("Could not close JDBC Connection", ex);
 				}
 			}
-
-			// Processing finished - potentially session still to be closed.
 		}
 		finally {
 			// Only close SqlMapSession if we know we've actually opened it

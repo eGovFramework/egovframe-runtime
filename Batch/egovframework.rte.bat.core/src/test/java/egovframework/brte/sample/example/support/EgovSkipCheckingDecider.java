@@ -25,7 +25,7 @@ import org.springframework.batch.core.job.flow.JobExecutionDecider;
  * @since 2012. 07.30
  * @see
  * <pre>
- * << 개정이력(Modification Information) >>  
+ * == 개정이력(Modification Information) ==
  * 수정일               수정자               수정내용 
  * -------    --------     --------------------------- 
  * 2012.07.30  배치실행개발팀         최초 생성 

@@ -66,7 +66,8 @@ import com.ibatis.sqlmap.client.SqlMapClient;
  *   2013.05.22  이기하 		XSSF, SXSSF형식 추가(xlsx 지원)
  *   2013.05.29  한성곤			mapBeanName property 추가 및 코드 정리
  *   2014.05.14  이기하			코드 refactoring 및 mybatis 서비스 추가
- *   2017.02.15  장동한		시큐어코딩(ES)-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
+ *   2017.02.15  장동한		    ES-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
+ *   2020.08.31  ESFC           ES-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
  *
  * </pre>
  */
@@ -181,8 +182,6 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
         //2017.02.15 장동한 시큐어코딩(ES)-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
         } catch(IllegalArgumentException e) {
         	LOGGER.error(getMessageSource().getMessage("error.excel.runtime.error", new Object[] {"createWorkbook" }, Locale.getDefault()), e);
-        } catch (Exception e) {
-            LOGGER.error(getMessageSource().getMessage("error.excel.runtime.error", new Object[] {"createWorkbook" }, Locale.getDefault()), e);
         } finally {
             LOGGER.debug("ExcelServiceImpl loadExcelObject end...");
             fileOut.close();
@@ -215,8 +214,6 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
          //2017.02.15 장동한 시큐어코딩(ES)-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
         } catch(IllegalArgumentException e) {
             LOGGER.error(getMessageSource().getMessage("error.excel.runtime.error", new Object[] {"EgovExcelServiceImpl loadExcelTemplate" }, Locale.getDefault()), e);
-        } catch (Exception e) {
-            LOGGER.error(getMessageSource().getMessage("error.excel.runtime.error", new Object[] {"EgovExcelServiceImpl loadExcelTemplate" }, Locale.getDefault()), e);
         } finally {
             LOGGER.debug("ExcelServiceImpl loadExcelTemplate end...");
             fileIn.close();
@@ -242,14 +239,10 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
 
     	try {
     		LOGGER.debug("ExcelServiceImpl loadExcelTemplate(XSSF) ...");
-
     		wb = new XSSFWorkbook(fileIn);
-
         //2017.02.15 장동한 시큐어코딩(ES)-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
         } catch(IllegalArgumentException e) {
         	LOGGER.error(getMessageSource().getMessage("error.excel.runtime.error", new Object[] {"EgovExcelServiceImpl loadExcelTemplate(XSSF)" }, Locale.getDefault()), e);   
-    	} catch (Exception e) {
-    		LOGGER.error(getMessageSource().getMessage("error.excel.runtime.error", new Object[] {"EgovExcelServiceImpl loadExcelTemplate(XSSF)" }, Locale.getDefault()), e);
     	} finally {
     		LOGGER.debug("ExcelServiceImpl loadExcelTemplate(XSSF) end...");
     		fileIn.close();
@@ -294,7 +287,7 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
 	/**
 	 * 엑셀 파일을 로딩한다.
 	 * 
-	 * @param filepath
+	 * @param fileIn
 	 * @return
 	 * @throws Exception
 	 */
@@ -303,11 +296,11 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
 
 		try {
 			LOGGER.debug("ExcelServiceImpl loadWorkbook ...");
-
-				POIFSFileSystem fs = new POIFSFileSystem(fileIn);
-				wb = new HSSFWorkbook(fs);
-		} catch (Exception e) {
-			LOGGER.error(getMessageSource().getMessage("error.excel.runtime.error", new Object[] { "loadWorkbook" }, Locale.getDefault()), e);
+			POIFSFileSystem fs = new POIFSFileSystem(fileIn);
+			wb = new HSSFWorkbook(fs);
+		// 2020.08.31 ESFC ES-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
+		} catch (IOException ie) {
+			LOGGER.error(getMessageSource().getMessage("error.excel.runtime.error", new Object[] { "loadWorkbook" }, Locale.getDefault()), ie);
 		}
 
 		return wb;
@@ -326,9 +319,9 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
     	try {
     		LOGGER.debug("ExcelServiceImpl loadWorkbook(XSSF) ...");
     		wb = new XSSFWorkbook(fileIn);
-
-    	} catch (Exception e) {
-    		LOGGER.error(getMessageSource().getMessage("error.excel.runtime.error", new Object[] {"loadWorkbook(XSSF)" }, Locale.getDefault()), e);
+    	// 2020.08.31 ESFC ES-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
+    	} catch (IOException ie) {
+    		LOGGER.error(getMessageSource().getMessage("error.excel.runtime.error", new Object[] {"loadWorkbook(XSSF)" }, Locale.getDefault()), ie);
     	}
 
     	return wb;
@@ -347,65 +340,58 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
 	 * @return
 	 * @throws Exception
 	 */
-	public Integer uploadExcel(String queryId, Sheet sheet, int start, long commitCnt) throws BaseException, Exception {
+	public Integer uploadExcel(String queryId, Sheet sheet, int start, long commitCnt) throws Exception {
 
 		LOGGER.debug("sheet.getPhysicalNumberOfRows() : {}", sheet.getPhysicalNumberOfRows());
 
         Integer rowsAffected = 0;
 
-        try {
+		long rowCnt = sheet.getPhysicalNumberOfRows();
+		long cnt = (commitCnt == 0) ? rowCnt : commitCnt;
 
-            long rowCnt = sheet.getPhysicalNumberOfRows();
-            long cnt = (commitCnt == 0) ? rowCnt : commitCnt;
+		LOGGER.debug("Runtime.getRuntime().totalMemory() : {}", Runtime.getRuntime().totalMemory());
+		LOGGER.debug("Runtime.getRuntime().freeMemory() : {}", Runtime.getRuntime().freeMemory());
 
-			LOGGER.debug("Runtime.getRuntime().totalMemory() : {}", Runtime.getRuntime().totalMemory());
-			LOGGER.debug("Runtime.getRuntime().freeMemory() : {}", Runtime.getRuntime().freeMemory());
+		long startTime = System.currentTimeMillis();
 
-            long startTime = System.currentTimeMillis();
+		for (int idx = start, i = start; idx < rowCnt; idx = i) {
+			List<Object> list = new ArrayList<Object>();
 
-            for (int idx = start, i = start; idx < rowCnt; idx = i) {
-                List<Object> list = new ArrayList<Object>();
+			LOGGER.debug("before Runtime.getRuntime().freeMemory() : {}", Runtime.getRuntime().freeMemory());
 
-				LOGGER.debug("before Runtime.getRuntime().freeMemory() : {}", Runtime.getRuntime().freeMemory());
+			EgovExcelMapping mapping = null;
 
-				EgovExcelMapping mapping = null;
+			if (mapBeanName != null) {
+				mapping = (EgovExcelMapping) applicationContext.getBean(mapBeanName);
+			} else if (mapClass != null) {
+				mapping = (EgovExcelMapping) EgovObjectUtil.instantiate(mapClass);
+			} else {
+				throw new RuntimeException(getMessageSource().getMessage("error.excel.property.error", null, Locale.getDefault()));
+			}
 
-				if (mapBeanName != null) {
-					mapping = (EgovExcelMapping) applicationContext.getBean(mapBeanName);
-				} else if (mapClass != null) {
-					mapping = (EgovExcelMapping) EgovObjectUtil.instantiate(mapClass);
-				} else {
-					throw new RuntimeException(getMessageSource().getMessage("error.excel.property.error", null, Locale.getDefault()));
-				}
+			for (i = idx; i < rowCnt && i < (cnt + idx); i++) {
+				Row row = sheet.getRow(i);
+				list.add(mapping.mappingColumn(row));
+			}
 
-                for (i = idx; i < rowCnt && i < (cnt + idx); i++) {
-                    Row row = sheet.getRow(i);
-                    list.add(mapping.mappingColumn(row));
-                }
+			// insert
+			// 현재 spring 연계 ibatis의 batch 형식으로 작성 후 중간에 exception 발생시켜도 rollback 이 불가한 문제가 있음.
+			// ibatis 의 batch 관련하여서는 sqlMapClient.startTransaction() 이하의 코드 등 추가 작업이 필요한지 확인 필요!
 
-                // insert
-                // 현재 spring 연계 ibatis의 batch 형식으로 작성 후 중간에 exception 발생시켜도 rollback 이 불가한 문제가 있음.
-                // ibatis 의 batch 관련하여서는 sqlMapClient.startTransaction() 이하의 코드 등 추가 작업이 필요한지 확인 필요!
+			if (sqlSessionTemplate != null) {
+				rowsAffected += excelBatchMapper.batchInsert(queryId, list);
+			} else if (sqlMapClient != null) {
+				rowsAffected += dao.batchInsert(queryId, list);
+			} else {
+				throw new RuntimeException(getMessageSource().getMessage("error.excel.persistence.error", null, Locale.getDefault()));
+			}
 
-                if (sqlSessionTemplate != null) {
-                	rowsAffected += excelBatchMapper.batchInsert(queryId, list);
-                } else if (sqlMapClient != null) {
-                	rowsAffected += dao.batchInsert(queryId, list);
-                } else {
-                	throw new RuntimeException(getMessageSource().getMessage("error.excel.persistence.error", null, Locale.getDefault()));
-                }
+			LOGGER.debug("after Runtime.getRuntime().freeMemory() : {}", Runtime.getRuntime().freeMemory());
 
-				LOGGER.debug("after Runtime.getRuntime().freeMemory() : {}", Runtime.getRuntime().freeMemory());
+			LOGGER.debug("rowsAffected : {}", rowsAffected);
+		}
 
-                LOGGER.debug("rowsAffected : {}", rowsAffected);
-            }
-
-			LOGGER.debug("batchInsert time is {}", (System.currentTimeMillis() - startTime));
-
-        } catch (Exception e) {
-            throw new Exception(e);
-        }
-
+		LOGGER.debug("batchInsert time is {}", (System.currentTimeMillis() - startTime));
         LOGGER.debug("uploadExcel result count is {}", rowsAffected);
 
         return rowsAffected;
@@ -424,7 +410,6 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
 	public Integer uploadExcel(String queryId, InputStream fileIn, int start, long commitCnt) throws BaseException, Exception {
 		Workbook wb = loadWorkbook(fileIn);
 		Sheet sheet = wb.getSheetAt(0);
-
 		return uploadExcel(queryId, sheet, start, commitCnt);
 	}
 
@@ -442,7 +427,6 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
 	public Integer uploadExcel(String queryId, InputStream fileIn, int start, long commitCnt, XSSFWorkbook wb) throws BaseException, Exception {
 		wb = loadWorkbook(fileIn, wb);
 		Sheet sheet = wb.getSheetAt(0);
-
 		return uploadExcel(queryId, sheet, start, commitCnt);
 	}
 
@@ -485,7 +469,6 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
 	public Integer uploadExcel(String queryId, InputStream fileIn, short sheetIndex, int start, long commitCnt) throws BaseException, Exception {
 		Workbook wb = loadWorkbook(fileIn);
 		Sheet sheet = wb.getSheetAt(sheetIndex);
-
 		return uploadExcel(queryId, sheet, start, commitCnt);
 	}
 
@@ -505,7 +488,6 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
 	public Integer uploadExcel(String queryId, InputStream fileIn, short sheetIndex, int start, long commitCnt, XSSFWorkbook wb) throws BaseException, Exception {
 		wb = loadWorkbook(fileIn, wb);
 		Sheet sheet = wb.getSheetAt(sheetIndex);
-
 		return uploadExcel(queryId, sheet, start, commitCnt);
 	}
 
@@ -524,7 +506,6 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
 	public Integer uploadExcel(String queryId, InputStream fileIn, String sheetName, int start, long commitCnt) throws BaseException, Exception {
 		Workbook wb = loadWorkbook(fileIn);
 		Sheet sheet = wb.getSheet(sheetName);
-
 		return uploadExcel(queryId, sheet, start, commitCnt);
 	}
 
@@ -544,8 +525,6 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
 	public Integer uploadExcel(String queryId, InputStream fileIn, String sheetName, int start, long commitCnt, XSSFWorkbook wb) throws BaseException, Exception {
 		wb = loadWorkbook(fileIn, wb);
 		Sheet sheet = wb.getSheet(sheetName);
-
 		return uploadExcel(queryId, sheet, start, commitCnt);
 	}
-
 }

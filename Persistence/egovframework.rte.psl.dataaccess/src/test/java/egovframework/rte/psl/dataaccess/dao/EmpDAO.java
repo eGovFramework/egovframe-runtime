@@ -32,49 +32,6 @@ public class EmpDAO extends EgovAbstractDAO {
 		return (BigDecimal) getSqlMapClientTemplate().insert(queryId, vo);
 	}
 
-	// @Transactional
-	// public Integer batchInsertEmp(final String
-	// queryId, final List<EmpVO> list) {
-	// return (Integer)
-	// getSqlMapClientTemplate().execute(
-	// new SqlMapClientCallback() {
-	// public Object doInSqlMapClient(SqlMapExecutor
-	// executor)
-	// throws SQLException {
-	// // try {
-	// Iterator<EmpVO> itr = list.iterator();
-	//                        
-	// // // ibatis startTransaction
-	// // getSqlMapClient().startTransaction();
-	//                        
-	// // ibatis startBatch
-	// executor.startBatch();
-	//                        
-	// while (itr.hasNext()) {
-	// // insert
-	// executor.insert(queryId, itr.next());
-	// }
-	//                        
-	// // ibatis executeBatch
-	// int rowsAffected = executor.executeBatch();
-	//                        
-	// // // ibatis commit
-	// // getSqlMapClient().commitTransaction();
-	//
-	//
-	// return rowsAffected;
-	// // } catch (SQLException e) {
-	// // e.printStackTrace();
-	// // throw e;
-	// // } finally {
-	// // // ibatis release
-	// // getSqlMapClient().endTransaction();
-	// // }
-	// }
-	// });
-	//
-	// }
-
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Integer batchInsertEmp(final String queryId, final List<EmpVO> list) {
 		return (Integer) getSqlMapClientTemplate().execute(new SqlMapClientCallback() {
@@ -89,19 +46,8 @@ public class EmpDAO extends EgovAbstractDAO {
 				return executor.executeBatch();
 			}
 		});
-
 	}
 
-	// public int updateEmp(String queryId, EmpVO vo) {
-	// return getSqlMapClientTemplate().update(queryId,
-	// vo);
-	// }
-	//
-	// public int deleteEmp(String queryId, EmpVO vo) {
-	// return getSqlMapClientTemplate().delete(queryId,
-	// vo);
-	// }
-	//
 	public EmpVO selectEmp(String queryId, EmpVO vo) {
 		return (EmpVO) getSqlMapClientTemplate().queryForObject(queryId, vo);
 	}

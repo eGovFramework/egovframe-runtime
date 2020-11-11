@@ -30,21 +30,19 @@ public class EgovARIAFileTest {
 	
 	String sAlgorithmKey = "egovframe";
 
-	
     @Test
-    public void EgovARIAFilVerify() throws Exception{
-    	
-    	String sPath = EgovARIAFileTest.class.getResource("").getPath();
-    	cryptoService.encrypt(new File(sPath+"/test/test.txt"), sAlgorithmKey, new File(sPath+"/test/test2.txt"));
-    	cryptoService.decrypt(new File(sPath+"/test/test2.txt"), sAlgorithmKey, new File(sPath+"/test/test3.txt"));
-		
+    public void EgovARIAFilVerify() throws Exception {
+
+    	String sPath = EgovARIAFileTest.class.getResource("/META-INF/spring").getPath();
+    	cryptoService.encrypt(new File(sPath+"/file/test.txt"), sAlgorithmKey, new File(sPath+"/file/test2.txt"));
+    	cryptoService.decrypt(new File(sPath+"/file/test2.txt"), sAlgorithmKey, new File(sPath+"/file/test3.txt"));
+
     	List<String> list = new ArrayList<String>();
     	List<String> list3 = new ArrayList<String>();
 
-    	
         //파일 객체 생성
-        File file = new File(sPath+"/test/test.txt");
-        File file3 = new File(sPath+"/test/test3.txt");
+        File file = new File(sPath+"/file/test.txt");
+        File file3 = new File(sPath+"/file/test3.txt");
         
         //입력 스트림 생성
         FileReader filereader = new FileReader(file);
@@ -54,50 +52,32 @@ public class EgovARIAFileTest {
         BufferedReader bufReader3 = new BufferedReader(filereader3);
         String line = "";
         while((line = bufReader.readLine()) != null){
-            //System.out.println(line);
         	list.add(line);
         }
         while((line = bufReader3.readLine()) != null){
-            //System.out.println(line);
         	list3.add(line);
         }
-        //.readLine()은 끝에 개행문자를 읽지 않는다.            
+
         bufReader.close();
-        
-        //System.out.print(list);
-
-
-    	//assertEquals(list, list3);
         assertEquals(list, list3);
     }
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(EgovARIAFileTest.class);
-	
+
 	public static void main(String[] args) {
-		
 		EgovARIAFileTest egovARIAFileTest = new EgovARIAFileTest();
-	
-		//String sPath = EgovARIAFileTest.class.getResource("").getPath();
-		String sPath = "";
-		
-		LOGGER.info("------------------------------------------------------");		
 		ApplicationContext context = new ClassPathXmlApplicationContext(new String[]{"classpath:/META-INF/spring/context-crypto.xml"});
 		EgovARIACryptoService cryptoService = context.getBean(EgovARIACryptoServiceImpl.class);
-		LOGGER.info("------------------------------------------------------");
-		
-			try {
-				//System.out.println(EgovARIAFileTest.class.getResource("").getPath() );
-				sPath = EgovARIAFileTest.class.getResource("").getPath();
-				cryptoService.encrypt(new File(sPath+"/test/test.txt"), egovARIAFileTest.sAlgorithmKey, new File(sPath+"/test/test2.txt"));
-				cryptoService.decrypt(new File(sPath+"/test/test2.txt"), egovARIAFileTest.sAlgorithmKey, new File(sPath+"/test/test3.txt"));
+		String sPath = "";
 
-				System.out.println("------------------------------------------------------");
-				//assertEquals(str, new String(decrypted, "UTF-8"));
-				
-			} catch (Exception uee) {
-				uee.printStackTrace();
+		try {
+			sPath = EgovARIAFileTest.class.getResource("/META-INF/spring").getPath();
+			cryptoService.encrypt(new File(sPath+"/file/test.txt"), egovARIAFileTest.sAlgorithmKey, new File(sPath+"/file/test2.txt"));
+			cryptoService.decrypt(new File(sPath+"/file/test2.txt"), egovARIAFileTest.sAlgorithmKey, new File(sPath+"/file/test3.txt"));
+		} catch (Exception uee) {
+			uee.printStackTrace();
 
-			}
+		}
 	}
 
 }

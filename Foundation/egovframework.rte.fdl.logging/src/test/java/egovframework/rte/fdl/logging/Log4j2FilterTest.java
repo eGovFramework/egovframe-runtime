@@ -57,10 +57,10 @@ public class Log4j2FilterTest {
 			assertTrue(!LogFileUtil.contains(logFileDir, "DEBUG"));
 			assertEquals(2, LogFileUtil.countWords(logFileDir, "ERROR"));
 
-			String[] tailLines = LogFileUtil.getTailLines(logFile, 32);
+			String[] tailLines = LogFileUtil.getTailLines(logFile, 33);
 			assertTrue(tailLines[0].endsWith("- An ArithmeticException have been thrown"));
 			// 엔트리 메서드는 메서드 명으로 로그 메세지가 출력됨 (ex. entry() - entry, exit() - exit ...)
-			assertTrue(tailLines[1].endsWith("- catching"));
+			assertTrue(tailLines[1].endsWith("- Catching"));
 		}
 	}
 

@@ -56,8 +56,8 @@ public interface EgovDigestService {
     /**
      * 확인 처리.
      * 
-     * @param message
-     * @param digest
+     * @param messageByte
+     * @param digestByte
      * @return
      */
     public boolean matches(byte[] messageByte, byte[] digestByte);

@@ -3,8 +3,8 @@
     xmlns:p="http://www.springframework.org/schema/p"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
         
-	<import resource="/context-datasource.xml" />
-	<import resource="/context-transaction.xml" />
+	<import resource="context-datasource.xml" />
+	<import resource="context-transaction.xml" />
 		
 	<bean id="jobLauncher" class="org.springframework.batch.core.launch.support.SimpleJobLauncher">
 		<property name="jobRepository" ref="jobRepository" />

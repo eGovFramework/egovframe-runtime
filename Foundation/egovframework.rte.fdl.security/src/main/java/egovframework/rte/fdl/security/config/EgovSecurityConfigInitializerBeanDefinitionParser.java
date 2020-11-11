@@ -59,8 +59,8 @@ public class EgovSecurityConfigInitializerBeanDefinitionParser extends AbstractS
 		
 		EgovSecurityHttp egovSecurityHttp = EgovSecurityHttp.getInstance();
 
-		try{
-					
+		try {
+
 			parserContext.getReaderContext().getReader().setValidationMode(XmlBeanDefinitionReader.VALIDATION_XSD);
 			LOGGER.debug("EgovSecurityConfigInitializerBeanDefinitionParser httpd load start...");
 		    /**
@@ -69,12 +69,15 @@ public class EgovSecurityConfigInitializerBeanDefinitionParser extends AbstractS
 		     * @param XFrameOptions 	: 프레임셋 동작여부 옵션(DENY:거부, SAMEORIGIN:허용) 
 		     * @param XssProtection 	: 브라우저가 XSS 공격에 사용될 수 있는 스크립트를 실행하지 않음 옵션(활성:true, 비활성:false)
 		     * @param Csrf 				: HTTP 요청과 악의적 인 웹 사이트의 요청을 거부 옵션(활성:true, 비활성:false)
+			 * @param CacheControl		: 브라우저 캐시를 수동으로 제어하기 위한 설정(캐시비활성:true, 캐시활성:false)
 		     * @return InputStreamResource
 		     */
-			parserContext.getReaderContext().getReader().loadBeanDefinitions(egovSecurityHttp.getHttp(EgovSecurityConfigShare.sniff,
-																										EgovSecurityConfigShare.xFrameOptions,
-																										EgovSecurityConfigShare.xssProtection,
-																										EgovSecurityConfigShare.csrf ));
+			parserContext.getReaderContext().getReader().loadBeanDefinitions(egovSecurityHttp.getHttp(
+					EgovSecurityConfigShare.sniff,
+					EgovSecurityConfigShare.xFrameOptions,
+					EgovSecurityConfigShare.xssProtection,
+					EgovSecurityConfigShare.cacheControl,
+					EgovSecurityConfigShare.csrf ));
 
 			parserContext.getReaderContext().getReader().setValidationMode(XmlBeanDefinitionReader.VALIDATION_AUTO);			
 			

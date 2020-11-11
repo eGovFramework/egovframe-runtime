@@ -39,12 +39,13 @@ import org.springframework.util.PathMatcher;
  * @see
  *
  * <pre>
- * << 개정이력(Modification Information) >>
+ * == 개정이력(Modification Information) ==
  *
- *   수정일      수정자           수정내용
- *  -------    --------    ---------------------------
- *   2009.05.30  Judd Cho        최초 생성
- *   2015.01.31 Vincent Han		코드 품질 개선 
+ *   수정일			수정자 			수정내용
+ *  -----------------------------------------------------------------
+ *   2009.05.30		Judd Cho		최초 생성
+ *   2015.01.31		Vincent Han		코드 품질 개선
+ *   2020.08.31		ESFC			시큐어코딩(ES)-Private 배열에 Public 데이터 할당[CWE-496]
  *
  * </pre>
  */
@@ -63,7 +64,11 @@ public class LeaveaTrace {
 	 * @param traceHandlerServices 실행하고자 하는 Handler 를 가진 Manager서비스
 	 */
 	public void setTraceHandlerServices(TraceHandlerService[] traceHandlerServices) {
-		this.traceHandlerServices = traceHandlerServices;
+		// 2020.08.31 ESFC 시큐어코딩(ES)-Private 배열에 Public 데이터 할당[CWE-496]
+		this.traceHandlerServices = new TraceHandlerService[traceHandlerServices.length];
+		for (int i = 0; i < traceHandlerServices.length; i++) {
+			this.traceHandlerServices[i] = traceHandlerServices[i];
+		}
 	}
 
 	/**

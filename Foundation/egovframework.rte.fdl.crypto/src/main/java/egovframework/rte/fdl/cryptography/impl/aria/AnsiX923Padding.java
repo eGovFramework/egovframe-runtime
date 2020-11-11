@@ -84,10 +84,12 @@ public class AnsiX923Padding implements CryptoPadding {
 		}
 		
 		//padding length 1에 대한 보정 2019.01.02 modify by jdh
-		if((blockSize%lastValue) == 1) {
-			isPadding = true;
-		}else if (isPadding && lastValue <= 0) { // minus, 0 and 기존 1 skip(padding length +1에 대한 보정 )  2019.01.02 modify by jdh
-			isPadding = false;
+		if (lastValue != 0) {
+			if((blockSize%lastValue) == 1) {
+				isPadding = true;
+			} else if (isPadding && lastValue <= 0) { // minus, 0 and 기존 1 skip(padding length +1에 대한 보정 )  2019.01.02 modify by jdh
+				isPadding = false;
+			}
 		}
 
 		if (isPadding) {
@@ -101,8 +103,6 @@ public class AnsiX923Padding implements CryptoPadding {
 
 		if (isPadding) {
 			paddingResult = new byte[source.length - lastValue];
-			//System.out.println("source.length = " + source.length + ", lastValue = " + lastValue);
-			//print(source);
 			try {
 				System.arraycopy(source, 0, paddingResult, 0, paddingResult.length);
 			} catch (ArrayIndexOutOfBoundsException ex) {

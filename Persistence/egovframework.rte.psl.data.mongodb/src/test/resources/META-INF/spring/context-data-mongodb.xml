@@ -1,28 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
-		http://www.springframework.org/schema/data/mongo http://www.springframework.org/schema/data/mongo/spring-mongo.xsd">
-		
-	 <!-- Default bean name is 'mongo' -->
-   <mongo:mongo-client
-        host="10.211.55.3"        
-        port="27017"
-        credentials="egov1:egov01@egov"  id="mongo">
-        <!-- id:pwd @ admin --> 
-    </mongo:mongo-client>
-    <!-- for Replica Sets -->
-    <!-- mongo:mongo id="replicaSetMongo" replica-set="127.0.0.1:27017,127.0.0.1:27018" /-->
-    
-    <!-- Default bean name is 'mongoDbFactory' -->
-	<mongo:db-factory dbname="egov" mongo-ref="mongo" id="mongoDbFactory" />
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+       http://www.springframework.org/schema/data/mongo http://www.springframework.org/schema/data/mongo/spring-mongo.xsd">
 
-   <bean    id="mongoTemplate"
-            class="org.springframework.data.mongodb.core.MongoTemplate">
-            <constructor-arg ref="mongo"/>
-            <constructor-arg name="databaseName" value="egov"/>    
+    <mongo:mongo-client
+            host="127.0.0.1"
+            port="27017"
+            credentials="com:com01@com"
+            id="mongo">
+    </mongo:mongo-client>
+
+    <mongo:db-factory dbname="com" mongo-ref="mongo" id="mongoDbFactory"/>
+
+    <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+        <constructor-arg ref="mongo"/>
+        <constructor-arg name="databaseName" value="com"/>
     </bean>
-	<!-- for Repository -->
- 	<mongo:repositories base-package="egovframework.rte.psl.data.mongodb.repository" />
+
+    <mongo:repositories base-package="egovframework.rte.psl.data.mongodb.repository"/>
 
 </beans>

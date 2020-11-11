@@ -13,9 +13,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
 public interface PersonRepository extends MongoRepository<Person, String> {
-
 	// Query methods
-
 	List<Person> findByLastname(String lastname);
 
 	Page<Person> findByFirstname(String firstname, Pageable pageable);
@@ -23,13 +21,11 @@ public interface PersonRepository extends MongoRepository<Person, String> {
 	Person findByAddress(Address address);
 
 	// Delete methods
-
 	List<Person> deleteByLastname(String lastname);
 
 	Long deletePersonByLastname(String lastname);
 
 	// Geo-spatial methods
-	// { 'location' : { '$near' : [point.x, point.y], '$maxDistance' : distance}}
 	List<Person> findByLocationNear(Point location, Distance distance);
 
 	// JSON based query methods

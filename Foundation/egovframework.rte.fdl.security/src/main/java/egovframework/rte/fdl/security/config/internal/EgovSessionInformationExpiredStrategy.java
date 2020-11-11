@@ -6,14 +6,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.factory.FactoryBean;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.security.web.session.SessionInformationExpiredEvent;
 import org.springframework.security.web.session.SessionInformationExpiredStrategy;
-import org.springframework.util.StringUtils;
-
-import egovframework.rte.fdl.security.config.SecurityConfig;
 
 /**
  * SessionInformationExpiredStrategy를 처리하는 factory bean 클래스

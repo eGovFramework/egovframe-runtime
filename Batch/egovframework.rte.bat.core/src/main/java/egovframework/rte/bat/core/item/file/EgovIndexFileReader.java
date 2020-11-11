@@ -34,7 +34,7 @@ import org.springframework.core.io.ResourceLoader;
  * @see
  *
  * <pre>
- * << 개정이력(Modification Information) >>
+ * == 개정이력(Modification Information) ==
  *   
  *   수정일        수정자           수정내용
  *  -------       --------          ---------------------------
@@ -138,7 +138,6 @@ public class EgovIndexFileReader<T> implements ItemStreamReader<T>{
 		try {
 			((FlatFileItemReader<T>)this.reader).afterPropertiesSet();
 		} catch (Exception e) {
-			//throw new RuntimeException(this.readerResourceType + " 타입의 File을 read 하기 위한 FlatFileItemReader 생성에 실패 하였습니다.");
 			throw new RuntimeException("["+e.getClass()+"] File을 read 하기 위한 FlatFileItemReader 생성에 실패 하였습니다.("+e.getMessage()+")");
 		}
 
@@ -220,7 +219,7 @@ public class EgovIndexFileReader<T> implements ItemStreamReader<T>{
 			}
 
 		});
-		if (fileInfoList.length == 0) {
+		if (fileInfoList == null || fileInfoList.length == 0) {
 			throw new RuntimeException("The file resource not found in '"+resourceDirectory+"'");
 		}
 		List<String> indexFileList = new ArrayList<String>();

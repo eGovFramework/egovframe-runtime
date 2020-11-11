@@ -11,18 +11,16 @@ public class Person {
 	private String lastname;
 
 	private Address address;
-	
+
 	private double[] location;
 
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof Person) {
-			
 			if (this.id != null && (this.id.equals(((Person)obj).id))) {
 				return true;
 			}
 		}
-		
 		return false;
 	}
 

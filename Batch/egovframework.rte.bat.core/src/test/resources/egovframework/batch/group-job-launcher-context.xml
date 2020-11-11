@@ -8,8 +8,8 @@
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
         
-	<import resource="/context-datasource.xml" />
-	<import resource="/context-transaction.xml" />
+	<import resource="context-datasource.xml" />
+	<import resource="context-transaction.xml" />
 		
 	<bean id="jobLauncher" class="org.springframework.batch.core.launch.support.SimpleJobLauncher">
 		<property name="jobRepository" ref="jobRepository" />

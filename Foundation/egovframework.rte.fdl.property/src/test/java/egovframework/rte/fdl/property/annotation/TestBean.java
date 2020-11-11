@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package egovframework.rte.fdl.property.annotation;
 
 import org.springframework.beans.factory.BeanFactory;
@@ -27,7 +26,6 @@ import org.springframework.util.ObjectUtils;
  * @since 15 April 2001
  */
 public class TestBean {
-
 
 	private String country;
 
@@ -43,13 +41,13 @@ public class TestBean {
 
 	private boolean destroyed;
 
-
 	public TestBean() {
 	}
 
 	public TestBean(String name) {
 		this.name = name;
 	}
+
 	public TestBean(String name, int age) {
 		this.name = name;
 		this.age = age;
@@ -63,7 +61,6 @@ public class TestBean {
 		return postProcessed;
 	}
 
-	
 	public String getName() {
 		return name;
 	}
@@ -83,8 +80,6 @@ public class TestBean {
 		}
 	}
 
-
-
 	public void destroy() {
 		this.destroyed = true;
 	}
@@ -92,7 +87,6 @@ public class TestBean {
 	public boolean wasDestroyed() {
 		return destroyed;
 	}
-
 
 	public boolean equals(Object other) {
 		if (this == other) {

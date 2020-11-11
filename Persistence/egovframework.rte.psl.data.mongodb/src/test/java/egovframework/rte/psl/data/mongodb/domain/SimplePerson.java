@@ -26,5 +26,4 @@ public class SimplePerson {
 	public String toString() {
 		return "Person [id=" + id + ", name=" + name + ", age=" + age + "]";
 	}
-
 }

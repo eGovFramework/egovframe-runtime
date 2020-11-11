@@ -4,7 +4,7 @@
 	<groupId>egovframework.rte</groupId>
 	<artifactId>egovframework.rte.root</artifactId>
 	<packaging>pom</packaging>
-	<version>3.9.0</version>
+	<version>3.10.0</version>
 	<name>egovframework.rte.root</name>
 
 	<modules>

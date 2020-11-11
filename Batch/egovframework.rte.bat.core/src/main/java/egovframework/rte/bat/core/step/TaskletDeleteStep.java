@@ -1,6 +1,7 @@
 package egovframework.rte.bat.core.step;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +33,11 @@ public class TaskletDeleteStep implements Tasklet, InitializingBean {
 		LOGGER.debug("TaskletDeleteStep execute START ===");
 
 		File fileInfo = directory.getFile();
-		//Assert.state(fileInfo.isDirectory());
+
+		if (!fileInfo.exists()) {
+			throw new IOException("The file resource not found");
+		}
+
 		if ( fileInfo.isDirectory() == true ) { // Directory
 	
 			File[] files = fileInfo.listFiles();

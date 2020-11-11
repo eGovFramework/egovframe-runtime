@@ -27,10 +27,9 @@ import java.lang.annotation.Target;
  * @author 유지보수 이영지
  * @since 2014.04.23
  * @version 3.0
- * @see AnnotationCommandMapArgumentResolver
  *
  * <pre>
- * << 개정이력(Modification Information) >>
+ * == 개정이력(Modification Information) ==
  *
  *   수정일      수정자           수정내용
  *  -------    --------    ---------------------------

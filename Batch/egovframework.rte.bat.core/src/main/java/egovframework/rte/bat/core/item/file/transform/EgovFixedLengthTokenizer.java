@@ -93,7 +93,7 @@ public class EgovFixedLengthTokenizer extends EgovAbstractLineTokenizer {
 	/**
 	 * String 형태의 line을 필드 범위 값(ranges)을 기준으로 token으로  자른다.
 	 * 
-	 * @param String : ItemReader에서 읽어들인 line
+	 * @param line : ItemReader에서 읽어들인 line
 	 * @return Listz : tokens
 	 */
 	protected List<String> doTokenize(String line) {

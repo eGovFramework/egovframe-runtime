@@ -79,28 +79,4 @@ public class EgovPasswordEncoder {
 		return encoder.checkPassword(plainPassword, encryptedPassword);
 	}
 
-	//2017.02.28 장동한 시큐어코딩(ES)-제거되지 않고 남은 디버그 코드[CWE-489]
-	/*
-	public static void main(String[] args) {
-		if (args.length < 2) {
-			System.out.println("Arguments missing!!!");
-			System.out.println();
-			System.out.println("Usage: java ... egovframework.rte.fdl.cryptography.EgovPasswordEncoder 'algorithm' 'password'");
-			System.out.println("\t- algorithm : Message Digest Algorithms (ex: MD5, SHA-1, SHA-256, ...)");
-			System.out.println();
-			System.out.println("Ex: java ... egovframework.rte.fdl.cryptography.EgovPasswordEncoder SHA-256 egovframework");
-
-			return;
-		}
-
-		// egovframe (SHA-256) : gdyYs/IZqY86VcWhT8emCYfqY1ahw2vtLG+/FzNqtrQ=
-
-		EgovPasswordEncoder encoder = new EgovPasswordEncoder();
-
-		encoder.setAlgorithm(args[0]);
-
-		System.out.println("Digested Password : " + encoder.encryptPassword(args[1]));
-	}
-	*/
-	
 }

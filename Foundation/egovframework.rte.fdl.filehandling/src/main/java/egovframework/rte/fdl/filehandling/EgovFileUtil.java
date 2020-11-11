@@ -385,7 +385,7 @@ public class EgovFileUtil {
 		try {
 			writer = new FileWriter(file);
 			writer.write(text);
-		} catch (Exception e) {
+		} catch (IOException e) {
 			LOGGER.error("Error creating File: {} : {}", file.getName(), e);
 			return;
 		} finally {
@@ -519,7 +519,6 @@ public class EgovFileUtil {
 	 */
 	public static void delete(File file) throws IOException {
 
-		
 		//2017.02.28 장동한 시큐어코딩(ES)-Null Pointer 역참조[CWE-476]
 		if(file != null){	
 			if (file.isDirectory()) {
@@ -530,9 +529,11 @@ public class EgovFileUtil {
 				}
 			}
 		}
-		
-		if (!file.delete()) {
-			throw new IOException("Unable to delete " + file.getPath());
+
+		if(file != null) {
+			if (!file.delete()) {
+				throw new IOException("Unable to delete " + file.getPath());
+			}
 		}
 	}
 

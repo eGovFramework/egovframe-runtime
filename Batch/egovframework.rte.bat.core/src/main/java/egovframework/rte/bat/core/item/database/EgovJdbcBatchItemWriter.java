@@ -133,7 +133,7 @@ public class EgovJdbcBatchItemWriter<T> implements ItemWriter<T>,
 	/**
 	 * SimpleJdbcTemplate 셋팅
 	 *
-	 * @param simpleJdbcTemplate
+	 * @param jdbcTemplate
 	 */
 	public void setSimpleJdbcTemplate(JdbcOperations jdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;

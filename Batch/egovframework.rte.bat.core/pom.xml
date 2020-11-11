@@ -1,13 +1,14 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>egovframework.rte</groupId>
-	<artifactId>egovframework.rte.bat.core</artifactId>
-	<packaging>jar</packaging>
-	<version>3.9.0</version>
-	<name>egovframework.rte.bat.core</name>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>egovframework.rte</groupId>
+    <artifactId>egovframework.rte.bat.core</artifactId>
+    <packaging>jar</packaging>
+    <version>3.10.0</version>
+    <name>egovframework.rte.bat.core</name>
     <description>The eGovernment Standard Framework</description>
-	<url>http://www.egovframe.go.kr</url>
+    <url>http://www.egovframe.go.kr</url>
 
     <licenses>
         <license>
@@ -16,13 +17,13 @@
         </license>
     </licenses>
 
-	<properties>
-		<spring.maven.artifact.version>4.3.22.RELEASE</spring.maven.artifact.version>
-		<batch.maven.artifact.version>3.0.6.RELEASE</batch.maven.artifact.version>
-        <egovframework.rte.version>3.9.0</egovframework.rte.version>
-	</properties>
+    <properties>
+        <spring.maven.artifact.version>4.3.25.RELEASE</spring.maven.artifact.version>
+        <batch.maven.artifact.version>3.0.10.RELEASE</batch.maven.artifact.version>
+        <egovframework.rte.version>3.10.0</egovframework.rte.version>
+    </properties>
 
-	<dependencies>
+    <dependencies>
         <dependency>
             <groupId>egovframework.rte</groupId>
             <artifactId>egovframework.rte.fdl.logging</artifactId>
@@ -33,166 +34,165 @@
             <artifactId>egovframework.rte.fdl.cmmn</artifactId>
             <version>${egovframework.rte.version}</version>
         </dependency>
-        
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context-support</artifactId>
-			<version>${spring.maven.artifact.version}</version>
-			<exclusions>
-			    <!-- Exclude Commons Logging in favor of SLF4j -->
+        <dependency>
+            <groupId>egovframework.rte</groupId>
+            <artifactId>egovframework.rte.psl.dataaccess</artifactId>
+            <version>${egovframework.rte.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+            <version>${spring.maven.artifact.version}</version>
+            <exclusions>
                 <exclusion>
                     <artifactId>commons-logging</artifactId>
                     <groupId>commons-logging</groupId>
                 </exclusion>
                 <exclusion>
-                	<artifactId>spring-core</artifactId>
-                	<groupId>org.springframework</groupId>
+                    <artifactId>spring-core</artifactId>
+                    <groupId>org.springframework</groupId>
                 </exclusion>
                 <exclusion>
-                	<artifactId>spring-beans</artifactId>
-                	<groupId>org.springframework</groupId>
+                    <artifactId>spring-beans</artifactId>
+                    <groupId>org.springframework</groupId>
                 </exclusion>
                 <exclusion>
-                	<artifactId>spring-context</artifactId>
-                	<groupId>org.springframework</groupId>
+                    <artifactId>spring-context</artifactId>
+                    <groupId>org.springframework</groupId>
                 </exclusion>
                 <exclusion>
-                	<artifactId>spring-aop</artifactId>
-                	<groupId>org.springframework</groupId>
+                    <artifactId>spring-aop</artifactId>
+                    <groupId>org.springframework</groupId>
                 </exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-orm</artifactId>
-			<version>${spring.maven.artifact.version}</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>spring-core</artifactId>
-					<groupId>org.springframework</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>spring-beans</artifactId>
-					<groupId>org.springframework</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>spring-tx</artifactId>
-					<groupId>org.springframework</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>spring-jdbc</artifactId>
-					<groupId>org.springframework</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-webmvc</artifactId>
-			<version>${spring.maven.artifact.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.batch</groupId>
-			<artifactId>spring-batch-test</artifactId>
-			<version>${batch.maven.artifact.version}</version>
-			<exclusions>
-			    <!-- Exclude Commons Logging in favor of SLF4j -->
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+            <version>${spring.maven.artifact.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>spring-core</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-beans</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-tx</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-jdbc</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>${spring.maven.artifact.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.batch</groupId>
+            <artifactId>spring-batch-test</artifactId>
+            <version>${batch.maven.artifact.version}</version>
+            <exclusions>
                 <exclusion>
                     <artifactId>commons-logging</artifactId>
                     <groupId>commons-logging</groupId>
                 </exclusion>
                 <exclusion>
-		            <groupId>org.springframework</groupId>
-		            <artifactId>spring-test</artifactId>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-test</artifactId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-core</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-beans</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-context</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-aop</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-tx</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-jdbc</artifactId>
+                    <groupId>org.springframework</groupId>
                 </exclusion>
                 <exclusion>
                     <groupId>quartz</groupId>
                     <artifactId>quartz</artifactId>
                 </exclusion>
                 <exclusion>
-                	<artifactId>spring-core</artifactId>
-                	<groupId>org.springframework</groupId>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.batch</groupId>
+            <artifactId>spring-batch-integration</artifactId>
+            <version>${batch.maven.artifact.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>spring-tx</artifactId>
+                    <groupId>org.springframework</groupId>
                 </exclusion>
                 <exclusion>
-                	<artifactId>spring-beans</artifactId>
-                	<groupId>org.springframework</groupId>
+                    <artifactId>spring-beans</artifactId>
+                    <groupId>org.springframework</groupId>
                 </exclusion>
                 <exclusion>
-                	<artifactId>spring-context</artifactId>
-                	<groupId>org.springframework</groupId>
+                    <artifactId>sring-context</artifactId>
+                    <groupId>org.springframework</groupId>
                 </exclusion>
                 <exclusion>
-                	<artifactId>spring-aop</artifactId>
-                	<groupId>org.springframework</groupId>
+                    <artifactId>spring-core</artifactId>
+                    <groupId>org.springframework</groupId>
                 </exclusion>
                 <exclusion>
-                	<artifactId>spring-tx</artifactId>
-                	<groupId>org.springframework</groupId>
+                    <artifactId>spring-context</artifactId>
+                    <groupId>org.springframework</groupId>
                 </exclusion>
                 <exclusion>
-                	<artifactId>spring-jdbc</artifactId>
-                	<groupId>org.springframework</groupId>
+                    <artifactId>spring-aop</artifactId>
+                    <groupId>org.springframework</groupId>
                 </exclusion>
                 <exclusion>
-                	<groupId>junit</groupId>
-                	<artifactId>junit</artifactId>
+                    <artifactId>spring-messaging</artifactId>
+                    <groupId>org.springframework</groupId>
                 </exclusion>
-			</exclusions>
-		</dependency>
-
-		<!-- SpringJUnit4ClassRunner requires JUnit 4.12 or higher to add  -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-		    <groupId>org.springframework.batch</groupId>
-		    <artifactId>spring-batch-integration</artifactId>
-		    <version>${batch.maven.artifact.version}</version>
-		    <exclusions>
-                <exclusion>
-                	<artifactId>spring-tx</artifactId>
-                	<groupId>org.springframework</groupId>
-                </exclusion>
-                <exclusion>
-                	<artifactId>spring-beans</artifactId>
-                	<groupId>org.springframework</groupId>
-                </exclusion>
-                <exclusion>
-                	<artifactId>sring-context</artifactId>
-                	<groupId>org.springframework</groupId>
-                </exclusion>
-                <exclusion>
-                	<artifactId>spring-core</artifactId>
-                	<groupId>org.springframework</groupId>
-                </exclusion>
-                <exclusion>
-                	<artifactId>spring-context</artifactId>
-                	<groupId>org.springframework</groupId>
-                </exclusion>
-                <exclusion>
-                	<artifactId>spring-aop</artifactId>
-                	<groupId>org.springframework</groupId>
-                </exclusion>
-                <exclusion>
-                	<artifactId>spring-messaging</artifactId>
-                	<groupId>org.springframework</groupId>
-                </exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-		    <groupId>org.springframework</groupId>
-		    <artifactId>spring-messaging</artifactId>
-		    <version>${spring.maven.artifact.version}</version>
-		</dependency>
-		<dependency>
-		    <groupId>org.springframework</groupId>
-		    <artifactId>spring-aop</artifactId>
-		    <version>${spring.maven.artifact.version}</version>
-		</dependency>
-		<!-- for testing - Exclude에 따른 springframework 관련 추가 test/provided -->
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-messaging</artifactId>
+            <version>${spring.maven.artifact.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+            <version>${spring.maven.artifact.version}</version>
+        </dependency>
+        <!-- for testing - Exclude에 따른 springframework 관련 추가 test/provided -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-tx</artifactId>
@@ -206,127 +206,95 @@
 
         <!-- for testing -->
         <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>egovframework.rte</groupId>
             <artifactId>egovframework.rte.fdl.idgnr</artifactId>
             <version>${egovframework.rte.version}</version>
             <scope>test</scope>
             <exclusions>
-            	<exclusion>
-            		<artifactId>spring-context</artifactId>
-            		<groupId>org.springframework</groupId>
-            	</exclusion>
-            	<exclusion>
-            		<artifactId>spring-tx</artifactId>
-            		<groupId>org.springframework</groupId>
-            	</exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>egovframework.rte</groupId>
-            <artifactId>egovframework.rte.psl.dataaccess</artifactId>
-            <version>${egovframework.rte.version}</version>
-            <exclusions>
                 <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
+                    <artifactId>spring-context</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-tx</artifactId>
+                    <groupId>org.springframework</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <version>${spring.maven.artifact.version}</version>
             <scope>test</scope>
             <exclusions>
-            	<exclusion>
-            		<artifactId>spring-core</artifactId>
-            		<groupId>org.springframework</groupId>
-            	</exclusion>
-            </exclusions>
-        </dependency>
-		<dependency>
-		    <groupId>org.springframework</groupId>
-		    <artifactId>spring-oxm</artifactId>
-		    <version>${spring.maven.artifact.version}</version>
-		    <scope>test</scope>
-		    <exclusions>
-		    	<exclusion>
-		    		<artifactId>spring-core</artifactId>
-		    		<groupId>org.springframework</groupId>
-		    	</exclusion>
-		    	<exclusion>
-		    		<artifactId>spring-beans</artifactId>
-		    		<groupId>org.springframework</groupId>
-		    	</exclusion>
-		    </exclusions>
-		</dependency>
-		<dependency>
-		    <groupId>org.springmodules</groupId>
-		    <artifactId>spring-modules-validation</artifactId>
-		    <version>0.9</version>
-		    <scope>test</scope>
-		</dependency>
-				
-		<dependency>
-			<groupId>javax.mail</groupId>
-			<artifactId>mail</artifactId>
-			<version>1.4.2</version>
-			<scope>test</scope>			
-		</dependency>
-		<dependency>
-		    <groupId>javax.persistence</groupId>
-		    <artifactId>persistence-api</artifactId>
-		    <version>1.0.2</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>hsqldb</groupId>
-			<artifactId>hsqldb</artifactId>
-			<version>1.8.0.10</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>commons-dbcp</groupId>
-			<artifactId>commons-dbcp</artifactId>
-			<version>1.4</version>
-			<scope>test</scope>
-		</dependency>
-		
-<!-- 		<dependency>
-		    <groupId>com.googlecode.log4jdbc</groupId>
-		    <artifactId>log4jdbc</artifactId>
-		    <version>1.2</version>
-			<scope>test</scope>
-            <exclusions>
                 <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
+                    <artifactId>spring-core</artifactId>
+                    <groupId>org.springframework</groupId>
                 </exclusion>
             </exclusions>
-		</dependency> -->
-
-		<dependency>
-		    <groupId>javax.servlet</groupId>
-		    <artifactId>javax.servlet-api</artifactId>
-		    <version>3.1.0</version>
-		    <scope>test</scope>
-		</dependency>
-										
-		<!-- Quartz for test -->
-		<!-- 
-		<dependency>
-			<groupId>org.opensymphony.quartz</groupId>
-			<artifactId>quartz</artifactId>
-			<version>1.6.1</version>
-			<scope>test</scope>
-		</dependency>
-		 -->
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-oxm</artifactId>
+            <version>${spring.maven.artifact.version}</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>spring-core</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-beans</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springmodules</groupId>
+            <artifactId>spring-modules-validation</artifactId>
+            <version>0.9</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>1.5.0-b01</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.persistence</groupId>
+            <artifactId>persistence-api</artifactId>
+            <version>1.0.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>2.5.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+            <version>1.4</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>
-            <version>2.2.2</version> 
+            <version>2.3.2</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -337,12 +305,12 @@
         </dependency>
         <!--
         <dependency>
-            <groupId>org.quartz-scheduler</groupId>
-            <artifactId>quartz-jobs</artifactId>
-            <version>2.2.1</version>
+        <groupId>org.quartz-scheduler</groupId>
+        <artifactId>quartz-jobs</artifactId>
+        <version>2.2.1</version>
         </dependency>
-          -->
-	</dependencies>
+        -->
+    </dependencies>
 
     <build>
         <defaultGoal>install</defaultGoal>
@@ -353,7 +321,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.1</version>
+                    <version>3.8.1</version>
                     <configuration>
                         <source>1.7</source>
                         <target>1.7</target>
@@ -363,7 +331,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>hibernate3-maven-plugin</artifactId>
-                    <version>2.1</version>
+                    <version>3.0</version>
                     <configuration>
                         <components>
                             <component>
@@ -376,7 +344,7 @@
                         <dependency>
                             <groupId>org.hsqldb</groupId>
                             <artifactId>hsqldb</artifactId>
-                            <version>2.3.2</version>
+                            <version>2.5.0</version>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -390,7 +358,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-pmd-plugin</artifactId>
-                    <version>3.1</version>
+                    <version>3.12.0</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -411,7 +379,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.17</version>
+                <version>2.22.2</version>
                 <configuration>
                     <skipTests>false</skipTests>
                     <forkMode>once</forkMode>
@@ -434,17 +402,21 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9.1</version>
+                <version>3.1.1</version>
+                <configuration>
+                    <additionalJOption>-Xdoclint:none</additionalJOption>
+                </configuration>
             </plugin>
         </plugins>
     </build>
+
     <reporting>
         <outputDirectory>${basedir}/target/site</outputDirectory>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>2.7</version>
+                <version>3.0.0</version>
                 <reportSets>
                     <reportSet>
                         <id>sunlink</id>
@@ -478,30 +450,6 @@
                     </reportSet>
                 </reportSets>
             </plugin>
-            <!-- PMD manven plugin -->
-            <!--
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-pmd-plugin</artifactId>
-                <version>3.1</version>
-                <configuration>
-                    <rulesets>
-                        <ruleset>./Ruleset.xml</ruleset>
-                    </rulesets>
-                    <linkXref>true</linkXref>
-                    <sourceEncoding>${encoding}</sourceEncoding>
-                    <minimumTokens>100</minimumTokens>
-                    <targetJdk>${compileSource}</targetJdk>
-                </configuration>
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <report>pmd</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-            -->
             <!-- Generating JavaDoc Report -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -509,9 +457,10 @@
                 <configuration>
                     <minmemory>128m</minmemory>
                     <maxmemory>512m</maxmemory>
-                    <encoding>${encoding}</encoding>
-                    <docencoding>${encoding}</docencoding>
-                    <charset>${encoding}</charset>
+                    <encoding>UTF-8</encoding>
+                    <docencoding>UTF-8</docencoding>
+                    <charset>UTF-8</charset>
+                    <additionalJOption>-Xdoclint:none</additionalJOption>
                 </configuration>
             </plugin>
             <!-- Generating Java Source in HTML -->
@@ -519,8 +468,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jxr-plugin</artifactId>
                 <configuration>
-                    <inputEncoding>${encoding}</inputEncoding>
-                    <outputEncoding>${encoding}</outputEncoding>
+                    <inputEncoding>UTF-8</inputEncoding>
+                    <outputEncoding>UTF-8</outputEncoding>
                     <linkJavadoc>true</linkJavadoc>
                     <javadocDir>apidocs</javadocDir>
                 </configuration>

@@ -125,10 +125,20 @@ public class ServiceBridgeImpl implements ServiceBridge {
 						requestBody.put(paramInfo.getName(), typedObject);
 						
 					//2017.02.15 장동한 시큐어코딩(ES)-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
+					} catch(ClassNotFoundException e) {
+						LOGGER.error("[ClassNotFoundException] Cannot Create Request Message : " + e.getMessage());
+						succeed = false;
+					} catch(IllegalAccessException e) {
+						LOGGER.error("[IllegalAccessException] Cannot Create Request Message : " + e.getMessage());
+						succeed = false;
 					} catch(IllegalArgumentException e) {
-					    LOGGER.error("[IllegalArgumentException] Cannot parse request message : "+ e.getMessage());
-					} catch (Throwable e) {
-						LOGGER.error("Cannot parse request message {}", e);
+						LOGGER.error("[IllegalArgumentException] Cannot Create Request Message : " + e.getMessage());
+						succeed = false;
+					} catch(InstantiationException e) {
+						LOGGER.error("[InstantiationException] Cannot Create Request Message : " + e.getMessage());
+						succeed = false;
+					} catch(NoSuchFieldException e) {
+						LOGGER.error("[NoSuchFieldException] Cannot Create Request Message : " + e.getMessage());
 						succeed = false;
 					}
 				}

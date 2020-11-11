@@ -1,168 +1,145 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans:beans  xmlns="http://www.springframework.org/schema/security"
 	xmlns:beans="http://www.springframework.org/schema/beans"
-	xmlns:aop="http://www.springframework.org/schema/aop"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
-						http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.2.xsd
-						http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
-						http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
-    
-<context:annotation-config />
-    
-	<!-- separation of http -->
-	
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+
+	<context:annotation-config/>
+
 	<beans:bean id="loginUrlAuthenticationEntryPoint" class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
-		<!-- <beans:property name="loginFormUrl" ref="loginFormUrlFactoryBean" /> -->
+		<!-- <beans:property name="loginFormUrl" ref="loginFormUrlFactoryBean"/> -->
 		<beans:constructor-arg index="0" ref="loginFormUrlFactoryBean"/>
 	</beans:bean>
-	
-	<beans:bean id="loginFormUrlFactoryBean" class="egovframework.rte.fdl.security.config.internal.LoginFormUrlFactoryBean" />
+
+	<beans:bean id="loginFormUrlFactoryBean" class="egovframework.rte.fdl.security.config.internal.LoginFormUrlFactoryBean"/>
 
 	<!-- for concurrent control -->
 	<beans:bean id="sas" class="org.springframework.security.web.authentication.session.CompositeSessionAuthenticationStrategy">
 		<beans:constructor-arg>
 			<beans:list>
 				<beans:bean class="org.springframework.security.web.authentication.session.ConcurrentSessionControlAuthenticationStrategy">
-					<beans:constructor-arg ref="sessionRegistry" />
-					<beans:property name="maximumSessions" ref="maximumSessionsFactoryBean" />
-					<beans:property name="exceptionIfMaximumExceeded" value="false" />
+					<beans:constructor-arg ref="sessionRegistry"/>
+					<beans:property name="maximumSessions" ref="maximumSessionsFactoryBean"/>
+					<beans:property name="exceptionIfMaximumExceeded" ref="errorIfMaximumExceededFactoryBean"/>
 				</beans:bean>
 				<beans:bean class="org.springframework.security.web.authentication.session.SessionFixationProtectionStrategy"/>
 				<beans:bean class="org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy">
-					<beans:constructor-arg ref="sessionRegistry" />
+					<beans:constructor-arg ref="sessionRegistry"/>
 				</beans:bean>
 			</beans:list>
 		</beans:constructor-arg>
 	</beans:bean>
 
-	<beans:bean id="sessionRegistry" class="org.springframework.security.core.session.SessionRegistryImpl" />
+	<beans:bean id="sessionRegistry" class="org.springframework.security.core.session.SessionRegistryImpl"/>
 
 	<beans:bean id="concurrencyFilter" class="org.springframework.security.web.session.ConcurrentSessionFilter">
 		<beans:constructor-arg index="0" ref="sessionRegistry"/>
 		<beans:constructor-arg index="1" ref="sessionInformationExpiredStrategy"/>
 	</beans:bean>
-	
+
 	<beans:bean id="maximumSessionsFactoryBean" class="egovframework.rte.fdl.security.config.internal.MaximumSessionsFactoryBean"/>
+
 	<beans:bean id="expiredUrlFactoryBean" class="egovframework.rte.fdl.security.config.internal.ExpiredUrlFactoryBean"/>
+
+	<beans:bean id="errorIfMaximumExceededFactoryBean" class="egovframework.rte.fdl.security.config.internal.ErrorIfMaximumExceededFactoryBean"/>
+
 	<beans:bean id="sessionInformationExpiredStrategy" class="egovframework.rte.fdl.security.config.internal.EgovSessionInformationExpiredStrategy">
 		<beans:constructor-arg index="0" ref="expiredUrlFactoryBean"/>
 	</beans:bean>
 
-	<!--
-	authentication-manager 기본 생성 bean id :  org.springframework.security.authenticationManager
-		(alias로 변경할 수 있음)
-	-->
+	<!-- authentication-manager 기본 생성 bean id : org.springframework.security.authenticationManager (alias로 변경할 수 있음) -->
 	<authentication-manager>
 		<authentication-provider user-service-ref="jdbcUserService">
-			<password-encoder  hash="sha-256" base64="true"/>
-		</authentication-provider>		
+			<password-encoder hash="sha-256" base64="true"/>
+		</authentication-provider>
 	</authentication-manager>
 
-	<!--
-	<jdbc-user-service id="jdbcUserService" data-source-ref="dataSource"
-		users-by-username-query="SELECT USER_ID, PASSWORD, ENABLED, BIRTHDAY FROM USERS WHERE USER_ID = ?"
-		authorities-by-username-query="SELECT USER_ID, AUTHORITY FROM AUTHORITIES WHERE USER_ID = ?" />
-	-->
-	
-	<!-- customizing user table, authorities table -->	 
-	<beans:bean id="jdbcUserService" class="egovframework.rte.fdl.security.userdetails.jdbc.EgovJdbcUserDetailsManager" >
-		<beans:property name="roleHierarchy" ref="roleHierarchy" />
-		<beans:property name="dataSource" ref="dataSourceFactoryBean" />
-		<beans:property name="usersByUsernameQuery" ref="usersQueryFactoryBean" />
-		<beans:property name="authoritiesByUsernameQuery" ref="authoritiesQueryFactoryBean" />
-		
-		<beans:property name="mapClass" ref="mapClassFactoryBean" />
-	</beans:bean>
-	
-	<!--
-	<jdbc-user-service id="jdbcUserService" data-source-ref="dataSource"
-		users-by-username-query="SELECT USER_ID, PASSWORD, ENABLED, BIRTHDAY FROM USERS WHERE USER_ID = ?"
-		authorities-by-username-query="SELECT USER_ID, AUTHORITY FROM AUTHORITIES WHERE USER_ID = ?" />
-	-->
-	
-	<!-- FactorBeans -->
-	<beans:bean id="dataSourceFactoryBean" class="egovframework.rte.fdl.security.config.internal.DataSourceFactoryBean" />
-	
-	<beans:bean id="usersQueryFactoryBean" class="egovframework.rte.fdl.security.config.internal.UsersQueryFactoryBean">
-		<beans:property name="defaultQuery" value="select user_id, password, enabled, users.* from users where user_id = ?" />
-	</beans:bean>
-	
-	<beans:bean id="authoritiesQueryFactoryBean" class="egovframework.rte.fdl.security.config.internal.AuthoritiesQueryFactoryBean">
-		<beans:property name="defaultQuery" value="select user_id, authority from authorites where user_id = ?" />
-	</beans:bean>
-	
-	<beans:bean id="mapClassFactoryBean" class="egovframework.rte.fdl.security.config.internal.MapClassFactoryBean">
-		<beans:property name="defaultMapClass" value="egovframework.rte.fdl.security.userdetails.DefaultMapUserDetailsMapping" />
-	</beans:bean>
-	
-	<beans:bean id="requestMatcherTypeFactoryBean" class="egovframework.rte.fdl.security.config.internal.RequestMatcherTypeFactoryBean"/>
-	<!--  FactorBeans -->
-	
-	<beans:bean id="securedObjectService" class="egovframework.rte.fdl.security.securedobject.impl.SecuredObjectServiceImpl">
-		<beans:property name="securedObjectDAO" ref="securedObjectDAO"/>
-		<!-- beans:property name="requestMatcherType" value="ant"/-->	<!-- get requestMatcherType string from SecurityConfig bean -->
+	<beans:bean id="jdbcUserService" class="egovframework.rte.fdl.security.userdetails.jdbc.EgovJdbcUserDetailsManager">
+		<beans:property name="roleHierarchy" ref="roleHierarchy"/>
+		<beans:property name="dataSource" ref="dataSourceFactoryBean"/>
+		<beans:property name="usersByUsernameQuery" ref="usersQueryFactoryBean"/>
+		<beans:property name="authoritiesByUsernameQuery" ref="authoritiesQueryFactoryBean"/>
+		<beans:property name="mapClass" ref="mapClassFactoryBean"/>
 	</beans:bean>
 
-	<beans:bean id="securedObjectDAO" class="egovframework.rte.fdl.security.securedobject.impl.SecuredObjectDAO" >
+	<beans:bean id="dataSourceFactoryBean" class="egovframework.rte.fdl.security.config.internal.DataSourceFactoryBean"/>
+
+	<beans:bean id="usersQueryFactoryBean" class="egovframework.rte.fdl.security.config.internal.UsersQueryFactoryBean">
+		<beans:property name="defaultQuery" value="select user_id, password, enabled, users.* from users where user_id = ?"/>
+	</beans:bean>
+
+	<beans:bean id="authoritiesQueryFactoryBean" class="egovframework.rte.fdl.security.config.internal.AuthoritiesQueryFactoryBean">
+		<beans:property name="defaultQuery" value="select user_id, authority from authorites where user_id = ?"/>
+	</beans:bean>
+
+	<beans:bean id="mapClassFactoryBean" class="egovframework.rte.fdl.security.config.internal.MapClassFactoryBean">
+		<beans:property name="defaultMapClass" value="egovframework.rte.fdl.security.userdetails.DefaultMapUserDetailsMapping"/>
+	</beans:bean>
+
+	<beans:bean id="requestMatcherTypeFactoryBean" class="egovframework.rte.fdl.security.config.internal.RequestMatcherTypeFactoryBean"/>
+
+	<beans:bean id="securedObjectService" class="egovframework.rte.fdl.security.securedobject.impl.SecuredObjectServiceImpl">
+		<beans:property name="securedObjectDAO" ref="securedObjectDAO"/>
+	</beans:bean>
+
+	<beans:bean id="securedObjectDAO" class="egovframework.rte.fdl.security.securedobject.impl.SecuredObjectDAO">
 		<beans:property name="dataSource" ref="dataSourceFactoryBean"/>
 	</beans:bean>
-	
-	<beans:bean id="roleHierarchy"  class="org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl" >
-		<!-- XML 사용 
-		<beans:property name="hierarchy">
+
+	<beans:bean id="roleHierarchy"  class="org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl">
+		<!-- XML
+        <beans:property name="hierarchy">
 			<beans:value>
 				ROLE_ADMIN > ROLE_USER
 				ROLE_USER > ROLE_RESTRICTED
 				ROLE_RESTRICTED > IS_AUTHENTICATED_FULLY
 				IS_AUTHENTICATED_REMEMBERED > IS_AUTHENTICATED_ANONYMOUSLY
 			</beans:value>
-		</beans:property>
-		-->
-		<!-- DB 사용 -->
+        </beans:property>
+        -->
+		<!-- DB -->
 		<beans:property name="hierarchy" ref="hierarchyStrings"/>
 	</beans:bean>
 
-	<beans:bean id="hierarchyStrings" class="egovframework.rte.fdl.security.userdetails.hierarchicalroles.HierarchyStringsFactoryBean"
-		init-method="init">
+	<beans:bean id="hierarchyStrings" class="egovframework.rte.fdl.security.userdetails.hierarchicalroles.HierarchyStringsFactoryBean" init-method="init">
 		<beans:property name="securedObjectService" ref="securedObjectService"/>
 	</beans:bean>
-	
-	<beans:bean id="filterSecurityInterceptor" class="org.springframework.security.web.access.intercept.FilterSecurityInterceptor">	
- 		<beans:property name="authenticationManager" ref="org.springframework.security.authenticationManager" />
-		<beans:property name="accessDecisionManager" ref="accessDecisionManager" />
-		 <beans:property name="securityMetadataSource" ref="databaseSecurityMetadataSource" />
+
+	<beans:bean id="filterSecurityInterceptor" class="org.springframework.security.web.access.intercept.FilterSecurityInterceptor">
+		<beans:property name="authenticationManager" ref="org.springframework.security.authenticationManager"/>
+		<beans:property name="accessDecisionManager" ref="accessDecisionManager"/>
+		<beans:property name="securityMetadataSource" ref="databaseSecurityMetadataSource"/>
 	</beans:bean>
-	
-   <beans:bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
- 	<beans:constructor-arg>
-		 <beans:list>
-			<beans:bean class="org.springframework.security.access.vote.RoleVoter">
-				<beans:property name="rolePrefix" value="" />
-			</beans:bean>
-			<beans:bean class="org.springframework.security.access.vote.AuthenticatedVoter"/>
-			<!-- 
-			<beans:bean class="org.springframework.security.web.access.expression.WebExpressionVoter"/>
-			<beans:bean class="org.springframework.security.access.vote.AuthenticatedVoter"/> 
-			-->
-		 </beans:list>
-	  </beans:constructor-arg> 
+
+	<beans:bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
+		<beans:constructor-arg>
+			<beans:list>
+				<beans:bean class="org.springframework.security.access.vote.RoleVoter">
+					<beans:property name="rolePrefix" value=""/>
+				</beans:bean>
+				<beans:bean class="org.springframework.security.access.vote.AuthenticatedVoter"/>
+			</beans:list>
+		</beans:constructor-arg>
 		<!-- 기권 voter 통과 여부(기본값 true) -->
-		<beans:property name="allowIfAllAbstainDecisions" value="false" />
-   </beans:bean>
+		<beans:property name="allowIfAllAbstainDecisions" value="false"/>
+	</beans:bean>
 
 	<beans:bean id="databaseSecurityMetadataSource" class="egovframework.rte.fdl.security.intercept.EgovReloadableFilterInvocationSecurityMetadataSource">
-		<beans:constructor-arg ref="requestMap" />	
+		<beans:constructor-arg ref="requestMap"/>
 		<beans:property name="securedObjectService" ref="securedObjectService"/>
 	</beans:bean>
 
-	<!--  url  -->
-	<beans:bean id="requestMap" 	class="egovframework.rte.fdl.security.intercept.UrlResourcesMapFactoryBean" init-method="init">
+	<beans:bean id="requestMap" class="egovframework.rte.fdl.security.intercept.UrlResourcesMapFactoryBean" init-method="init">
 		<beans:property name="securedObjectService" ref="securedObjectService"/>
 	</beans:bean>
-	
-	<!-- 지정 불필요 : request-matcher 참조 -->
-	<!-- <beans:bean id="regexUrlPathMatcher" class="org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler" /> -->	
-   
+
+	<beans:bean name="CsrfAccessDeniedUrlFactoryBean" class="egovframework.rte.fdl.security.config.internal.CsrfAccessDeniedUrlFactoryBean"/>
+
+	<beans:bean name="csrfAccessDeniedHandler" class="egovframework.rte.fdl.security.intercept.CsrfAccessDeniedHandler">
+		<beans:constructor-arg name="csrfAccessDeniedUrl" ref="CsrfAccessDeniedUrlFactoryBean"/>
+	</beans:bean>
+
 </beans:beans>

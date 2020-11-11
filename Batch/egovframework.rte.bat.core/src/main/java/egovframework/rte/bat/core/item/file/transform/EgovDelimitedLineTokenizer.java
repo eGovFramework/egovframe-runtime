@@ -95,7 +95,7 @@ public class EgovDelimitedLineTokenizer extends EgovAbstractLineTokenizer {
 	/**
 	 * String 형태의 line을 delimiter기준으로 token으로  만든다.
 	 * 
-	 * @param String : ItemReader에서 읽어들인 line
+	 * @param line : ItemReader에서 읽어들인 line
 	 * @return List String : tokens
 	 */
 	public List<String> doTokenize(String line) {

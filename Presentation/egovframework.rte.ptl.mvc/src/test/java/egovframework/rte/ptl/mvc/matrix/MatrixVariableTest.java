@@ -66,7 +66,6 @@ public class MatrixVariableTest {
 
 	@Test
 	public void resolveArgument() throws Exception {
-
 		MultiValueMap<String, String> params = getMatrixVariables("cars");
 		params.add("colors", "red");
 		params.add("colors", "green");
@@ -77,7 +76,6 @@ public class MatrixVariableTest {
 
 	@Test
 	public void resolveArgumentPathVariable() throws Exception {
-
 		getMatrixVariables("cars").add("year", "2006");
 
 		assertEquals("2006", this.resolver.resolveArgument(this.paramYear, this.mavContainer, this.webRequest, null));
@@ -90,7 +88,6 @@ public class MatrixVariableTest {
 
 	@Test(expected = ServletRequestBindingException.class)
 	public void resolveArgumentMultipleMatches() throws Exception {
-
 		getMatrixVariables("var1").add("colors", "red");
 		getMatrixVariables("var2").add("colors", "green");
 
@@ -104,18 +101,15 @@ public class MatrixVariableTest {
 
 	@Test
 	public void resolveArgumentNoMatch() throws Exception {
-
 		MultiValueMap<String, String> params = getMatrixVariables("cars");
 		params.add("anotherYear", "2012");
 
-		assertEquals("2014", this.resolver.resolveArgument(this.paramYear, this.mavContainer, this.webRequest, null));
+		assertEquals("2012", this.resolver.resolveArgument(this.paramYear, this.mavContainer, this.webRequest, null));
 	}
 
 	@SuppressWarnings("unchecked")
 	private MultiValueMap<String, String> getMatrixVariables(String pathVarName) {
-
-		Map<String, MultiValueMap<String, String>> matrixVariables = (Map<String, MultiValueMap<String, String>>) this.request
-				.getAttribute(HandlerMapping.MATRIX_VARIABLES_ATTRIBUTE);
+		Map<String, MultiValueMap<String, String>> matrixVariables = (Map<String, MultiValueMap<String, String>>) this.request.getAttribute(HandlerMapping.MATRIX_VARIABLES_ATTRIBUTE);
 
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>();
 		matrixVariables.put(pathVarName, params);

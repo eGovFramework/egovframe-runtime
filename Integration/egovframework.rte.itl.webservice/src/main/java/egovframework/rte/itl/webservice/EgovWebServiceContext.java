@@ -668,9 +668,6 @@ public class EgovWebServiceContext implements EgovIntegrationContext,
 			} catch(IllegalArgumentException e) {
 				LOGGER.error("Fail in publishing Server (address = \"{}\") {}",
 						serverInfo.address, e);
-			} catch (Throwable e) {
-				LOGGER.error("Fail in publishing Server (address = \"{}\") {}",
-						serverInfo.address, e);
 			}
 		}
 

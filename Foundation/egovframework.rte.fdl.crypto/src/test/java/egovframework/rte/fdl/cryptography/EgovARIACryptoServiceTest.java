@@ -218,25 +218,19 @@ public class EgovARIACryptoServiceTest {
     
     @Test
 	public void testFile() {
-		//String filePath = "/META-INF/spring/file/test.hwp";
-    	//File srcFile = new File(this.getClass().getResource(filePath).getFile());
-    	String sPath = this.getClass().getResource("").getPath();
-    	File srcFile =  new File(sPath+"/test/test.txt");
-		
+		String filePath = "/META-INF/spring/file/test.txt";
+    	File srcFile = new File(this.getClass().getResource(filePath).getFile());
+
 		File trgtFile;
 		File decryptedFile;
 		try {
 			trgtFile = File.createTempFile("tmp", "encrypted");
 			trgtFile.deleteOnExit();
-			//trgtFile = new File("C:/test.enc");
-
-			System.out.println("Temp file : " + trgtFile.toString());
 
 			cryptoService.encrypt(srcFile, password, trgtFile);
 
 			decryptedFile = File.createTempFile("tmp", "decrypted");
 			decryptedFile.deleteOnExit();
-			//decryptedFile = new File("C:/test.dec.hwp");
 
 			cryptoService.decrypt(trgtFile, password, decryptedFile);
 

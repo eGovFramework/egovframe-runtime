@@ -140,17 +140,18 @@ public class EgovExcelXSSFServiceTest extends AbstractJUnit4SpringContextTests {
 			StringBuffer sb = new StringBuffer();
 			sb.append(fileLocation).append("/").append("testModifyCellContents.xlsx");
 
-			if (!EgovFileUtil.isExistsFile(sb.toString())) {
-				Workbook wbT = new XSSFWorkbook();
-				wbT.createSheet();
-
-				// 엑셀 파일 생성
-				excelService.createWorkbook(wbT, sb.toString());
+			if (EgovFileUtil.isExistsFile(sb.toString())) {
+				EgovFileUtil.delete(new File(sb.toString()));
+				LOGGER.debug("Delete file....{}", sb.toString());
 			}
 
+			// 엑셀 파일 생성
+			Workbook wbT = new XSSFWorkbook();
+			wbT.createSheet();
+			Workbook tmp = excelService.createWorkbook(wbT, sb.toString());
+
 			// 엑셀 파일 로드
-			XSSFWorkbook wb = null;
-			wb = excelService.loadWorkbook(sb.toString(), wb);
+			Workbook wb = excelService.loadWorkbook(sb.toString(), new XSSFWorkbook());
 			LOGGER.debug("testModifyCellContents after loadWorkbook....");
 
 			Sheet sheet = wb.getSheetAt(0);

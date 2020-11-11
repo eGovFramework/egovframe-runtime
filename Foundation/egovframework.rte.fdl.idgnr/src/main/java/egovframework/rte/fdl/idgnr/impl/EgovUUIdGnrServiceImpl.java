@@ -182,7 +182,7 @@ public class EgovUUIdGnrServiceImpl implements EgovIdGnrService, ApplicationCont
     /**
      * 정책정보를 입력받아 String 타입을 아이디 제공을 요청하면 불가능한 요청이라는 에러 발생
      * 
-     * @param strategy 정책 String
+     * @param strategyId 정책 String
      * @return String 타입 ID
      * @throws FdlException 아이디 생성에 실패한 경우
      */
@@ -228,7 +228,7 @@ public class EgovUUIdGnrServiceImpl implements EgovIdGnrService, ApplicationCont
                     while (stok.hasMoreTokens()) {
                         addressBytes[i++] = Integer.valueOf(stok.nextToken(), 16).byteValue();
                     }
-                } catch (Exception e) {
+                } catch (IllegalArgumentException e) {
                     throw new FdlException(ERROR_STRING);
                 }
             } else if (address.indexOf(":") > 0) {
@@ -242,7 +242,7 @@ public class EgovUUIdGnrServiceImpl implements EgovIdGnrService, ApplicationCont
                     while (stok.hasMoreTokens()) {
                         addressBytes[i++] = Integer.valueOf(stok.nextToken(), 16).byteValue();
                     }
-                } catch (Exception e) {
+                } catch (IllegalArgumentException e) {
                     throw new FdlException(ERROR_STRING);
                 }
             } else {

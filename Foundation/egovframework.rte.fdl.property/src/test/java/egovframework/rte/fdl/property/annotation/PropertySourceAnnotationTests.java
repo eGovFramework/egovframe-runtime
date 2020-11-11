@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package egovframework.rte.fdl.property.annotation;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -32,120 +31,118 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.MutablePropertySources;
 
-
 public class PropertySourceAnnotationTests {
 
-	@Test
-	public void withExplicitName() {
-		AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
-		ctx.register(ConfigWithExplicitName.class);
-		ctx.refresh();
-		assertTrue("property source p1 was not added",
-				ctx.getEnvironment().getPropertySources().contains("p1"));
-		assertThat(ctx.getBean(TestBean.class).getName(), equalTo("p1TestBean"));
+    @Test
+    public void withExplicitName() {
+        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+        ctx.register(ConfigWithExplicitName.class);
+        ctx.refresh();
+        assertTrue("property source p1 was not added", ctx.getEnvironment().getPropertySources().contains("p1"));
+        assertThat(ctx.getBean(TestBean.class).getName(), equalTo("p1TestBean"));
 
-		// assert that the property source was added last to the set of sources
-		String name;
-		MutablePropertySources sources = ctx.getEnvironment().getPropertySources();
-		Iterator<org.springframework.core.env.PropertySource<?>> iterator = sources.iterator();
-		do {
-			name = iterator.next().getName();
-		}
-		while(iterator.hasNext());
+        // assert that the property source was added last to the set of sources
+        String name;
+        MutablePropertySources sources = ctx.getEnvironment().getPropertySources();
+        Iterator<org.springframework.core.env.PropertySource<?>> iterator = sources.iterator();
+        do {
+            name = iterator.next().getName();
+        }
+        while (iterator.hasNext());
 
-		assertThat(name, is("p1"));
+        assertThat(name, is("p1"));
 
-		ctx.close();
-	}
+        ctx.close();
+    }
 
-	@Test
-	public void orderingIsLifo() {
-		{
-			AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
-			ctx.register(ConfigWithImplicitName.class, P2Config.class);
-			ctx.refresh();
-			// p2 should 'win' as it was registered last
-			assertThat(ctx.getBean(TestBean.class).getName(), equalTo("p2TestBean"));
+    @Test
+    public void orderingIsLifo() {
+        {
+            AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+            ctx.register(ConfigWithImplicitName.class, P2Config.class);
+            ctx.refresh();
+            // p2 should 'win' as it was registered last
+            assertThat(ctx.getBean(TestBean.class).getName(), equalTo("p2TestBean"));
 
-			ctx.close();
-		}
+            ctx.close();
+        }
 
-		{
-			AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
-			ctx.register(P2Config.class, ConfigWithImplicitName.class);
-			ctx.refresh();
-			// p1 should 'win' as it was registered last
-			assertThat(ctx.getBean(TestBean.class).getName(), equalTo("p1TestBean"));
+        {
+            AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+            ctx.register(P2Config.class, ConfigWithImplicitName.class);
+            ctx.refresh();
+            // p1 should 'win' as it was registered last
+            assertThat(ctx.getBean(TestBean.class).getName(), equalTo("p1TestBean"));
 
-			ctx.close();
-		}
-	}
+            ctx.close();
+        }
+    }
 
-	@Test
-	public void withNameAndMultipleResourceLocations() {
-		AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
-		ctx.register(ConfigWithNameAndMultipleResourceLocations.class);
-		ctx.refresh();
-		assertThat(ctx.getEnvironment().containsProperty("from.p1"), is(true));
-		assertThat(ctx.getEnvironment().containsProperty("from.p2"), is(true));
+    @Test
+    public void withNameAndMultipleResourceLocations() {
+        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+        ctx.register(ConfigWithNameAndMultipleResourceLocations.class);
+        ctx.refresh();
+        assertThat(ctx.getEnvironment().containsProperty("from.p1"), is(true));
+        assertThat(ctx.getEnvironment().containsProperty("from.p2"), is(true));
 
-		ctx.close();
-	}
+        ctx.close();
+    }
 
-	@Configuration
-	@PropertySource("classpath:properties/p1.properties")
-	static class ConfigWithImplicitName {
-		@Autowired
-		Environment env;
+    @Configuration
+    @PropertySource("classpath:properties/p1.properties")
+    static class ConfigWithImplicitName {
+        @Autowired
+        Environment env;
 
-		@Bean
-		public TestBean testBean() {
-			return new TestBean(env.getProperty("testbean.name"));
-		}
-	}
+        @Bean
+        public TestBean testBean() {
+            return new TestBean(env.getProperty("testbean.name"));
+        }
+    }
 
-	@Configuration
-	@PropertySource(name="p1", value="classpath:properties/p1.properties")
-	static class ConfigWithExplicitName {
-		@Autowired
-		Environment env;
+    @Configuration
+    @PropertySource(name = "p1", value = "classpath:properties/p1.properties")
+    static class ConfigWithExplicitName {
+        @Autowired
+        Environment env;
 
-		@Bean
-		public TestBean testBean() {
-			return new TestBean(env.getProperty("testbean.name"));
-		}
-	}
-
-
-	@Configuration
-	@PropertySource("classpath:properties/p2.properties")
-	static class P2Config {
-	}
-
-	@Configuration
-	@PropertySource(
-			name = "psName",
-			value = {
-					"classpath:properties/p1.properties",
-					"classpath:properties/p2.properties"
-			})
-	static class ConfigWithNameAndMultipleResourceLocations {
-
-		/**추가함***/
-		@Autowired
-		Environment env;
-
-		@Bean
-		public String TesDoubleProperties(){
-			String temp = env.getProperty("testbean.name");
-			return temp;
-		}
-		/***End***/
-	}
+        @Bean
+        public TestBean testBean() {
+            return new TestBean(env.getProperty("testbean.name"));
+        }
+    }
 
 
-	@Configuration
-	@PropertySource(value = {})
-	static class ConfigWithEmptyResourceLocations {
-	}
+    @Configuration
+    @PropertySource("classpath:properties/p2.properties")
+    static class P2Config {
+    }
+
+    @Configuration
+    @PropertySource(
+            name = "psName",
+            value = {
+                    "classpath:properties/p1.properties",
+                    "classpath:properties/p2.properties"
+            })
+    static class ConfigWithNameAndMultipleResourceLocations {
+        /**
+         * 추가함
+         ***/
+        @Autowired
+        Environment env;
+
+        @Bean
+        public String TesDoubleProperties() {
+            String temp = env.getProperty("testbean.name");
+            return temp;
+        }
+        /***End***/
+    }
+
+    @Configuration
+    @PropertySource(value = {})
+    static class ConfigWithEmptyResourceLocations {
+    }
 }

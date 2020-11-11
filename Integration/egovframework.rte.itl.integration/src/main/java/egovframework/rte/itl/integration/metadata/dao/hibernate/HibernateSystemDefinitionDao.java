@@ -62,8 +62,9 @@ public class HibernateSystemDefinitionDao extends HibernateDaoSupport implements
 
 		SystemDefinition systemDefinition = null;
 
-		List<SystemDefinition> result = (List<SystemDefinition>) getHibernateTemplate().find("from SystemDefinition as system " + "where system.organization.id = ? " + "and system.id = ?",
-				new Object[] { organizationId, systemId });
+		List<SystemDefinition> result = (List<SystemDefinition>) getHibernateTemplate().find(
+				"from SystemDefinition as system " + "where system.organization.id = ?0 "
+						+ "and system.id = ?1 ", new Object[] { organizationId, systemId });
 		if (result != null && result.size() > 0) {
 			systemDefinition = result.get(0);
 			if (result.size() > 1) {

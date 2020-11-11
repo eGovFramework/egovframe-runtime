@@ -28,45 +28,47 @@ import javax.sql.DataSource;
  * @see <pre>
  *  == 개정이력(Modification Information) ==
  *   
- *   수정일				수정자		수정내용
+ *   수정일		수정자					수정내용
  *  ---------------------------------------------------------------------------------
- *   2014.03.12	한성곤		Spring Security 설정 간소화 기능 추가
- *   2017.07.03	장동한		Spring Security 4.x 업그레이드(보안설정기능) 추가
+ *   2014.03.12	한성곤					Spring Security 설정 간소화 기능 추가
+ *   2017.07.03	장동한					Spring Security 4.x 업그레이드(보안설정기능) 추가
+ *   2020.05.27	Egovframework Center	CSRF Access Denied 처리 URL 추가
  * 
  * </pre>
  */
 public class SecurityConfig {
     public static final String DEF_USERS_BY_USERNAME_QUERY_SQL = "select user_id, password, enabled, users.* from users where user_id = ?";
     public static final String DEF_AUTHORITIES_BY_USERNAME_QUERY_SQL = "select user_id, authority from authorites where user_id = ?";
-    
+
 	private String loginUrl;
 	private String logoutSuccessUrl;
 	private String loginFailureUrl;
 	private String accessDeniedUrl;
-	
+
 	private DataSource dataSource;
-	
+
 	private String jdbcUsersByUsernameQuery = DEF_USERS_BY_USERNAME_QUERY_SQL;
 	private String jdbcAuthoritiesByUsernameQuery = DEF_AUTHORITIES_BY_USERNAME_QUERY_SQL;
-	
 	private String jdbcMapClass = "egovframework.rte.fdl.security.userdetails.DefaultMapUserDetailsMapping";
-	
-	private String requestMatcherType = "regex";		// regex, ant, ciRegex (case-insensitive) 
-	private String hash = "sha-256";							// hashing algorithm
-	private boolean hashBase64 = true;						// default = true
-	
+
+	private String requestMatcherType = "regex";	// regex, ant, ciRegex (case-insensitive)
+	private String hash = "sha-256";				// hashing algorithm
+	private boolean hashBase64 = true;				// default = true
+
 	private int concurrentMaxSessons;
 	private String concurrentExpiredUrl;
-	
+	private boolean errorIfMaximumExceeded;
 	private String defaultTargetUrl;
-
+	private boolean alwaysUseDefaultTargetUrl;
 	private boolean supportPointcut;
-	
+
 	private boolean sniff;
 	private String xframeOptions;
 	private boolean xssProtection;
+	private boolean cacheControl;
 	private boolean csrf;
-	
+	private String csrfAccessDeniedUrl;
+
 	public String getLoginUrl() {
 		return loginUrl;
 	}
@@ -171,6 +173,14 @@ public class SecurityConfig {
 		this.concurrentExpiredUrl = concurrentExpiredUrl;
 	}
 
+	public boolean getErrorIfMaximumExceeded() {
+		return errorIfMaximumExceeded;
+	}
+
+	public void setErrorIfMaximumExceeded(boolean errorIfMaximumExceeded) {
+		this.errorIfMaximumExceeded = errorIfMaximumExceeded;
+	}
+
 	public String getDefaultTargetUrl() {
 		return defaultTargetUrl;
 	}
@@ -178,6 +188,10 @@ public class SecurityConfig {
 	public void setDefaultTargetUrl(String defaultTargetUrl) {
 		this.defaultTargetUrl = defaultTargetUrl;
 	}
+
+	public boolean isAlwaysUseDefaultTargetUrl() { return alwaysUseDefaultTargetUrl; }
+
+	public void setAlwaysUseDefaultTargetUrl(boolean alwaysUseDefaultTargetUrl) { this.alwaysUseDefaultTargetUrl = alwaysUseDefaultTargetUrl; }
 
 	public boolean isHashBase64() {
 		return hashBase64;
@@ -190,26 +204,49 @@ public class SecurityConfig {
 	public boolean isSniff() {
 		return sniff;
 	}
+
 	public void setSniff(boolean sniff) {
 		this.sniff = sniff;
 	}
+
 	public String getXframeOptions() {
 		return xframeOptions;
 	}
+
 	public void setXframeOptions(String xFrameOptions) {
 		this.xframeOptions = xFrameOptions;
 	}
+
 	public boolean isXssProtection() {
 		return xssProtection;
 	}
+
 	public void setXssProtection(boolean xssProtection) {
 		this.xssProtection = xssProtection;
 	}
+
+	public boolean getCacheControl() {
+		return cacheControl;
+	}
+
+	public void setCacheControl(boolean cacheControl) {
+		this.cacheControl = cacheControl;
+	}
+
 	public boolean isCsrf() {
 		return csrf;
 	}
+
 	public void setCsrf(boolean csrf) {
 		this.csrf = csrf;
 	}
-	
+
+	public String getCsrfAccessDeniedUrl() {
+		return csrfAccessDeniedUrl;
+	}
+
+	public void setCsrfAccessDeniedUrl(String csrfAccessDeniedUrl) {
+		this.csrfAccessDeniedUrl = csrfAccessDeniedUrl;
+	}
+
 }

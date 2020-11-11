@@ -1,6 +1,5 @@
 package egovframework.rte.fdl.property.db;
 
-
 //DB기반의 PropertySource의 경우, XML에서 property적용시 사용
 public class PropertySourceTestInXml {
 

@@ -134,77 +134,57 @@ public class LogLayoutTest {
 
 		// 위의 %d %5p [%c] 및 마지막 %m%n 의 출력은 동일
 		// thread 명이 main 으로만 나올 때도 있고 main [client-10] 과 같이 나오는 경우도 있음
-		String patternStr = "^(.*\\]) (egovframework\\.rte\\.fdl\\.logging\\.sample\\.LogLayoutSample) (executeSomeLogic) ([0-9]{2,}) ([a-z]+ ?\\[client-[0-9]{0,2}\\]|[a-z]+) ([0-9]+) (.*)$";
+		String patternStr = "^(.*) ([a-zA-Z]+) \\[(egovframework\\.rte\\.fdl\\.logging\\.sample\\.LogLayoutSample)\\] (.*)$";
 		Pattern pattern = Pattern.compile(patternStr);
 		Matcher matcher = pattern.matcher(tailLines[0]);
 		boolean isMatch = matcher.matches();
 		assertTrue(isMatch);
-		// if (isMatch) {
-		// for (int i=0; i<=matcher.groupCount(); i++) {
-		// String groupStr = matcher.group(i);
-		// LogManager.getLogger("sysoutLogger").debug(groupStr);
-		// }
-		// }
+
 		LogManager.getLogger("sysoutLogger").debug("== tailLines[0] ==");
-		LogManager.getLogger("sysoutLogger").debug(	"%d %5p [%c] : " + matcher.group(1));
-		LogManager.getLogger("sysoutLogger").debug("%C : " + matcher.group(2));
-		LogManager.getLogger("sysoutLogger").debug("%M : " + matcher.group(3));
-		LogManager.getLogger("sysoutLogger").debug("%L : " + matcher.group(4));
-		LogManager.getLogger("sysoutLogger").debug("%t : " + matcher.group(5));
-		LogManager.getLogger("sysoutLogger").debug("%r : " + matcher.group(6));
-		LogManager.getLogger("sysoutLogger").debug("%m%n : " + matcher.group(7));
+		LogManager.getLogger("sysoutLogger").debug("%d : " + matcher.group(1));
+		LogManager.getLogger("sysoutLogger").debug("%5p : " + matcher.group(2));
+		LogManager.getLogger("sysoutLogger").debug("[%c] : " + matcher.group(3));
+		LogManager.getLogger("sysoutLogger").debug("%m%n : " + matcher.group(4));
 
 		matcher = pattern.matcher(tailLines[1]);
 		isMatch = matcher.matches();
 		assertTrue(isMatch);
 
 		LogManager.getLogger("sysoutLogger").debug("== tailLines[1] ==");
-		LogManager.getLogger("sysoutLogger").debug(	"%d %5p [%c] : " + matcher.group(1));
-		LogManager.getLogger("sysoutLogger").debug("%C : " + matcher.group(2));
-		LogManager.getLogger("sysoutLogger").debug("%M : " + matcher.group(3));
-		LogManager.getLogger("sysoutLogger").debug("%L : " + matcher.group(4));
-		LogManager.getLogger("sysoutLogger").debug("%t : " + matcher.group(5));
-		LogManager.getLogger("sysoutLogger").debug("%r : " + matcher.group(6));
-		LogManager.getLogger("sysoutLogger").debug("%m%n : " + matcher.group(7));
+		LogManager.getLogger("sysoutLogger").debug("%d : " + matcher.group(1));
+		LogManager.getLogger("sysoutLogger").debug("%5p : " + matcher.group(2));
+		LogManager.getLogger("sysoutLogger").debug("[%c] : " + matcher.group(3));
+		LogManager.getLogger("sysoutLogger").debug("%m%n : " + matcher.group(4));
 
 		matcher = pattern.matcher(tailLines[2]);
 		isMatch = matcher.matches();
 		assertTrue(isMatch);
 
 		LogManager.getLogger("sysoutLogger").debug("== tailLines[2] ==");
-		LogManager.getLogger("sysoutLogger").debug("%d %5p [%c] : " + matcher.group(1));
-		LogManager.getLogger("sysoutLogger").debug("%C : " + matcher.group(2));
-		LogManager.getLogger("sysoutLogger").debug("%M : " + matcher.group(3));
-		LogManager.getLogger("sysoutLogger").debug("%L : " + matcher.group(4));
-		LogManager.getLogger("sysoutLogger").debug("%t : " + matcher.group(5));
-		LogManager.getLogger("sysoutLogger").debug("%r : " + matcher.group(6));
-		LogManager.getLogger("sysoutLogger").debug("%m%n : " + matcher.group(7));
+		LogManager.getLogger("sysoutLogger").debug("%d : " + matcher.group(1));
+		LogManager.getLogger("sysoutLogger").debug("%5p : " + matcher.group(2));
+		LogManager.getLogger("sysoutLogger").debug("[%c] : " + matcher.group(3));
+		LogManager.getLogger("sysoutLogger").debug("%m%n : " + matcher.group(4));
 
 		matcher = pattern.matcher(tailLines[3]);
 		isMatch = matcher.matches();
 		assertTrue(isMatch);
 
 		LogManager.getLogger("sysoutLogger").debug("== tailLines[3] ==");
-		LogManager.getLogger("sysoutLogger").debug(	"%d %5p [%c] : " + matcher.group(1));
-		LogManager.getLogger("sysoutLogger").debug("%C : " + matcher.group(2));
-		LogManager.getLogger("sysoutLogger").debug("%M : " + matcher.group(3));
-		LogManager.getLogger("sysoutLogger").debug("%L : " + matcher.group(4));
-		LogManager.getLogger("sysoutLogger").debug("%t : " + matcher.group(5));
-		LogManager.getLogger("sysoutLogger").debug("%r : " + matcher.group(6));
-		LogManager.getLogger("sysoutLogger").debug("%m%n : " + matcher.group(7));
+		LogManager.getLogger("sysoutLogger").debug("%d : " + matcher.group(1));
+		LogManager.getLogger("sysoutLogger").debug("%5p : " + matcher.group(2));
+		LogManager.getLogger("sysoutLogger").debug("[%c] : " + matcher.group(3));
+		LogManager.getLogger("sysoutLogger").debug("%m%n : " + matcher.group(4));
 
 		matcher = pattern.matcher(tailLines[4]);
 		isMatch = matcher.matches();
 		assertTrue(isMatch);
 
 		LogManager.getLogger("sysoutLogger").debug("== tailLines[4] ==");
-		LogManager.getLogger("sysoutLogger").debug(	"%d %5p [%c] : " + matcher.group(1));
-		LogManager.getLogger("sysoutLogger").debug("%C : " + matcher.group(2));
-		LogManager.getLogger("sysoutLogger").debug("%M : " + matcher.group(3));
-		LogManager.getLogger("sysoutLogger").debug("%L : " + matcher.group(4));
-		LogManager.getLogger("sysoutLogger").debug("%t : " + matcher.group(5));
-		LogManager.getLogger("sysoutLogger").debug("%r : " + matcher.group(6));
-		LogManager.getLogger("sysoutLogger").debug("%m%n : " + matcher.group(7));
+		LogManager.getLogger("sysoutLogger").debug("%d : " + matcher.group(1));
+		LogManager.getLogger("sysoutLogger").debug("%5p : " + matcher.group(2));
+		LogManager.getLogger("sysoutLogger").debug("[%c] : " + matcher.group(3));
+		LogManager.getLogger("sysoutLogger").debug("%m%n : " + matcher.group(4));
 	}
 
 	/**

@@ -28,7 +28,7 @@ package egovframework.rte.fdl.cryptography.config;
  * @see
  *
  * <pre>
- * << 개정이력(Modification Information) >>
+ * == 개정이력(Modification Information) ==
  *
  *   수정일        수정자           수정내용
  *  -------      -------------  ----------------------
@@ -66,8 +66,7 @@ public class EgovCryptoConfig  {
 	
 	/**
 	 * 환경설정 Property 경로 getter
-	 * 
-	 * @param N/A
+	 *
 	 * @return String
 	 */
 	public String getCryptoPropertyLocation() {
@@ -89,8 +88,7 @@ public class EgovCryptoConfig  {
 	
 	/**
 	 * 데이터베이스 접속 항목(계정명)에 대한 getter
-	 * 
-	 * @param N/A
+	 *
 	 * @return String
 	 */
 	public String getUsername() {
@@ -109,8 +107,7 @@ public class EgovCryptoConfig  {
 
 	/**
 	 * 데이터베이스 접속 항목(비밀번호)에 대한 getter
-	 * 
-	 * @param N/A
+	 *
 	 * @return String
 	 */
 	public String getPassword() {
@@ -129,8 +126,7 @@ public class EgovCryptoConfig  {
 
 	/**
 	 * 데이터베이스 접속 항목(URL)에 대한 setter
-	 * 
-	 * @param N/A
+	 *
 	 * @return String
 	 */
 	public String getUrl() {
@@ -149,8 +145,7 @@ public class EgovCryptoConfig  {
 
 	/**
 	 * Crypto 사용여부에 대한 getter
-	 * 
-	 * @param N/A
+	 *
 	 * @return boolean
 	 */
 	public boolean isCrypto() {
@@ -169,8 +164,7 @@ public class EgovCryptoConfig  {
 	
 	/**
 	 * 초기화 여부에 대한 getter
-	 * 
-	 * @param N/A
+	 *
 	 * @return boolean
 	 */
 	public boolean isInitial() {
@@ -189,8 +183,7 @@ public class EgovCryptoConfig  {
 
 	/**
 	 * Crypto 계정 알고리즘 지정에 대한 getter
-	 * 
-	 * @param cryptoAlgorithm 계정 암호화 알고리즘(MD5, SHA-1, SHA-256)
+	 *
 	 * @return void
 	 */
 	public String getAlgorithm() {
@@ -200,7 +193,7 @@ public class EgovCryptoConfig  {
 	/**
 	 * Crypto 계정 알고리즘 지정에 대한 setter
 	 * 
-	 * @param N/A
+	 * @param algorithm 계정 암호화 알고리즘(MD5, SHA-1, SHA-256)
 	 * @return String
 	 */
 	public void setAlgorithm(String algorithm) {
@@ -209,8 +202,7 @@ public class EgovCryptoConfig  {
 
 	/**
 	 * Crypto 계정 알고리즘키에 대한 getter
-	 * 
-	 * @param N/A
+	 *
 	 * @return String
 	 */
 	public String getAlgorithmKey() {
@@ -220,7 +212,7 @@ public class EgovCryptoConfig  {
 	/**
 	 * Crypto 알고리즘 키에 대한 setter
 	 * 
-	 * @param cyptoAlgorithmKey 알고리즘키
+	 * @param algorithmKey 알고리즘키
 	 * @return void
 	 */
 	public void setAlgorithmKey(String algorithmKey) {
@@ -229,8 +221,7 @@ public class EgovCryptoConfig  {
 
 	/**
 	 * Crypto 알고리즘 키 Hash에 대한 getter
-	 * 
-	 * @param N/A
+	 *
 	 * @return String
 	 */
 	public String getAlgorithmKeyHash() {
@@ -240,7 +231,7 @@ public class EgovCryptoConfig  {
 	/**
 	 * Crypto 알고리즘 키 Hash에 대한 setter
 	 * 
-	 * @param cyptoAlgorithmKeyHash 알고리즘키Hash코드
+	 * @param algorithmKeyHash 알고리즘키Hash코드
 	 * @return void
 	 */
 	public void setAlgorithmKeyHash(String algorithmKeyHash) {
@@ -249,8 +240,7 @@ public class EgovCryptoConfig  {
 
 	/**
 	 * Crypto 블럭 사이즈에 대한 getter
-	 * 
-	 * @param N/A
+	 *
 	 * @return int
 	 */
 	public int getCryptoBlockSize() {

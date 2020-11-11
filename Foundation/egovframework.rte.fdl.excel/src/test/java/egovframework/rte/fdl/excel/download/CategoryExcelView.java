@@ -3,103 +3,89 @@ package egovframework.rte.fdl.excel.download;
 import java.util.List;
 import java.util.Map;
 
-import egovframework.rte.fdl.excel.vo.UsersVO;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.servlet.view.document.AbstractExcelView;
+import org.springframework.web.servlet.view.AbstractView;
+import egovframework.rte.fdl.excel.vo.UsersVO;
 
-public class CategoryExcelView extends AbstractExcelView {
+public class CategoryExcelView extends AbstractView {
 
 	private static final Logger LOGGER  = LoggerFactory.getLogger(CategoryExcelView.class);
 
 	@Override
-	@SuppressWarnings("unchecked")
-	protected void buildExcelDocument(Map<String, Object> model, HSSFWorkbook wb, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        HSSFCell cell = null;
+	protected void renderMergedOutputModel(Map<String, Object> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-        LOGGER.debug("### buildExcelDocument start !!!");
+		response.setContentType("application/vnd.ms-excel");
 
-        HSSFSheet sheet = wb.createSheet("User List");
-        sheet.setDefaultColumnWidth(12);
+		LOGGER.debug("### buildExcelDocument start !!!");
 
-        // put text in first cell
-        cell = getCell(sheet, 0, 0);
-        setText(cell, "User List");
+		HSSFWorkbook wb = new HSSFWorkbook();
+		HSSFSheet sheet = wb.createSheet("User List");
 
-        // set header information
-        setText(getCell(sheet, 2, 0), "id");
-        setText(getCell(sheet, 2, 1), "name");
-        setText(getCell(sheet, 2, 2), "description");
-        setText(getCell(sheet, 2, 3), "use_yn");
-        setText(getCell(sheet, 2, 4), "reg_user");
+		HSSFRow row = sheet.createRow(0);
+		row.createCell(0).setCellValue("User List");
 
-        LOGGER.debug("### buildExcelDocument cast");
+		// set header information
+		row = sheet.createRow(2);
+		row.createCell(0).setCellValue("id");
+		row.createCell(1).setCellValue("name");
+		row.createCell(2).setCellValue("description");
+		row.createCell(3).setCellValue("use_yn");
+		row.createCell(4).setCellValue("reg_user");
+
+		LOGGER.debug("### buildExcelDocument cast");
 
 		Map<String, Object> map= (Map<String, Object>) model.get("categoryMap");
-        List<Object> categories = (List<Object>) map.get("category");
+		List<Object> categories = (List<Object>) map.get("category");
 
-        boolean isVO = false;
+		boolean isVO = false;
 
-        if (categories.size() > 0) {
-        	Object obj = categories.get(0);
-        	isVO = obj instanceof UsersVO;
-        }
+		if (categories.size() > 0) {
+			Object obj = categories.get(0);
+			isVO = obj instanceof UsersVO;
+		}
 
-        for (int i = 0; i < categories.size(); i++) {
+		int rowIndex = 3;
 
-        	if (isVO) {	// VO
+		for (int i = 0; i < categories.size(); i++) {
 
-        		LOGGER.debug("### buildExcelDocument VO : {} started!!", i);
+			row = sheet.createRow(rowIndex);
 
-        		UsersVO category = (UsersVO) categories.get(i);
+			if (isVO) {
 
-	            cell = getCell(sheet, 3 + i, 0);
-	            setText(cell, category.getId());
+				LOGGER.debug("### buildExcelDocument VO : {} started!!", i);
 
-	            cell = getCell(sheet, 3 + i, 1);
-	            setText(cell, category.getName());
+				UsersVO category = (UsersVO) categories.get(i);
+				row.createCell(0).setCellValue(category.getId());
+				row.createCell(1).setCellValue(category.getName());
+				row.createCell(2).setCellValue(category.getDescription());
+				row.createCell(3).setCellValue(category.getUseYn());
+				row.createCell(4).setCellValue(category.getRegUser());
 
-	            cell = getCell(sheet, 3 + i, 2);
-	            setText(cell, category.getDescription());
+				LOGGER.debug("### buildExcelDocument VO : {} end!!", i);
 
-	            cell = getCell(sheet, 3 + i, 3);
-	            setText(cell, category.getUseYn());
+			} else {	// Map
 
-	            cell = getCell(sheet, 3 + i, 4);
-	            setText(cell, category.getRegUser());
+				LOGGER.debug("### buildExcelDocument Map : {} started!!", i);
 
-	            LOGGER.debug("### buildExcelDocument VO : {} end!!", i);
+				Map<String, String> category = (Map<String, String>) categories.get(i);
+				row.createCell(0).setCellValue(category.get("id"));
+				row.createCell(1).setCellValue(category.get("name"));
+				row.createCell(2).setCellValue(category.get("description"));
+				row.createCell(3).setCellValue(category.get("useyn"));
+				row.createCell(4).setCellValue(category.get("reguser"));
 
-        	 } else {	// Map
+				LOGGER.debug("### buildExcelDocument Map : {} end!!", i);
+			}
 
-        		LOGGER.debug("### buildExcelDocument Map : {} started!!", i);
+			rowIndex++;
 
-        		Map<String, String> category = (Map<String, String>) categories.get(i);
-
- 	            cell = getCell(sheet, 3 + i, 0);
- 	            setText(cell, category.get("id"));
-
- 	            cell = getCell(sheet, 3 + i, 1);
- 	            setText(cell, category.get("name"));
-
- 	            cell = getCell(sheet, 3 + i, 2);
- 	            setText(cell, category.get("description"));
-
- 	            cell = getCell(sheet, 3 + i, 3);
- 	            setText(cell, category.get("useyn"));
-
- 	            cell = getCell(sheet, 3 + i, 4);
- 	            setText(cell, category.get("reguser"));
-
- 	            LOGGER.debug("### buildExcelDocument Map : {} end!!", i);
-        	 }
-        }
-    }
+		}
+	}
 }

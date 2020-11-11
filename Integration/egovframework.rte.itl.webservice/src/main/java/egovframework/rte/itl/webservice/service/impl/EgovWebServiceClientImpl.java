@@ -246,11 +246,18 @@ public class EgovWebServiceClientImpl implements EgovWebServiceClient {
 			succeed = true;
 			
 		//2017.02.15 장동한 시큐어코딩(ES)-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
+		} catch(ClassNotFoundException e) {
+			LOGGER.error("[ClassNotFoundException] Cannot Create Request Message : " + e.getMessage());
+		} catch(IllegalAccessException e) {
+			LOGGER.error("[IllegalAccessException] Cannot Create Request Message : " + e.getMessage());
 		} catch(IllegalArgumentException e) {
-		    LOGGER.error("[IllegalArgumentException] Cannot Create Request Message : "+ e.getMessage());
-		} catch (Throwable e) {
-			LOGGER.error("Cannot Create Request Message {}", e);
+		    LOGGER.error("[IllegalArgumentException] Cannot Create Request Message : " + e.getMessage());
+		} catch(InstantiationException e) {
+			LOGGER.error("[InstantiationException] Cannot Create Request Message : " + e.getMessage());
+		} catch(NoSuchFieldException e) {
+			LOGGER.error("[NoSuchFieldException] Cannot Create Request Message : " + e.getMessage());
 		}
+
 		if (succeed == false) {
 			// 요청 메시시 생성 실패
 			return new EgovWebServiceMessage(new EgovWebServiceMessageHeader(

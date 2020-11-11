@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.cache.CacheException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.ReflectionUtils;
@@ -109,23 +110,29 @@ public class EgovReflectionSupport<T> {
 	 * VO의 Field명과 Setter Method들을 비교하여 Map에 Put 한다.
 	 * Bean 생성시 한 번만 실행 된다.
 	 */
-	public void generateSetterMethodMap(Class<?> type, String[] names) throws Exception {
-		methods = type.newInstance().getClass().getMethods();
+	public void generateSetterMethodMap(Class<?> type, String[] names) {
+		try {
+			methods = type.newInstance().getClass().getMethods();
+		} catch (InstantiationException e) {
+			ReflectionUtils.handleReflectionException(e);
+		} catch (IllegalAccessException e) {
+			ReflectionUtils.handleReflectionException(e);
+		}
 		methodMap = new HashMap<String, Method>();
 
 		for (int i = 0; i < names.length; i++) {
 			try {
 				String strMethod = "set" + (names[i].substring(0, 1)).toUpperCase() + names[i].substring(1);
 				methodMap.put(names[i], retrieveMethod(methods, strMethod));
-				
-			//2017.02.15 장동한 시큐어코딩(ES)-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
-			} catch (Exception e) {
-				LOGGER.error("["+e.getClass()+"] Try/Catch... Runing : " + e.getMessage());
-				throw new Exception("Cannot create a method list of given : " + type.toString());
+			} catch (CacheException e) {
+				ReflectionUtils.handleReflectionException(e);
+			} catch (NullPointerException e) {
+				ReflectionUtils.handleReflectionException(e);
+			} catch (IllegalArgumentException e) {
+				ReflectionUtils.handleReflectionException(e);
 			}
 		}
 	}
-
 
 	/**
 	 * VO의 Setter method 실행
@@ -162,24 +169,25 @@ public class EgovReflectionSupport<T> {
 	 * VO의 Field명과 Getter Method들을 비교하여 Map에 Put 한다.
 	 * Bean 생성시 한 번만 실행 된다.
 	 */
-	public void generateGetterMethodMap(String[] names, T item) throws Exception {
+	public void generateGetterMethodMap(String[] names, T item) {
 		if (methods == null) {
 			methods = item.getClass().getMethods();
-			methodMap = new HashMap<String, Method>();	
-			try {
-				for (int i = 0; i < names.length; i++) {
+			methodMap = new HashMap<String, Method>();
+			for (int i = 0; i < names.length; i++) {
+				try {
 					String strMethod = "get" + (names[i].substring(0, 1)).toUpperCase() + names[i].substring(1);
 					methodMap.put(names[i], retrieveMethod(methods, strMethod));
+				} catch (CacheException e) {
+					ReflectionUtils.handleReflectionException(e);
+				} catch (NullPointerException e) {
+					ReflectionUtils.handleReflectionException(e);
+				} catch (IllegalArgumentException e) {
+					ReflectionUtils.handleReflectionException(e);
 				}
-			} catch (Exception e) {
-				//2017.02.15 장동한 시큐어코딩(ES)-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
-				LOGGER.error("["+e.getClass()+"] Try/Catch... Runing : " + e.getMessage());
-				throw new Exception("Cannot create a method list of given : " + item.toString());
 			}
 		}
 	}
 
-	
 	/**
 	 * item의 field 정보를 가져오기 위해 getter를 invoke
 	 * @param item 정보를 담고 있는 VO

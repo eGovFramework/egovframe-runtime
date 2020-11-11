@@ -16,6 +16,7 @@
 package egovframework.rte.fdl.security.config;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 
@@ -63,16 +64,12 @@ import org.springframework.util.StringUtils;
  * </pre>
  */
 public class SecurityConfigInitializer implements ApplicationContextAware {
-
 	private static final Logger LOGGER = LoggerFactory.getLogger(SecurityConfigInitializer.class);
-
 	private ApplicationContext context;
-
 	private SecurityConfig config;
 
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 		this.context = applicationContext;
-
 		config = (SecurityConfig) context.getBean(SecurityConfig.class);
 	}
 
@@ -123,9 +120,7 @@ public class SecurityConfigInitializer implements ApplicationContextAware {
 	}
 
 	private <T extends Filter> T getSecurityFilter(Class<T> type) {
-
 		Map<String, DefaultSecurityFilterChain> filterChainMap = context.getBeansOfType(DefaultSecurityFilterChain.class);
-
 		for (DefaultSecurityFilterChain filterChain : filterChainMap.values()) {
 			for (Filter filter : filterChain.getFilters()) {
 				if (type.isInstance(filter)) {
@@ -133,130 +128,75 @@ public class SecurityConfigInitializer implements ApplicationContextAware {
 				}
 			}
 		}
-
-		//throw new NoSuchBeanDefinitionException("No bean of type [" + type.getName() + "] is defined.");
 		throw new NoSuchBeanDefinitionException(type);
 	}
 
 	private void registerLogoutSuccessUrl(String logoutSuccessUrl) {
 		LogoutFilter filter = getSecurityFilter(LogoutFilter.class);
-
 		checkUrl(logoutSuccessUrl);
-
+		Field field = null;
 		try {
-			Field field = filter.getClass().getDeclaredField("logoutSuccessHandler");
-
+			field = filter.getClass().getDeclaredField("logoutSuccessHandler");
 			field.setAccessible(true);
-
 			SimpleUrlLogoutSuccessHandler logoutSuccessHandler = (SimpleUrlLogoutSuccessHandler) field.get(filter);
-
 			logoutSuccessHandler.setDefaultTargetUrl(logoutSuccessUrl);
-
-		} catch (Exception ex) {
+		} catch (NoSuchFieldException | IllegalAccessException ex) {
 			throw new RuntimeException(ex);
 		}
 	}
 
 	private void registerLoginFailureUrl(String loginFailureUrl) {
 		UsernamePasswordAuthenticationFilter filter = getSecurityFilter(UsernamePasswordAuthenticationFilter.class);
-
 		checkUrl(loginFailureUrl);
-
 		SimpleUrlAuthenticationFailureHandler failureHandler = null;
-
 		Method method = null;
-
 		try {
-			//method = UsernamePasswordAuthenticationFilter.class.getDeclaredMethod("getFailureHandler", (Class<?>[]) null);
 			method = AbstractAuthenticationProcessingFilter.class.getDeclaredMethod("getFailureHandler", (Class<?>[]) null);
-
 			method.setAccessible(true);
-
 			failureHandler = (SimpleUrlAuthenticationFailureHandler) method.invoke(filter, (Object[]) null);
-		} catch (Exception ex) {
-			LOGGER.error("## registerLoginFailureUrl : {}", ex);
+		} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ex) {
 			throw new RuntimeException(ex);
 		}
-
 		failureHandler.setDefaultFailureUrl(loginFailureUrl);
-
 	}
 
 	private void registerLoginUrl() {
-		/*
-		ExceptionTranslationFilter filter = getSecurityFilter(ExceptionTranslationFilter.class);
-
-		checkUrl(loginUrl);
-
-		LoginUrlAuthenticationEntryPoint entryPoint = (LoginUrlAuthenticationEntryPoint) filter.getAuthenticationEntryPoint();
-
-		entryPoint.setLoginFormUrl(loginUrl);
-		*/
-
 		// LoginUrlAuthenticationEntryPoint 설정을 통해 지정함 (LoginFormUrlFactoryBean 참조)
 	}
 
 	protected void registerAccessDeniedUrl(String accessDeniedUrl) {
-
 		ExceptionTranslationFilter filter = getSecurityFilter(ExceptionTranslationFilter.class);
-
 		checkUrl(accessDeniedUrl);
-
 		AccessDeniedHandlerImpl accessDeniedHandler = new AccessDeniedHandlerImpl();
 		accessDeniedHandler.setErrorPage(accessDeniedUrl);
-
 		filter.setAccessDeniedHandler(accessDeniedHandler);
 	}
 
 	protected void registerJdbcInfo(String jdbcUsersByUsernameQuery, String jdbcAuthoritiesByUsernameQuery, String jdbcMapClass) {
-		/*
-		EgovJdbcUserDetailsManager manager = (EgovJdbcUserDetailsManager)context.getBean(EgovJdbcUserDetailsManager.class);
-
-		//manager.setDataSource(dataSource);		// set by DataSourceFactorybBean
-		manager.setUsersByUsernameQuery(jdbcUsersByUsernameQuery);
-		manager.setAuthoritiesByUsernameQuery(jdbcAuthoritiesByUsernameQuery);
-		manager.setMapClass(jdbcMapClass);
-		*/
-
 		// FactoryBean을 통해 지정
 	}
 
 	protected void registerHash(String hash, boolean isHashBase64) {
 		DaoAuthenticationProvider authentication = context.getBean(DaoAuthenticationProvider.class);
-
 		if (hash.equalsIgnoreCase("plaintext")) {
-
 			authentication.setPasswordEncoder(new PlaintextPasswordEncoder());
-
 		} else if (hash.equalsIgnoreCase("md5")) {
-
 			Md5PasswordEncoder password = new Md5PasswordEncoder();
 			password.setEncodeHashAsBase64(isHashBase64);
 			authentication.setPasswordEncoder(password);
-
 		} else if (hash.equalsIgnoreCase("sha")) {
-
 			ShaPasswordEncoder password = new ShaPasswordEncoder();
 			password.setEncodeHashAsBase64(isHashBase64);
 			authentication.setPasswordEncoder(password);
-
 		} else if (hash.equalsIgnoreCase("sha-256")) {
-			// CHECKSTYLE:OFF
 			ShaPasswordEncoder password = new ShaPasswordEncoder(256);
-			// CHECKSTYLE:ON
 			password.setEncodeHashAsBase64(isHashBase64);
 			authentication.setPasswordEncoder(password);
-
 		} else if (hash.equalsIgnoreCase("bcrypt")) {
-
 			BCryptPasswordEncoder password = new BCryptPasswordEncoder();
-
 			authentication.setPasswordEncoder(password);
-
 		} else {
-
 			throw new IllegalArgumentException("'hash' attribute have to be plaintext, md5, sha, sha-256, or bcrypt");
-
 		}
 	}
 
@@ -265,32 +205,23 @@ public class SecurityConfigInitializer implements ApplicationContextAware {
 	}
 
 	private void registerDefaultTargetUrl(String defaultTargetUrl) {
-		//UsernamePasswordAuthenticationFilter
 		AbstractAuthenticationProcessingFilter filter = getSecurityFilter(AbstractAuthenticationProcessingFilter.class);
-
 		checkUrl(defaultTargetUrl);
-
 		Method method = null;
 		try {
 			method = AbstractAuthenticationProcessingFilter.class.getDeclaredMethod("getSuccessHandler", (Class<?>[]) null);
-
 			method.setAccessible(true);
-
 			SavedRequestAwareAuthenticationSuccessHandler successHandler = (SavedRequestAwareAuthenticationSuccessHandler) method.invoke(filter, (Object[]) null);
-
-			successHandler.setAlwaysUseDefaultTargetUrl(true);
+			successHandler.setAlwaysUseDefaultTargetUrl(EgovSecurityConfigShare.alwaysUseDefaultTargetUrl);
 			successHandler.setDefaultTargetUrl(defaultTargetUrl);
-
-		} catch (Exception ex) {
+		} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ex) {
 			throw new RuntimeException(ex);
 		}
-
 	}
 
 	private void checkUrl(String url) {
 		if (!UrlUtils.isValidRedirectUrl(url)) {
 			LOGGER.warn("Url ({} is not a valid redirect URL (must start with '/' or http(s))", url);
 		}
-
 	}
 }

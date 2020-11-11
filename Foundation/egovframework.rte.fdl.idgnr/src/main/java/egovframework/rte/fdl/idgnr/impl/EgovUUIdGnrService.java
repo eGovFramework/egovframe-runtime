@@ -33,6 +33,7 @@ package egovframework.rte.fdl.idgnr.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Random;
 import java.util.StringTokenizer;
 
 import egovframework.rte.fdl.cmmn.exception.FdlException;
@@ -58,9 +59,10 @@ import org.springframework.context.MessageSource;
  * @see <pre>
  *  == 개정이력(Modification Information) ==
  *
- *   수정일      수정자           수정내용
- *  -------    --------    ---------------------------
- *   2009.02.01  김태호          최초 생성
+ *   수정일      수정자      수정내용
+ *  ----------------------------------------
+ *   2009.02.01  김태호      최초 생성
+ *   2020.08.31  ESFC		 ES-적절하지 않은 난수값 사용[CWE-330]
  *
  * </pre>
  */
@@ -197,7 +199,7 @@ public class EgovUUIdGnrService implements EgovIdGnrService, ApplicationContextA
     /**
      * 정책정보를 입력받아 String 타입을 아이디 제공을 요청하면 불가능한 요청이라는 에러 발생
      * 
-     * @param strategy 정책 String
+     * @param strategyId 정책 String
      * @return String 타입 ID
      * @throws FdlException 아이디 생성에 실패한 경우
      */
@@ -217,7 +219,8 @@ public class EgovUUIdGnrService implements EgovIdGnrService, ApplicationContextA
     	// CHECKSTYLE:OFF
         // this.address = address;
         byte[] addressBytes = new byte[6];
-
+        Random random = new Random();
+        random.setSeed(System.currentTimeMillis());
         if (null == address) {
             LOGGER.warn("IDGeneration Service : Using a random number as the "
                 + "base for id's.  This is not the best method for many "
@@ -225,7 +228,8 @@ public class EgovUUIdGnrService implements EgovIdGnrService, ApplicationContextA
                 + " Consider using an IP or ethernet (MAC) address if "
                 + "available. ");
             for (int i = 0; i < 6; i++) {
-                addressBytes[i] = (byte) (255 * Math.random());
+                // 2020.08.31 ESFC ES-적절하지 않은 난수값 사용[CWE-330]
+                addressBytes[i] = (byte) (random.nextDouble() * 255 + 0);
             }
         } else {
             if (address.indexOf(".") > 0) {
@@ -243,7 +247,7 @@ public class EgovUUIdGnrService implements EgovIdGnrService, ApplicationContextA
                         addressBytes[i++] =
                             Integer.valueOf(stok.nextToken(), 16).byteValue();
                     }
-                } catch (Exception e) {
+                } catch (IllegalArgumentException e) {
                     throw new FdlException(ERROR_STRING);
                 }
             } else if (address.indexOf(":") > 0) {
@@ -258,7 +262,7 @@ public class EgovUUIdGnrService implements EgovIdGnrService, ApplicationContextA
                         addressBytes[i++] =
                             Integer.valueOf(stok.nextToken(), 16).byteValue();
                     }
-                } catch (Exception e) {
+                } catch (IllegalArgumentException e) {
                     throw new FdlException(ERROR_STRING);
                 }
             } else {

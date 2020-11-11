@@ -43,7 +43,7 @@ import egovframework.rte.bat.core.item.file.transform.EgovFixedLengthLineAggrega
  * @see
  *
  * <pre>
- * << 개정이력(Modification Information) >>
+ * == 개정이력(Modification Information) ==
  *   
  *   수정일        수정자           수정내용
  *  -------       --------          ---------------------------
@@ -159,8 +159,6 @@ public class EgovIndexFileWriter<T> implements ItemStreamWriter<T>{
 		try {
 			((FlatFileItemWriter<T>) this.writer).afterPropertiesSet();
 		} catch (Exception e) {
-			// throw new RuntimeException(this.writerResourceType +
-			// " 타입의 File을 write 하기 위한 FlatFileItemWriter 생성에 실패 하였습니다.");
 			// 2017.02.15 장동한 시큐어코딩(ES)-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
 			throw new RuntimeException(
 					"["
@@ -249,7 +247,7 @@ public class EgovIndexFileWriter<T> implements ItemStreamWriter<T>{
 			}
 
 		});
-		if (fileInfoList.length == 0) {
+		if (fileInfoList == null || fileInfoList.length == 0) {
 			throw new RuntimeException("The file resource not found in '"+resourceDirectory+"'");
 		}
 		List<String> indexFileList = new ArrayList<String>();

@@ -15,9 +15,6 @@ import egovframework.rte.fdl.xml.impl.EgovSAXFactoryServiceImpl;
  * @author 개발프레임웍크 실행환경 개발팀 김종호
  * @since 2009. 03.18
  * @version 1.0
- * @see
- * 
- *  Copyright (C) by MOPAS All right reserved.
  */
 public class EgovXmlset {
 	/** abstractXMLFactoryService 상속한 EgovConcreteDOMFactory **/ 
@@ -27,7 +24,6 @@ public class EgovXmlset {
 	/**
 	 * 구성 Class EgovConcreteDOMFactory 설정 
 	 * @param domconcrete - 구상 Class EgovConcreteDOMFactory
-	 * @see 개발프레임웍크 실행환경 개발팀 
 	 */
 	public void setDomconcrete(EgovDOMFactoryServiceImpl domconcrete)
 	{
@@ -36,7 +32,6 @@ public class EgovXmlset {
 	/**
 	 * 구성 Class EgovConcreteDOMFactory 리턴 
 	 * @return 구성 Class EgovConcreteDOMFactory
-	 * @see 개발프레임웍크 실행환경 개발팀 
 	 */
 	public EgovDOMFactoryServiceImpl getDomconcrete()
 	 {
@@ -45,7 +40,6 @@ public class EgovXmlset {
 	/**
 	 * 구성 Class EgovConcreteSAXFactory 설정 
 	 * @param saxconcrete - 구상 Class EgovConcreteSAXFactory
-	 * @see 개발프레임웍크 실행환경 개발팀 
 	 */
 	public void setSaxconcrete(EgovSAXFactoryServiceImpl saxconcrete)
 	{
@@ -54,7 +48,6 @@ public class EgovXmlset {
 	/**
 	 * 구성 Class EgovConcreteSAXFactory 리턴 
 	 * @return 구성 Class EgovConcreteSAXFactory
-	 * @see 개발프레임웍크 실행환경 개발팀 
 	 */
 	public EgovSAXFactoryServiceImpl getSaxconcrete()
 	 {

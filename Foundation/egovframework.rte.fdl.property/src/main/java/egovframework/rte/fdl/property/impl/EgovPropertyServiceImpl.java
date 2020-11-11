@@ -50,13 +50,14 @@ import org.springframework.util.Assert;
  * @author 실행환경 개발팀 김태호
  * @since 2009.02.01
  * @version 1.0
- * @see <pre>
+ * <pre>
  *  == 개정이력(Modification Information) ==
  *
  *   수정일      수정자           수정내용
  *  -------    --------    ---------------------------
- *   2009.02.01  김태호          	최초 생성
+ *   2009.02.01  김태호          최초 생성
  *   2014.08.12  Vincent Han	"properties" 속성이 없는 경우 처리
+ *	 2020.08.31	 ESFC			Property 값을 정확히 등록하기 위해 put() 메소드를 addProperty() 메소드로 변경
  *
  * </pre>
  */
@@ -332,8 +333,9 @@ public class EgovPropertyServiceImpl
 						LOGGER.error(messageSource.getMessage("error.properties.check.essential", new String[] {}, Locale.getDefault()));
 						throw new FdlException(messageSource, "error.properties.check.essential", null);
 					}
-	
-					egovProperties.put(key, value);
+
+					// 2020.08.31 ESFC Property 값을 정확히 등록하기 위해 put() 메소드를 addProperty() 메소드로 변경
+					egovProperties.addProperty(key, value);
 				}
 			}
 		} catch (Exception e) {
@@ -429,7 +431,7 @@ public class EgovPropertyServiceImpl
 	/**
 	 * 파일 정보를 읽어서 egovProperties에 저장
 	 * 
-	 * @param resources 리소스정보
+	 * @param resource 리소스정보
 	 * @param encoding 인코딩정보
 	 * @throws Exception
 	 */

@@ -50,7 +50,7 @@ public abstract class EgovAbstractByteLineTokenizer implements EgovByteLineToken
 	/**
 	 * doTokenize를 호출하여 Encoding Type에 따라 Token목록을 생성한다. 
 	 * @param line
-	 * @param nameSize
+	 * @param encoding
 	 * @return List String: token 목록 
 	 */
 	public List<String> tokenize(byte[] line, String encoding) throws Exception {

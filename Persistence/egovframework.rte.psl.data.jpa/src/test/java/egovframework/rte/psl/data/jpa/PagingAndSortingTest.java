@@ -51,10 +51,8 @@ public class PagingAndSortingTest {
 
 		int size = 3;
 		Page<Employee> list = null;
-
-		Sort sort = new Sort(new Order(Sort.Direction.ASC, "employeeName"));
-
 		int totalIndex = 0;
+		Sort sort = new Sort(new Order(Sort.Direction.ASC, "employeeName"));
 
 		for (int i = 0; i < (NAME.length + (size - 1)) / size ; i++) {	// 올림 처리
 			list = repository.findAll(new PageRequest(i, size, sort));

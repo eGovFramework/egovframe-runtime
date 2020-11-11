@@ -120,7 +120,7 @@ public class EgovTableIdGnrServiceImpl extends AbstractDataBlockIdGnrService {
      * tableName에 대한 초기 값이 없는 경우 초기 id 값 등록 (blockSize 처리)
      *
      * @param useBigDecimals
-     * @param initId
+     * @param blockSize
      */
     private Object insertInitId(final boolean useBigDecimals, final int blockSize) {
 
@@ -167,7 +167,6 @@ public class EgovTableIdGnrServiceImpl extends AbstractDataBlockIdGnrService {
 
 					try {
 
-						//String selectQuery = "SELECT " + nextIdFieldName + " FROM " + table + " WHERE " + tableNameFieldName + " = ? For UPDATE";
 						String selectQuery = "SELECT " + nextIdFieldName + " FROM " + table + " WHERE " + tableNameFieldName + " = ?";
 
 						LOGGER.debug("Select Query : {}", selectQuery);
@@ -200,7 +199,6 @@ public class EgovTableIdGnrServiceImpl extends AbstractDataBlockIdGnrService {
 						}
 					} catch (DataAccessException dae) {
 						//2017.02.28 장동한 시큐어코딩(ES)-오류 메시지를 통한 정보노출[CWE-209]
-						//dae.printStackTrace();
 						LOGGER.error("{}", dae);
 						status.setRollbackOnly();
 						throw new RuntimeException(new FdlException(messageSource, "error.idgnr.select.idblock", new String[] { tableName }, null));

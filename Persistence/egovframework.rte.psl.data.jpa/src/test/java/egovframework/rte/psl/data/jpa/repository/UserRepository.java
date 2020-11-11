@@ -15,7 +15,7 @@ public interface UserRepository extends CrudRepository<User, UserPK> {
 
 	List<User> findByLastname(String lastname);
 
-	@Query("select u from User u where u.firstname = ?")
+	@Query("select u from User u where u.firstname = ?1")
 	List<User> findByFirstname(String firstname);
 
 	@Query("select u from User u where u.firstname = :name or u.lastname = :name")

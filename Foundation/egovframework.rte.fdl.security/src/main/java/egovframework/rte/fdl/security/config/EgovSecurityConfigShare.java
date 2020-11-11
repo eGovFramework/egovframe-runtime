@@ -34,13 +34,17 @@ package egovframework.rte.fdl.security.config;
  */
 
 public class EgovSecurityConfigShare {
-    
+
+	public static boolean alwaysUseDefaultTargetUrl = true;
+
 	public static boolean sniff = true;
-	
+
 	public static String xFrameOptions = "SAMEORIGIN";
-	
+
 	public static boolean xssProtection = true;
-	
+
+	public static boolean cacheControl = false;
+
 	public static boolean csrf = false;
 
 }

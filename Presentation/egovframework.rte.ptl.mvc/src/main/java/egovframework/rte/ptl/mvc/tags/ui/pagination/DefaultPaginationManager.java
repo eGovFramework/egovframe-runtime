@@ -17,7 +17,7 @@ package egovframework.rte.ptl.mvc.tags.ui.pagination;
 
 import java.util.Map;
 
-/*
+/**
  * DefaultPaginationManager.java
  * <pre> 인터페이스 PaginationManager 기본 구현 클래스.
  * PaginationRenderer의 구현체를 빈설정 파일을 참조하여 반환한다. 
@@ -25,10 +25,9 @@ import java.util.Map;
  * @author 실행환경 개발팀 함철
  * @since 2009.06.01
  * @version 1.0
- * @see
  *
  * <pre>
- * << 개정이력(Modification Information) >>
+ * == 개정이력(Modification Information) ==
  *   
  *   수정일      수정자           수정내용
  *  -------    --------    ---------------------------

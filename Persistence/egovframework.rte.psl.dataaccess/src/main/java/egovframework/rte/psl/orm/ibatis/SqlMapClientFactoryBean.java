@@ -89,7 +89,6 @@ public class SqlMapClientFactoryBean implements FactoryBean<SqlMapClient>, Initi
 		return configTimeLobHandlerHolder.get();
 	}
 
-
 	private Resource[] configLocations;
 
 	private Resource[] mappingLocations;
@@ -128,7 +127,11 @@ public class SqlMapClientFactoryBean implements FactoryBean<SqlMapClient>, Initi
 	 * are going to be merged into one unified configuration at runtime.
 	 */
 	public void setConfigLocations(Resource[] configLocations) {
-		this.configLocations = configLocations;
+		// 2020.08.31 ESFC 시큐어코딩(ES)-Private 배열에 Public 데이터 할당[CWE-496]
+		this.configLocations = new Resource[configLocations.length];
+		for (int i = 0; i < configLocations.length; i++) {
+			this.configLocations[i] = configLocations[i];
+		}
 	}
 
 	/**
@@ -142,7 +145,11 @@ public class SqlMapClientFactoryBean implements FactoryBean<SqlMapClient>, Initi
 	 * with any previous iBATIS version.
 	 */
 	public void setMappingLocations(Resource[] mappingLocations) {
-		this.mappingLocations = mappingLocations;
+		// 2020.08.31 ESFC 시큐어코딩(ES)-Private 배열에 Public 데이터 할당[CWE-496]
+		this.mappingLocations = new Resource[mappingLocations.length];
+		for (int i = 0; i < mappingLocations.length; i++) {
+			this.mappingLocations[i] = mappingLocations[i];
+		}
 	}
 
 	/**
@@ -409,7 +416,7 @@ public class SqlMapClientFactoryBean implements FactoryBean<SqlMapClient>, Initi
 				stateField.setAccessible(true);
 				state = (XmlParserState) stateField.get(configParser);
 			}
-			catch (Exception ex) {
+			catch (IllegalAccessException | NoSuchFieldException ex) {
 				throw new IllegalStateException("iBATIS 2.3.2 'state' field not found in SqlMapConfigParser class - " +
 						"please upgrade to IBATIS 2.3.2 or higher in order to use the new 'mappingLocations' feature. " + ex);
 			}

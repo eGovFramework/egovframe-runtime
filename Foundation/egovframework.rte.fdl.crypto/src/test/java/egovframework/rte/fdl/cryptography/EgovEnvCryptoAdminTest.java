@@ -21,7 +21,7 @@ import egovframework.rte.fdl.cryptography.impl.EgovARIACryptoServiceImpl;
  * @see
  *
  * <pre>
- * << 개정이력(Modification Information) >>
+ * == 개정이력(Modification Information) ==
  *
  *   수정일        수정자           수정내용
  *  -------      -------------  ----------------------
@@ -35,16 +35,10 @@ public class EgovEnvCryptoAdminTest {
 	private static final Logger LOGGER = LoggerFactory.getLogger(EgovEnvCryptoAdminTest.class);
 	
 	//계정 아이디
-//	String[] arrCryptoString = { 
-//            "userId",       //데이터베이스 접속 계정
-//            "userPassword", //데이터베이스 접속 패드워드
-//            "url"           //데이터베이스 접속 주소
-//          };
 	String[] arrCryptoString = { 
             "publisher",       //데이터베이스 접속 계정
             "publisher1024!@#", //데이터베이스 접속 패드워드
-            //"jdbc:log4jdbc:mysql://121.128.108.65:33096/com?zeroDateTimeBehavior=convertToNull&amp;characterEncoding=UTF-8"           //데이터베이스 접속 주소
-            "jdbc:log4jdbc:mysql://121.128.108.65:33096/com?zeroDateTimeBehavior=convertToNull&"           //데이터베이스 접속 주소
+            "jdbc:log4jdbc:mysql://127.0.0.1:3306/com?zeroDateTimeBehavior=convertToNull&"           //데이터베이스 접속 주소
           };
 	
 	//계정암호화키 키

@@ -22,7 +22,6 @@ public class CategoryPOIExcelView extends AbstractPOIExcelView {
 	@Override
 	@SuppressWarnings("unchecked")
 	protected void buildExcelDocument(Map<String, Object> model, XSSFWorkbook wb, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        XSSFCell cell = null;
 
         LOGGER.debug("### buildExcelDocument start !!!");
 
@@ -30,7 +29,7 @@ public class CategoryPOIExcelView extends AbstractPOIExcelView {
         sheet.setDefaultColumnWidth(12);
 
         // put text in first cell
-        cell = getCell(sheet, 0, 0);
+		XSSFCell cell = getCell(sheet, 0, 0);
         setText(cell, "User List");
 
         // set header information

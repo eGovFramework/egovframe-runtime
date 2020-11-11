@@ -202,7 +202,7 @@ public class EgovTableIdGnrServiceWithThreadTest {
 	}
 
 	@Transactional
-	private void transaction() {
+	void transaction() {
 		int id;
 		try {
 			id = idsTestSimpleRequestIdsSize1.getNextIntegerId();

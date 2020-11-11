@@ -62,8 +62,8 @@ public class HibernateIntegrationDefinitionDao extends HibernateDaoSupport imple
 		LOGGER.debug("get IntegrationDefinition of Consumer(organizationId = \"{}\", systemId = \"{}\")", consumerOrganizationId, consumerSystemId);
 		// CHECKSTYLE:OFF
 		List<IntegrationDefinition> list = (List<IntegrationDefinition>) getHibernateTemplate().find(
-				"from IntegrationDefinition as integrationDefinition " + "where integrationDefinition.consumer.organization.id = ? " + "and integrationDefinition.consumer.id = ?",
-				new Object[] { consumerOrganizationId, consumerSystemId });
+				"from IntegrationDefinition as integrationDefinition " + "where integrationDefinition.consumer.organization.id = ?0 "
+						+ "and integrationDefinition.consumer.id = ?1 ", new Object[] { consumerOrganizationId, consumerSystemId });
 		//	CHECKSTYLE:ON
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("get IntegrationDefinition of Consumer(organizationId = \"{}\", systemId = \"{}\")'s size = {}", consumerOrganizationId, consumerSystemId, list.size());
@@ -83,8 +83,8 @@ public class HibernateIntegrationDefinitionDao extends HibernateDaoSupport imple
 		LOGGER.debug("get IntegrationDefinition of Provider(organizationId = \"{}\", systemId = \"{}\")", providerOrganizationId, providerSystemId);
 		//		CHECKSTYLE:OFF
 		List<IntegrationDefinition> list = (List<IntegrationDefinition>)getHibernateTemplate().find(
-				"from IntegrationDefinition as integrationDefinition " + "where integrationDefinition.provider.system.organization.id = ? "
-						+ "and integrationDefinition.provider.system.id = ?", new Object[] { providerOrganizationId, providerSystemId });
+				"from IntegrationDefinition as integrationDefinition " + "where integrationDefinition.provider.system.organization.id = ?0 "
+						+ "and integrationDefinition.provider.system.id = ?1 ", new Object[] { providerOrganizationId, providerSystemId });
 		//		CHECKSTYLE:ON
 
 		if (LOGGER.isDebugEnabled()) {

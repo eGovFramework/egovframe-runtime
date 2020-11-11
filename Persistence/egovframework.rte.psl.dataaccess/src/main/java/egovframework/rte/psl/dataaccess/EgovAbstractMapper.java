@@ -128,8 +128,11 @@ public abstract class EgovAbstractMapper extends SqlSessionDaoSupport {
 	/**
 	 * 명명규칙에 맞춰 selectOne()로 변경한다.
 	 * @deprecated select() 메소드로 대체
-	 * 
-	 * @see EgovAbstractMapper.selectOne()
+	 *
+	 * @param queryId - 단건 조회 처리 SQL mapping 쿼리 ID
+	 * @param parameterObject - 단건 조회 처리 SQL mapping 입력 데이터(key)를 세팅한 파라메터 객체(보통 VO 또는 Map)
+	 *
+	 * @return 결과 객체 - SQL mapping 파일에서 지정한 resultType/resultMap 에 의한 단일 결과 객체(보통 VO 또는 Map)
 	 */
 	//CHECKSTYLE:ON
 	@Deprecated

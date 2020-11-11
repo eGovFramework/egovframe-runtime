@@ -121,7 +121,7 @@ public class EgovTableIdGnrService extends AbstractDataBlockIdGnrService {
      * tableName에 대한 초기 값이 없는 경우 초기 id 값 등록 (blockSize 처리)
      *
      * @param useBigDecimals
-     * @param initId
+     * @param blockSize
      */
     private Object insertInitId(final boolean useBigDecimals, final int blockSize) {
 

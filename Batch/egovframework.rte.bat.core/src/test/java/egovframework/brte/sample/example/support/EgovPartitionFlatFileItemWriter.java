@@ -55,7 +55,7 @@ import org.springframework.util.ClassUtils;
  * @see
  * 
  *      <pre>
- * << 개정이력(Modification Information) >>
+ * == 개정이력(Modification Information) ==
  *   
  *   수정일               수정자               수정내용
  *  -------      --------     ---------------------------

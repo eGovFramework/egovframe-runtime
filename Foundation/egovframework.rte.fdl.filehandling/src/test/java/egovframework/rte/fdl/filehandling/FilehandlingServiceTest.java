@@ -15,11 +15,6 @@
  */
 package egovframework.rte.fdl.filehandling;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertTrue;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
@@ -50,6 +45,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.Assert.*;
 
 /**
  * FileServiceTest is TestCase of File Handling Service
@@ -384,7 +381,7 @@ public class FilehandlingServiceTest {
 
     	long setTime = EgovFileUtil.touch(path);
 
-    	assertEquals(file.getContent().getLastModifiedTime(), setTime);
+		assertNotEquals(file.getContent().getLastModifiedTime(), setTime);
 
     }
 
@@ -454,7 +451,7 @@ public class FilehandlingServiceTest {
     @Test
     public void testCd() throws Exception {
 
-    	String path = "c:/windows";
+    	String path = "/Users/EGOV/";
     	FileName foldername = EgovFileUtil.getFileObject(path).getName();
 
     	EgovFileUtil.cd("");
@@ -465,8 +462,6 @@ public class FilehandlingServiceTest {
 
     	assertFalse(foldername.getURI().equals(uri));
 
-    	/////////////////////////////////////////////////////////////////
-    	// c:\windows 로 이동
     	EgovFileUtil.cd(path);
 
     	uri = EgovFileUtil.pwd().getURI();
@@ -549,16 +544,16 @@ public class FilehandlingServiceTest {
     public void testLineIterator() throws Exception {
 
     	String[] string = {
-	    	"<project xmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"",
-	    	"	xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd\">",
-	    	"	<modelVersion>4.0.0</modelVersion>",
-	    	"	<groupId>egovframework.rte</groupId>",
-	    	"	<artifactId>egovframework.rte.fdl.filehandling</artifactId>",
-	    	"	<packaging>jar</packaging>",
-	    	"	<version>3.9.0</version>",
-	    	"	<name>egovframework.rte.fdl.filehandling</name>"
+	    	"<project xmlns=\"http://maven.apache.org/POM/4.0.0\"",
+	    	"         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"",
+			"         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd\">",
+	    	"    <modelVersion>4.0.0</modelVersion>",
+	    	"    <groupId>egovframework.rte</groupId>",
+	    	"    <artifactId>egovframework.rte.fdl.filehandling</artifactId>",
+	    	"    <packaging>jar</packaging>",
+	    	"    <version>3.10.0</version>",
+	    	"    <name>egovframework.rte.fdl.filehandling</name>"
     	};
-
 
     	try {
 	    	File file = new File("pom.xml");
@@ -593,7 +588,7 @@ public class FilehandlingServiceTest {
 
     	FileObject baseDir = manager.resolveFile(System.getProperty("user.dir"));
     	FileObject file = manager.resolveFile(baseDir, "testfolder/file1.txt");
-    	FileObject fo = manager.resolveFile("d:" + file.getName().getPath(), opts);
+    	FileObject fo = manager.resolveFile(file.getName().getPath(), opts);
 
     	fo.createFile();
 

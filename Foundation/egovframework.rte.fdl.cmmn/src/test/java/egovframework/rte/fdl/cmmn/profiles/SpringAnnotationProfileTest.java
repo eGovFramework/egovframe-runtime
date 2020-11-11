@@ -17,29 +17,27 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.util.Assert;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader=AnnotationConfigContextLoader.class)
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class)
 @ActiveProfiles("annotationProfile")
 public class SpringAnnotationProfileTest {
 
-	@Configuration
-	@Profile("annotationProfile")
-	static class EmbeddedDataSource {
+    @Configuration
+    @Profile("annotationProfile")
+    static class EmbeddedDataSource {
 
-		@Bean
-		public DataSource annotationDataSource() {
-			return new EmbeddedDatabaseBuilder()
-			.setType(EmbeddedDatabaseType.HSQL)/*
-			.addScript("classpath:/spring/schema.sql")
-			.addScript("classpath:/spring/test-data.sql")*/
-			.build();
-		}
-	}
-	
-	@Resource(name="annotationDataSource")
-	private DataSource dataSource;
+        @Bean
+        public DataSource annotationDataSource() {
+            return new EmbeddedDatabaseBuilder()
+                    .setType(EmbeddedDatabaseType.HSQL)
+                    .build();
+        }
+    }
 
-	@Test
-	public void testAnnotationProfile() {
-		Assert.notNull(dataSource instanceof EmbeddedDatabaseBuilder);
-	}
+    @Resource(name = "annotationDataSource")
+    private DataSource dataSource;
+
+    @Test
+    public void testAnnotationProfile() {
+        Assert.notNull(dataSource instanceof EmbeddedDatabaseBuilder);
+    }
 }

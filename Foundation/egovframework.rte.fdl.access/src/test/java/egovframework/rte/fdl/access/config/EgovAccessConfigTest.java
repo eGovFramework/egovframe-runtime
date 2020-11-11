@@ -23,7 +23,7 @@ import egovframework.rte.fdl.access.interceptor.EgovAccessUtil;
 import egovframework.rte.fdl.access.service.EgovUserDetailsHelper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"classpath*:META-INF/spring/config/*.xml"})
+@ContextConfiguration(locations={"classpath*:META-INF/spring/context-access.xml","classpath*:META-INF/spring/test-config.xml"})
 public class EgovAccessConfigTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EgovAccessConfigTest.class);
@@ -52,7 +52,7 @@ public class EgovAccessConfigTest {
     @Test
     public void test() throws Exception {
 
-        context = new ClassPathXmlApplicationContext(new String[] {"classpath*:META-INF/spring/config/*.xml"});
+        context = new ClassPathXmlApplicationContext(new String[]{"classpath*:META-INF/spring/context-access.xml","classpath*:META-INF/spring/test-config.xml"});
 
         String[] contextList = context.getBeanDefinitionNames();
         for (String bean : contextList) {
@@ -97,3 +97,4 @@ public class EgovAccessConfigTest {
     }
 
 }
+

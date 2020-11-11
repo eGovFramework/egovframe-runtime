@@ -1,8 +1,10 @@
 package egovframework.rte.bat.core.item.database;
 
 import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,7 +35,7 @@ import egovframework.rte.bat.support.EgovStepVariableListener;
  * @see
  *
  * <pre>
- * << 개정이력(Modification Information) >>
+ * == 개정이력(Modification Information) ==
  *
  *   수정일        수정자           수정내용
  *  -------      -------------  ----------------------
@@ -84,29 +86,33 @@ public class EgovMyBatisBatchItemWriter<T> extends MyBatisBatchItemWriter<T> {
 	public void write(final List<? extends T> items) {
 		List<Object> list = new ArrayList<Object>();
 		Map<String, Object> map = null;
-		try{
-			for(T item : items) {
+		try {
+			for (T item : items) {
 				map = new HashMap<String, Object>();
-			    BeanInfo beanInfo = Introspector.getBeanInfo(item.getClass());
-			    if(resourceVariable != null)
-			    	map.putAll(resourceVariable.getVariableMap());
-			    if(jobVariable != null)
-			    	map.putAll(jobVariable.getVariableMap());
-			    if(stepVariable != null)
-			    	map.putAll(stepVariable.getVariableMap());
-			    for(PropertyDescriptor pd : beanInfo.getPropertyDescriptors()) {
-			        Method reader = pd.getReadMethod();
-			        if(reader != null)
-			            map.put(pd.getName(),reader.invoke(item));
-			    }
-			    list.add(map);
-			}			
-		}catch(IllegalArgumentException e) {
-			e.printStackTrace();
-			LOGGER.error("[" + e.getClass() +"] executing items convert error : " + e.getMessage());
-		}catch(Exception e){
-			LOGGER.error("[" + e.getClass() +"] executing items convert error : " + e.getMessage());
+				BeanInfo beanInfo = Introspector.getBeanInfo(item.getClass());
+				if (resourceVariable != null)
+					map.putAll(resourceVariable.getVariableMap());
+				if (jobVariable != null)
+					map.putAll(jobVariable.getVariableMap());
+				if (stepVariable != null)
+					map.putAll(stepVariable.getVariableMap());
+				for (PropertyDescriptor pd : beanInfo.getPropertyDescriptors()) {
+					Method reader = pd.getReadMethod();
+					if (reader != null)
+						map.put(pd.getName(), reader.invoke(item));
+				}
+				list.add(map);
+			}
+		} catch (IllegalArgumentException e) {
+			LOGGER.error("IllegalArgumentException Occurred");
+		} catch (InvocationTargetException e) {
+			LOGGER.error("InvocationTargetException Occurred");
+		} catch (IllegalAccessException e) {
+			LOGGER.error("IllegalAccessException Occurred");
+		} catch (IntrospectionException e) {
+			LOGGER.error("IntrospectionException Occurred");
 		}
+
 		super.write( (List<? extends T>)list );
 	}
 

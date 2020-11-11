@@ -136,11 +136,7 @@ public class EgovGeneralCryptoServiceImpl implements EgovGeneralCryptoService {
 						encrypted = cipher.encrypt(buffer);
 					}
 					String line;
-					try {
-						line = new String(base64.encode(encrypted), "US-ASCII");
-					} catch (Exception e) {
-						throw new RuntimeException(e);
-					}
+					line = new String(base64.encode(encrypted), "US-ASCII");
 					bw.write(line);
 					bw.newLine();
 					size += length;
@@ -209,14 +205,8 @@ public class EgovGeneralCryptoServiceImpl implements EgovGeneralCryptoService {
 				String line = null;
 
 				while ((line = br.readLine()) != null) {
-					try {
-						encrypted = base64.decode(line.getBytes("US-ASCII"));
-					} catch (Exception e) {
-						throw new RuntimeException(e);
-					}
-
+					encrypted = base64.decode(line.getBytes("US-ASCII"));
 					decrypted = cipher.decrypt(encrypted);
-
 					bos.write(decrypted);
 				}
 				bos.flush();

@@ -15,14 +15,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath*:META-INF/spring/mvcTest/test_servlet.xml")
+@ContextConfiguration(locations = "classpath*:META-INF/spring/mvcTest/test-servlet.xml")
 public class ApplicationContextSetupTest {
 
 	@Test
 	public void responseBodyHandler() throws Exception {
 		MockMvc mockMvc = MockMvcBuilders.standaloneSetup(new TestController()).build();
 		mockMvc.perform(get("/form")).andExpect(status().isOk()).andExpect(content().string("hello"));
-
 		mockMvc.perform(get("/wrong")).andExpect(status().isNotFound());
 	}
 
