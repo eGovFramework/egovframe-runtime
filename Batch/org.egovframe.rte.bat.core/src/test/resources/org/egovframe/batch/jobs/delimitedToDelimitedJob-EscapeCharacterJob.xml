@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+	   http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+	   http://www.springframework.org/schema/batch
+	   http://www.springframework.org/schema/batch/spring-batch-3.0.xsd">
+
+	<import resource="abstract/eGovBase.xml" />
+
+	<job id="delimitedToDelimitedJob-EscapeCharacterJob" parent="eGovBaseJob" xmlns="http://www.springframework.org/schema/batch">
+	
+		<step id="delimitedToDelimitedStep-EscapeCharacter" parent="eGovBaseStep">
+			<tasklet>
+				<chunk reader="delimitedToDelimitedJob-EscapeCharacter-delimitedItemReader"
+					processor=""
+					writer="delimitedToDelimitedJob-EscapeCharacter-delimitedItemWriter"
+					commit-interval="1000" />
+			</tasklet>
+		</step>
+		
+	</job>
+
+	<bean id="delimitedToDelimitedJob-EscapeCharacter-delimitedItemReader"
+		class="org.springframework.batch.item.file.FlatFileItemReader" scope="step">
+		<property name="resource" value="file:./src/test/resources/org/egovframe/data/input/csvDataEscapeCharacter.csv" />
+		<!-- <property name="resource" value="file:./src/main/resources/org/egovframe/batch/data/inputs/csvDataEscapeCharacter_Test100m.csv" /> -->
+		<property name="lineMapper">
+			<bean class="org.egovframe.rte.bat.core.item.file.mapping.EgovDefaultLineMapper">
+				<property name="lineTokenizer">
+					<bean class="org.egovframe.rte.bat.core.item.file.transform.EgovEscapableDelimitedLineTokenizer">
+						<property name="delimiter" value="," />
+					</bean>
+				</property>
+				<property name="objectMapper">
+					<bean class="org.egovframe.rte.bat.core.item.file.mapping.EgovObjectMapper">
+						<property name="type"
+							value="org.egovframe.rte.bat.domain.CustomerCredit" />
+						<property name="names" value="name,credit" />
+					</bean>
+				</property>
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="delimitedToDelimitedJob-EscapeCharacter-delimitedItemWriter"
+	    class="org.springframework.batch.item.file.FlatFileItemWriter" scope="step">
+		<property name="resource" value="file:./target/csvOutput_EscapeCharacter_#{new java.text.SimpleDateFormat('yyyyMMddHHmmssSS').format(new java.util.Date())}.csv" />
+		<property name="shouldDeleteIfExists" value="true" />
+		<property name="lineAggregator">
+			<bean class="org.springframework.batch.item.file.transform.DelimitedLineAggregator">
+				<property name="delimiter" value="," />
+				<property name="fieldExtractor">
+					<bean class="org.egovframe.rte.bat.core.item.file.transform.EgovFieldExtractor">
+						<property name="names" value="name,credit" />
+					</bean>
+				</property>
+			</bean>
+		</property>
+	</bean>
+
+	<bean class="org.springframework.batch.core.scope.StepScope" />
+	<bean class="org.springframework.batch.core.scope.JobScope" />
+
+</beans>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
+
+    <bean id="boolean" class="org.egovframe.rte.itl.integration.type.support.PrimitiveTypeFactoryBean"/>
+    <bean id="string" class="org.egovframe.rte.itl.integration.type.support.PrimitiveTypeFactoryBean"/>
+    <bean id="byte" class="org.egovframe.rte.itl.integration.type.support.PrimitiveTypeFactoryBean"/>
+    <bean id="short" class="org.egovframe.rte.itl.integration.type.support.PrimitiveTypeFactoryBean"/>
+    <bean id="integer" class="org.egovframe.rte.itl.integration.type.support.PrimitiveTypeFactoryBean"/>
+    <bean id="long" class="org.egovframe.rte.itl.integration.type.support.PrimitiveTypeFactoryBean"/>
+    <bean id="biginteger" class="org.egovframe.rte.itl.integration.type.support.PrimitiveTypeFactoryBean"/>
+    <bean id="float" class="org.egovframe.rte.itl.integration.type.support.PrimitiveTypeFactoryBean"/>
+    <bean id="double" class="org.egovframe.rte.itl.integration.type.support.PrimitiveTypeFactoryBean"/>
+    <bean id="bigdecimal" class="org.egovframe.rte.itl.integration.type.support.PrimitiveTypeFactoryBean"/>
+    <bean id="calendar" class="org.egovframe.rte.itl.integration.type.support.PrimitiveTypeFactoryBean"/>
+
+</beans>

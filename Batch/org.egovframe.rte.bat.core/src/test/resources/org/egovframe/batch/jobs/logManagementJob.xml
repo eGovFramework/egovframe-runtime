@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:util="http://www.springframework.org/schema/util"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+	   http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+	   http://www.springframework.org/schema/util
+	   http://www.springframework.org/schema/util/spring-util-4.3.xsd
+	   http://www.springframework.org/schema/batch
+	   http://www.springframework.org/schema/batch/spring-batch-3.0.xsd">
+
+	<job id="logManagementJob" incrementer="incrementer" xmlns="http://www.springframework.org/schema/batch">
+
+		<step id="step1" parent="baseStep">
+			<tasklet>
+				<chunk reader="fileItemReader" processor="tradeProcessor" writer="tradeWriter" commit-interval="3" skip-limit="10">
+					<skippable-exception-classes>
+						<include class="org.springframework.batch.item.file.FlatFileParseException" />
+						<include class="org.springframework.batch.item.WriteFailedException" />
+					</skippable-exception-classes>
+				</chunk>
+			</tasklet>
+			<next on="COMPLETED WITH SKIPS" to="errorPrint" />
+			<fail on="FAILED" exit-code="FAILED" />
+		</step>
+
+		<step id="errorPrint">
+			<tasklet ref="errorLogTasklet" />
+		</step>
+
+	</job>
+
+	<step id="baseStep" abstract="true" xmlns="http://www.springframework.org/schema/batch">
+		<tasklet>
+			<listeners>
+				<listener>
+					<bean class="org.egovframe.brte.sample.example.listener.EgovSkipCheckingListener" xmlns="http://www.springframework.org/schema/beans" />
+				</listener>
+				<listener>
+					<bean class="org.springframework.batch.core.listener.ExecutionContextPromotionListener" xmlns="http://www.springframework.org/schema/beans">
+						<property name="keys">
+							<list>
+								<value>stepName</value>
+								<util:constant static-field="org.egovframe.brte.sample.common.domain.trade.TradeWriter.TOTAL_AMOUNT_KEY" />
+							</list>
+						</property>
+					</bean>
+				</listener>
+			</listeners>
+		</tasklet>
+	</step>
+
+	<bean id="fileItemReader" class="org.springframework.batch.item.file.FlatFileItemReader" scope="step">
+		<property name="resource" value="classpath:/org/egovframe/data/input/input1.txt" />
+		<property name="lineMapper">
+			<bean class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
+				<property name="lineTokenizer">
+					<bean class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
+						<property name="names" value="ISIN, Quantity, Price, Customer" />
+					</bean>
+				</property>
+				<property name="fieldSetMapper">
+					<bean class="org.egovframe.brte.sample.common.domain.trade.TradeFieldSetMapper" />
+				</property>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="tradeProcessor" class="org.egovframe.brte.sample.common.domain.trade.TradeProcessor" scope="step"/>
+
+	<bean id="tradeProcessorFailure" class="org.egovframe.brte.sample.common.domain.trade.TradeProcessor" scope="step">
+		<property name="validationFailure" value="7" />
+	</bean>
+
+	<bean id="tradeWriter" class="org.egovframe.brte.sample.common.domain.trade.TradeWriter" scope="step">
+		<property name="dao">
+			<bean class="org.egovframe.brte.sample.common.domain.trade.JdbcTradeDao">
+				<property name="dataSource" ref="dataSource" />
+				<property name="incrementer">
+					<bean parent="incrementerParent">
+						<property name="incrementerName" value="TRADE_SEQ" />
+					</bean>
+				</property>
+			</bean>
+		</property>
+		<property name="failingCustomers">
+			<list>
+				<value>customer6</value>
+			</list>
+		</property>
+	</bean>
+
+	
+	<bean id="errorLogTasklet" class="org.egovframe.brte.sample.example.support.EgovErrorLogTasklet" scope="step">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="skipCheckingDecider" class="org.egovframe.brte.sample.example.support.EgovSkipCheckingDecider" />
+
+	<bean id="incrementer" class="org.springframework.batch.core.launch.support.RunIdIncrementer" />
+
+</beans>

@@ -1,42 +1,42 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>egovframework.rte</groupId>
-	<artifactId>egovframework.rte.root</artifactId>
+	<groupId>org.egovframe.rte</groupId>
+	<artifactId>org.egovframe.rte.root</artifactId>
 	<packaging>pom</packaging>
-	<version>3.10.0</version>
-	<name>egovframework.rte.root</name>
+	<version>4.0.0</version>
+	<name>org.egovframe.rte.root</name>
 
 	<modules>
 		<!-- Foundation Layer -->
-		<module>Foundation/egovframework.rte.fdl.cmmn</module>
-		<module>Foundation/egovframework.rte.fdl.crypto</module>
-		<module>Foundation/egovframework.rte.fdl.excel</module>
-		<module>Foundation/egovframework.rte.fdl.filehandling</module>
-		<module>Foundation/egovframework.rte.fdl.idgnr</module>
-		<module>Foundation/egovframework.rte.fdl.logging</module>
-		<module>Foundation/egovframework.rte.fdl.property</module>
-		<module>Foundation/egovframework.rte.fdl.security</module>
-		<module>Foundation/egovframework.rte.fdl.string</module>
-		<module>Foundation/egovframework.rte.fdl.xml</module>
-		<module>Foundation/egovframework.rte.fdl.access</module>
-		
+		<module>Foundation/org.egovframe.rte.fdl.cmmn</module>
+		<module>Foundation/org.egovframe.rte.fdl.crypto</module>
+		<module>Foundation/org.egovframe.rte.fdl.excel</module>
+		<module>Foundation/org.egovframe.rte.fdl.filehandling</module>
+		<module>Foundation/org.egovframe.rte.fdl.idgnr</module>
+		<module>Foundation/org.egovframe.rte.fdl.logging</module>
+		<module>Foundation/org.egovframe.rte.fdl.property</module>
+		<module>Foundation/org.egovframe.rte.fdl.security</module>
+		<module>Foundation/org.egovframe.rte.fdl.string</module>
+		<module>Foundation/org.egovframe.rte.fdl.xml</module>
+		<module>Foundation/org.egovframe.rte.fdl.access</module>
+
 		<!-- Persistence -->
-		<module>Persistence/egovframework.rte.psl.dataaccess</module>
-		<module>Persistence/egovframework.rte.psl.data.jpa</module>
-		<module>Persistence/egovframework.rte.psl.data.mongodb</module>
-		
+		<module>Persistence/org.egovframe.rte.psl.dataaccess</module>
+		<module>Persistence/org.egovframe.rte.psl.data.jpa</module>
+		<module>Persistence/org.egovframe.rte.psl.data.mongodb</module>
+
 		<!-- BusinessLogic -->
 
 		<!-- Presentation -->
-		<module>Presentation/egovframework.rte.ptl.mvc</module>
+		<module>Presentation/org.egovframe.rte.ptl.mvc</module>
 
 		<!-- Integration -->
-		<module>Integration/egovframework.rte.itl.integration</module>
-		<module>Integration/egovframework.rte.itl.webservice</module>
+		<module>Integration/org.egovframe.rte.itl.integration</module>
+		<module>Integration/org.egovframe.rte.itl.webservice</module>
 
 		<!-- Batch -->
-		<module>Batch/egovframework.rte.bat.core</module>
+		<module>Batch/org.egovframe.rte.bat.core</module>
 
 	</modules>
 

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
+
+    <bean id="accessDataSourceFactoryBean" class="org.egovframe.rte.fdl.access.bean.AccessDataSourceFactoryBean" />
+
+    <bean id="authorityUserFactoryBean" class="org.egovframe.rte.fdl.access.bean.AuthorityUserFactoryBean" />
+
+    <bean id="roleAndUrlFactoryBean" class="org.egovframe.rte.fdl.access.bean.RoleAndUrlFactoryBean" />
+
+    <bean id="egovAccessDao" class="org.egovframe.rte.fdl.access.service.impl.EgovAccessDao">
+        <property name="dataSource" ref="accessDataSourceFactoryBean" />
+        <property name="authorityUserQuery" ref="authorityUserFactoryBean" />
+        <property name="roleAndUrlQuery" ref="roleAndUrlFactoryBean" />
+    </bean>
+
+    <bean id="egovAccessService" class="org.egovframe.rte.fdl.access.service.impl.EgovAccessServiceImpl">
+        <property name="egovAccessDao" ref="egovAccessDao" />
+    </bean>
+
+    <bean id="authorityMap" class="org.egovframe.rte.fdl.access.bean.AuthorityMapFactoryBean" init-method="init">
+        <property name="egovAccessService" ref="egovAccessService" />
+    </bean>
+
+    <bean id="resourceMap" class="org.egovframe.rte.fdl.access.bean.ResourceMapFactoryBean" init-method="init">
+        <property name="egovAccessService" ref="egovAccessService" />
+    </bean>
+
+    <bean id="authorityResource" class="org.egovframe.rte.fdl.access.bean.AuthorityResourceMetadata">
+        <constructor-arg ref="authorityMap" />
+        <constructor-arg ref="resourceMap" />
+        <property name="egovAccessService" ref="egovAccessService" />
+    </bean>
+
+</beans>

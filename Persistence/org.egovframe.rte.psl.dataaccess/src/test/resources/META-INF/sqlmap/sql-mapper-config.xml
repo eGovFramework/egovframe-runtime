@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" 
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+ 
+<configuration>
+    <typeHandlers>
+        <typeHandler handler="org.egovframe.rte.psl.dataaccess.typehandler.CalendarMapperTypeHandler" />
+    </typeHandlers>
+    <!-- 
+    <typeAliases>
+	    <typeAlias alias="empIncludesDeptVO" type="org.egovframe.rte.psl.dataaccess.vo.EmpIncludesDeptVO" />
+		<typeAlias alias="deptIncludesEmpListVO" type="org.egovframe.rte.psl.dataaccess.vo.DeptIncludesEmpListVO" />
+		<typeAlias alias="deptVO" type="org.egovframe.rte.psl.dataaccess.vo.DeptVO" />
+		<typeAlias alias="empVO" type="org.egovframe.rte.psl.dataaccess.vo.EmpVO" />
+		<typeAlias alias="empIncludesMgrVO" type="org.egovframe.rte.psl.dataaccess.vo.EmpIncludesMgrVO" />
+		<typeAlias alias="empIncludesEmpListVO" type="org.egovframe.rte.psl.dataaccess.vo.EmpIncludesEmpListVO" />
+    </typeAliases>
+     -->
+</configuration>

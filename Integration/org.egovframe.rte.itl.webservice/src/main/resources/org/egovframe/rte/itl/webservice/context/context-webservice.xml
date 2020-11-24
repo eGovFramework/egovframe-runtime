@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
+
+    <import resource="classpath:META-INF/cxf/cxf.xml"/>
+    <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml"/>
+    <import resource="classpath:META-INF/cxf/cxf-servlet.xml"/>
+
+    <bean id="integrationDefinitionDao"
+          class="org.egovframe.rte.itl.integration.metadata.dao.hibernate.HibernateIntegrationDefinitionDao">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+ 
+    <bean id="recordTypeDefinitionDao"
+          class="org.egovframe.rte.itl.integration.metadata.dao.hibernate.HibernateRecordTypeDefinitionDao">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+ 
+    <bean id="webServiceClientDefinitionDao"
+          class="org.egovframe.rte.itl.webservice.data.dao.hibernate.HibernateWebServiceClientDefinitionDao">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>          
+ 
+    <bean id="webServiceServerDefinitionDao"
+          class="org.egovframe.rte.itl.webservice.data.dao.hibernate.HibernateWebServiceServerDefinitionDao">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+ 
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="mappingResources">
+            <list>
+                <value>/org/egovframe/rte/itl/integration/metadata/dao/hibernate/OrganizationDefinition.hbm.xml</value>
+                <value>/org/egovframe/rte/itl/integration/metadata/dao/hibernate/SystemDefinition.hbm.xml</value>
+                <value>/org/egovframe/rte/itl/integration/metadata/dao/hibernate/ServiceDefinition.hbm.xml</value>
+                <value>/org/egovframe/rte/itl/integration/metadata/dao/hibernate/RecordTypeDefinition.hbm.xml</value>
+                <value>/org/egovframe/rte/itl/integration/metadata/dao/hibernate/IntegrationDefinition.hbm.xml</value>
+                <value>/org/egovframe/rte/itl/webservice/data/dao/hibernate/WebServiceClientDefinition.hbm.xml</value>
+                <value>/org/egovframe/rte/itl/webservice/data/dao/hibernate/WebServiceServerDefinition.hbm.xml</value>
+            </list>
+        </property>
+		<property name="hibernateProperties">  
+			<props>  
+				<prop key="hibernate.dialect">org.hibernate.dialect.HSQLDialect</prop>  
+				<prop key="hibernate.show_sql">false</prop>  
+				<prop key="hibernate.hbm2ddl.auto">validate</prop>  
+				<prop key="hibernate.format_sql">true</prop>  
+			</props>  
+		</property>
+	</bean>
+ 
+    <bean id="typeLoader" class="org.egovframe.rte.itl.integration.type.support.TypeLoaderUsingMetadata">
+        <property name="recordTypeDefinitionDao" ref="recordTypeDefinitionDao"/>
+    </bean>
+ 
+    <bean id="classLoader" class="org.egovframe.rte.itl.webservice.service.impl.EgovWebServiceClassLoaderFactoryBean"/>
+ 
+ </beans>

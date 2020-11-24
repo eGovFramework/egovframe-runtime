@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:egov-security="http://www.egovframe.go.kr/schema/egov-security"
+	   xmlns:security="http://www.springframework.org/schema/security"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+	   http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-5.2.xsd
+	   http://www.egovframe.go.kr/schema/egov-security http://www.egovframe.go.kr/schema/egov-security/egov-security-3.10.xsd">
+
+	<!-- loaded by 'EgovSecurityConfigInitializerBeanDefinitionParser' BeanDefinitionParser  -->
+	<!-- import resource="classpath*:/META-INF/spring/security/security-*.xml" /-->
+
+	<security:http pattern="/css/**" security="none"/>
+    <security:http pattern="/images/**" security="none"/>
+ 	<security:http pattern="/js/**" security="none"/>
+ 	<security:http pattern="\A/WEB-INF/jsp/.*\Z" request-matcher="regex" security="none"/>
+
+	<egov-security:config id="securityConfig"
+		loginUrl="/cvpl/EgovCvplLogin.do"
+		logoutSuccessUrl="/cvpl/EgovCvplLogin.do"
+		loginFailureUrl="/cvpl/EgovCvplLogin.do?login_error=1"
+		accessDeniedUrl="/system/accessDenied.do"
+
+		dataSource="dataSource"
+		jdbcUsersByUsernameQuery="SELECT USER_ID,PASSWORD,ENABLED,USER_NAME,BIRTH_DAY,SSN FROM USERS WHERE USER_ID = ?"
+		jdbcAuthoritiesByUsernameQuery="SELECT USER_ID,AUTHORITY FROM AUTHORITIES WHERE USER_ID = ?"
+		jdbcMapClass="org.egovframe.rte.fdl.security.userdetails.EgovUserDetailsMapping"
+
+		requestMatcherType="regex"
+		hash="md5"
+	/>
+
+	<egov-security:initializer id="initializer"
+		supportPointcut="true"
+	/>
+
+</beans>

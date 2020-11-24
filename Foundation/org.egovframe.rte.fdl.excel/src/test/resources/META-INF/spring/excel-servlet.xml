@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
+
+	<!-- 2009.02.27 ExcelView 구현 -->
+	<bean id="categoryExcelView" class="org.egovframe.rte.fdl.excel.download.CategoryExcelView" />
+
+	<!-- 2013.05.22 ExcelView 구현 -->
+	<bean id="categoryPOIExcelView" class="org.egovframe.rte.fdl.excel.download.CategoryPOIExcelView" />
+
+	<bean class="org.springframework.web.servlet.view.BeanNameViewResolver" >
+		<property name="order" value="0" />
+	</bean>
+	<!-- ViewResolver가 여러개일경우 우선순위를 반드시 지정해줘야된다.-->
+
+</beans>

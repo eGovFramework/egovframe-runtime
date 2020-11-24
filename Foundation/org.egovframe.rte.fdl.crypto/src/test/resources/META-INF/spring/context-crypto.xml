@@ -1,0 +1,35 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans   
+       http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+       http://www.springframework.org/schema/context   
+       http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+	
+	<context:property-placeholder 
+		location="classpath*:/META-INF/spring/crypto_config.properties,classpath*:/META-INF/spring/password.properties" />
+	<!-- recommended location method is using file prefix.. ex) "file:/home/properties/crypto_config.properties" -->
+	
+	<bean id="passwordEncoder" class="org.egovframe.rte.fdl.cryptography.EgovPasswordEncoder">
+		<property name="algorithm" value="${crypto.password.algorithm}" />	<!-- default : SHA-256 -->
+		<property name="hashedPassword" value="${crypto.hashed.password}" />
+	</bean>
+	
+	<bean id="ARIACryptoService" class="org.egovframe.rte.fdl.cryptography.impl.EgovARIACryptoServiceImpl">
+		<property name="passwordEncoder" ref="passwordEncoder" />
+		<property name="blockSize" value="1024" />	<!-- default : 1024 -->
+	</bean>
+	
+	<bean id="digestService" class="org.egovframe.rte.fdl.cryptography.impl.EgovDigestServiceImpl">
+		<property name="algorithm" value="SHA-256" />	<!-- default : SHA-256 -->
+		<property name="plainDigest" value="false" />	<!-- default : false -->
+	</bean>
+	
+	<bean id="generalCryptoService" class="org.egovframe.rte.fdl.cryptography.impl.EgovGeneralCryptoServiceImpl">
+		<property name="passwordEncoder" ref="passwordEncoder" />
+		<property name="algorithm" value="PBEWithSHA1AndDESede" />	<!-- default : PBEWithSHA1AndDESede -->
+		<property name="blockSize" value="1024" />	<!-- default : 1024 -->
+	</bean>
+	
+</beans> 

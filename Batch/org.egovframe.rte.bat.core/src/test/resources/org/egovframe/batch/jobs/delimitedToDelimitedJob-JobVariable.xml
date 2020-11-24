@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+	   http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+	   http://www.springframework.org/schema/batch
+	   http://www.springframework.org/schema/batch/spring-batch-3.0.xsd">
+
+	<import resource="abstract/eGovBase.xml" />
+
+
+    <bean id="egovJobVariableListener" class="org.egovframe.rte.bat.support.EgovJobVariableListener">
+ 
+	<property name="pros">
+	<props>
+		<prop key="JobVariableKey1">JobVariableValue1</prop>
+		<prop key="JobVariableKey2">JobVariableValue2</prop>
+		<prop key="JobVariableKey3">JobVariableValue3</prop>
+	</props>
+	</property>
+    <!--
+	<property name="pros">
+		<value>
+		egovJobVariableKey1=egovJobVariableValue1
+		egovJobVariableKey2=egovJobVariableValue2
+		egovJobVariableKey3=egovJobVariableValue3
+		</value>
+	</property>
+	 -->
+    </bean>
+
+    
+	<job id="delimitedToDelimitedJob-JobVariable" parent="eGovBaseJob" xmlns="http://www.springframework.org/schema/batch">
+		<listeners>
+			<listener ref="egovJobVariableListener" />
+		</listeners>
+		
+		<step id="step1" next="delimitedToDelimitedStep-JobVariable">
+			<tasklet ref="taskletJob" />
+		</step>
+		<!-- 
+		<step id="step2" next="delimitedToDelimitedStep-JobVariable">
+			<tasklet ref="taskletJob" />
+		</step>
+		 -->
+	
+		<step id="delimitedToDelimitedStep-JobVariable" parent="eGovBaseStep">
+			<tasklet>
+				<chunk reader="delimitedToDelimitedJob-JobVariable.delimitedToDelimitedStep.delimitedItemReader"
+					processor="delimitedToDelimitedJob-JobVariable.delimitedToDelimitedStep.itemProcessor"
+					writer="delimitedToDelimitedJob-JobVariable.delimitedToDelimitedStep.delimitedItemWriter"
+					commit-interval="2" />
+			</tasklet>
+		</step>
+		
+
+	</job>
+
+	<bean id="delimitedToDelimitedJob-JobVariable.delimitedToDelimitedStep.delimitedItemReader"
+		class="org.springframework.batch.item.file.FlatFileItemReader" scope="step">
+		<property name="resource" value="#{jobParameters[inputFile]}" />
+		<property name="lineMapper">
+			<bean class="org.egovframe.rte.bat.core.item.file.mapping.EgovDefaultLineMapper">
+				<property name="lineTokenizer">
+					<bean class="org.egovframe.rte.bat.core.item.file.transform.EgovDelimitedLineTokenizer">
+						<property name="delimiter" value="," />
+					</bean>
+				</property>
+				<property name="objectMapper">
+					<bean class="org.egovframe.rte.bat.core.item.file.mapping.EgovObjectMapper">
+						<property name="type"
+							value="org.egovframe.brte.sample.common.domain.trade.CustomerCredit" />
+						<property name="names" value="name,credit" />
+					</bean>
+				</property>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="delimitedToDelimitedJob-JobVariable.delimitedToDelimitedStep.delimitedItemWriter"
+	    class="org.springframework.batch.item.file.FlatFileItemWriter" scope="step">
+		<property name="resource" value="file:./target/test-outputs/csvOutput_JobVariable_#{new java.text.SimpleDateFormat('yyyyMMddHHmmssSS').format(new java.util.Date())}.csv" />
+		<property name="lineAggregator">
+			<bean class="org.springframework.batch.item.file.transform.DelimitedLineAggregator">
+				<property name="delimiter" value="," />
+				<property name="fieldExtractor">
+					<bean class="org.egovframe.rte.bat.core.item.file.transform.EgovFieldExtractor">
+						<property name="names" value="name,credit" />
+					</bean>
+				</property>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="delimitedToDelimitedJob-JobVariable.delimitedToDelimitedStep.itemProcessor"
+				class="org.egovframe.brte.sample.common.domain.trade.CustomerCreditIncreaseProcessor" scope="step">
+	</bean>
+
+	<bean id="taskletJob" class="org.egovframe.rte.bat.support.tasklet.TaskletJob" scope="step">
+		<property name="jobVariable" value="#{jobExecutionContext[JobVariableKey1]}" />
+	</bean>
+
+	<bean class="org.springframework.batch.core.scope.StepScope" />
+	<bean class="org.springframework.batch.core.scope.JobScope" />
+
+</beans>

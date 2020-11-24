@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+	   http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+	   http://www.springframework.org/schema/batch
+	   http://www.springframework.org/schema/batch/spring-batch-3.0.xsd">
+
+	<job id="retrySample" xmlns="http://www.springframework.org/schema/batch">
+		<step id="step1">
+			<tasklet>
+				<chunk reader="itemGenerator" writer="itemWriter" commit-interval="1" retry-limit="3">
+				    <retryable-exception-classes>
+				    	<include class="java.lang.Exception"/>
+				    </retryable-exception-classes>
+				</chunk>
+			</tasklet>
+		</step>
+	</job>
+
+	<bean id="itemGenerator" class="org.egovframe.brte.sample.common.domain.trade.GeneratingTradeItemReader">
+		<property name="limit" value="10" />
+	</bean>
+
+	<bean id="itemWriter" class="org.egovframe.brte.sample.example.support.EgovRetrySampleItemWriter" />
+
+</beans>
