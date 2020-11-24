@@ -25,6 +25,7 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -834,8 +835,8 @@ public final class EgovStringUtil {
 	@SuppressWarnings("restriction")
 	@Deprecated
 	public static String encodeString(String str) {
-		sun.misc.BASE64Encoder encoder = new sun.misc.BASE64Encoder();
-		return new String(encoder.encodeBuffer(str.getBytes())).trim();
+		byte[] encodedBytes = Base64.encodeBase64(str.getBytes());
+		return new String(encodedBytes).trim();
 	}
 
     /**
@@ -848,12 +849,8 @@ public final class EgovStringUtil {
 	@SuppressWarnings("restriction")
 	@Deprecated
 	public static String decodeString(String str) {
-		sun.misc.BASE64Decoder dec = new sun.misc.BASE64Decoder();
-		try {
-			return new String(dec.decodeBuffer(str));
-		} catch (IOException io) {
-			throw new RuntimeException(io.getMessage(), io.getCause());
-		}
+		byte[] decodedBytes = Base64.decodeBase64(str);
+		return new String(decodedBytes);
 	}
 
     /**
