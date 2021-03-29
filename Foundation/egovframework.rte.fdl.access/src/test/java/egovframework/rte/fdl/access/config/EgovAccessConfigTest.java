@@ -93,8 +93,6 @@ public class EgovAccessConfigTest {
         }
 
         Assert.assertTrue(matchStatus);
-
     }
 
 }
-

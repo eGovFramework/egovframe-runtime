@@ -6,24 +6,24 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="egovframework.rte.bat.core" />
-        <module name="egovframework.rte.fdl.access" />
-        <module name="egovframework.rte.fdl.cmmn" />
-        <module name="egovframework.rte.fdl.crypto" />
-        <module name="egovframework.rte.fdl.excel" />
-        <module name="egovframework.rte.fdl.filehandling" />
+        <module name="egovframework.rte.psl.dataaccess" />
         <module name="egovframework.rte.fdl.idgnr" />
         <module name="egovframework.rte.fdl.logging" />
-        <module name="egovframework.rte.fdl.property" />
-        <module name="egovframework.rte.fdl.security" />
-        <module name="egovframework.rte.fdl.string" />
-        <module name="egovframework.rte.fdl.xml" />
         <module name="egovframework.rte.itl.integration" />
-        <module name="egovframework.rte.itl.webservice" />
-        <module name="egovframework.rte.psl.data.jpa" />
-        <module name="egovframework.rte.psl.data.mongodb" />
-        <module name="egovframework.rte.psl.dataaccess" />
+        <module name="egovframework.rte.fdl.property" />
         <module name="egovframework.rte.ptl.mvc" />
+        <module name="egovframework.rte.fdl.access" />
+        <module name="egovframework.rte.itl.webservice" />
+        <module name="egovframework.rte.fdl.crypto" />
+        <module name="egovframework.rte.psl.data.mongodb" />
+        <module name="egovframework.rte.fdl.excel" />
+        <module name="egovframework.rte.fdl.filehandling" />
+        <module name="egovframework.rte.bat.core" />
+        <module name="egovframework.rte.fdl.cmmn" />
+        <module name="egovframework.rte.psl.data.jpa" />
+        <module name="egovframework.rte.fdl.xml" />
+        <module name="egovframework.rte.fdl.string" />
+        <module name="egovframework.rte.fdl.security" />
       </profile>
     </annotationProcessing>
   </component>

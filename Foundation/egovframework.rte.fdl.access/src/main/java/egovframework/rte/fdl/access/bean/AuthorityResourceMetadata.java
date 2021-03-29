@@ -36,7 +36,7 @@ import egovframework.rte.fdl.access.service.EgovAccessService;
  * 수정일			수정자					수정내용
  * ---------------------------------------------------------------------------------
  * 2019.10.01	Egovframework Center	최초 생성
- *
+ * 2021.02.01   Egovframework Center    권한재설정 수정
  * </pre>
  */
 public class AuthorityResourceMetadata {
@@ -69,6 +69,12 @@ public class AuthorityResourceMetadata {
     }
 
     public void reload() throws Exception {
+        List<Map<String, Object>> authList = egovAccessService.getAuthorityUser();
+        Iterator<Map<String, Object>> authInterator = authList.iterator();
+        authorityList.clear();
+        while (authInterator.hasNext()) {
+            authorityList.add(authInterator.next());
+        }
         List<Map<String, Object>> list = egovAccessService.getRoleAndUrl();
         Iterator<Map<String, Object>> iterator = list.iterator();
         resourceMap.clear();
