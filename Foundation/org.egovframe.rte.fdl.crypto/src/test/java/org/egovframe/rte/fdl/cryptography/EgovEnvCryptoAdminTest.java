@@ -33,19 +33,15 @@ import org.egovframe.rte.fdl.cryptography.impl.EgovARIACryptoServiceImpl;
 public class EgovEnvCryptoAdminTest {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(EgovEnvCryptoAdminTest.class);
-	
+
 	//계정 아이디
-//	String[] arrCryptoString = { 
-//            "userId",       //데이터베이스 접속 계정
-//            "userPassword", //데이터베이스 접속 패드워드
-//            "url"           //데이터베이스 접속 주소
-//          };
-	String[] arrCryptoString = { 
-            "publisher",		//데이터베이스 접속 계정
-            "publisher1024!@#",	//데이터베이스 접속 패드워드
-            "jdbc:log4jdbc:mysql://127.0.0.1:3306/com?zeroDateTimeBehavior=convertToNull&"	//데이터베이스 접속 주소
-          };
-	
+	String[] arrCryptoString = {
+		"com", //데이터베이스 접속 계정
+		"com01", //데이터베이스 접속 패드워드
+		"jdbc:log4jdbc:mysql://10.211.55.2:3306/com", //데이터베이스 접속 주소
+		"net.sf.log4jdbc.DriverSpy" //데이터베이스 드라이버
+	};
+
 	//계정암호화키 키
 	public String algorithmKey = "egovframe";
 

@@ -1,2 +1,2 @@
-http\://www.egovframe.go.kr/schema/egov-crypto/egov-crypto.xsd=org/egovframe/rte/fdl/crypto/config/egov-crypto-3.8.xsd
-http\://www.egovframe.go.kr/schema/egov-crypto/egov-crypto-3.8.xsd=org/egovframe/rte/fdl/crypto/config/egov-crypto-3.8.xsd
+http\://maven.egovframe.go.kr/schema/egov-crypto/egov-crypto.xsd=org/egovframe/rte/fdl/crypto/config/egov-crypto-4.0.0.xsd
+http\://maven.egovframe.go.kr/schema/egov-crypto/egov-crypto-4.0.0.xsd=org/egovframe/rte/fdl/crypto/config/egov-crypto-4.0.0.xsd
