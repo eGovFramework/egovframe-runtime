@@ -20,14 +20,14 @@ import javax.servlet.http.HttpServletRequestWrapper;
 
 /**
  * HTMLTagFilterRequestWrapper.java
- * 
+ *
  * @author 실행환경 개발팀 함철
  * @since 2009.06.01
  * @version 1.0
  *
  * <pre>
  * == 개정이력(Modification Information) ==
- *   
+ *
  *   수정일      수정자           수정내용
  *  -------    --------    ---------------------------
  *   2009.05.30  함철            최초 생성
@@ -41,7 +41,6 @@ public class HTMLTagFilterRequestWrapper extends HttpServletRequestWrapper {
 	}
 
 	public String[] getParameterValues(String parameter) {
-
 		String[] values = super.getParameterValues(parameter);
 
 		if (values == null) {
@@ -50,33 +49,7 @@ public class HTMLTagFilterRequestWrapper extends HttpServletRequestWrapper {
 
 		for (int i = 0; i < values.length; i++) {
 			if (values[i] != null) {
-				StringBuffer strBuff = new StringBuffer();
-				for (int j = 0; j < values[i].length(); j++) {
-					char c = values[i].charAt(j);
-					switch (c) {
-						case '<':
-							strBuff.append("&lt;");
-							break;
-						case '>':
-							strBuff.append("&gt;");
-							break;
-						case '&':
-							strBuff.append("&amp;");
-							break;
-						case '"':
-							strBuff.append("&quot;");
-							break;
-						case '\'':
-							strBuff.append("&apos;");
-							break;
-						default:
-							strBuff.append(c);
-							break;
-					}
-				}
-				values[i] = strBuff.toString();
-			} else {
-				values[i] = null;
+				values[i] = this.doFilter(values[i]);
 			}
 		}
 
@@ -84,40 +57,68 @@ public class HTMLTagFilterRequestWrapper extends HttpServletRequestWrapper {
 	}
 
 	public String getParameter(String parameter) {
-
 		String value = super.getParameter(parameter);
 
 		if (value == null) {
 			return null;
 		}
 
-		StringBuffer strBuff = new StringBuffer();
+		value = this.doFilter(value);
+
+		return value;
+	}
+
+	public Map<String, String[]> getParameterMap() {
+		Map<String, String[]> paramMap = super.getParameterMap();
+		Map<String, String[]> newFilteredParamMap = new HashMap<String, String[]>();
+		Set<Entry<String, String[]>> set = paramMap.entrySet();
+
+		for (Entry<String, String[]> entry : set) {
+			String[] valueObj = entry.getValue();
+			String[] filteredValue = new String[valueObj.length];
+
+			for (int index = 0; index < valueObj.length; ++index) {
+				filteredValue[index] = this.doFilter(String.valueOf(valueObj[index]));
+			}
+
+			newFilteredParamMap.put(entry.getKey(), filteredValue);
+		}
+
+		return newFilteredParamMap;
+	}
+
+	private String doFilter(String value) {
+		if (value == null) {
+			return null;
+		}
+
+		StringBuilder sb = new StringBuilder();
 
 		for (int i = 0; i < value.length(); i++) {
 			char c = value.charAt(i);
 			switch (c) {
 				case '<':
-					strBuff.append("&lt;");
+					sb.append("&lt;");
 					break;
 				case '>':
-					strBuff.append("&gt;");
+					sb.append("&gt;");
 					break;
 				case '&':
-					strBuff.append("&amp;");
+					sb.append("&amp;");
 					break;
 				case '"':
-					strBuff.append("&quot;");
+					sb.append("&quot;");
 					break;
 				case '\'':
-					strBuff.append("&apos;");
+					sb.append("&apos;");
 					break;
 				default:
-					strBuff.append(c);
+					sb.append(c);
 					break;
 			}
 		}
 
-		value = strBuff.toString();
+		value = sb.toString();
 
 		return value;
 	}
