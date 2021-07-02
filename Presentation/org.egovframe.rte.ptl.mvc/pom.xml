@@ -22,6 +22,19 @@
         <org.egovframe.rte.version>4.0.0</org.egovframe.rte.version>
     </properties>
 
+	<repositories>
+		<repository>
+			<id>egovframe</id>
+			<url>http://maven.egovframe.go.kr/maven/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
     <dependencies>
         <dependency>
             <groupId>org.egovframe.rte</groupId>
@@ -47,7 +60,7 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.springmodules</groupId>
+            <groupId>org.egovframe.rte</groupId>
             <artifactId>spring-modules-validation</artifactId>
             <version>0.9</version>
         </dependency>
