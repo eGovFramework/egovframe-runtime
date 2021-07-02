@@ -20,7 +20,7 @@
     <properties>
         <spring.maven.artifact.version>5.2.5.RELEASE</spring.maven.artifact.version>
         <org.egovframe.rte.version>4.0.0</org.egovframe.rte.version>
-        <spring.security.maven.artifact.version>5.2.2.RELEASE</spring.security.maven.artifact.version>
+        <spring.security.maven.artifact.version>5.2.10.RELEASE</spring.security.maven.artifact.version>
     </properties>
 
     <dependencies>
