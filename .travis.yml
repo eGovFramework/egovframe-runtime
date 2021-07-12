@@ -19,7 +19,7 @@ notifications:
 
 addons:
   sonarcloud:
-    organization: "pinepond"
+    organization: "openlenalab"
     token:
       secure: "PqjTJBzH0Xi06PZd3IUR8rl00FuDKcGMaWCjJPemWUt/8WcLjdmN2Fx6/Zgq/hHQXI8q+J/c00WtMJOIpbQZUQBy5krvK/hHoduJocJGS0PMB8SAz0TQ0dyusS0vVK1qpNzb6WlQlTOQ8tL5jsD++4Mhvwbi+OfacTdIDo6zLakHfUYdNTyR7ruCrX+AlKTGvtPO64mAK8vFZrT3DTImQ6Uon9Vh4gpw3f6tfbeMAtMSIRCJzI2634pEPaFHh0j0cKsWEGJLuohBPbPr3D9SGI8qlTq+0PcYppLPdQ7KIDGde9GatXjBvMD0MvoFB6fTDkU96Y3FO1f+/F0A0WFZG/I6+zX09pn6OZ15lvfjA2y9atRReUCzmUHCM+SP4mKqiUj45zs80wuGcfzTzwIX8e9AvNLJ/hKbx9tizEDF/478lm3hpUpmrFsJRttlVZAm62LcEzFTVvIrGPPywwb7Yn/SeX0zUy+LF+Y0ZJESg5tlrK7wgLAkzofaIBiadMcDXDFWHHomRoJ97uDEVP+88mD5dNYgvp5iEZ5BbFAVJaOhiwNyOXva2ccasJiUITYpoZOOyd9S6vvO7/9mah6d0OrQVZhrXuOfVaK6txAoZTfv0WsXaO+EHpqbHOHVfIvTGTZHSSXAxd7l/aRF5Fr1Xo4uftZltzExP5PuQD84XTw="
 
