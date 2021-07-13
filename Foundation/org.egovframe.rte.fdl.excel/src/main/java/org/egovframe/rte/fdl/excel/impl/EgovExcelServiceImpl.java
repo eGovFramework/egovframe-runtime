@@ -168,15 +168,18 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
 	 */
     public Workbook loadExcelTemplate(String templateName) throws IOException {
         FileInputStream fileIn = new FileInputStream(templateName);
+        POIFSFileSystem fs = null;
         Workbook wb = null;
         LOGGER.debug("EgovExcelServiceImpl.loadExcelTemplate : templatePath is {}", templateName);
         try {
             LOGGER.debug("ExcelServiceImpl loadExcelTemplate ...");
-            POIFSFileSystem fs = new POIFSFileSystem(fileIn);
+            fs = new POIFSFileSystem(fileIn);
             wb = new HSSFWorkbook(fs);
         } finally {
             LOGGER.debug("ExcelServiceImpl loadExcelTemplate end...");
-            fileIn.close();
+            if(wb != null) wb.close();
+            if(fs != null) fs.close(); 
+            if(fileIn != null)fileIn.close();
         }
         return wb;
     }
@@ -230,7 +233,8 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
 		try {
 			wb = loadWorkbook(fileIn, wb);
 		} finally {
-			fileIn.close();
+			if(wb != null)	wb.close();
+			if(fileIn != null) fileIn.close();
 		}
     	return wb;
     }
