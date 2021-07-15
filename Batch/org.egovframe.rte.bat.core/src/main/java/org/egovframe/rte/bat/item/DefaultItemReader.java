@@ -183,7 +183,9 @@ public class DefaultItemReader<T> implements ItemStreamReader<T> {
 				    }
 			    }
 		    	this.resource = new FileSystemResource(resourceName);
-			    this.fieldNames = names.split(",");
+		    	if(names != null) {
+				    this.fieldNames = names.split(",");
+		    	}
 			    try {
 					this.voType = Class.forName(type);
 				} catch (ClassNotFoundException e) {
