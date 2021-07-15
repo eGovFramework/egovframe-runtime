@@ -135,7 +135,7 @@ public final class EgovObjectUtil {
      * @return Null인경우 true / Null이 아닌경우 false
      */
     public static boolean isNull(Object object) {
-        return ((object == null) || object.equals(null));
+    	return (object == null) ? true : false;
     }
 
 }
