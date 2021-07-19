@@ -179,7 +179,7 @@ public class EgovJdbcBatchItemWriter<T> implements ItemWriter<T>, InitializingBe
 				}
 			});
 
-			if (assertUpdates) {
+			if (assertUpdates && (updateCounts != null)) {
 				for (int i = 0; i < updateCounts.length; i++) {
 					int value = updateCounts[i];
 					if (value == 0) {
