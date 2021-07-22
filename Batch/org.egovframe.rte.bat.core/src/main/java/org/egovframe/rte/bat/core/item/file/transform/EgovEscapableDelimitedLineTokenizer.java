@@ -68,7 +68,7 @@ public class EgovEscapableDelimitedLineTokenizer extends EgovAbstractLineTokeniz
 	 * @param delimiter : delimiter로 사용 할 문자열
 	 */
 	public EgovEscapableDelimitedLineTokenizer(String delimiter) {
-		Assert.state(delimiter != DEFAULT_QUOTE_CHARACTER, "[" + DEFAULT_QUOTE_CHARACTER + "] is not allowed as delimiter for tokenizers.");
+		Assert.state(!delimiter.equals(DEFAULT_QUOTE_CHARACTER), "[" + DEFAULT_QUOTE_CHARACTER + "] is not allowed as delimiter for tokenizers.");
 		this.delimiter = delimiter;
 		setQuoteCharacter(DEFAULT_QUOTE_CHARACTER);
 	}
