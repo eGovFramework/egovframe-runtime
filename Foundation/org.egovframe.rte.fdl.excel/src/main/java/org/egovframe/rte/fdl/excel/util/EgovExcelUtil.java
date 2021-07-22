@@ -56,7 +56,7 @@ public final class EgovExcelUtil {
      */
     public static String getValue(Cell cell) {
         String result = "";
-        if (null == cell || cell.equals(null)) {
+        if (null == cell) {
             return "";
         }
 
