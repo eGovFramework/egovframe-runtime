@@ -89,15 +89,6 @@
             <version>2.5.0</version>
             <scope>test</scope>
         </dependency>
-        <!-- for Table ID Generation Service -->
-        <!--
-        <dependency>
-            <groupId>ojdbc</groupId>
-            <artifactId>ojdbc</artifactId>
-            <version>14</version>
-            <scope>test</scope>
-        </dependency>
-        -->
     </dependencies>
 
     <build>
