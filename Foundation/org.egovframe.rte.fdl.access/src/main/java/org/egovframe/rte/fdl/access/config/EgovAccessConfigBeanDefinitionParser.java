@@ -132,7 +132,6 @@ public class EgovAccessConfigBeanDefinitionParser extends AbstractSingleBeanDefi
                 "       </mvc:interceptors>\n" +
                 "   </beans>\n" +
                 "</beans>";
-        //LOGGER.debug("===>>> "+beanDefinitionBuilderString);
         try {
             parserContext.getReaderContext().getReader().setValidationMode(XmlBeanDefinitionReader.VALIDATION_XSD);
             LOGGER.debug("##### EgovAccessConfigBeanDefinitionParser interceptor httpd load Start #####");
