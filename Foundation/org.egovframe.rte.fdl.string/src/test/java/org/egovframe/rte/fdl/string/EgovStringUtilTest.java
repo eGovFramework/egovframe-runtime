@@ -216,7 +216,7 @@ public class EgovStringUtilTest {
 	 */
 	public void testNull2string1() throws Exception {
 		String string = null;
-		assertEquals("", EgovStringUtil.null2string(string, ""));
+		assertEquals("", EgovStringUtil.null2string(string,""));
 	}
 
 
@@ -341,6 +341,7 @@ public class EgovStringUtilTest {
 	/**
 	 * @throws Exception
 	 */
+	@Test
 	public void testEncodePassword() throws Exception {
 		// 1. try to encode password and compare
 		String encoded1 = EgovStringUtil.encodePassword("password", "MD5");
@@ -377,6 +378,7 @@ public class EgovStringUtilTest {
 	/**
 	 * @throws Exception
 	 */
+	@Test
 	public void testSwapFirstLetterCase() throws Exception {
 		// 1. In case, first letter is small letter. try to swap.
 		String swapped = EgovStringUtil.swapFirstLetterCase("password");
@@ -389,6 +391,7 @@ public class EgovStringUtilTest {
 	/**
 	 * @throws Exception
 	 */
+	@Test
 	public void testTrim() throws Exception {
 		// 1. try to trim when trimmed string is 'trim'
 		String trimmed = EgovStringUtil.trim("passwordtrimpassword", "trim");
@@ -401,6 +404,7 @@ public class EgovStringUtilTest {
 	/**
 	 * @throws Exception
 	 */
+	@Test
 	public void testGetLastString() throws Exception {
 		// 1. get last string when token is ','
 		String trimmed = EgovStringUtil.getLastString("password,password", ",");
@@ -414,6 +418,7 @@ public class EgovStringUtilTest {
 	/**
 	 * @throws Exception
 	 */
+	@Test
 	public void testGetStringArray() throws Exception {
 		// 1. when original string has token, get string array.
 		String[] strings = EgovStringUtil.getStringArray("password,password", ",");
@@ -426,6 +431,7 @@ public class EgovStringUtilTest {
 	/**
 	 * @throws Exception
 	 */
+	@Test
 	public void testIsNotEmpty() throws Exception {
 		// 1. check which string is not empty or not
 		assertTrue(EgovStringUtil.isNotEmpty("passwordtrimpassword"));
@@ -434,6 +440,7 @@ public class EgovStringUtilTest {
 	/**
 	 * @throws Exception
 	 */
+	@Test
 	public void testIsEmpty() throws Exception {
 		// 1. check empty string
 		assertTrue(EgovStringUtil.isEmpty(""));
@@ -444,6 +451,7 @@ public class EgovStringUtilTest {
 	/**
 	 * @throws Exception
 	 */
+	@Test
 	public void testReplace() throws Exception {
 		// 1. try to replace ',' to '-'
 		String replaced = EgovStringUtil.replace("password,password", ",", "-");
@@ -487,6 +495,7 @@ public class EgovStringUtilTest {
 	/**
 	 * @throws Exception
 	 */
+	@Test
 	public void testContainsMaxSequence() throws Exception {
 		// 1. string contains 2 sequences of the same character
 		String str = "password";
@@ -508,6 +517,7 @@ public class EgovStringUtilTest {
 	/**
 	 * @throws Exception
 	 */
+	@Test
 	public void testContainsInvalidChars() throws Exception {
 		// 1. string is empty.
 		String str = "";
@@ -572,6 +582,7 @@ public class EgovStringUtilTest {
 	/**
 	 * @throws Exception
 	 */
+	@Test
 	public void testIsNumeric() throws Exception {
 		// 1. string is empty
 		String str = "";
@@ -596,6 +607,7 @@ public class EgovStringUtilTest {
 	/**
 	 * @throws Exception
 	 */
+	@Test
 	public void testReverse() throws Exception {
 		// 1. string is null
 		String str = null;
@@ -608,6 +620,7 @@ public class EgovStringUtilTest {
 	/**
 	 * @throws Exception
 	 */
+	@Test
 	public void testFillString() throws Exception {
 		String originalStr = "1";
 		char ch = '0';
@@ -623,6 +636,7 @@ public class EgovStringUtilTest {
 	/**
 	 * @throws Exception
 	 */
+	@Test
 	public void testIsEmptyTrimmed() throws Exception {
 		// 1. string is null
 		String str = null;
@@ -640,6 +654,7 @@ public class EgovStringUtilTest {
 	/**
 	 * @throws Exception
 	 */
+	@Test
 	public void testGetTokens() throws Exception {
 		// 1. original string
 		String str = "a,b,c,d";
