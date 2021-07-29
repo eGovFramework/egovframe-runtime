@@ -102,7 +102,7 @@ public class EgovPartitionFlatFileItemWriter<T> extends ExecutionContextUserSupp
 	// fileOpenTime : file이 최초로 open 될 때의 시간
 	private long fileOpenTime = 0;
 
-	// fileOpenTime : file이 최종으로 close 될 때의 시간
+	// fileCloseTime : file이 최종으로 close 될 때의 시간
 	private long fileCloseTime = 0;
 
 	private static final double TIME_PERCENT = 1000.0;
