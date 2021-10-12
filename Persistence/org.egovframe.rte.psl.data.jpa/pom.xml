@@ -22,6 +22,19 @@
         <org.egovframe.rte.version>4.0.0</org.egovframe.rte.version>
     </properties>
 
+	<repositories>
+        <repository>
+	        <id>egovframe</id>
+	        <url>http://www.egovframe.go.kr/maven/</url>
+	         <releases>
+	             <enabled>true</enabled>
+	         </releases>
+    	         <snapshots>
+	             <enabled>false</enabled>
+	         </snapshots>
+	    </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.data</groupId>
