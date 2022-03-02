@@ -43,7 +43,7 @@ public class FdlExceptionTestService implements ApplicationContextAware {
 
 			case 7:
 				throw new FdlException(messageSource,
-				                       "error.fdl.msg3",
+									   "error.fdl.msg3",
 				                       Locale.KOREAN,
 				                       new Exception("TEST FdlException"));
 

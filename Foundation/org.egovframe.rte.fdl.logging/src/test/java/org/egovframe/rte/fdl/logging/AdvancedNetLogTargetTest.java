@@ -19,22 +19,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(locations = { "classpath:META-INF/spring/context-common.xml" })
 public class AdvancedNetLogTargetTest {
 
-	// @BeforeClass
-	// public static void runRemoteSocketServer() {
-	// try {
-	// // Runtime.getRuntime().exec("runSocketServer.bat", null, new File("."));
-	// Runtime
-	// .getRuntime()
-	// .exec(
-	// "java -classpath ./lib/log4j-1.3alpha-8-374949.jar org.apache.log4j.net.SimpleSocketServer 4448 ./remote/log4j.xml");
-	// } catch (BindException be) {
-	// LogManager.getLogger("sysoutLogger").debug("이미 SimpleSocketServer 가 떠 있습니다.");
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// }
-	// }
-
-	
 	/** testSocketAppender() 테스트 케이스 실행 방법
 	 *  1. 반드시 classpath에 있는 runSocketServer.bat 를 실행한다.
 	 *  2. runSocketServer.bat가 두개 이상 실행되어 있는 경우, 에러를 발생시킨다.
@@ -86,14 +70,13 @@ public class AdvancedNetLogTargetTest {
 	 *  logger: level=ERROR, appender=SMTP
 	 * */
 	@Test
-	public void testSMTPAppender() throws Exception {
-		
+	public void testSMTPAppender() {
 		System.setProperty("mail.smtp.starttls.enable", "true");
 		System.setProperty("mail.smtps.auth", "true");
 
 		Logger logger = LogManager.getLogger("mailLogger");
+
 		// 로그 출력
 		logger.error("SMTPAppender 테스트 test");
-		// 받은 메일함 확인
 	}
 }

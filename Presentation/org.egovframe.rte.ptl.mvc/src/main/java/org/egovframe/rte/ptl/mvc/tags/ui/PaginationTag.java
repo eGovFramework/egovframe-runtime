@@ -22,12 +22,15 @@ import org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 import org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationManager;
 import org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationRenderer;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.springframework.web.servlet.DispatcherServlet;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 /**
  *PaginationTag.java
@@ -61,9 +64,12 @@ public class PaginationTag extends TagSupport {
 			JspWriter out = pageContext.getOut();
 			PaginationManager paginationManager;
 			WebApplicationContext ctx = WebApplicationContextUtils.getWebApplicationContext(pageContext.getServletContext());
+			WebApplicationContext ctxd = RequestContextUtils.findWebApplicationContext((HttpServletRequest) pageContext.getRequest(), pageContext.getServletContext());
 
 			if (ctx.containsBean("paginationManager")) {
 				paginationManager = (PaginationManager) ctx.getBean("paginationManager");
+			} else if (ctxd.containsBean("paginationManager")) {
+				paginationManager = (PaginationManager) ctxd.getBean("paginationManager");
 			} else {
 				//bean 정의가 없다면 DefaultPaginationManager를 사용. 빈설정이 없으면 기본 적인 페이징 리스트라도 보여주기 위함.
 				paginationManager = new DefaultPaginationManager();

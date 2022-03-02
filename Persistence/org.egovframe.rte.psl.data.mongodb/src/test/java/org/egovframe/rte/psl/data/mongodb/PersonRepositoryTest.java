@@ -29,6 +29,7 @@ import org.egovframe.rte.psl.data.mongodb.repository.PersonRepository;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath*:META-INF/spring/context-data-*.xml")
 public class PersonRepositoryTest {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(PersonRepositoryTest.class);
 
     @Autowired
@@ -121,4 +122,5 @@ public class PersonRepositoryTest {
         List<Person> list = repository.findByThePersonsFirstname("Gildong");
         assertEquals(1, list.size());
     }
+
 }

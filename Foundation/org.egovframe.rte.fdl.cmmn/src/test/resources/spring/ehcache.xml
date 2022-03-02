@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="http://www.ehcache.org/ehcache.xsd"
-         updateCheck="true" monitoring="autodetect"
+         xsi:noNamespaceSchemaLocation="https://www.ehcache.org/ehcache.xsd"
+         updateCheck="true"
+         monitoring="autodetect"
          dynamicConfig="true">
 
     <defaultCache
@@ -15,9 +16,7 @@
             diskPersistent="false"
             diskExpiryThreadIntervalSeconds="120"
             memoryStoreEvictionPolicy="LRU"
-            statistics="false"
-            >
-    </defaultCache>
+            statistics="false" />
 
     <cache name="ehcache"
            maxElementsInMemory="10000"
@@ -28,17 +27,13 @@
            timeToIdleSeconds="300"
            timeToLiveSeconds="600"
            memoryStoreEvictionPolicy="LFU"
-           transactionalMode="off"
-            >
-    </cache>
+           transactionalMode="off" />
 
     <cache name="sampleCache2"
            maxElementsInMemory="1000"
            eternal="true"
            overflowToDisk="false"
-           memoryStoreEvictionPolicy="FIFO"
-            >
-    </cache>
+           memoryStoreEvictionPolicy="FIFO" />
 
     <cache name="sampleCache3"
            maxElementsInMemory="500"
@@ -48,7 +43,6 @@
            timeToLiveSeconds="600"
            diskPersistent="true"
            diskExpiryThreadIntervalSeconds="1"
-           memoryStoreEvictionPolicy="LFU"
-            >
-    </cache>
+           memoryStoreEvictionPolicy="LFU" />
+
 </ehcache>

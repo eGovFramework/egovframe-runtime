@@ -4,6 +4,7 @@
 -- It is intended for HSQLDB. 
 
 DROP TABLE db_log IF EXISTS;
+COMMIT;
 
 CREATE TABLE db_log (
   eventDate timestamp NOT NULL,
@@ -12,6 +13,4 @@ CREATE TABLE db_log (
   message LONGVARCHAR,
   exception LONGVARCHAR
 );
-
---commit;
-
+COMMIT;

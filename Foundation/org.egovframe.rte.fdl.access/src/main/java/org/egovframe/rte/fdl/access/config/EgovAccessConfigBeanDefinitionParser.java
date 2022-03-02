@@ -101,7 +101,7 @@ public class EgovAccessConfigBeanDefinitionParser extends AbstractSingleBeanDefi
         }
         
         String mappingPath = element.getAttribute("mappingPath");
-        LOGGER.debug("===>>> mappingPath = "+mappingPath);
+        LOGGER.debug("##### EgovAccessConfigBeanDefinitionParser mappingPath >>> {}", mappingPath);
 
         String beanDefinitionBuilderString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                 "<beans xmlns=\"http://www.springframework.org/schema/beans\"\n" +
@@ -132,7 +132,7 @@ public class EgovAccessConfigBeanDefinitionParser extends AbstractSingleBeanDefi
                 "       </mvc:interceptors>\n" +
                 "   </beans>\n" +
                 "</beans>";
-        //LOGGER.debug("===>>> "+beanDefinitionBuilderString);
+
         try {
             parserContext.getReaderContext().getReader().setValidationMode(XmlBeanDefinitionReader.VALIDATION_XSD);
             LOGGER.debug("##### EgovAccessConfigBeanDefinitionParser interceptor httpd load Start #####");
@@ -153,7 +153,7 @@ public class EgovAccessConfigBeanDefinitionParser extends AbstractSingleBeanDefi
         }
 
         LOGGER.debug("##### EgovAccessConfigBeanDefinitionParser access-config.xml load Start #####");
-        parserContext.getReaderContext().getReader().loadBeanDefinitions("classpath*:/META-INF/spring/access/access-config.xml");
+        parserContext.getReaderContext().getReader().loadBeanDefinitions("classpath:/META-INF/spring/access/access-config.xml");
         LOGGER.debug("##### EgovAccessConfigBeanDefinitionParser access-config.xml load End #####");
 
     }

@@ -1,19 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="${driver}" />
 		<property name="url" value="${dburl}" />
 		<property name="username" value="${username}" />
 		<property name="password" value="${password}" />
-		<!-- you can set custom properties on your datasource
-		<property name="connectionProperties">
-			<props>
-				<prop key="com.oracle.xxxx" value="xxxx" />
-			</props>
-		</property>
-		-->
 	</bean>
 
 </beans>

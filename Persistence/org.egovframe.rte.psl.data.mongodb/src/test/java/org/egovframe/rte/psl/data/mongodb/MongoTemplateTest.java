@@ -20,6 +20,7 @@ import org.egovframe.rte.psl.data.mongodb.domain.SimplePerson;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath*:META-INF/spring/context-data-*.xml")
 public class MongoTemplateTest {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoTemplateTest.class);
 
     @Resource(name = "mongoTemplate")
@@ -55,4 +56,5 @@ public class MongoTemplateTest {
 
         mongoTemplate.dropCollection("person");
     }
+
 }

@@ -63,7 +63,7 @@ import com.ibatis.sqlmap.client.SqlMapClient;
  * 2013.05.29  한성곤				mapBeanName property 추가 및 코드 정리
  * 2014.05.14  이기하				코드 refactoring 및 mybatis 서비스 추가
  * 2017.02.15  장동한				ES-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
- * 2020.08.31  ESFC					ES-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
+ * 2020.08.31  ESFC				ES-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
  * </pre>
  */
 public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContextAware {
@@ -148,14 +148,16 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
             LOGGER.debug("make dir {}", FilenameUtils.getFullPath(fullFileName));
             FileUtils.forceMkdir(new File(FilenameUtils.getFullPath(fullFileName)));
         }
-        FileOutputStream fileOut = new FileOutputStream(fullFileName);
+        FileOutputStream fileOut = null;
         LOGGER.debug("EgovExcelServiceImpl.createWorkbook : templatePath is {}", fullFileName);
 		try {
             LOGGER.debug("ExcelServiceImpl loadExcelObject ...");
-            wb.write(fileOut);
+			fileOut = new FileOutputStream(fullFileName);
+			wb.write(fileOut);
         } finally {
             LOGGER.debug("ExcelServiceImpl loadExcelObject end...");
-            fileOut.close();
+            if (wb != null) wb.close();;
+			if (fileOut != null) fileOut.close();
         }
         return wb;
     }
@@ -167,16 +169,20 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
 	 * @throws Exception
 	 */
     public Workbook loadExcelTemplate(String templateName) throws IOException {
-        FileInputStream fileIn = new FileInputStream(templateName);
-        Workbook wb = null;
+        FileInputStream fileIn = null;
+		POIFSFileSystem fs = null;
+		Workbook wb = null;
         LOGGER.debug("EgovExcelServiceImpl.loadExcelTemplate : templatePath is {}", templateName);
         try {
             LOGGER.debug("ExcelServiceImpl loadExcelTemplate ...");
-            POIFSFileSystem fs = new POIFSFileSystem(fileIn);
+			fileIn = new FileInputStream(templateName);
+			fs = new POIFSFileSystem(fileIn);
             wb = new HSSFWorkbook(fs);
         } finally {
             LOGGER.debug("ExcelServiceImpl loadExcelTemplate end...");
-            fileIn.close();
+			if (wb != null) wb.close();
+			if (fs != null) fs.close();
+			if (fileIn != null) fileIn.close();
         }
         return wb;
     }
@@ -189,14 +195,16 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
 	 * @throws Exception
 	 */
     public XSSFWorkbook loadExcelTemplate(String templateName, XSSFWorkbook wb) throws IOException {
-    	FileInputStream fileIn = new FileInputStream(templateName);
+    	FileInputStream fileIn = null;
     	LOGGER.debug("EgovExcelServiceImpl.loadExcelTemplate(XSSF) : templatePath is {}", templateName);
     	try {
     		LOGGER.debug("ExcelServiceImpl loadExcelTemplate(XSSF) ...");
-    		wb = new XSSFWorkbook(fileIn);
+			fileIn = new FileInputStream(templateName);
+			wb = new XSSFWorkbook(fileIn);
     	} finally {
     		LOGGER.debug("ExcelServiceImpl loadExcelTemplate(XSSF) end...");
-    		fileIn.close();
+			if (wb != null) wb.close();
+			if (fileIn != null) fileIn.close();
     	}
     	return wb;
     }
@@ -207,13 +215,15 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
 	 * @return Workbook
 	 * @throws Exception
 	 */
-    public Workbook loadWorkbook(String filepath) throws BaseException, IOException {
-		Workbook wb;
-    	FileInputStream fileIn = new FileInputStream(filepath);
+    public Workbook loadWorkbook(String filepath) throws IOException {
+    	FileInputStream fileIn = null;
+		Workbook wb = null;
 		try {
+			fileIn = new FileInputStream(filepath);
 			wb = loadWorkbook(fileIn);
 		} finally {
-			fileIn.close();
+			if (wb != null) wb.close();
+			if (fileIn != null) fileIn.close();
 		}
 		return wb;
     }
@@ -226,11 +236,13 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
      * @throws Exception
      */
     public XSSFWorkbook loadWorkbook(String filepath, XSSFWorkbook wb) throws BaseException, IOException {
-    	FileInputStream fileIn = new FileInputStream(filepath);
+    	FileInputStream fileIn = null;
 		try {
+			fileIn = new FileInputStream(filepath);
 			wb = loadWorkbook(fileIn, wb);
 		} finally {
-			fileIn.close();
+			if (wb != null) wb.close();
+			if (fileIn != null) fileIn.close();
 		}
     	return wb;
     }
@@ -242,13 +254,16 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
 	 * @throws Exception
 	 */
 	public Workbook loadWorkbook(InputStream fileIn) throws IOException {
-		Workbook wb;
-		POIFSFileSystem fs = new POIFSFileSystem(fileIn);
+		POIFSFileSystem fs = null;
+		Workbook wb = null;
 		try {
 			LOGGER.debug("ExcelServiceImpl loadWorkbook ...");
+			fs = new POIFSFileSystem(fileIn);
 			wb = new HSSFWorkbook(fs);
 		} finally {
-			fs.close();
+			if (wb != null) wb.close();
+			if (fs != null) fs.close();
+			if (fileIn != null) fileIn.close();
 		}
 		return wb;
     }

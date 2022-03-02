@@ -18,7 +18,7 @@
 		</property>
 		<property name="basenames">
 			<list>
-				<value>classpath:/egovframework/rte/fdl/property/messages/properties</value>
+				<value>classpath:/org/egovframe/rte/fdl/property/messages/properties</value>
 			</list>
 		</property>
 	</bean>

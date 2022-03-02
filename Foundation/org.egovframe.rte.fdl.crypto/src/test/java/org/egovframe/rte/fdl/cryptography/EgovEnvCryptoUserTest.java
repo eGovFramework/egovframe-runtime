@@ -41,8 +41,7 @@ public class EgovEnvCryptoUserTest {
                 "url"           //데이터베이스 접속 주소
               };
 
-		
-		LOGGER.info("------------------------------------------------------");		
+		LOGGER.info("------------------------------------------------------");
 		ApplicationContext context = new ClassPathXmlApplicationContext(new String[]{"classpath:/META-INF/spring/config/crypto-config.xml"});
 		EgovEnvCryptoService cryptoService = context.getBean(EgovEnvCryptoServiceImpl.class);
 		LOGGER.info("------------------------------------------------------");

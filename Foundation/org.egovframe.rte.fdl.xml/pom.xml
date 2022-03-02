@@ -1,6 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.egovframe.rte</groupId>
     <artifactId>org.egovframe.rte.fdl.xml</artifactId>
@@ -8,18 +8,20 @@
     <version>4.0.0</version>
     <name>org.egovframe.rte.fdl.xml</name>
     <description>The eGovernment Standard Framework</description>
-    <url>http://www.egovframe.go.kr</url>
+    <url>https://www.egovframe.go.kr</url>
 
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
         </license>
     </licenses>
 
     <properties>
-        <spring.maven.artifact.version>5.2.5.RELEASE</spring.maven.artifact.version>
+        <spring.maven.artifact.version>5.3.6</spring.maven.artifact.version>
         <org.egovframe.rte.version>4.0.0</org.egovframe.rte.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
 
     <dependencies>
@@ -70,9 +72,9 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>net.sf.ehcache.internal</groupId>
-            <artifactId>ehcache-core</artifactId>
-            <version>2.10.6</version>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+            <version>2.10.9.2</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -80,12 +82,6 @@
                     <groupId>org.slf4j</groupId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>net.sf.ehcache</groupId>
-            <artifactId>ehcache-terracotta</artifactId>
-            <version>2.1.1</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>jaxen</groupId>
@@ -104,7 +100,7 @@
     <build>
         <defaultGoal>install</defaultGoal>
         <directory>${basedir}/target</directory>
-        <finalName>${artifactId}-${version}</finalName>
+        <finalName>${project.artifactId}-${project.version}</finalName>
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -112,8 +108,8 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.8.1</version>
                     <configuration>
-                        <source>1.7</source>
-                        <target>1.7</target>
+                        <source>1.8</source>
+                        <target>1.8</target>
                         <encoding>UTF-8</encoding>
                     </configuration>
                 </plugin>
@@ -122,12 +118,12 @@
                     <artifactId>hibernate3-maven-plugin</artifactId>
                     <version>3.0</version>
                     <configuration>
-                    <components>
-                        <component>
-                            <name>hbm2ddl</name>
-                            <implementation>annotationconfiguration</implementation>
-                        </component>
-                    </components>
+                        <components>
+                            <component>
+                                <name>hbm2ddl</name>
+                                <implementation>annotationconfiguration</implementation>
+                            </component>
+                        </components>
                     </configuration>
                     <dependencies>
                         <dependency>
@@ -155,6 +151,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
+                <version>3.2.1</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -168,6 +165,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.2</version>
                 <configuration>
                     <skipTests>true</skipTests>
                     <forkMode>once</forkMode>
@@ -184,6 +182,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>emma-maven-plugin</artifactId>
+                <version>1.0-alpha-3</version>
                 <inherited>true</inherited>
             </plugin>
             <!-- JavaDoc -->
@@ -205,7 +204,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.1.2</version>
                 <reportSets>
                     <reportSet>
                         <id>sunlink</id>
@@ -215,7 +214,7 @@
                         <inherited>true</inherited>
                         <configuration>
                             <links>
-                                <link>http://docs.oracle.com/javase/6/docs/api/</link>
+                                <link>https://docs.oracle.com/javase/6/docs/api/</link>
                             </links>
                         </configuration>
                     </reportSet>
@@ -228,8 +227,8 @@
                 <inherited>true</inherited>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>surefire-report-maven-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
                 <inherited>true</inherited>
                 <reportSets>
                     <reportSet>
@@ -239,30 +238,6 @@
                     </reportSet>
                 </reportSets>
             </plugin>
-            <!-- PMD manven plugin -->
-            <!--
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-pmd-plugin</artifactId>
-                <version>3.1</version>
-                <configuration>
-                    <rulesets>
-                        <ruleset>./Ruleset.xml</ruleset>
-                    </rulesets>
-                    <linkXref>true</linkXref>
-                    <sourceEncoding>${encoding}</sourceEncoding>
-                    <minimumTokens>100</minimumTokens>
-                    <targetJdk>${compileSource}</targetJdk>
-                </configuration>
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <report>pmd</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-            -->
             <!-- Generating JavaDoc Report -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

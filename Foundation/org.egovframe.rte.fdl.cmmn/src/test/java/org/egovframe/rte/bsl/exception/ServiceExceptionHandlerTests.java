@@ -16,11 +16,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:/spring/*.xml" })
+@ContextConfiguration(locations = { "classpath*:/spring/*.xml" })
 public class ServiceExceptionHandlerTests {
-
 	@Resource(name = "helloService")
 	private HelloService helloService;
+
 	@Resource(name = "ohterService")
 	private HelloService otherService;
 
@@ -29,15 +29,13 @@ public class ServiceExceptionHandlerTests {
 
 	@Test
 	public void testBizUnCheckedException() throws Exception {
-
 		String name = "world";
-		String resultStr ;
+		String resultStr;
 
 		resultStr = helloService.sayHello(name);
 		assertEquals("Hello world", resultStr);
 
 		LeaveaTrace tmpTrace = (LeaveaTrace) applicationContext.getBean("leaveaTrace");
-
 		assertEquals(1, tmpTrace.countOfTheTraceHandlerService());
 	}
 
@@ -48,7 +46,7 @@ public class ServiceExceptionHandlerTests {
 			helloService.updateMethod();
 		} catch (Exception be) {
 			assertTrue(be instanceof EgovBizException);
-			assertTrue(((EgovBizException) be).getWrappedException() instanceof ArithmeticException);
+			assertTrue(((EgovBizException)be).getWrappedException() instanceof ArithmeticException);
 			assertTrue("해당 데이터가 없습니다.".equals(be.getMessage()));
 			ExceptionTransfer etfer = (ExceptionTransfer) applicationContext.getBean("exceptionTransfer");
 			assertEquals(2, etfer.countOfTheExceptionHandlerService());
@@ -66,7 +64,6 @@ public class ServiceExceptionHandlerTests {
 			ExceptionTransfer etfer = (ExceptionTransfer) applicationContext.getBean("exceptionTransfer");
 			assertEquals(2, etfer.countOfTheExceptionHandlerService());
 		}
-
 	}
 
 }

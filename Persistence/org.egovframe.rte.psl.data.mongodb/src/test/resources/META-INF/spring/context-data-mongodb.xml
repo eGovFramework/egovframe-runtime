@@ -5,18 +5,13 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
        http://www.springframework.org/schema/data/mongo http://www.springframework.org/schema/data/mongo/spring-mongo.xsd">
 
-    <mongo:mongo-client
-            host="127.0.0.1"
-            port="27017"
-            credentials="com:com01@com"
-            id="mongo">
-    </mongo:mongo-client>
+    <mongo:mongo-client id="mongo" host="127.0.0.1" port="27017" credentials="com:com01@com" />
 
-    <mongo:db-factory dbname="com" mongo-ref="mongo" id="mongoDbFactory"/>
+    <mongo:db-factory id="mongoDbFactory" dbname="com" mongo-ref="mongo" />
 
     <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
         <constructor-arg ref="mongo"/>
-        <constructor-arg name="databaseName" value="com"/>
+        <constructor-arg name="databaseName" value="mongoDbFactory"/>
     </bean>
 
     <mongo:repositories base-package="org.egovframe.rte.psl.data.mongodb.repository" />

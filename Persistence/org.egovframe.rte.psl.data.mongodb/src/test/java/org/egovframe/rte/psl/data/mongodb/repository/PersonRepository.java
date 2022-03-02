@@ -13,6 +13,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
 public interface PersonRepository extends MongoRepository<Person, String> {
+
 	// Query methods
 	List<Person> findByLastname(String lastname);
 
@@ -31,4 +32,5 @@ public interface PersonRepository extends MongoRepository<Person, String> {
 	// JSON based query methods
 	@Query("{ 'firstname' : ?0 }")
 	List<Person> findByThePersonsFirstname(String firstname);
+
 }

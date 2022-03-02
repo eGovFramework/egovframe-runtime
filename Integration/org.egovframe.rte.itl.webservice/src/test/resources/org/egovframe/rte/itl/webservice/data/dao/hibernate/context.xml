@@ -13,7 +13,7 @@
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>          
     
-    <bean id="myDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+    <bean id="myDataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
         <property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
         <property name="url" value="jdbc:hsqldb:mem:test/test;showdown=true"/>
         <property name="username" value="sa"/>

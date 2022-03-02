@@ -8,6 +8,7 @@
 	<name>org.egovframe.rte.root</name>
 
 	<modules>
+
 		<!-- Foundation Layer -->
 		<module>Foundation/org.egovframe.rte.fdl.cmmn</module>
 		<module>Foundation/org.egovframe.rte.fdl.crypto</module>
@@ -25,8 +26,6 @@
 		<module>Persistence/org.egovframe.rte.psl.dataaccess</module>
 		<module>Persistence/org.egovframe.rte.psl.data.jpa</module>
 		<module>Persistence/org.egovframe.rte.psl.data.mongodb</module>
-
-		<!-- BusinessLogic -->
 
 		<!-- Presentation -->
 		<module>Presentation/org.egovframe.rte.ptl.mvc</module>

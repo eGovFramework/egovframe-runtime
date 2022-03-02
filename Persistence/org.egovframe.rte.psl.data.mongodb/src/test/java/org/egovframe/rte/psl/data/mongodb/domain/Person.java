@@ -3,15 +3,12 @@ package org.egovframe.rte.psl.data.mongodb.domain;
 import org.springframework.data.annotation.Id;
 
 public class Person {
+
 	@Id
 	private String id;
-
 	private String firstname;
-
 	private String lastname;
-
 	private Address address;
-	
 	private double[] location;
 
 	@Override
@@ -63,4 +60,5 @@ public class Person {
 	public void setLocation(double[] location) {
 		this.location = location;
 	}
+
 }

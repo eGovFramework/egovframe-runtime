@@ -83,7 +83,7 @@ public class MatrixVariableTest {
 
 	@Test
 	public void resolveArgumentDefaultValue() throws Exception {
-		assertEquals("2014", resolver.resolveArgument(this.paramYear, this.mavContainer, this.webRequest, null));
+		assertEquals("2014", this.resolver.resolveArgument(this.paramYear, this.mavContainer, this.webRequest, null));
 	}
 
 	@Test(expected = ServletRequestBindingException.class)
@@ -96,7 +96,7 @@ public class MatrixVariableTest {
 
 	@Test(expected = ServletRequestBindingException.class)
 	public void resolveArgumentRequired() throws Exception {
-		resolver.resolveArgument(this.paramColors, this.mavContainer, this.webRequest, null);
+		this.resolver.resolveArgument(this.paramColors, this.mavContainer, this.webRequest, null);
 	}
 
 	@Test

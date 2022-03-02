@@ -55,7 +55,6 @@ public class DefaultPaginationRenderer extends AbstractPaginationRenderer {
 
 	@Override
 	public String renderPagination(PaginationInfo paginationInfo, String jsFunction) {
-
 		return super.renderPagination(paginationInfo, jsFunction);
 	}
 

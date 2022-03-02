@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans:beans xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns="http://www.springframework.org/schema/security"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-						http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+<beans:beans xmlns:beans="http://www.springframework.org/schema/beans"
+			 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			 xmlns="http://www.springframework.org/schema/security"
+			 xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+			 http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
 
 	<beans:bean id="securedObjectService" class="org.egovframe.rte.fdl.security.securedobject.impl.SecuredObjectServiceImpl">
 		<beans:property name="securedObjectDAO" ref="securedObjectDAO"/>
@@ -11,46 +12,7 @@
 
 	<beans:bean id="securedObjectDAO" class="org.egovframe.rte.fdl.security.securedobject.impl.SecuredObjectDAO" >
 		<beans:property name="dataSource" ref="dataSource"/>
-		<!--
-		<beans:property name="sqlHierarchicalRoles">
-			<beans:value>
-				SELECT a.child_role child, a.parent_role parent
-				FROM ROLES_HIERARCHY a LEFT JOIN ROLES_HIERARCHY b on (a.child_role = b.parent_role)
-			</beans:value>
-		</beans:property>
-		<beans:property name="sqlRolesAndUrl">
-			<beans:value>
-				SELECT a.resource_pattern url, b.authority authority
-				FROM SECURED_RESOURCES a, SECURED_RESOURCES_ROLE b
-				WHERE a.resource_id = b.resource_id
-				AND a.resource_type = 'url' ORDER BY a.sort_order
-			</beans:value>
-		</beans:property>
-		<beans:property name="sqlRolesAndMethod">
-			<beans:value>
-		    SELECT a.resource_pattern method, b.authority authority
-				FROM SECURED_RESOURCES a, SECURED_RESOURCES_ROLE b
-				WHERE a.resource_id = b.resource_id
-				AND a.resource_type = 'method' ORDER BY a.sort_order
-			</beans:value>
-		</beans:property>
-		<beans:property name="sqlRolesAndPointcut">
-			<beans:value>
-				SELECT a.resource_pattern pointcut, b.authority authority
-				FROM SECURED_RESOURCES a, SECURED_RESOURCES_ROLE b
-				WHERE a.resource_id = b.resource_id
-				AND a.resource_type = 'pointcut' ORDER BY a.sort_order
-			</beans:value>
-		</beans:property>
-		-->
 	</beans:bean>
-
-	<!--
-	<beans:bean id="userDetailsServiceWrapper" class="org.springframework.security.userdetails.hierarchicalroles.UserDetailsServiceWrapper">
-		<beans:property name="roleHierarchy" ref="roleHierarchy"/>
-		<beans:property name="userDetailsService" ref="jdbcUserService"/>
-	</beans:bean>
-	-->
 
 	<beans:bean id="roleHierarchy" class="org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl" >
 		<!-- XML 사용

@@ -1,8 +1,8 @@
 package org.egovframe.rte.fdl.access.config;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import org.egovframe.rte.fdl.access.bean.AuthorityResourceMetadata;
+import org.egovframe.rte.fdl.access.interceptor.EgovAccessUtil;
+import org.egovframe.rte.fdl.access.service.EgovUserDetailsHelper;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -18,23 +18,22 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import org.egovframe.rte.fdl.access.bean.AuthorityResourceMetadata;
-import org.egovframe.rte.fdl.access.interceptor.EgovAccessUtil;
-import org.egovframe.rte.fdl.access.service.EgovUserDetailsHelper;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"classpath*:META-INF/spring/*.xml"})
 public class EgovAccessConfigTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EgovAccessConfigTest.class);
-
     protected MockHttpServletRequest request;
     protected MockHttpSession session;
 
-    private ApplicationContext context;
-
     @Before
-    public void setUp() throws Exception{
+    public void setUp() {
         session = new MockHttpSession();
         session.setAttribute("accessUser","GNRUSER");
 
@@ -50,9 +49,9 @@ public class EgovAccessConfigTest {
     }
 
     @Test
-    public void test() throws Exception {
+    public void test() {
 
-        context = new ClassPathXmlApplicationContext(new String[]{"classpath:META-INF/spring/context-access.xml","classpath:META-INF/spring/test-config.xml"});
+        ApplicationContext context = new ClassPathXmlApplicationContext("classpath:META-INF/spring/context-access.xml", "classpath:META-INF/spring/test-config.xml");
         String[] contextList = context.getBeanDefinitionNames();
         for (String bean : contextList) {
             LOGGER.debug("##### EgovAccessConfigTest context list >>> {} ", context.getBean(bean).getClass());
@@ -64,7 +63,7 @@ public class EgovAccessConfigTest {
         List<String> authorityList = EgovUserDetailsHelper.getAuthorities();
         LOGGER.debug("##### EgovAccessConfigTest authorityList : {} #####", authorityList);
         String authority = "";
-        for (String str : authorityList) {
+        for (String str : Objects.requireNonNull(authorityList)) {
             authority = str;
         }
 

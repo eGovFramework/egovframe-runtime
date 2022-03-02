@@ -9,10 +9,8 @@ public class Log4j2ParameterizedTest {
 	Logger logger = LogManager.getLogger();
 	long startTime;
 	long endTime;
-			
 	String testStr = "Welcome To eGovFrame";
-	
-	
+
 	/**
 	 *  아래는 Log4j2에 추가된 Parameterized Logging의 성능을 비교하는 테스트 메소드
 	 *  logger: level=TRACE, appender=Console
@@ -33,8 +31,7 @@ public class Log4j2ParameterizedTest {
 		logger.debug("## String Concatation 방식 시작시간: " + startTime);
 		logger.debug("## String Concatation 방식 종료시간: " + endTime);
 		logger.debug("## String Concatation 방식 소요시간: " + (endTime - startTime) / 1000.0f + "초");
-		
-		
+
 		// Parameterized 방식으로 로깅
 		startTime = System.currentTimeMillis();
 		

@@ -1,8 +1,8 @@
 package org.egovframe.rte.psl.data.mongodb.domain;
 
 public class Address {
+
 	private String zipCode;
-	
 	private String address;
 
 	public String getZipCode() {
@@ -20,4 +20,5 @@ public class Address {
 	public void setAddress(String address) {
 		this.address = address;
 	}
+
 }

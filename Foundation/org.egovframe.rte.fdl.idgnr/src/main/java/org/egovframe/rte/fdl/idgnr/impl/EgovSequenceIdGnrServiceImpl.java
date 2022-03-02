@@ -48,7 +48,6 @@ import org.slf4j.LoggerFactory;
  * </pre>
  */
 public class EgovSequenceIdGnrServiceImpl extends AbstractDataIdGnrService {
-
 	private static final Logger LOGGER = LoggerFactory.getLogger(EgovSequenceIdGnrServiceImpl.class);
 
 	/**
@@ -59,28 +58,30 @@ public class EgovSequenceIdGnrServiceImpl extends AbstractDataIdGnrService {
 	protected BigDecimal getNextBigDecimalIdInner() throws FdlException {
 		LOGGER.debug(messageSource.getMessage("debug.idgnr.sequenceid.query", new String[] { query }, Locale.getDefault()));
 
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+
 		try {
-			Connection conn = getConnection();
-			PreparedStatement stmt = conn.prepareStatement(query);
-			ResultSet rs = stmt.executeQuery();
-			try {
-				if (rs.next()) {
-					return rs.getBigDecimal(1);
-				} else {
-					LOGGER.error(messageSource.getMessage("error.idgnr.sequenceid.notallocate.id", new String[] {}, Locale.getDefault()));
-					throw new FdlException(messageSource, "error.idgnr.sequenceid.notallocate.id");
-				}
-			} finally {
-				//2017.02.14 장동한 시큐어코딩(ES)-오류 상황 대응 부재[CWE-390, CWE-397]s
-				if (rs != null) try { rs.close(); }	catch(SQLException ex) {LOGGER.error("[SQLException] ResultSet Next Runing : "+ ex.getMessage());}
-				//2017.02.14 장동한 시큐어코딩(ES)-오류 상황 대응 부재[CWE-390, CWE-397]
-				if (stmt != null) try { stmt.close(); } catch(SQLException ex) {LOGGER.error("[SQLException] ResultSet Next Runing : "+ ex.getMessage());}
-				//2017.02.14 장동한 시큐어코딩(ES)-오류 상황 대응 부재[CWE-390, CWE-397]
-				if (conn != null) try { conn.close(); } catch(SQLException ex) {LOGGER.error("[SQLException] ResultSet Next Runing : "+ ex.getMessage());}
+			conn = getConnection();
+			stmt = conn.prepareStatement(query);
+			rs = stmt.executeQuery();
+			if (rs.next()) {
+				return rs.getBigDecimal(1);
+			} else {
+				LOGGER.error(messageSource.getMessage("error.idgnr.sequenceid.notallocate.id", new String[] {}, Locale.getDefault()));
+				throw new FdlException(messageSource, "error.idgnr.sequenceid.notallocate.id");
 			}
 		} catch (SQLException e) {
 			LOGGER.error(messageSource.getMessage("error.idgnr.get.connection", new String[] {}, Locale.getDefault()));
 			throw new FdlException(messageSource, "error.idgnr.get.connection", e);
+		} finally {
+			//2017.02.14 장동한 시큐어코딩(ES)-오류 상황 대응 부재[CWE-390, CWE-397]
+			if (rs != null) try { rs.close(); }	catch(SQLException ex) { LOGGER.error("[SQLException] ResultSet Next Runing : "+ ex.getMessage()); }
+			//2017.02.14 장동한 시큐어코딩(ES)-오류 상황 대응 부재[CWE-390, CWE-397]
+			if (stmt != null) try { stmt.close(); } catch(SQLException ex) { LOGGER.error("[SQLException] ResultSet Next Runing : "+ ex.getMessage()); }
+			//2017.02.14 장동한 시큐어코딩(ES)-오류 상황 대응 부재[CWE-390, CWE-397]
+			if (conn != null) try { conn.close(); } catch(SQLException ex) { LOGGER.error("[SQLException] ResultSet Next Runing : "+ ex.getMessage()); }
 		}
 	}
 
@@ -92,28 +93,31 @@ public class EgovSequenceIdGnrServiceImpl extends AbstractDataIdGnrService {
 	protected long getNextLongIdInner() throws FdlException {
 		LOGGER.debug(messageSource.getMessage("debug.idgnr.sequenceid.query", new String[] { query }, Locale.getDefault()));
 
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+
 		try {
-			Connection conn = getConnection();
-			PreparedStatement stmt = conn.prepareStatement(query);
-			ResultSet rs = stmt.executeQuery();
-			try {
-				if (rs.next()) {
-					return rs.getLong(1);
-				} else {
-					LOGGER.error(messageSource.getMessage("error.idgnr.sequenceid.notallocate.id", new String[] {}, Locale.getDefault()));
-					throw new FdlException(messageSource, "error.idgnr.sequenceid.notallocate.id");
-				}
-			} finally {
-				//2017.02.14 장동한 시큐어코딩(ES)-오류 상황 대응 부재[CWE-390, CWE-397]
-				if (rs != null) try { rs.close(); } catch(SQLException ex) {LOGGER.error("[SQLException] ResultSet Next Runing : "+ ex.getMessage());}
-				//2017.02.14 장동한 시큐어코딩(ES)-오류 상황 대응 부재[CWE-390, CWE-397]
-				if (stmt != null) try { stmt.close(); } catch(SQLException ex) {LOGGER.error("[SQLException] ResultSet Next Runing : "+ ex.getMessage());}
-				//2017.02.14 장동한 시큐어코딩(ES)-오류 상황 대응 부재[CWE-390, CWE-397]
-				if (conn != null) try { conn.close(); } catch(SQLException ex) {LOGGER.error("[SQLException] ResultSet Next Runing : "+ ex.getMessage());}
+			conn = getConnection();
+			stmt = conn.prepareStatement(query);
+			rs = stmt.executeQuery();
+
+			if (rs.next()) {
+				return rs.getLong(1);
+			} else {
+				LOGGER.error(messageSource.getMessage("error.idgnr.sequenceid.notallocate.id", new String[] {}, Locale.getDefault()));
+				throw new FdlException(messageSource, "error.idgnr.sequenceid.notallocate.id");
 			}
 		} catch (SQLException e) {
 			LOGGER.error(messageSource.getMessage("error.idgnr.get.connection", new String[] {}, Locale.getDefault()));
 			throw new FdlException(messageSource, "error.idgnr.get.connection", e);
+		} finally {
+			//2017.02.14 장동한 시큐어코딩(ES)-오류 상황 대응 부재[CWE-390, CWE-397]
+			if (rs != null) try { rs.close(); } catch(SQLException ex) { LOGGER.error("[SQLException] ResultSet Next Runing : "+ ex.getMessage()); }
+			//2017.02.14 장동한 시큐어코딩(ES)-오류 상황 대응 부재[CWE-390, CWE-397]
+			if (stmt != null) try { stmt.close(); } catch(SQLException ex) { LOGGER.error("[SQLException] ResultSet Next Runing : "+ ex.getMessage()); }
+			//2017.02.14 장동한 시큐어코딩(ES)-오류 상황 대응 부재[CWE-390, CWE-397]
+			if (conn != null) try { conn.close(); } catch(SQLException ex) { LOGGER.error("[SQLException] ResultSet Next Runing : "+ ex.getMessage()); }
 		}
 	}
 

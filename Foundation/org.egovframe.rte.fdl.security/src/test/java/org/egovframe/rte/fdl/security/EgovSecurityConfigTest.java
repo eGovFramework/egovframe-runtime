@@ -55,16 +55,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
 
-
 /**
  * @author sjyoon
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {
-    "classpath*:META-INF/spring/context-common.xml",
-    "classpath*:META-INF/spring/context-datasource-jdbc.xml"
-    })
+@ContextConfiguration(locations = {"classpath:META-INF/spring/context-common.xml", "classpath:META-INF/spring/context-datasource-jdbc.xml"})
 public class EgovSecurityConfigTest {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(EgovSecurityConfigTest.class);
@@ -80,7 +76,6 @@ public class EgovSecurityConfigTest {
     @Resource(name = "jdbcProperties")
     private Properties jdbcProperties;
 
-
     @Before
     public void onSetUp() throws Exception {
     	LOGGER.debug("###### EgovSecurityConfigTest.onSetUp START ######");
@@ -94,13 +89,12 @@ public class EgovSecurityConfigTest {
     	// 테이블 생성 후 테스트를 위하여 여기서 처리
 		context = new ClassPathXmlApplicationContext(
 				new String[] {
-						"classpath*:META-INF/spring/context-common.xml",
-						"classpath*:META-INF/spring/context-datasource-jdbc.xml",
-						"classpath*:META-INF/spring/config-context.xml",
+						"classpath:/META-INF/spring/context-common.xml",
+						"classpath:/META-INF/spring/context-datasource-jdbc.xml",
+						"classpath:/META-INF/spring/config-context.xml"
 				});
 
 		LOGGER.debug("###### EgovSecurityConfigTest.onSetUp END ######");
-
     }
 
     @After
@@ -156,9 +150,8 @@ public class EgovSecurityConfigTest {
 
     @Test
     public void testGetSecurityFilter() {
-    		LogoutFilter logout  = getSecurityFilter(LogoutFilter.class);
-
-    		assertNotNull(logout);
+		LogoutFilter logout  = getSecurityFilter(LogoutFilter.class);
+		assertNotNull(logout);
     }
 
     /**
@@ -204,13 +197,11 @@ public class EgovSecurityConfigTest {
      */
     @Test(expected=BadCredentialsException.class)
     public void testRejectAccessForUnauthorizedUser() throws Exception {
-
-       UsernamePasswordAuthenticationToken login = new UsernamePasswordAuthenticationToken("jimi", "wrongpw");
+		UsernamePasswordAuthenticationToken login = new UsernamePasswordAuthenticationToken("jimi", "wrongpw");
 		AuthenticationManager authManager = (AuthenticationManager) context.getBean(BeanIds.AUTHENTICATION_MANAGER);
 
 		LOGGER.debug("### jimi's password is wrong!!");
-       SecurityContextHolder.getContext().setAuthentication(authManager.authenticate(login));
-
+		SecurityContextHolder.getContext().setAuthentication(authManager.authenticate(login));
     }
 
     /**
@@ -219,7 +210,6 @@ public class EgovSecurityConfigTest {
      */
     @Test
     public void testMethodAndRoleMapping() throws Exception {
-
     	DelegatingMethodSecurityMetadataSource definitionsource = (DelegatingMethodSecurityMetadataSource) context.getBean("delegatingMethodSecurityMetadataSource");
     	Method method = null;
     	Collection<ConfigAttribute> role = null;
@@ -235,7 +225,6 @@ public class EgovSecurityConfigTest {
 
    		assertEquals("ROLE_USER", role.toArray()[0].toString());
    		LOGGER.debug("## testMethodAndRoleMapping : {} is {}", method.getName(), role.toArray()[0].toString());
-
     }
 
     /**
@@ -244,7 +233,6 @@ public class EgovSecurityConfigTest {
      */
     @Test
     public void testFailedMethodAndRoleMapping() throws Exception {
-
     	DelegatingMethodSecurityMetadataSource definitionsource = (DelegatingMethodSecurityMetadataSource) context.getBean("delegatingMethodSecurityMetadataSource");
     	Method method = null;
     	Collection<ConfigAttribute> role = null;
@@ -269,7 +257,6 @@ public class EgovSecurityConfigTest {
      */
     @Test
     public void testURLAndRoleMapping() throws Exception {
-
     	FilterSecurityInterceptor interceptor = (FilterSecurityInterceptor) context.getBean("filterSecurityInterceptor");
         FilterInvocationSecurityMetadataSource definitionsource = interceptor.getSecurityMetadataSource();
 
@@ -300,7 +287,6 @@ public class EgovSecurityConfigTest {
 
         LOGGER.debug("### Pattern Matched url size is {} and Roles are {}", attrs.size(), attrs);
         assertTrue(attrs.contains(new SecurityConfig("ROLE_RESTRICTED")));
-
     }
 
     /**
@@ -325,7 +311,6 @@ public class EgovSecurityConfigTest {
 
 		LOGGER.debug("### Pattern Matched url is none");
        assertNull(attrs);
-
     }
 
 
@@ -335,7 +320,6 @@ public class EgovSecurityConfigTest {
      */
     @Test
     public void testSuccessfulUrlInvocation() throws Exception {
-
     	final String loginPage = "/cvpl/EgovCvplLogin.do";
 
     	FilterChainProxy filterChainProxy = (FilterChainProxy) context.getBean(BeanIds.SPRING_SECURITY_FILTER_CHAIN);
@@ -358,8 +342,6 @@ public class EgovSecurityConfigTest {
     	LOGGER.debug("### getErrorMessage {}", response.getErrorMessage());
     	LOGGER.debug("### getContentAsString {}", response.getContentAsString());
 
-
-    	/////////////
     	request = new MockHttpServletRequest();
         request.setMethod("GET");
         request.setServletPath("/sale/index.do");
@@ -374,7 +356,6 @@ public class EgovSecurityConfigTest {
     	LOGGER.debug("### getIncludedUrl {}", response.getIncludedUrl());
     	LOGGER.debug("### getErrorMessage {}", response.getErrorMessage());
     	LOGGER.debug("### getContentAsString {}", response.getContentAsString());
-
     }
 
     /**
@@ -383,13 +364,8 @@ public class EgovSecurityConfigTest {
      */
     @Test
     public void testFailureUrlInvocation() throws Exception {
-
-    	//final String loginPage = "/cvpl/EgovCvplLogin.do";
-
     	FilterChainProxy filterChainProxy = (FilterChainProxy) context.getBean(BeanIds.FILTER_CHAIN_PROXY);
 
-
-    	////////////////
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setMethod("GET");
         request.setServletPath("/index.do");
@@ -402,8 +378,6 @@ public class EgovSecurityConfigTest {
     	assertNull(response.getRedirectedUrl());
     	LOGGER.debug("### getRedirectedUrl is null");
 
-
-    	////////////////
         request = new MockHttpServletRequest();
         request.setMethod("GET");
         request.setServletPath("/sale/index.doit");
@@ -415,7 +389,6 @@ public class EgovSecurityConfigTest {
 
     	assertNull(response.getRedirectedUrl());
     	LOGGER.debug("### getRedirectedUrl is null");
-
     }
 
     /**
@@ -424,7 +397,6 @@ public class EgovSecurityConfigTest {
      */
     @Test
     public void testUserDetailsExt() throws Exception {
-
         // 인증되지 않은 사용자 체크
     	Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
     	assertFalse(isAuthenticated.booleanValue());
@@ -466,7 +438,6 @@ public class EgovSecurityConfigTest {
     	isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
     	assertTrue(isAuthenticated.booleanValue());
 
-
         // ID : test
         user = (EgovUserDetailsVO)EgovUserDetailsHelper.getAuthenticatedUser();
 
@@ -486,7 +457,6 @@ public class EgovSecurityConfigTest {
         // 인증된 사용자 검증
     	isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
     	assertTrue(isAuthenticated.booleanValue());
-
 
         // ID : test
         user = (EgovUserDetailsVO)EgovUserDetailsHelper.getAuthenticatedUser();
@@ -516,7 +486,6 @@ public class EgovSecurityConfigTest {
         assertEquals("19701231", user.getBirthDay());
         assertEquals("1234567890123", user.getSsn());
         LOGGER.debug("### testUserDetailsExt 사용자 : {}", user.getUserId());
-
     }
 
     /**
@@ -543,7 +512,6 @@ public class EgovSecurityConfigTest {
     	assertTrue(authorities.contains("IS_AUTHENTICATED_FULLY"));
     	assertTrue(authorities.contains("IS_AUTHENTICATED_REMEMBERED"));
 
-
     	// 2. authorites 에  ROLE 이 여러개 설정된 경우
     	for (Iterator<String> it = authorities.iterator(); it.hasNext();) {
     		String auth = it.next();
@@ -553,7 +521,6 @@ public class EgovSecurityConfigTest {
     	// 3. authorites 에  ROLE 이 하나만 설정된 경우
     	String auth = (String) authorities.toArray()[0];
     	LOGGER.debug("########### user ROLE is {}", auth);
-
 
     	// buyer USER : ROLE_RESTRICTED
     	login = new UsernamePasswordAuthenticationToken("buyer", "buyer");
@@ -595,4 +562,3 @@ public class EgovSecurityConfigTest {
     }
 
 }
-

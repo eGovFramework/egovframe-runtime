@@ -20,6 +20,7 @@ import org.egovframe.rte.psl.data.mongodb.domain.SimplePerson;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/META-INF/spring/context-data-*.xml")
 public class MongoOperationsAuthTest {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoOperationsAuthTest.class);
 
     @Resource(name = "mongoTemplate")
@@ -37,4 +38,5 @@ public class MongoOperationsAuthTest {
         assertEquals("Joe", person.getName());
         mongoOps.dropCollection("person");
     }
+
 }

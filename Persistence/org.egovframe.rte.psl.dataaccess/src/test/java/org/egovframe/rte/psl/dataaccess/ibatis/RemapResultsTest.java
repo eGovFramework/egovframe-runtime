@@ -8,6 +8,7 @@ import static org.junit.Assert.fail;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.egovframe.rte.psl.dataaccess.TestBase;
 import org.egovframe.rte.psl.dataaccess.dao.MapTypeDAO;
@@ -18,6 +19,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.dao.TransientDataAccessResourceException;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
@@ -111,13 +113,14 @@ public class RemapResultsTest extends TestBase {
 			fail("이 라인이 수행될 수 없습니다.");
 		} catch (BadSqlGrammarException be) {
 			assertNotNull(be);
+		} catch (TransientDataAccessResourceException te) {
+			assertNotNull(te);
 		} catch (UncategorizedSQLException ue) {
 			// tibero 인 경우 Spring 에서
 			// UncategorizedSQLException <--
 			// NestedSQLException <-- TbSQLException 으로
 			// 처리됨
 			assertNotNull(ue);
-			//            assertTrue(ue.getCause().getCause() instanceof TbSQLException);
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("기대한 exception 이 아닙니다.");

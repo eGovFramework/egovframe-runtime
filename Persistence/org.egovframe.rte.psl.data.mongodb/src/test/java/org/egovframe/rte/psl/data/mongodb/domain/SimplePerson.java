@@ -1,6 +1,7 @@
 package org.egovframe.rte.psl.data.mongodb.domain;
 
 public class SimplePerson {
+
 	private String id;
 	private String name;
 	private int age;
@@ -26,4 +27,5 @@ public class SimplePerson {
 	public String toString() {
 		return "Person [id=" + id + ", name=" + name + ", age=" + age + "]";
 	}
+
 }

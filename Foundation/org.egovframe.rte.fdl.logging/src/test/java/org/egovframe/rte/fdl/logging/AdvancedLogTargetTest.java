@@ -21,18 +21,15 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {
-		"classpath:META-INF/spring/context-common.xml",
-		"classpath:META-INF/spring/context-datasource.xml",
-		"classpath:META-INF/spring/context-connectionFactory.xml"})
+@ContextConfiguration(locations={"classpath*:META-INF/spring/*.xml"})
 public class AdvancedLogTargetTest {
-	
+
 	@Resource(name = "dataSource")
 	DataSource dataSource;
 
-	@Value("#{jdbcProperties['usingDBMS']}") 
+	@Value("#{jdbcProperties['usingDBMS']}")
 	private String usingDBMS;
-	
+
     @Before
     public void onSetUp() throws Exception {
     	ScriptUtils.executeSqlScript(dataSource.getConnection(), new ClassPathResource("META-INF/testdata/dialect/" + usingDBMS + ".sql"));
@@ -55,7 +52,6 @@ public class AdvancedLogTargetTest {
 		logger.fatal("fatal");
 
 		// 로그 확인
-		
 		// db_log 테이블에 저장된 로그 조회
 		String sql = "SELECT * FROM db_log";
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
@@ -66,12 +62,12 @@ public class AdvancedLogTargetTest {
 			// db_log 테이블에 저장된 로그를 콘솔에 출력
 			LogManager.getLogger("org.egovframe").debug(result);
 		}
-		
+
 		// 저장된 error, fatal 로그의 각 컬럼 확인
 		assertEquals("ERROR", resultList.get(0).get("level"));
 		assertEquals("dbLogger", resultList.get(0).get("logger"));
 		assertEquals("error", resultList.get(0).get("message"));
-		
+
 		assertEquals("FATAL", resultList.get(1).get("level"));
 		assertEquals("dbLogger", resultList.get(1).get("logger"));
 		assertEquals("fatal", resultList.get(1).get("message"));

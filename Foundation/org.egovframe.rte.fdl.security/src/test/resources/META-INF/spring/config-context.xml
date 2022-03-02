@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	   xmlns:egov-security="http://maven.egovframe.go.kr/schema/egov-security"
 	   xmlns:security="http://www.springframework.org/schema/security"
 	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 	   http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
-	   http://maven.egovframe.go.kr/schema/egov-security http://maven.egovframe.go.kr/schema/egov-security/egov-security-4.0.0.xsd">
+	   http://maven.egovframe.go.kr/schema/egov-security https://maven.egovframe.go.kr/schema/egov-security/egov-security-4.0.0.xsd">
 
 	<security:http pattern="/css/**" security="none"/>
     <security:http pattern="/images/**" security="none"/>
@@ -26,8 +27,6 @@
 		hash="md5"
 	/>
 
-	<egov-security:initializer id="initializer"
-		supportPointcut="true"
-	/>
+	<egov-security:initializer id="initializer" supportMethod="true" supportPointcut="false" />
 
 </beans>

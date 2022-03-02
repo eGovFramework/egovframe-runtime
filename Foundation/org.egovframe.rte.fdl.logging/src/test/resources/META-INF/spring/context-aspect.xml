@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:aop="http://www.springframework.org/schema/aop"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:aop="http://www.springframework.org/schema/aop"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
 	   http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
 
 	<bean id="methodParameterLoggingAspect" class="org.egovframe.rte.fdl.logging.sample.aop.MethodParameterLoggingAspect" />
 
 	<aop:config>
-		<aop:pointcut id="serviceMethod"
-			expression="execution(* org.egovframe.rte.fdl.logging.sample..impl.*Impl.*(..))" />
+		<aop:pointcut id="serviceMethod" expression="execution(* org.egovframe.rte.fdl.logging.sample..impl.*Impl.*(..))" />
 		<aop:aspect ref="methodParameterLoggingAspect">
 			<aop:before pointcut-ref="serviceMethod" method="beforeLog" />
 		</aop:aspect>

@@ -77,7 +77,7 @@ public class EgovSecurityHttp {
 	        "	xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
 	        "	xmlns:context=\"http://www.springframework.org/schema/context\"\n" +
 	        "	xsi:schemaLocation=\"http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd\n" +
-	        "						http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-5.2.xsd\n" +
+	        "						http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd\n" +
 	        "						http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd\n" +
 	        "						http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd\">\n" +
 	        

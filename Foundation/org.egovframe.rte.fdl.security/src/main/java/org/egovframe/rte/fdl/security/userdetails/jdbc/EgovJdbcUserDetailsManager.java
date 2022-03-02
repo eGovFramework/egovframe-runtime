@@ -61,9 +61,7 @@ public class EgovJdbcUserDetailsManager extends JdbcUserDetailsManager {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(EgovJdbcUserDetailsManager.class);
 
-	private EgovUserDetails userDetails = null;
     private EgovUsersByUsernameMapping usersByUsernameMapping;
-
     private String mapClass;
     private RoleHierarchy roleHierarchy = null;
 
@@ -146,11 +144,11 @@ public class EgovJdbcUserDetailsManager extends JdbcUserDetailsManager {
         }
 
         UserDetails obj = users.get(0);
-        this.userDetails = (EgovUserDetails) obj;
+        EgovUserDetails userDetails = (EgovUserDetails) obj;
         Set<GrantedAuthority> dbAuthsSet = new HashSet<GrantedAuthority>();
-        dbAuthsSet.addAll(loadUserAuthorities(this.userDetails.getUsername()));
+        dbAuthsSet.addAll(loadUserAuthorities(userDetails.getUsername()));
         List<GrantedAuthority> dbAuths = new ArrayList<GrantedAuthority>(dbAuthsSet);
-        addCustomAuthorities(this.userDetails.getUsername(), dbAuths);
+        addCustomAuthorities(userDetails.getUsername(), dbAuths);
         if (dbAuths.size() == 0) {
 			throw new UsernameNotFoundException(messages.getMessage("EgovJdbcUserDetailsManager.noAuthority", new Object[] { username }, "User {0} has no GrantedAuthority"));
         }
@@ -159,9 +157,7 @@ public class EgovJdbcUserDetailsManager extends JdbcUserDetailsManager {
         Collection<? extends GrantedAuthority> authorities = roleHierarchy.getReachableGrantedAuthorities(dbAuths);
 
         // JdbcDaoImpl 클래스의 createUserDetails 메소드 재정의
-        return new EgovUserDetails(this.userDetails.getUsername(),
-            this.userDetails.getPassword(), this.userDetails.isEnabled(), true,
-            true, true, authorities, this.userDetails.getEgovUserVO());
+        return new EgovUserDetails(userDetails.getUsername(), userDetails.getPassword(), userDetails.isEnabled(), true, true, true, authorities, userDetails.getEgovUserVO());
     }
 
     /**

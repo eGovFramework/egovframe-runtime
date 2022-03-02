@@ -3,17 +3,14 @@ package org.egovframe.rte.psl.data.mongodb;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 
-import com.mongodb.MongoClient;
-
 import java.net.UnknownHostException;
-
+import com.mongodb.MongoClient;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.mongodb.MongoTransactionManager;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
@@ -24,6 +21,7 @@ import org.egovframe.rte.psl.data.mongodb.domain.SimplePerson;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath*:META-INF/spring/context-common.xml")
 public class MongoOperationsAnonymousTest {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoOperationsAnonymousTest.class);
 
     @Value("#{mongo['mongo.host']}")
@@ -46,4 +44,5 @@ public class MongoOperationsAnonymousTest {
         assertEquals("Joe", person.getName());
         mongoOps.dropCollection("person");
     }
+
 }

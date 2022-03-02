@@ -38,8 +38,8 @@ public class EgovEnvCryptoAdminTest {
 	String[] arrCryptoString = {
 		"com", //데이터베이스 접속 계정
 		"com01", //데이터베이스 접속 패드워드
-		"jdbc:log4jdbc:mysql://10.211.55.2:3306/com", //데이터베이스 접속 주소
-		"net.sf.log4jdbc.DriverSpy" //데이터베이스 드라이버
+		"jdbc:mysql://localhost:3306/com", //데이터베이스 접속 주소
+		"com.mysql.jdbc.Driver" //데이터베이스 드라이버
 	};
 
 	//계정암호화키 키

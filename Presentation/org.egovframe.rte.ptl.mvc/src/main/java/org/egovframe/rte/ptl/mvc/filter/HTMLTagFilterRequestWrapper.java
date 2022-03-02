@@ -17,6 +17,7 @@ package org.egovframe.rte.ptl.mvc.filter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+import java.util.Map;
 
 /**
  * HTMLTagFilterRequestWrapper.java
@@ -40,38 +41,12 @@ public class HTMLTagFilterRequestWrapper extends HttpServletRequestWrapper {
 
 	public String[] getParameterValues(String parameter) {
 		String[] values = super.getParameterValues(parameter);
-
 		if (values == null) {
 			return null;
 		}
-
 		for (int i = 0; i < values.length; i++) {
 			if (values[i] != null) {
-				StringBuffer strBuff = new StringBuffer();
-				for (int j = 0; j < values[i].length(); j++) {
-					char c = values[i].charAt(j);
-					switch (c) {
-						case '<':
-							strBuff.append("&lt;");
-							break;
-						case '>':
-							strBuff.append("&gt;");
-							break;
-						case '&':
-							strBuff.append("&amp;");
-							break;
-						case '"':
-							strBuff.append("&quot;");
-							break;
-						case '\'':
-							strBuff.append("&apos;");
-							break;
-						default:
-							strBuff.append(c);
-							break;
-					}
-				}
-				values[i] = strBuff.toString();
+				values[i] = getSafeParamData(values[i]);
 			} else {
 				values[i] = null;
 			}
@@ -81,36 +56,55 @@ public class HTMLTagFilterRequestWrapper extends HttpServletRequestWrapper {
 
 	public String getParameter(String parameter) {
 		String value = super.getParameter(parameter);
-
 		if (value == null) {
 			return null;
 		}
+		value = getSafeParamData(value);
+		return value;
+	}
 
-		StringBuffer strBuff = new StringBuffer();
+	public Map<String, String[]> getParameterMap() {
+		Map<String, String[]> valueMap = super.getParameterMap();
+		String[] values;
+		for (String key : valueMap.keySet()) {
+			values = valueMap.get(key);
+			for (int i = 0; i < values.length; i++) {
+				if (values[i] != null) {
+					values[i] = getSafeParamData(values[i]);
+				} else {
+					values[i] = null;
+				}
+			}
+		}
+		return valueMap;
+	}
+
+	public String getSafeParamData(String value) {
+		StringBuilder stringBuilder = new StringBuilder();
 		for (int i = 0; i < value.length(); i++) {
 			char c = value.charAt(i);
 			switch (c) {
 				case '<':
-					strBuff.append("&lt;");
+					stringBuilder.append("&lt;");
 					break;
 				case '>':
-					strBuff.append("&gt;");
+					stringBuilder.append("&gt;");
 					break;
 				case '&':
-					strBuff.append("&amp;");
+					stringBuilder.append("&amp;");
 					break;
 				case '"':
-					strBuff.append("&quot;");
+					stringBuilder.append("&quot;");
 					break;
 				case '\'':
-					strBuff.append("&apos;");
+					stringBuilder.append("&apos;");
 					break;
 				default:
-					strBuff.append(c);
+					stringBuilder.append(c);
 					break;
 			}
 		}
-		value = strBuff.toString();
+		value = stringBuilder.toString();
 		return value;
 	}
 

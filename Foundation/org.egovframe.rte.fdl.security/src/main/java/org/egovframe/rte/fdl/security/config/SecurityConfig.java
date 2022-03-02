@@ -56,13 +56,14 @@ public class SecurityConfig {
 	private boolean errorIfMaximumExceeded;
 	private String defaultTargetUrl;
 	private boolean alwaysUseDefaultTargetUrl;
-	private boolean supportPointcut;
 	private boolean sniff;
 	private String xframeOptions;
 	private boolean xssProtection;
 	private boolean cacheControl;
 	private boolean csrf;
 	private String csrfAccessDeniedUrl;
+	private boolean supportPointcut;
+	private boolean supportMethod;
 
 	public String getLoginUrl() {
 		return loginUrl;
@@ -142,14 +143,6 @@ public class SecurityConfig {
 
 	public void setHash(String hash) {
 		this.hash = hash;
-	}
-
-	public boolean isSupportPointcut() {
-		return supportPointcut;
-	}
-
-	public void setSupportPointcut(boolean supportPointcut) {
-		this.supportPointcut = supportPointcut;
 	}
 
 	public int getConcurrentMaxSessons() {
@@ -242,6 +235,22 @@ public class SecurityConfig {
 
 	public void setCsrfAccessDeniedUrl(String csrfAccessDeniedUrl) {
 		this.csrfAccessDeniedUrl = csrfAccessDeniedUrl;
+	}
+
+	public boolean isSupportPointcut() {
+		return supportPointcut;
+	}
+
+	public void setSupportPointcut(boolean supportPointcut) {
+		this.supportPointcut = supportPointcut;
+	}
+
+	public boolean isSupportMethod() {
+		return supportMethod;
+	}
+
+	public void setSupportMethod(boolean supportMethod) {
+		this.supportMethod = supportMethod;
 	}
 
 }

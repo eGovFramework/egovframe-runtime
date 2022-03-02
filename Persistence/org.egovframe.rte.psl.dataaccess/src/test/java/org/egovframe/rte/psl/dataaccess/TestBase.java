@@ -15,7 +15,7 @@ public class TestBase {
 	protected boolean isTibero = false;
 	protected boolean isAltibase = false;
 
-	protected static String usingDBMS = "oracle";
+	protected static String usingDBMS = "hsql";
 
 	@Resource(name = "jdbcProperties")
 	protected Properties jdbcProperties;
