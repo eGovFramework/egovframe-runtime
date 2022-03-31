@@ -18,7 +18,7 @@
     </licenses>
 
     <properties>
-        <spring.maven.artifact.version>5.3.6</spring.maven.artifact.version>
+        <spring.maven.artifact.version>5.3.18</spring.maven.artifact.version>
         <org.egovframe.rte.version>4.0.0</org.egovframe.rte.version>
     </properties>
 
