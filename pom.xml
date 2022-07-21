@@ -28,6 +28,7 @@
 		<module>Persistence/org.egovframe.rte.psl.data.mongodb</module>
 
 		<!-- Presentation -->
+		<module>Presentation/spring-modules-validation</module>
 		<module>Presentation/org.egovframe.rte.ptl.mvc</module>
 
 		<!-- Integration -->
