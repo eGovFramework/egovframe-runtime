@@ -6,6 +6,8 @@
 	<packaging>pom</packaging>
 	<version>4.0.0</version>
 	<name>org.egovframe.rte.root</name>
+	
+	<modules>
 
 		<!-- Foundation Layer -->
 		<module>Foundation/org.egovframe.rte.fdl.cmmn</module>
