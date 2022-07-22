@@ -10,6 +10,12 @@
     <description>The eGovernment Standard Framework</description>
     <url>https://www.egovframe.go.kr</url>
 
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
 
     <properties>
         <spring.maven.artifact.version>5.3.6</spring.maven.artifact.version>
