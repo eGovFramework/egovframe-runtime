@@ -60,12 +60,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- org.egovframe.rte.psl.jdbc의 LobCreatorUtils 참조로 추가(v3.7 작업) -->
-        <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-api</artifactId>
-            <version>7.0</version>
-        </dependency>
         <!-- iBatis -->
         <dependency>
             <groupId>org.apache.ibatis</groupId>
