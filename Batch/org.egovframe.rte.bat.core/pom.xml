@@ -8,7 +8,6 @@
         <artifactId>org.egovframe.rte.root</artifactId>
         <relativePath>../../pom.xml</relativePath>
     </parent>
-    <!--groupId>org.egovframe.rte</groupId-->
     <artifactId>org.egovframe.rte.bat.core</artifactId>
     <packaging>jar</packaging>
     <version>4.0.0</version>
