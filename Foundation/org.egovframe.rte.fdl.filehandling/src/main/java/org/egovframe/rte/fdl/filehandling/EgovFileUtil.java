@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -506,7 +507,7 @@ public class EgovFileUtil {
 	 */
 	public static List<String> grep(final Object[] search, final String pattern) throws Exception {
 		Pattern searchPattern = Pattern.compile(pattern);
-		String[] strings = searchPattern.split(search.toString());
+		String[] strings = searchPattern.split(Arrays.toString(search));
 		List<String> list = new ArrayList<String>();
 		for (int i = 0; i < strings.length; i++) {
 			list.add(strings[i]);
@@ -525,7 +526,7 @@ public class EgovFileUtil {
 		Pattern searchPattern = Pattern.compile(pattern);
 		List<String> lists = FileUtils.readLines(file);
 		Object[] search = lists.toArray();
-		String[] strings = searchPattern.split(search.toString());
+		String[] strings = searchPattern.split(Arrays.toString(search));
 		List<String> list = new ArrayList<String>();
 		for (int i = 0; i < strings.length; i++) {
 			list.add(strings[i]);
