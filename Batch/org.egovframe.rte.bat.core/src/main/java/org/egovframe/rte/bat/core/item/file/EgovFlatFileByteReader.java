@@ -114,7 +114,7 @@ public class EgovFlatFileByteReader<T> extends AbstractItemCountingItemStreamIte
 	 * osType
 	 */
 	public void setOsType(String osType) {
-		if (!osType.toUpperCase().equals("WINDOWS")) {
+		if (!osType.equalsIgnoreCase("WINDOWS")) {
 			LINE_CRLF = UNIX_CRLF;
 		} else {
 			LINE_CRLF = WINDOWS_CRLF;
