@@ -7,6 +7,34 @@
 	<version>4.0.0</version>
 	<name>org.egovframe.rte.root</name>
 
+	<properties>
+		<spring.maven.artifact.version>5.3.6</spring.maven.artifact.version>
+		<batch.maven.artifact.version>4.3.2</batch.maven.artifact.version>
+		<org.egovframe.rte.version>4.0.0</org.egovframe.rte.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<javax.annotation.version>1.3.2</javax.annotation.version>
+		<junit.version>4.13.1</junit.version>
+		<spring.modules.validation.version>0.9</spring.modules.validation.version>
+		<javax.mail.version>1.5.0-b01</javax.mail.version>
+		<javax.persistence.version>1.0.2</javax.persistence.version>
+		<hsqldb.version>2.5.0</hsqldb.version>
+		<org.apache.commons.version>2.4.0</org.apache.commons.version>
+		<javax.servlet.version>3.1.0</javax.servlet.version>
+		<org.quartz-scheduler.version>2.3.2</org.quartz-scheduler.version>
+		<commons-io.version>2.7</commons-io.version>
+		<maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
+		<maven.pmd.plugin.version>3.12.0</maven.pmd.plugin.version>
+		<maven.source.plugin.version>3.2.1</maven.source.plugin.version>
+		<maven.surefire.plugin.verion>2.22.2</maven.surefire.plugin.verion>
+		<maven.javadoc.plugin.version>3.1.1</maven.javadoc.plugin.version>
+		<maven.project.info.reports.plugin.version>3.1.2</maven.project.info.reports.plugin.version>
+		<jdk.version>1.8</jdk.version>
+		<hibernate3.version>3.0</hibernate3.version>
+		<emma.maven.plugin.version>1.0-alpha-3</emma.maven.plugin.version>
+	</properties>
+
+
 	<modules>
 
 		<!-- Foundation Layer -->
@@ -39,5 +67,7 @@
 		<module>Batch/org.egovframe.rte.bat.core</module>
 
 	</modules>
+
+
 
 </project>
