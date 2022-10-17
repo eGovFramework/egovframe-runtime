@@ -37,8 +37,14 @@ import org.springframework.beans.factory.annotation.Required;
 
 public class EgovPasswordEncoder {
 
-	private String algorithm = "SHA-256"; // default
+	private static final String DEFAULT_ALGORITHM = "SHA-256";
+
+	private String algorithm;
 	private String hashedPassword;
+
+	public EgovPasswordEncoder() {
+		setAlgorithm(DEFAULT_ALGORITHM);
+	}
 
 	public void setAlgorithm(String algorithm) {
 		this.algorithm = algorithm;
@@ -54,24 +60,24 @@ public class EgovPasswordEncoder {
 	}
 
 	public String encryptPassword(String plainPassword) {
-		ConfigurablePasswordEncryptor encoder = new ConfigurablePasswordEncryptor();
-		encoder.setAlgorithm(this.algorithm);
-		encoder.setPlainDigest(true);
+		ConfigurablePasswordEncryptor encoder = createEncryptor();
 		return encoder.encryptPassword(plainPassword);
 	}
 
 	public boolean checkPassword(String plainPassword) {
-		ConfigurablePasswordEncryptor encoder = new ConfigurablePasswordEncryptor();
-		encoder.setAlgorithm(this.algorithm);
-		encoder.setPlainDigest(true);
+		ConfigurablePasswordEncryptor encoder = createEncryptor();
 		return encoder.checkPassword(plainPassword, this.hashedPassword);
 	}
 
 	public boolean checkPassword(String plainPassword, String encryptedPassword) {
-		ConfigurablePasswordEncryptor encoder = new ConfigurablePasswordEncryptor();
-		encoder.setAlgorithm(this.algorithm);
-		encoder.setPlainDigest(true);
+		ConfigurablePasswordEncryptor encoder = createEncryptor();
 		return encoder.checkPassword(plainPassword, encryptedPassword);
 	}
 
+	private ConfigurablePasswordEncryptor createEncryptor() {
+		ConfigurablePasswordEncryptor encoder = new ConfigurablePasswordEncryptor();
+		encoder.setAlgorithm(this.algorithm);
+		encoder.setPlainDigest(true);
+		return encoder;
+	}
 }
