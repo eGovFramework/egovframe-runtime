@@ -58,7 +58,8 @@ public class EgovAccessConfigTest {
         }
 
         String requestMatchType = "regex";
-        String url = "/sym/ccm/zip/EgovCcmZipList.do";
+        //String url = "/sym/ccm/zip/EgovCcmZipList.do";
+        String url = "/EgovContent.do";
         boolean matchStatus = false;
         List<String> authorityList = EgovUserDetailsHelper.getAuthorities();
         LOGGER.debug("##### EgovAccessConfigTest authorityList : {} #####", authorityList);
