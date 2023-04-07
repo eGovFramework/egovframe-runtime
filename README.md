@@ -19,7 +19,7 @@
 - Spring Boot 2.7.0 지원
 - Spring Framework 5.3.20 버전으로 업그레이드
 - Spring Security 5.7.1 버전으로 업그레이드
-- Spring WebFlux 표준화 기반 구성을 위한 [WebFlux 프로젝트 구성](https://www.egovframe.go.kr/home/sub.do?menuNo=37)<img width="912" alt="11" src="https://user-images.githubusercontent.com/51683963/230555013-4e5f2c3a-808a-42e0-89bd-6a783d20345a.png">
+- Spring WebFlux 표준화 기반 구성을 위한 [WebFlux 적용 예제](https://www.egovframe.go.kr/home/sub.do?menuNo=37)<img width="912" alt="11" src="https://user-images.githubusercontent.com/51683963/230555013-4e5f2c3a-808a-42e0-89bd-6a783d20345a.png">
 
 
 ## 실행환경 구성
