@@ -706,7 +706,7 @@ public class TypedListTest
         // null
         try
         {
-            list.toArray(null);
+            list.toArray((Object[])null);
             fail();
         }
         catch (NullPointerException e)
