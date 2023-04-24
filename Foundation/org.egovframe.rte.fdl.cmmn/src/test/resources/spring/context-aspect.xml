@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:p="http://www.springframework.org/schema/p"
-	xmlns:aop="http://www.springframework.org/schema/aop"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
-		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:p="http://www.springframework.org/schema/p"
+	   xmlns:aop="http://www.springframework.org/schema/aop"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+	   http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
 
 	<aop:config>
 		<aop:pointcut id="serviceMethod" expression="execution(* org.egovframe.rte.bsl..*(..))" />
@@ -51,13 +52,8 @@
 	<bean id="otherHandler" class="org.egovframe.rte.fdl.exception.handler.OthersServiceExceptionHandler" />
 
 	<bean id="otherSSLMailSender" class="org.egovframe.rte.mail.SimpleSSLMail"
-		p:host="smtp.gmail.com" p:port="465" p:username="egovframe@gmail.com" p:password="egovframe1q2w3e">
-		<property name="receivers">
-			<list>
-				<value>horanghi@hanmail.net</value>
-			</list>
-		</property>
-	</bean>
+		p:host="smtp.gmail.com" p:port="465" p:username="egovframe@gmail.com" p:password="egovframe1q2w3e"
+		p:receivers="user@gmail.com"/>
 
 	<bean id="helloService" class="org.egovframe.rte.bsl.exception.HelloServiceImpl" />
 	<bean id="ohterService" class="org.egovframe.rte.bsl.exception.HelloServiceImpl" />

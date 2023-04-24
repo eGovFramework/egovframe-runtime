@@ -15,19 +15,7 @@
  */
 package org.egovframe.rte.fdl.excel.impl;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import org.egovframe.rte.fdl.cmmn.exception.BaseException;
-import org.egovframe.rte.fdl.excel.EgovExcelMapping;
-import org.egovframe.rte.fdl.excel.EgovExcelService;
-import org.egovframe.rte.fdl.filehandling.EgovFileUtil;
-import org.egovframe.rte.fdl.string.EgovObjectUtil;
+import com.ibatis.sqlmap.client.SqlMapClient;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -36,6 +24,11 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.egovframe.rte.fdl.cmmn.exception.BaseException;
+import org.egovframe.rte.fdl.excel.EgovExcelMapping;
+import org.egovframe.rte.fdl.excel.EgovExcelService;
+import org.egovframe.rte.fdl.filehandling.EgovFileUtil;
+import org.egovframe.rte.fdl.string.EgovObjectUtil;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +36,11 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
-import com.ibatis.sqlmap.client.SqlMapClient;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * 엑셀 서비스를 처리하는 비즈니스 구현 클래스.
@@ -72,10 +69,8 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
 
     private MessageSource messageSource;
     private ApplicationContext applicationContext;
-
     private String mapClass;
     private String mapBeanName;
-
     private EgovExcelServiceDAO dao;
     private EgovExcelServiceMapper excelBatchMapper;
     private SqlMapClient sqlMapClient;
@@ -143,15 +138,15 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
 	 */
     public Workbook createWorkbook(Workbook wb, String filepath) throws IOException {
         String fullFileName = filepath;
-        LOGGER.debug("EgovExcelServiceImpl.createWorkbook : templatePath is {}", FilenameUtils.getFullPath(fullFileName));
+        LOGGER.debug("EgovExcelServiceImpl.createWorkbook 1 : templatePath is {}", FilenameUtils.getFullPath(fullFileName));
         if (!EgovFileUtil.isExistsFile(FilenameUtils.getFullPath(fullFileName))) {
-            LOGGER.debug("make dir {}", FilenameUtils.getFullPath(fullFileName));
-            FileUtils.forceMkdir(new File(FilenameUtils.getFullPath(fullFileName)));
+			LOGGER.debug("make dir {}", FilenameUtils.getFullPath(fullFileName));
+			FileUtils.forceMkdir(new File(FilenameUtils.getFullPath(fullFileName)));
         }
         FileOutputStream fileOut = null;
-        LOGGER.debug("EgovExcelServiceImpl.createWorkbook : templatePath is {}", fullFileName);
+        LOGGER.debug("EgovExcelServiceImpl.createWorkbook 2 : templatePath is {}", fullFileName);
 		try {
-            LOGGER.debug("ExcelServiceImpl loadExcelObject ...");
+            LOGGER.debug("ExcelServiceImpl filepath ...");
 			fileOut = new FileOutputStream(fullFileName);
 			wb.write(fileOut);
         } finally {
@@ -170,18 +165,15 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
 	 */
     public Workbook loadExcelTemplate(String templateName) throws IOException {
         FileInputStream fileIn = null;
-		POIFSFileSystem fs = null;
 		Workbook wb = null;
         LOGGER.debug("EgovExcelServiceImpl.loadExcelTemplate : templatePath is {}", templateName);
         try {
             LOGGER.debug("ExcelServiceImpl loadExcelTemplate ...");
 			fileIn = new FileInputStream(templateName);
-			fs = new POIFSFileSystem(fileIn);
-            wb = new HSSFWorkbook(fs);
+            wb = new HSSFWorkbook(fileIn);
         } finally {
             LOGGER.debug("ExcelServiceImpl loadExcelTemplate end...");
 			if (wb != null) wb.close();
-			if (fs != null) fs.close();
 			if (fileIn != null) fileIn.close();
         }
         return wb;

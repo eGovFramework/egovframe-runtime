@@ -1,19 +1,17 @@
 package org.egovframe.rte.psl.dataaccess.rowhandler;
 
+import com.ibatis.sqlmap.client.event.RowHandler;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
-import com.ibatis.sqlmap.client.event.RowHandler;
 
 @Scope("prototype")
 @Component("fileWritingRowHandler")

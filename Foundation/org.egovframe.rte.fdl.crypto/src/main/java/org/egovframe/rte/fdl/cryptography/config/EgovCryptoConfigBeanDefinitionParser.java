@@ -15,8 +15,6 @@
  */
 package org.egovframe.rte.fdl.cryptography.config;
 
-import java.io.ByteArrayInputStream;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -26,6 +24,8 @@ import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.util.StringUtils;
 import org.w3c.dom.Element;
+
+import java.io.ByteArrayInputStream;
 
 
 /**

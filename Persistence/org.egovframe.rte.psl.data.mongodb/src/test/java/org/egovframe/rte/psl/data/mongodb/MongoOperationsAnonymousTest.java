@@ -1,10 +1,7 @@
 package org.egovframe.rte.psl.data.mongodb;
 
-import static org.junit.Assert.assertEquals;
-import static org.springframework.data.mongodb.core.query.Criteria.where;
-
-import java.net.UnknownHostException;
-import com.mongodb.MongoClient;
+import com.mongodb.client.MongoClients;
+import org.egovframe.rte.psl.data.mongodb.domain.Person;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,33 +13,49 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.egovframe.rte.psl.data.mongodb.domain.SimplePerson;
+
+import static org.junit.Assert.assertEquals;
+import static org.springframework.data.mongodb.core.query.Criteria.where;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath*:META-INF/spring/context-common.xml")
+@ContextConfiguration(locations = "classpath:META-INF/spring/context-common.xml")
 public class MongoOperationsAnonymousTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoOperationsAnonymousTest.class);
 
-    @Value("#{mongo['mongo.host']}")
-    private String mongoHost;
+    @Value("${mongodb.host}")
+    private String mongodbHost;
 
-    @Value("#{mongo['mongo.port']}")
-    private int mongoPort;
+    @Value("${mongodb.port}")
+    private int mongodbPort;
+
+    @Value("${mongodb.database}")
+    private String mongodbDatabase;
 
     @Before
     public void setUp() {
-        LOGGER.info("MongoDB host : " + mongoHost);
-        LOGGER.info("MongoDB port : " + mongoPort);
+        LOGGER.info("##### MongoDB host : " + mongodbHost);
+        LOGGER.info("##### MongoDB port : " + mongodbPort);
+        LOGGER.info("##### MongoDB database : " + mongodbDatabase);
     }
 
     @Test
-    public void testBasicOperations() throws UnknownHostException {
-        MongoOperations mongoOps = new MongoTemplate(new MongoClient(mongoHost, mongoPort), "database");
-        mongoOps.insert(new SimplePerson("Joe", 34));
-        SimplePerson person = mongoOps.findOne(new Query(where("name").is("Joe")), SimplePerson.class);
-        assertEquals("Joe", person.getName());
-        mongoOps.dropCollection("person");
+    public void testBasicOperations() {
+        MongoOperations mongoOperations = new MongoTemplate(MongoClients.create("mongodb://"+mongodbHost+":"+mongodbPort), mongodbDatabase);
+
+        Person person = new Person();
+        person.setId("1001");
+        person.setName("Kim");
+        person.setAge(20);
+        mongoOperations.save(person, "person");
+
+        Person person1 = mongoOperations.findOne(new Query(where("name").is("Kim").and("age").is(20)), Person.class);
+        LOGGER.info("##### MongoOperationsAnonymousTest person : " + person1);
+        assertEquals(person.getId(), person1.getId());
+        assertEquals(person.getName(), person1.getName());
+        assertEquals(person.getAge(), person1.getAge());
+
+        mongoOperations.dropCollection("person");
     }
 
 }

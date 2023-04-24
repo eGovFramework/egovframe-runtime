@@ -16,9 +16,9 @@
 
 package org.egovframe.rte.psl.orm.ibatis;
 
-import java.sql.SQLException;
-
 import com.ibatis.sqlmap.client.SqlMapExecutor;
+
+import java.sql.SQLException;
 
 /**
  * Callback interface for data access code that works with the iBATIS

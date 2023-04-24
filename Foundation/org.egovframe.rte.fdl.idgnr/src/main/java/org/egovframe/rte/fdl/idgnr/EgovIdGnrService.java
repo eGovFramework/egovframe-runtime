@@ -15,8 +15,9 @@
  */
 package org.egovframe.rte.fdl.idgnr;
 
-import java.math.BigDecimal;
 import org.egovframe.rte.fdl.cmmn.exception.FdlException;
+
+import java.math.BigDecimal;
 
 /**
  * Id Generation 서비스의 인터페이스 클래스

@@ -15,8 +15,6 @@
  */
 package org.egovframe.rte.itl.webservice;
 
-import java.util.Calendar;
-
 import org.egovframe.rte.itl.integration.EgovIntegrationMessage;
 import org.egovframe.rte.itl.integration.EgovIntegrationMessageHeader.ResultCode;
 import org.egovframe.rte.itl.integration.metadata.IntegrationDefinition;
@@ -25,9 +23,10 @@ import org.egovframe.rte.itl.integration.metadata.ServiceDefinition;
 import org.egovframe.rte.itl.integration.metadata.SystemDefinition;
 import org.egovframe.rte.itl.integration.support.AbstractService;
 import org.egovframe.rte.itl.webservice.service.EgovWebServiceClient;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Calendar;
 
 /**
  * 전자정부 웹 서비스의 단위 서비스 구현 클래스

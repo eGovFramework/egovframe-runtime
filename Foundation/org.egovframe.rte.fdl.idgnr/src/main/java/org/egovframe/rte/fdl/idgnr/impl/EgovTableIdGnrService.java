@@ -15,13 +15,7 @@
  */
 package org.egovframe.rte.fdl.idgnr.impl;
 
-import java.math.BigDecimal;
-import java.util.Locale;
-
 import org.egovframe.rte.fdl.cmmn.exception.FdlException;
-
-import javax.sql.DataSource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
@@ -31,6 +25,10 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import javax.sql.DataSource;
+import java.math.BigDecimal;
+import java.util.Locale;
 
 /**
  * ID Generation 서비스를 위한 Table 구현 클래스

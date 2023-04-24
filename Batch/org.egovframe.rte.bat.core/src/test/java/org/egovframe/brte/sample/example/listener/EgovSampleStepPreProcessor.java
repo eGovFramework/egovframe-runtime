@@ -16,8 +16,8 @@ package org.egovframe.brte.sample.example.listener;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.batch.core.StepExecution;
 import org.egovframe.rte.bat.core.listener.EgovStepPreProcessor;
+import org.springframework.batch.core.StepExecution;
 
 /**
  * 스텝단계 이전에 호출되는 리스너 클래스

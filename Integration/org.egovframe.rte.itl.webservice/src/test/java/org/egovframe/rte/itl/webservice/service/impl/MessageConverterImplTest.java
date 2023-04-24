@@ -1,17 +1,5 @@
 package org.egovframe.rte.itl.webservice.service.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.egovframe.rte.itl.integration.type.ListType;
 import org.egovframe.rte.itl.integration.type.PrimitiveType;
 import org.egovframe.rte.itl.integration.type.RecordType;
@@ -20,8 +8,13 @@ import org.egovframe.rte.itl.webservice.service.EgovWebServiceClassLoader;
 import org.egovframe.rte.itl.webservice.service.MessageConverter;
 import org.egovframe.rte.itl.webservice.service.ServiceEndpointInfo;
 import org.egovframe.rte.itl.webservice.service.ServiceEndpointInterfaceInfo;
-
 import org.junit.Test;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.*;
+
+import static org.junit.Assert.*;
 
 public class MessageConverterImplTest {
 	private final RecordType personRecordType = new RecordType("personRecordType", "PersonRecordType", new HashMap<String, Type>() {

@@ -15,11 +15,11 @@
  */
 package org.egovframe.rte.fdl.security.config;
 
-import java.io.ByteArrayInputStream;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.InputStreamResource;
+
+import java.io.ByteArrayInputStream;
 
 /**
  * egov-security http create
@@ -85,7 +85,7 @@ public class EgovSecurityHttp {
 	        "	    disable-url-rewriting=\"false\" use-expressions=\"false\">\n\n";
 
 	        // Sniff 설정 활성화
-	        if (Sniff == true) {
+	        if (Sniff) {
 				sHttp += "		<headers defaults-disabled=\"false\">\n";
 			}
 			// Sniff 설정 비활성화
@@ -95,12 +95,12 @@ public class EgovSecurityHttp {
 
 	        sHttp += "			<frame-options policy=\"" + XFrameOptions +"\"/>\n";
 
-	        if (XssProtection == true) {
+	        if (XssProtection) {
 	        	sHttp += "			<xss-protection enabled=\"true\" block=\"true\"/>\n";
 	        }
 
 	        // 캐시 활성화
-	        if (CacheControl == true) {
+	        if (CacheControl) {
 				sHttp += "			<cache-control disabled=\"true\"/>\n";
 			}
 	        // 캐시 비활성화
@@ -111,7 +111,7 @@ public class EgovSecurityHttp {
 			sHttp += "		</headers>\n\n";
 
 	        // Csrf 설정 활성화
-	        if (Csrf == true) {
+	        if (Csrf) {
 	            sHttp += "		<csrf disabled=\"false\"/>\n\n";
 	        }
             // Csrf 설정 비활성화

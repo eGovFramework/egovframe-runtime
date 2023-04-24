@@ -17,7 +17,6 @@ package org.egovframe.rte.itl.integration.metadata.dao.hibernate;
 
 import org.egovframe.rte.itl.integration.metadata.OrganizationDefinition;
 import org.egovframe.rte.itl.integration.metadata.dao.OrganizationDefinitionDao;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;

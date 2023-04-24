@@ -1,8 +1,8 @@
 package org.egovframe.rte.fdl.logging.sample.service;
 
-import java.io.Serializable;
-
 import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import java.io.Serializable;
 
 public class SomeVO implements Serializable {
 

@@ -16,6 +16,7 @@
 
 package org.egovframe.brte.sample.testcase.test;
 
+import org.egovframe.brte.sample.common.domain.trade.CustomerCredit;
 import org.junit.runner.RunWith;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
@@ -25,8 +26,6 @@ import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.test.MetaDataInstanceFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import org.egovframe.brte.sample.common.domain.trade.CustomerCredit;
 
 /**
 * FilxedLength 방식으로 데이터처리를 수행하는 테스트

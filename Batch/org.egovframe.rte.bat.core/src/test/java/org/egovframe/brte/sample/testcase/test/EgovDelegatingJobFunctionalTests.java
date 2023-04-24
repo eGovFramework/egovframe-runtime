@@ -15,10 +15,7 @@
  */
 package org.egovframe.brte.sample.testcase.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import org.egovframe.brte.sample.common.domain.person.PersonService;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -29,6 +26,9 @@ import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
 *  기존에 작성된 클래스를 ItemReader나 ItemWriter의 역할로 배치작업을 수행하는 테스트

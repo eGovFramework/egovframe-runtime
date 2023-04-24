@@ -1,15 +1,14 @@
 package org.egovframe.rte.itl.integration.support;
 
-import static org.junit.Assert.assertEquals;
-
 import org.egovframe.rte.itl.integration.EgovIntegrationMessage;
 import org.egovframe.rte.itl.integration.EgovIntegrationMessageHeader.ResultCode;
 import org.egovframe.rte.itl.integration.EgovIntegrationService;
 import org.egovframe.rte.itl.integration.EgovIntegrationServiceResponse;
 import org.egovframe.rte.itl.integration.message.simple.SimpleMessage;
 import org.egovframe.rte.itl.integration.message.simple.SimpleMessageHeader;
-
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class AbstractServiceTest
 {

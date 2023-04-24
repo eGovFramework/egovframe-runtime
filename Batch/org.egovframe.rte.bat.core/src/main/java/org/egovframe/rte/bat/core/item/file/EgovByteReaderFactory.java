@@ -15,9 +15,10 @@
  */
 package org.egovframe.rte.bat.core.item.file;
 
+import org.springframework.core.io.Resource;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import org.springframework.core.io.Resource;
 
 /**
  * Resource와 Encoding을 입력받아 EgovReader를 Factory Pattern으로 생성함

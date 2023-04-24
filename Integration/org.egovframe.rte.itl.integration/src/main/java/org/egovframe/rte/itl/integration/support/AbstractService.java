@@ -15,13 +15,9 @@
  */
 package org.egovframe.rte.itl.integration.support;
 
-import org.egovframe.rte.itl.integration.EgovIntegrationMessage;
-import org.egovframe.rte.itl.integration.EgovIntegrationMessageHeader;
+import org.egovframe.rte.itl.integration.*;
 import org.egovframe.rte.itl.integration.EgovIntegrationMessageHeader.ResultCode;
-import org.egovframe.rte.itl.integration.EgovIntegrationService;
-import org.egovframe.rte.itl.integration.EgovIntegrationServiceCallback;
 import org.egovframe.rte.itl.integration.EgovIntegrationServiceCallback.CallbackId;
-import org.egovframe.rte.itl.integration.EgovIntegrationServiceResponse;
 import org.egovframe.rte.itl.integration.message.simple.SimpleMessage;
 import org.egovframe.rte.itl.integration.message.simple.SimpleMessageHeader;
 import org.slf4j.Logger;

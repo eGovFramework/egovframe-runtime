@@ -22,14 +22,14 @@
 
 		<bean id="temp" class="org.egovframe.rte.fdl.cmmn.profiles.testProfile2" />
 	</beans>
-	
+
 	<beans profile="embedded">
 		<jdbc:embedded-database id="dataSource">
 			<jdbc:script location="classpath:/spring/schema.sql" />
 			<jdbc:script location="classpath:/spring/test-data.sql" />
 		</jdbc:embedded-database>
 
-		<bean id="temp" class="springframework.profile.testProfile1" />
+		<bean id="temp" class="org.egovframe.rte.fdl.cmmn.profiles.testProfile1" />
 	</beans>
 
 </beans>

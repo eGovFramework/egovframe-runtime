@@ -16,10 +16,10 @@
 
 package org.egovframe.brte.sample.common.domain.trade;
 
-import java.math.BigDecimal;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.math.BigDecimal;
 
 /**
  * CustomerCredit 엔티티

@@ -14,16 +14,14 @@
  */
 package org.egovframe.brte.sample.example.support;
 
+import org.egovframe.brte.sample.common.domain.trade.Trade;
+import org.springframework.batch.item.ItemWriter;
+import org.springframework.jdbc.core.JdbcTemplate;
+
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.egovframe.brte.sample.common.domain.trade.Trade;
-
-import javax.sql.DataSource;
-
-import org.springframework.batch.item.ItemWriter;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  * Trade 관련 Data 를 쓰는 Writer

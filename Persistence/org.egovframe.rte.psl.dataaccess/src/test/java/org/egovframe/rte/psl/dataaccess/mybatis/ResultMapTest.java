@@ -1,19 +1,10 @@
 package org.egovframe.rte.psl.dataaccess.mybatis;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-
 import org.egovframe.rte.psl.dataaccess.TestBase;
 import org.egovframe.rte.psl.dataaccess.dao.EmpMapper;
 import org.egovframe.rte.psl.dataaccess.vo.EmpDeptSimpleCompositeVO;
 import org.egovframe.rte.psl.dataaccess.vo.EmpExtendsDeptVO;
 import org.egovframe.rte.psl.dataaccess.vo.EmpVO;
-
-import javax.annotation.Resource;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,6 +14,13 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  *  == 개정이력(Modification Information) ==

@@ -16,8 +16,8 @@ package org.egovframe.brte.sample.example.listener;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.batch.core.JobExecution;
 import org.egovframe.rte.bat.core.listener.EgovJobPostProcessor;
+import org.springframework.batch.core.JobExecution;
 
 /**
  * 잡 단계 이후에 호출되는 리스너 클래스

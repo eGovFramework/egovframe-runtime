@@ -15,12 +15,13 @@
  */
 package org.egovframe.rte.itl.integration.message.simple;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 import org.egovframe.rte.itl.integration.EgovIntegrationMessage;
 import org.egovframe.rte.itl.integration.EgovIntegrationMessageHeader;
 import org.springframework.util.StringUtils;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * 전자정부 연계 서비스의 표준 메시지 클래스

@@ -15,15 +15,15 @@
  */
 package org.egovframe.rte.itl.integration.message.typed;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
 import org.egovframe.rte.itl.integration.type.NoSuchRecordFieldException;
 import org.egovframe.rte.itl.integration.type.RecordType;
 import org.egovframe.rte.itl.integration.type.Type;
 import org.egovframe.rte.itl.integration.type.UnassignableValueException;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * 연계 서비스의 표준 메시지 구현 클래스.

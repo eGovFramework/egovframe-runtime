@@ -1,11 +1,10 @@
 package org.egovframe.rte.psl.dataaccess.dao;
 
-import java.util.List;
-
 import org.egovframe.rte.psl.dataaccess.EgovAbstractMapper;
 import org.egovframe.rte.psl.dataaccess.vo.DeptVO;
-
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository("deptMapper")
 public class DeptMapper extends EgovAbstractMapper {

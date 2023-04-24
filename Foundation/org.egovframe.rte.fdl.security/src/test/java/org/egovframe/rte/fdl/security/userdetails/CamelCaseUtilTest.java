@@ -1,9 +1,9 @@
 package org.egovframe.rte.fdl.security.userdetails;
 
-import static org.junit.Assert.*;
-
 import org.egovframe.rte.fdl.security.userdetails.util.CamelCaseUtil;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class CamelCaseUtilTest {
 

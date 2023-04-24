@@ -14,23 +14,17 @@
  */
 package org.egovframe.brte.sample.example.event;
 
-import java.util.Properties;
-
-import org.egovframe.rte.bat.core.event.EgovEventNoticeTrigger;
-
-import javax.mail.Authenticator;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.egovframe.rte.bat.core.event.EgovEventNoticeTrigger;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.StepExecution;
+
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import java.security.Security;
+import java.util.Properties;
 
 /**
  * 이벤트 알림을 위한 전자우편을 발송하는 클래스

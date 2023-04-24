@@ -15,9 +15,9 @@
  */
 package org.egovframe.rte.fdl.logging.db;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
-import javax.sql.DataSource;
 
 /**
  * log4j2의 JDBCAppender에서 사용하는 Connection 객체를 생성해주는 클래스

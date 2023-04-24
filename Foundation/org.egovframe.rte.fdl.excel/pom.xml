@@ -4,8 +4,8 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.egovframe.rte</groupId>
     <artifactId>org.egovframe.rte.fdl.excel</artifactId>
+    <version>4.1.0</version>
     <packaging>jar</packaging>
-    <version>4.0.0</version>
     <name>org.egovframe.rte.fdl.excel</name>
     <description>The eGovernment Standard Framework</description>
     <url>https://www.egovframe.go.kr</url>
@@ -18,10 +18,10 @@
     </licenses>
 
     <properties>
-        <spring.maven.artifact.version>5.3.6</spring.maven.artifact.version>
-        <org.egovframe.rte.version>4.0.0</org.egovframe.rte.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <spring.maven.artifact.version>5.3.20</spring.maven.artifact.version>
+        <org.egovframe.rte.version>4.1.0</org.egovframe.rte.version>
+        <java.version>1.8</java.version>
+        <project.encoding>UTF-8</project.encoding>
     </properties>
 
     <dependencies>
@@ -35,7 +35,6 @@
             <artifactId>org.egovframe.rte.fdl.filehandling</artifactId>
             <version>${org.egovframe.rte.version}</version>
             <exclusions>
-            <!-- Exclude Commons Logging in favor of SLF4j -->
                 <exclusion>
                     <artifactId>commons-logging</artifactId>
                     <groupId>commons-logging</groupId>
@@ -61,7 +60,7 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
-            <version>3.16</version>
+            <version>5.2.2</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-logging</artifactId>
@@ -80,35 +79,27 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
-            <version>3.16</version>
+            <version>5.2.2</version>
         </dependency>
         <dependency>
-            <groupId>net.sf.jxls</groupId>
-            <artifactId>jxls-core</artifactId>
-            <version>1.0.6</version>
-            <exclusions>
-                <!-- Exclude Commons Logging in favor of SLF4j -->
-                <exclusion>
-                    <artifactId>commons-logging</artifactId>
-                    <groupId>commons-logging</groupId>
-                </exclusion>
-            </exclusions>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>1.9.4</version>
         </dependency>
         <dependency>
-            <groupId>net.sf.jxls</groupId>
+            <groupId>org.jxls</groupId>
+            <artifactId>jxls</artifactId>
+            <version>2.11.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jxls</groupId>
             <artifactId>jxls-reader</artifactId>
-            <version>1.0.6</version>
-            <exclusions>
-                <!-- Exclude Commons Logging in favor of SLF4j -->
-                <exclusion>
-                    <artifactId>commons-logging</artifactId>
-                    <groupId>commons-logging</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>poi</artifactId>
-                    <groupId>org.apache.poi</groupId>
-                </exclusion>
-            </exclusions>
+            <version>2.0.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jxls</groupId>
+            <artifactId>jxls-poi</artifactId>
+            <version>2.11.0</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -124,39 +115,39 @@
 
         <!-- For Testing -->
         <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <version>${spring.maven.artifact.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.13.1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
-            <version>4.1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-            <version>2.5.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.31</version>
+            <version>4.3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-dbcp2</artifactId>
-            <version>2.4.0</version>
+            <version>2.9.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>2.5.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.29</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -170,30 +161,22 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.8.1</version>
+                    <version>3.10.1</version>
                     <configuration>
-                        <source>1.8</source>
-                        <target>1.8</target>
-                        <encoding>UTF-8</encoding>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                        <encoding>${project.encoding}</encoding>
                     </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>hibernate3-maven-plugin</artifactId>
                     <version>3.0</version>
-                    <configuration>
-                        <components>
-                            <component>
-                                <name>hbm2ddl</name>
-                                <implementation>annotationconfiguration</implementation>
-                            </component>
-                        </components>
-                    </configuration>
                     <dependencies>
                         <dependency>
                             <groupId>org.hsqldb</groupId>
                             <artifactId>hsqldb</artifactId>
-                            <version>2.5.0</version>
+                            <version>2.5.2</version>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -207,7 +190,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-pmd-plugin</artifactId>
-                    <version>3.12.0</version>
+                    <version>3.17.0</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -253,9 +236,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.1.1</version>
+                <version>3.4.0</version>
                 <configuration>
-                    <source>1.8</source>
+                    <source>${java.version}</source>
                     <additionalJOption>-Xdoclint:none</additionalJOption>
                 </configuration>
             </plugin>
@@ -268,7 +251,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>3.1.2</version>
+                <version>3.3.0</version>
                 <reportSets>
                     <reportSet>
                         <id>sunlink</id>
@@ -278,7 +261,7 @@
                         <inherited>true</inherited>
                         <configuration>
                             <links>
-                                <link>https://docs.oracle.com/javase/6/docs/api/</link>
+                                <link>https://docs.oracle.com/javase/8/docs/api/</link>
                             </links>
                         </configuration>
                     </reportSet>
@@ -309,9 +292,9 @@
                 <configuration>
                     <minmemory>128m</minmemory>
                     <maxmemory>512m</maxmemory>
-                    <encoding>UTF-8</encoding>
-                    <docencoding>UTF-8</docencoding>
-                    <charset>UTF-8</charset>
+                    <encoding>${project.encoding}</encoding>
+                    <docencoding>${project.encoding}</docencoding>
+                    <charset>${project.encoding}</charset>
                     <additionalJOption>-Xdoclint:none</additionalJOption>
                 </configuration>
             </plugin>
@@ -320,8 +303,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jxr-plugin</artifactId>
                 <configuration>
-                    <inputEncoding>UTF-8</inputEncoding>
-                    <outputEncoding>UTF-8</outputEncoding>
+                    <inputEncoding>${project.encoding}</inputEncoding>
+                    <outputEncoding>${project.encoding}</outputEncoding>
                     <linkJavadoc>true</linkJavadoc>
                     <javadocDir>apidocs</javadocDir>
                 </configuration>

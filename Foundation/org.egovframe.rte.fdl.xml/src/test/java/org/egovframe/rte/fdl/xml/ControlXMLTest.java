@@ -1,20 +1,9 @@
 package org.egovframe.rte.fdl.xml;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import org.egovframe.rte.fdl.xml.exception.UnsupportedException;
 import org.egovframe.rte.fdl.xml.exception.ValidatorException;
 import org.egovframe.rte.fdl.xml.impl.EgovDOMFactoryServiceImpl;
 import org.egovframe.rte.fdl.xml.impl.EgovSAXFactoryServiceImpl;
-
-import javax.annotation.Resource;
-import javax.xml.transform.TransformerException;
-
 import org.jdom2.Attribute;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -27,6 +16,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.xml.sax.SAXException;
+
+import javax.annotation.Resource;
+import javax.xml.transform.TransformerException;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * CategoryControllerTest is TestCase of CategoryController

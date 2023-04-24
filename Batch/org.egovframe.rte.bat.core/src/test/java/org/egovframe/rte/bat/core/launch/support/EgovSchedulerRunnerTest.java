@@ -1,8 +1,8 @@
 package org.egovframe.rte.bat.core.launch.support;
 
-import java.util.ArrayList;
-
 import org.junit.Test;
+
+import java.util.ArrayList;
 
 /**
  * EgovSchedulerRunner Test 클래스

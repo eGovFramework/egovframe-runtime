@@ -16,10 +16,10 @@
 
 package org.egovframe.brte.sample.common.domain.trade;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
-
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * Trade 엔티티

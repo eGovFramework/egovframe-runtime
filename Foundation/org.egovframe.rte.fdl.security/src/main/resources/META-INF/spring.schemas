@@ -1,2 +1,2 @@
-http\://maven.egovframe.go.kr/schema/egov-security/egov-security.xsd=org/egovframe/rte/fdl/security/config/egov-security-4.0.0.xsd
-http\://maven.egovframe.go.kr/schema/egov-security/egov-security-4.0.0.xsd=org/egovframe/rte/fdl/security/config/egov-security-4.0.0.xsd
+http\://maven.egovframe.go.kr/schema/egov-security/egov-security.xsd=org/egovframe/rte/fdl/security/config/egov-security-4.1.0.xsd
+http\://maven.egovframe.go.kr/schema/egov-security/egov-security-4.1.0.xsd=org/egovframe/rte/fdl/security/config/egov-security-4.1.0.xsd

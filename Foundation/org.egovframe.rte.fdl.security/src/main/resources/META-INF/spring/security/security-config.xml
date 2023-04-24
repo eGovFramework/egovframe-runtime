@@ -2,21 +2,15 @@
 <beans:beans  xmlns="http://www.springframework.org/schema/security"
 	xmlns:beans="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-						http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
-						http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
-
-	<!--<context:annotation-config/>-->
+						http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
 
 	<beans:bean id="loginUrlAuthenticationEntryPoint" class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
-		<!-- <beans:property name="loginFormUrl" ref="loginFormUrlFactoryBean"/> -->
 		<beans:constructor-arg index="0" ref="loginFormUrlFactoryBean"/>
 	</beans:bean>
 
 	<beans:bean id="loginFormUrlFactoryBean" class="org.egovframe.rte.fdl.security.config.internal.LoginFormUrlFactoryBean" />
 
-	<!-- for concurrent control -->
 	<beans:bean id="sas" class="org.springframework.security.web.authentication.session.CompositeSessionAuthenticationStrategy">
 		<beans:constructor-arg>
 			<beans:list>

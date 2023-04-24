@@ -15,14 +15,13 @@
  */
 package org.egovframe.rte.itl.integration.metadata.dao.hibernate;
 
-import java.util.List;
-
 import org.egovframe.rte.itl.integration.metadata.IntegrationDefinition;
 import org.egovframe.rte.itl.integration.metadata.dao.IntegrationDefinitionDao;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
+
+import java.util.List;
 
 /**
  * 연계 서비스 IntegrationDefinitionDao 구현 클래스.
@@ -50,7 +49,7 @@ public class HibernateIntegrationDefinitionDao extends HibernateDaoSupport imple
 	public IntegrationDefinition getIntegrationDefinition(String id) {
 		LOGGER.debug("get IntegrationDefinition (id = \"{}\")", id);
 
-		IntegrationDefinition integrationDefinition = (IntegrationDefinition) getHibernateTemplate().get(IntegrationDefinition.class, id);
+		IntegrationDefinition integrationDefinition = getHibernateTemplate().get(IntegrationDefinition.class, id);
 		// CHECKSTYLE:ON
 		LOGGER.debug("get IntegrationDefinition (id = \"{}\") = {}", id, integrationDefinition);
 

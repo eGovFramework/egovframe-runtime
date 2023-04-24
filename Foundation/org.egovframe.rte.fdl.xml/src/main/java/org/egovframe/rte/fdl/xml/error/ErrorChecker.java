@@ -16,10 +16,11 @@
  */
 package org.egovframe.rte.fdl.xml.error;
 
-import java.util.HashSet;
-import java.util.Set;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * DefaultHandler를 상속하는 클래스로, XML 파서가 파싱을 할 때

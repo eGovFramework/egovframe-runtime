@@ -1,16 +1,15 @@
 package org.egovframe.rte.ptl.mvc.exception;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.Properties;
-
-import javax.servlet.http.HttpServletResponse;
-
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.Properties;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  *

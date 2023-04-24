@@ -10,7 +10,7 @@
 	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
 		<property name="basenames">
 			<list>
-				<value>classpath:/META-INF/message/message-common</value>
+				<value>META-INF.message.message-common</value>
 			</list>
 		</property>
 		<property name="cacheSeconds">
@@ -23,7 +23,5 @@
 	<util:properties id="jdbcProperties" location="classpath:/META-INF/spring/jdbc.properties" />
 
 	<context:component-scan base-package="org.egovframe" />
-
-	<!--<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping" p:alwaysUseFullPath="true" />-->
 
 </beans>

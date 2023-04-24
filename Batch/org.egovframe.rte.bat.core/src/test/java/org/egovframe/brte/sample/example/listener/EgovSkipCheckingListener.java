@@ -16,13 +16,13 @@ package org.egovframe.brte.sample.example.listener;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.egovframe.brte.sample.common.domain.trade.Trade;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.annotation.AfterStep;
 import org.springframework.batch.core.annotation.BeforeStep;
 import org.springframework.batch.core.annotation.OnSkipInProcess;
 import org.springframework.batch.core.annotation.OnSkipInWrite;
-import org.egovframe.brte.sample.common.domain.trade.Trade;
 
 /**
  * Skip 된 데이터를 처리하는 Listener 클래스

@@ -17,7 +17,6 @@ package org.egovframe.rte.fdl.security.userdetails.hierarchicalroles;
 
 import org.egovframe.rte.fdl.security.config.SecuredObjectConfig;
 import org.egovframe.rte.fdl.security.securedobject.EgovSecuredObjectService;
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ApplicationContext;

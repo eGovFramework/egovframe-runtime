@@ -9,9 +9,7 @@
 				<value>classpath:/message/message-common</value>
 			</list>
 		</property>
-		<property name="cacheSeconds">
-			<value>60</value>
-		</property>
+		<property name="cacheSeconds" value="60"/>
 	</bean>
 
 	<bean id="leaveaTrace" class="org.egovframe.rte.fdl.cmmn.trace.LeaveaTrace">
@@ -33,12 +31,11 @@
 				<ref bean="defaultTraceHandler" />
 			</list>
 		</property>
-		<property name="reqExpMatcher">
-			<ref bean="antPathMater" />
-		</property>
+		<property name="reqExpMatcher" ref="antPathMater"/>
 	</bean>
-	
+
 	<bean id="antPathMater" class="org.springframework.util.AntPathMatcher" />
+
 	<bean id="defaultTraceHandler" class="org.egovframe.rte.fdl.cmmn.trace.handler.DefaultTraceHandler" />
 
 </beans>

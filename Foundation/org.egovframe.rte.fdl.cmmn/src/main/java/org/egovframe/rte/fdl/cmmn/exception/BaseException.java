@@ -15,9 +15,10 @@
  */
 package org.egovframe.rte.fdl.cmmn.exception;
 
+import org.springframework.context.MessageSource;
+
 import java.text.MessageFormat;
 import java.util.Locale;
-import org.springframework.context.MessageSource;
 
 /**
  * BaseException 은 EgovBizException의 상위클래스이다.

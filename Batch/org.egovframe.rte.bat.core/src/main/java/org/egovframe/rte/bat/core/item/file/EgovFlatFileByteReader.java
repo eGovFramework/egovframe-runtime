@@ -15,9 +15,7 @@
  */
 package org.egovframe.rte.bat.core.item.file;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.nio.charset.Charset;
+import org.egovframe.rte.bat.core.item.file.mapping.EgovByteLineMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.file.FlatFileItemReader;
@@ -30,7 +28,10 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
-import org.egovframe.rte.bat.core.item.file.mapping.EgovByteLineMapper;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.charset.Charset;
 
 /**
  * Flat File을 Byte단위로 읽어들임 
@@ -44,7 +45,7 @@ import org.egovframe.rte.bat.core.item.file.mapping.EgovByteLineMapper;
  * 수정일		수정자				수정내용
  * ----------------------------------------------
  * 2012.10.20	배치실행개발팀		최초 생성
- * 2017.02.15	장동한				시큐어코딩(ES)-부적절한 예외 처리[CWE-253, CWE-440, CWE-754
+ * 2017.02.15	장동한			시큐어코딩(ES)-부적절한 예외 처리[CWE-253, CWE-440, CWE-754
  * </pre>
  */
 public class EgovFlatFileByteReader<T> extends AbstractItemCountingItemStreamItemReader<T> implements ResourceAwareItemReaderItemStream<T>, InitializingBean {
@@ -114,7 +115,7 @@ public class EgovFlatFileByteReader<T> extends AbstractItemCountingItemStreamIte
 	 * osType
 	 */
 	public void setOsType(String osType) {
-		if (!osType.toUpperCase().equals("WINDOWS")) {
+		if (!osType.equalsIgnoreCase("WINDOWS")) {
 			LINE_CRLF = UNIX_CRLF;
 		} else {
 			LINE_CRLF = WINDOWS_CRLF;

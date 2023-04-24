@@ -14,7 +14,8 @@
 
 package org.egovframe.brte.sample.example.test;
 
-import static org.junit.Assert.assertEquals;
+import org.egovframe.brte.sample.common.domain.trade.CustomerCredit;
+import org.egovframe.brte.sample.testcase.test.EgovAbstractIoSampleTests;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.batch.core.JobExecution;
@@ -27,8 +28,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import org.egovframe.brte.sample.common.domain.trade.CustomerCredit;
-import org.egovframe.brte.sample.testcase.test.EgovAbstractIoSampleTests;
+import static org.junit.Assert.assertEquals;
 
 /**
  * 작업 실행시 선행 처리 설정 테스트 

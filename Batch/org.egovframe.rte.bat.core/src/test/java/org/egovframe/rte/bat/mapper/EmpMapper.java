@@ -2,8 +2,6 @@ package org.egovframe.rte.bat.mapper;
 
 import java.util.List;
 
-import org.egovframe.rte.psl.dataaccess.mapper.Mapper;
-
 /**
  * Mapper Interface
  * - 메서드명과 쿼리ID를 매핑하여 쿼리호출

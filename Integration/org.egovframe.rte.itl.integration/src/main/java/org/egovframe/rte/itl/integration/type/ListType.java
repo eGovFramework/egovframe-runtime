@@ -15,12 +15,11 @@
  */
 package org.egovframe.rte.itl.integration.type;
 
-import java.util.Collection;
-
 import org.egovframe.rte.itl.integration.message.typed.TypedList;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Collection;
 
 /**
  * 전자정부 연계 서비스의 표준 메시지를 정의 클래스

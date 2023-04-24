@@ -1,9 +1,9 @@
 package org.egovframe.rte.psl.dataaccess.utils;
 
-import static org.junit.Assert.*;
-
 import org.egovframe.rte.psl.dataaccess.util.CamelUtil;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class CamelUtilTest {
 

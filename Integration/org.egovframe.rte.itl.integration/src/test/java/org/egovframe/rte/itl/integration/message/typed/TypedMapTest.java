@@ -1,9 +1,7 @@
 package org.egovframe.rte.itl.integration.message.typed;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.egovframe.rte.itl.integration.type.*;
+import org.junit.Test;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -11,14 +9,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.egovframe.rte.itl.integration.type.ListType;
-import org.egovframe.rte.itl.integration.type.NoSuchRecordFieldException;
-import org.egovframe.rte.itl.integration.type.PrimitiveType;
-import org.egovframe.rte.itl.integration.type.RecordType;
-import org.egovframe.rte.itl.integration.type.Type;
-import org.egovframe.rte.itl.integration.type.UnassignableValueException;
-
-import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class TypedMapTest {
 

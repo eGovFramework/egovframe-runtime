@@ -1,14 +1,12 @@
 package org.egovframe.rte.fdl.security.userdetails;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import org.egovframe.rte.fdl.security.userdetails.jdbc.EgovUsersByUsernameMapping;
-
-import javax.sql.DataSource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.sql.DataSource;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * @author sjyoon

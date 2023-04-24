@@ -15,11 +15,10 @@
  */
 package org.egovframe.rte.itl.integration.metadata;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.egovframe.rte.itl.integration.util.Validatable;
-
 import org.springframework.util.StringUtils;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * 전자정부 연계 서비스 메타 데이터 중 '레코트 타입 필드' 구현 클래스

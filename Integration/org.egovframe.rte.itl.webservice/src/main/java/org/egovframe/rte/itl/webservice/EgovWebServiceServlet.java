@@ -15,14 +15,14 @@
  */
 package org.egovframe.rte.itl.webservice;
 
-import javax.servlet.ServletConfig;
-
 import org.apache.cxf.transport.servlet.CXFNonSpringServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
+
+import javax.servlet.ServletConfig;
 
 /**
  * 전자정부 웹 서비스를 Servlet을 통해 제공하기 위해 사용하는 Servlet 구현 클래스

@@ -31,9 +31,6 @@ public class HelloServiceImpl extends EgovAbstractServiceImpl implements HelloSe
 		} catch (ArithmeticException ae) {
 			throw processException("info.nodata.msg", ae);
 		}
-
-
-
 	}
 
 }

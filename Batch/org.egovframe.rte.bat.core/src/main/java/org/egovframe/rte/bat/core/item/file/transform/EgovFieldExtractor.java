@@ -15,15 +15,16 @@
  */
 package org.egovframe.rte.bat.core.item.file.transform;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import org.egovframe.rte.bat.core.reflection.EgovReflectionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.file.transform.FieldExtractor;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * item에 담긴 정보들을 getter 호출을 통해 추출하여 Object 배열로 반환하는 클래스

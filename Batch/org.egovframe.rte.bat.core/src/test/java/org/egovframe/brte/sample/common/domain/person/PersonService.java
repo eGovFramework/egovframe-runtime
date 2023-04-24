@@ -16,10 +16,10 @@
 
 package org.egovframe.brte.sample.common.domain.person;
 
+import org.egovframe.brte.sample.common.domain.order.Address;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.egovframe.brte.sample.common.domain.order.Address;
 
 /**
  * PersonService

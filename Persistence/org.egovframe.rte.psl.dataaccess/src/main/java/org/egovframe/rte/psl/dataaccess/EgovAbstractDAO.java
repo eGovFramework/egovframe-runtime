@@ -15,14 +15,12 @@
  */
 package org.egovframe.rte.psl.dataaccess;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
+import com.ibatis.sqlmap.client.SqlMapClient;
 import org.egovframe.rte.psl.orm.ibatis.support.SqlMapClientDaoSupport;
 
-import com.ibatis.sqlmap.client.SqlMapClient;
+import javax.annotation.Resource;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Spring 의 iBatis 연동 지원을 Annotation 형식으로 쉽게 처리하기 위한 공통 parent DAO 클래스

@@ -17,7 +17,6 @@
 package org.egovframe.brte.sample.testcase.test;
 
 import org.egovframe.brte.sample.common.domain.trade.CustomerCredit;
-
 import org.junit.runner.RunWith;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;

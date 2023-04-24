@@ -1,16 +1,16 @@
 package org.egovframe.rte.ptl.mvc.bind;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import org.junit.Test;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.bind.ServletRequestDataBinder;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.junit.Test;
-import org.springframework.beans.propertyeditors.CustomDateEditor;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.web.bind.ServletRequestDataBinder;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  *

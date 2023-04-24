@@ -1,14 +1,13 @@
 package org.egovframe.rte.ptl.mvc.bind.exception;
 
-import java.io.IOException;
-
 import org.egovframe.rte.fdl.cmmn.exception.BaseException;
 import org.egovframe.rte.fdl.cmmn.exception.EgovBizException;
 import org.egovframe.rte.fdl.cmmn.exception.FdlException;
-
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.io.IOException;
 
 @ControllerAdvice
 public class AnnotationExceptionHandler extends AbstractAnnotationExceptionHandler{

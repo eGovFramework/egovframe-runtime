@@ -15,11 +15,12 @@
  */
 package org.egovframe.rte.bat.core.item.file.mapping;
 
-import java.util.List;
 import org.egovframe.rte.bat.core.reflection.EgovReflectionSupport;
 import org.springframework.batch.item.file.transform.IncorrectTokenCountException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
+
+import java.util.List;
 
 /**
  * EgovObjectMapper 클래스

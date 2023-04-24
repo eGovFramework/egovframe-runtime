@@ -15,12 +15,13 @@
  */
 package org.egovframe.rte.itl.integration.message.typed;
 
-import java.util.Calendar;
-import java.util.HashMap;
 import org.egovframe.rte.itl.integration.EgovIntegrationMessageHeader;
 import org.egovframe.rte.itl.integration.type.PrimitiveType;
 import org.egovframe.rte.itl.integration.type.RecordType;
 import org.egovframe.rte.itl.integration.type.Type;
+
+import java.util.Calendar;
+import java.util.HashMap;
 
 /**
  * 전자정부 연계 서비스의 표준 MessageHeader 구현 클래스.

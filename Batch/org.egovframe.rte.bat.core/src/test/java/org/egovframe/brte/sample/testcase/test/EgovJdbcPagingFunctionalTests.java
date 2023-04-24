@@ -17,9 +17,6 @@
 package org.egovframe.brte.sample.testcase.test;
 
 import org.egovframe.brte.sample.common.domain.trade.CustomerCredit;
-
-import javax.sql.DataSource;
-
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.batch.core.JobParameters;
@@ -32,6 +29,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.sql.DataSource;
 
 /**
  * DB 의 Table을 설정된 페이지단위로 읽어서 데이터처리를 수행하는 테스트

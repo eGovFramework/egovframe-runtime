@@ -1,11 +1,10 @@
 package org.egovframe.rte.psl.dataaccess.mapper;
 
-import java.math.BigDecimal;
-import java.util.List;
-
+import org.apache.ibatis.session.ResultHandler;
 import org.egovframe.rte.psl.dataaccess.vo.EmpVO;
 
-import org.apache.ibatis.session.ResultHandler;
+import java.math.BigDecimal;
+import java.util.List;
 
 /**
  *  == 개정이력(Modification Information) ==

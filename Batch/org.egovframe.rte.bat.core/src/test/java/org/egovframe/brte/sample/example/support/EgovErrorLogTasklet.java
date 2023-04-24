@@ -14,8 +14,6 @@
  */
 package org.egovframe.brte.sample.example.support;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.core.ExitStatus;
@@ -27,6 +25,8 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.util.Assert;
+
+import javax.sql.DataSource;
 
 /**
  * Data 처리하다 Error 발생 시 Skip 에 관한 정보를 DB로 처리하는 클래스

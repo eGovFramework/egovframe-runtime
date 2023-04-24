@@ -1,17 +1,16 @@
 package org.egovframe.rte.fdl.logging;
 
-import static org.junit.Assert.assertEquals;
-
-import org.egovframe.rte.fdl.logging.sample.LogTestSample;
-
-import javax.annotation.Resource;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Logger;
+import org.egovframe.rte.fdl.logging.sample.LogTestSample;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.annotation.Resource;
+
+import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath*:META-INF/spring/context-common.xml" })

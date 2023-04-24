@@ -15,9 +15,9 @@
  */
 package org.egovframe.brte.sample.example.support;
 
-import java.util.List;
-
 import org.springframework.batch.item.ItemWriter;
+
+import java.util.List;
 
 /**
  * 실제 Write 하지 않고, 정해진 시간만큼 대기하는 클래스

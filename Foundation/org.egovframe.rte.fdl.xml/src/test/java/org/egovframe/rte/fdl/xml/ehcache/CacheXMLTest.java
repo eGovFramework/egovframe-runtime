@@ -1,16 +1,10 @@
 package org.egovframe.rte.fdl.xml.ehcache;
 
 
-import java.io.File;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.annotation.Resource;
-
+import org.egovframe.rte.fdl.xml.EgovSAXValidatorService;
+import org.egovframe.rte.fdl.xml.SharedObject;
+import org.egovframe.rte.fdl.xml.impl.EgovDOMFactoryServiceImpl;
+import org.egovframe.rte.fdl.xml.impl.EgovSAXFactoryServiceImpl;
 import org.jdom2.Attribute;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -23,10 +17,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import org.egovframe.rte.fdl.xml.EgovSAXValidatorService;
-import org.egovframe.rte.fdl.xml.SharedObject;
-import org.egovframe.rte.fdl.xml.impl.EgovDOMFactoryServiceImpl;
-import org.egovframe.rte.fdl.xml.impl.EgovSAXFactoryServiceImpl;
+import javax.annotation.Resource;
+import java.io.File;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * CategoryControllerTest is TestCase of CategoryController

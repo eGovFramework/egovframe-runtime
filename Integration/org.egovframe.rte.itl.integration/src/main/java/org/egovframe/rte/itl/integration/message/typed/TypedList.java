@@ -15,16 +15,11 @@
  */
 package org.egovframe.rte.itl.integration.message.typed;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-
 import org.egovframe.rte.itl.integration.type.ListType;
 import org.egovframe.rte.itl.integration.type.Type;
-
 import org.springframework.util.CollectionUtils;
+
+import java.util.*;
 
 /**
  * 연계 서비스의 표준 메시지 구현 클래스.

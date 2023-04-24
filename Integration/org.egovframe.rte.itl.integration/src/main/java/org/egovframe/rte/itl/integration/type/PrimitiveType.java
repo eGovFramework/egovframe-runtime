@@ -17,11 +17,7 @@ package org.egovframe.rte.itl.integration.type;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 연계 서비스의 표준 메시지를 정의 클래스

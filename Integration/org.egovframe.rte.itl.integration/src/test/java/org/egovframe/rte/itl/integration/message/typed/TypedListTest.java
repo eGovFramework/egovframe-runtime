@@ -1,23 +1,13 @@
 package org.egovframe.rte.itl.integration.message.typed;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.NoSuchElementException;
-
 import org.egovframe.rte.itl.integration.type.ListType;
 import org.egovframe.rte.itl.integration.type.PrimitiveType;
 import org.egovframe.rte.itl.integration.type.UnassignableValueException;
-
 import org.junit.Test;
+
+import java.util.*;
+
+import static org.junit.Assert.*;
 
 
 public class TypedListTest
@@ -685,7 +675,7 @@ public class TypedListTest
             assertEquals(strings[i], array[i]);
         }
         
-        String[] stringArray = list.toArray(new String[] {});
+        String[] stringArray = list.toArray(new String[0]);
         assertNotNull(stringArray);
         assertEquals(strings.length, stringArray.length);
         for (int i = 0; i < strings.length; i++)
@@ -696,7 +686,7 @@ public class TypedListTest
         // Un Assignable
         try
         {
-            list.toArray(new Integer[] {});
+            list.toArray(new Integer[0]);
             fail();
         }
         catch (ArrayStoreException e)

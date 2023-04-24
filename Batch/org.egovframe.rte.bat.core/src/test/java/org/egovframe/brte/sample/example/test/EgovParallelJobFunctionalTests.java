@@ -16,10 +16,6 @@
 
 package org.egovframe.brte.sample.example.test;
 
-import static org.junit.Assert.assertEquals;
-
-import javax.sql.DataSource;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,6 +27,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
+
+import javax.sql.DataSource;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * 멀티쓰레드로 실행하는 배치작업 테스트
@@ -47,7 +47,8 @@ import org.springframework.test.jdbc.JdbcTestUtils;
  *  </pre>
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"/org/egovframe/batch/simple-job-launcher-context.xml"
+@ContextConfiguration(locations={
+		"/org/egovframe/batch/simple-job-launcher-context.xml"
 		, "/org/egovframe/batch/jobs/parallelJob.xml"
 		, "/org/egovframe/batch/job-runner-context.xml"})
 public class EgovParallelJobFunctionalTests {

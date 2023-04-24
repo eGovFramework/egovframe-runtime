@@ -15,17 +15,16 @@
  */
 package org.egovframe.rte.fdl.idgnr.impl;
 
+import org.egovframe.rte.fdl.cmmn.exception.FdlException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Locale;
-
-import org.egovframe.rte.fdl.cmmn.exception.FdlException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * ID Generation 서비스를 위한 Sequence 구현 클래스

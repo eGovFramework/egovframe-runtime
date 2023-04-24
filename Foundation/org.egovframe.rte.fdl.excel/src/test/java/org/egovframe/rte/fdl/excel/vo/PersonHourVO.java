@@ -1,7 +1,6 @@
 package org.egovframe.rte.fdl.excel.vo;
 
 public class PersonHourVO {
-	
 	private String name;
     private String id;
     private Double mon;
@@ -11,7 +10,7 @@ public class PersonHourVO {
     private Double fri;
     private Double sat;
     private Double sun;
-    
+
     public String getName() {
 		return name;
 	}

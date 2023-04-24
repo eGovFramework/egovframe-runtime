@@ -1,14 +1,13 @@
 package org.egovframe.rte.bat.support.tasklet;
 
-import javax.annotation.Resource;
-
+import org.egovframe.rte.bat.support.EgovResourceVariable;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.InitializingBean;
 
-import org.egovframe.rte.bat.support.EgovResourceVariable;
+import javax.annotation.Resource;
 
 public class TaskletStepResource implements Tasklet, InitializingBean {
 	

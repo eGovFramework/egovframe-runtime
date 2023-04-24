@@ -1,16 +1,13 @@
 package org.egovframe.rte.itl.integration.type;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.egovframe.rte.itl.integration.message.typed.TypedMap;
+import org.junit.Test;
 
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.egovframe.rte.itl.integration.message.typed.TypedMap;
-
-import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class RecordTypeTest {
 

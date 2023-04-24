@@ -15,10 +15,10 @@
  */
 package org.egovframe.rte.fdl.excel.util;
 
-import org.egovframe.rte.fdl.string.EgovDateUtil;
-
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DateUtil;
+import org.egovframe.rte.fdl.string.EgovDateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,13 +60,13 @@ public final class EgovExcelUtil {
             return "";
         }
 
-        if (cell.getCellType() == Cell.CELL_TYPE_BOOLEAN) {
-            LOGGER.debug("### Cell.CELL_TYPE_BOOLEAN : {}", Cell.CELL_TYPE_BOOLEAN);
+        if (cell.getCellType() == CellType.BOOLEAN) {
+            LOGGER.debug("### Cell.CELL_TYPE_BOOLEAN : {}", CellType.BOOLEAN);
             result = String.valueOf(cell.getBooleanCellValue());
-        } else if (cell.getCellType() == Cell.CELL_TYPE_ERROR) {
-            LOGGER.debug("### Cell.CELL_TYPE_ERROR : {}", Cell.CELL_TYPE_ERROR);
-        } else if (cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
-            LOGGER.debug("### Cell.CELL_TYPE_FORMULA : {}", Cell.CELL_TYPE_FORMULA);
+        } else if (cell.getCellType() == CellType.ERROR) {
+            LOGGER.debug("### Cell.CELL_TYPE_ERROR : {}", CellType.ERROR);
+        } else if (cell.getCellType() == CellType.FORMULA) {
+            LOGGER.debug("### Cell.CELL_TYPE_FORMULA : {}", CellType.FORMULA);
 			String stringValue = null;
 			String longValue = null;
 			try {
@@ -84,14 +84,14 @@ public final class EgovExcelUtil {
 			} else {
 				result = cell.getCellFormula();
 			}
-        } else if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
-            LOGGER.debug("### Cell.CELL_TYPE_NUMERIC : {}", Cell.CELL_TYPE_NUMERIC);
+        } else if (cell.getCellType() == CellType.NUMERIC) {
+            LOGGER.debug("### Cell.CELL_TYPE_NUMERIC : {}", CellType.NUMERIC);
             result = DateUtil.isCellDateFormatted(cell) ? EgovDateUtil.toString(cell.getDateCellValue(), "yyyy/MM/dd", null) : doubleToString(cell.getNumericCellValue());
-        } else if (cell.getCellType() == Cell.CELL_TYPE_STRING) {
-            LOGGER.debug("### Cell.CELL_TYPE_STRING : {}", Cell.CELL_TYPE_STRING);
+        } else if (cell.getCellType() == CellType.STRING) {
+            LOGGER.debug("### Cell.CELL_TYPE_STRING : {}", CellType.STRING);
             result = cell.getRichStringCellValue().getString();
-        } else if (cell.getCellType() == Cell.CELL_TYPE_BLANK) {
-            LOGGER.debug("### Cell.CELL_TYPE_BLANK : {}", Cell.CELL_TYPE_BLANK);
+        } else if (cell.getCellType() == CellType.BLANK) {
+            LOGGER.debug("### Cell.CELL_TYPE_BLANK : {}", CellType.BLANK);
         }
         return result;
     }

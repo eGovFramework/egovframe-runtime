@@ -15,16 +15,17 @@
 
 package org.egovframe.brte.sample.example.test;
 
-import static org.junit.Assert.assertEquals;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.egovframe.brte.sample.common.domain.trade.GeneratingTradeItemReader;
 import org.egovframe.brte.sample.example.support.EgovRetrySampleItemWriter;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Data를 처리하다 에러시 Retry 시도 횟수 설정만큼 재시도 하는 과정을 테스트 

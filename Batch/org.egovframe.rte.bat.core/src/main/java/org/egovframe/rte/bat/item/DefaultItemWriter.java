@@ -15,8 +15,6 @@
  */
 package org.egovframe.rte.bat.item;
 
-import java.util.List;
-import javax.sql.DataSource;
 import org.egovframe.rte.bat.core.item.database.EgovJdbcBatchItemWriter;
 import org.egovframe.rte.bat.core.item.database.support.EgovMethodMapItemPreparedStatementSetter;
 import org.egovframe.rte.bat.core.item.file.transform.EgovFieldExtractor;
@@ -24,17 +22,16 @@ import org.egovframe.rte.bat.core.item.file.transform.EgovFixedLengthLineAggrega
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.annotation.BeforeStep;
-import org.springframework.batch.item.ExecutionContext;
-import org.springframework.batch.item.ItemStream;
-import org.springframework.batch.item.ItemStreamException;
-import org.springframework.batch.item.ItemStreamWriter;
-import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.*;
 import org.springframework.batch.item.file.FlatFileItemWriter;
 import org.springframework.batch.item.file.transform.DelimitedLineAggregator;
 import org.springframework.batch.item.file.transform.FieldExtractor;
 import org.springframework.batch.item.file.transform.LineAggregator;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+
+import javax.sql.DataSource;
+import java.util.List;
 
 /**
  * @author 서경석

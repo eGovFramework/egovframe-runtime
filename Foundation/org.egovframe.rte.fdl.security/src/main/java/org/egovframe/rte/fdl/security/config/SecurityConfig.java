@@ -201,8 +201,8 @@ public class SecurityConfig {
 		return xframeOptions;
 	}
 
-	public void setXframeOptions(String xFrameOptions) {
-		this.xframeOptions = xFrameOptions;
+	public void setXframeOptions(String xframeOptions) {
+		this.xframeOptions = xframeOptions;
 	}
 
 	public boolean isXssProtection() {

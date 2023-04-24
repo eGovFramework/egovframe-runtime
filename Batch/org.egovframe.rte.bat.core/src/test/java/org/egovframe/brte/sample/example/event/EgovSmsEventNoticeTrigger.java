@@ -14,14 +14,13 @@
  */
 package org.egovframe.brte.sample.example.event;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.egovframe.rte.bat.core.event.EgovEventNoticeTrigger;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.stereotype.Controller;
 
-import org.egovframe.rte.bat.core.event.EgovEventNoticeTrigger;
+import javax.annotation.Resource;
 
 //import org.egovframe.brte.support.EgovEventNoticeTrigger;
 //import org.egovframe.com.cop.sms.service.EgovSmsInfoService;

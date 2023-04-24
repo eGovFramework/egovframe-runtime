@@ -1,10 +1,9 @@
 package org.egovframe.rte.fdl.idgnr;
 
-import static org.junit.Assert.assertEquals;
-
 import org.egovframe.rte.fdl.idgnr.impl.Base64;
-
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Base64Test 클래스
