@@ -38,7 +38,7 @@
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-mongodb</artifactId>
-            <version>3.4.0</version>
+            <version>3.4.1</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework</groupId>
