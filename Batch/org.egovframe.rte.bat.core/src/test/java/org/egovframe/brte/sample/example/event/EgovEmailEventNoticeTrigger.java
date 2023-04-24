@@ -129,7 +129,7 @@ public class EgovEmailEventNoticeTrigger extends EgovEventNoticeTrigger {
 
 		boolean debug = false;
 
-		java.security.Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
+		Security.addProvider(Security.getProvider("SunJSSE"));
 		String SMTP_HOST_NAME = "gmail-smtp.l.google.com";
 
 		// Properties 설정
