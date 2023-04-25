@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -47,7 +47,7 @@ import java.util.Map;
  * 2019.10.01	Egovframework Center	최초 생성
  * </pre>
  */
-public class EgovAccessInterceptor extends HandlerInterceptorAdapter implements ApplicationContextAware {
+public class EgovAccessInterceptor implements HandlerInterceptor, ApplicationContextAware {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EgovAccessInterceptor.class);
     private ApplicationContext context;
