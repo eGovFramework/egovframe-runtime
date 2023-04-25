@@ -16,11 +16,10 @@
 
 package org.egovframe.rte.bat.domain;
 
-import java.math.BigDecimal;
-
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.math.BigDecimal;
 
 /**
  * @author 배치실행개발팀

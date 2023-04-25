@@ -133,9 +133,9 @@ public class EgovSecurityConfigBeanDefinitionParser extends AbstractSingleBeanDe
 			EgovSecurityConfigShare.sniff = Boolean.valueOf(sniff);
 		}
 
-		String xFrameOptions = element.getAttribute("xFrameOptions");
+		String xFrameOptions = element.getAttribute("xframeOptions");
 		if (StringUtils.hasText(xFrameOptions)) {
-			bean.addPropertyValue("xFrameOptions", xFrameOptions);
+			bean.addPropertyValue("xframeOptions", xFrameOptions);
 			EgovSecurityConfigShare.xFrameOptions = xFrameOptions;
 		}
 

@@ -1,10 +1,9 @@
 package org.egovframe.rte.fdl.logging.sample.service.impl;
 
-import org.egovframe.rte.fdl.logging.sample.service.LogTestService;
-import org.egovframe.rte.fdl.logging.sample.service.SomeVO;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.egovframe.rte.fdl.logging.sample.service.LogTestService;
+import org.egovframe.rte.fdl.logging.sample.service.SomeVO;
 import org.springframework.stereotype.Service;
 
 @Service("logTestService")

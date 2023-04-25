@@ -2,7 +2,6 @@ package org.egovframe.rte.fdl.exception.handler;
 
 import org.egovframe.rte.fdl.cmmn.exception.EgovBizException;
 import org.egovframe.rte.fdl.cmmn.exception.handler.ExceptionHandler;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

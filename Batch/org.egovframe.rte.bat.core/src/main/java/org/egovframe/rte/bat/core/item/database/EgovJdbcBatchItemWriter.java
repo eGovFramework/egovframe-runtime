@@ -15,13 +15,6 @@
  */
 package org.egovframe.rte.bat.core.item.database;
 
-import java.lang.reflect.Method;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import javax.sql.DataSource;
 import org.egovframe.rte.bat.core.item.database.support.EgovItemPreparedStatementSetter;
 import org.egovframe.rte.bat.core.reflection.EgovReflectionSupport;
 import org.slf4j.Logger;
@@ -34,6 +27,14 @@ import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.util.Assert;
+
+import javax.sql.DataSource;
+import java.lang.reflect.Method;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 /**
  * EgovJdbcBatchItemWriter EgovItemPreparedStatementSetter인터페이스를 상속받은

@@ -16,12 +16,12 @@
 
 package org.egovframe.brte.sample.common.domain.trade;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
+
+import javax.sql.DataSource;
 
 /**
  * JdbcTradeDao

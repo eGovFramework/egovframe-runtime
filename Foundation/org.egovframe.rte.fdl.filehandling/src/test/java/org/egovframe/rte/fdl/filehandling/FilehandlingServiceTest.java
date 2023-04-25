@@ -15,28 +15,11 @@
  */
 package org.egovframe.rte.fdl.filehandling;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.URL;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.commons.io.FileSystemUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
-import org.apache.commons.vfs2.CacheStrategy;
-import org.apache.commons.vfs2.FileContent;
-import org.apache.commons.vfs2.FileName;
-import org.apache.commons.vfs2.FileObject;
-import org.apache.commons.vfs2.FileSystemManager;
-import org.apache.commons.vfs2.FileSystemOptions;
-import org.apache.commons.vfs2.FilesCache;
-import org.apache.commons.vfs2.Selectors;
-import org.apache.commons.vfs2.VFS;
+import org.apache.commons.vfs2.*;
 import org.apache.commons.vfs2.auth.StaticUserAuthenticator;
 import org.apache.commons.vfs2.impl.DefaultFileSystemConfigBuilder;
 import org.apache.commons.vfs2.impl.DefaultFileSystemManager;
@@ -46,14 +29,18 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.*;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.Iterator;
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 /**
  * FileServiceTest is TestCase of File Handling Service
  * @author Seongjong Yoon
  */
-//@RunWith(SpringJUnit4ClassRunner.class)
-//@ContextConfiguration(locations = {"classpath*:spring/context-*.xml" })
 public class FilehandlingServiceTest {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(FilehandlingServiceTest.class);
@@ -375,14 +362,13 @@ public class FilehandlingServiceTest {
      */
     @Test
     public void testTouch() throws Exception {
+		String path = tmppath + "/movedfile.txt";
+		FileObject file = EgovFileUtil.getFileObject(path);
+		long lastModifyTime = file.getContent().getLastModifiedTime();
 
-    	String path = tmppath + "/movedfile.txt";
-    	FileObject file = EgovFileUtil.getFileObject(path);
+		long setTime = EgovFileUtil.touch(path);
 
-    	long setTime = EgovFileUtil.touch(path);
-
-		assertNotEquals(file.getContent().getLastModifiedTime(), setTime);
-
+		assertNotEquals(lastModifyTime, setTime);
     }
 
     /**
@@ -477,11 +463,9 @@ public class FilehandlingServiceTest {
      */
     @Test
     public void testIOUtils() throws Exception {
-		InputStream in = new URL("http://jakarta.apache.org").openStream();
+		InputStream in = new URL("https://commons.apache.org/").openStream();
 		try {
-
-			assertFalse(IOUtils.toString(in).equals(""));
-
+			assertFalse(IOUtils.toString(in, StandardCharsets.UTF_8).equals(""));
 		} finally {
 			IOUtils.closeQuietly(in);
 		}
@@ -550,8 +534,8 @@ public class FilehandlingServiceTest {
 	    	"    <modelVersion>4.0.0</modelVersion>",
 	    	"    <groupId>org.egovframe.rte</groupId>",
 	    	"    <artifactId>org.egovframe.rte.fdl.filehandling</artifactId>",
-	    	"    <packaging>jar</packaging>",
-	    	"    <version>4.0.0</version>",
+	    	"    <version>4.1.0</version>",
+			"    <packaging>jar</packaging>",
 	    	"    <name>org.egovframe.rte.fdl.filehandling</name>"
     	};
 
@@ -563,7 +547,7 @@ public class FilehandlingServiceTest {
 	    	try {
 	    		LOGGER.debug("############################# LineIterator ###############################");
 
-	    	 	for (int i = 0; it.hasNext(); i++) {
+				for (int i = 0; i < string.length; i++) {
 	    	    	String line = it.nextLine();
 	    	    	LOGGER.info(line);
 

@@ -1,13 +1,7 @@
 package org.egovframe.rte.bat.core.step;
 
-import java.io.File;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
-
+import org.egovframe.rte.bat.domain.CustomerCredit;
+import org.egovframe.rte.bat.util.ApplicationContextProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.StepContribution;
@@ -18,8 +12,12 @@ import org.springframework.batch.item.file.FlatFileItemWriter;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.InitializingBean;
 
-import org.egovframe.rte.bat.domain.CustomerCredit;
-import org.egovframe.rte.bat.util.ApplicationContextProvider;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Random;
 
 public class TaskletCreateDataStep implements Tasklet, InitializingBean {
 

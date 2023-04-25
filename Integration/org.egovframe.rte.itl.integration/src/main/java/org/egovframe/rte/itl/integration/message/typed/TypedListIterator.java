@@ -15,9 +15,9 @@
  */
 package org.egovframe.rte.itl.integration.message.typed;
 
-import java.util.ListIterator;
-
 import org.egovframe.rte.itl.integration.type.ListType;
+
+import java.util.ListIterator;
 
 /**
  * 연계 서비스의 표준 메시지 구현 클래스

@@ -16,14 +16,12 @@
 
 package org.egovframe.rte.psl.orm.ibatis.support;
 
-import javax.sql.DataSource;
-
 import com.ibatis.sqlmap.client.SqlMapClient;
-
 import org.egovframe.rte.psl.orm.ibatis.SqlMapClientTemplate;
-
 import org.springframework.dao.support.DaoSupport;
 import org.springframework.util.Assert;
+
+import javax.sql.DataSource;
 
 /**
  * Convenient super class for iBATIS SqlMapClient data access objects.

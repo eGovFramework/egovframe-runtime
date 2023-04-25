@@ -2,12 +2,11 @@ package org.egovframe.brte.sample.example.listener;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.egovframe.brte.sample.example.event.EgovEmailEventNoticeTrigger;
+import org.egovframe.rte.bat.core.listener.EgovStepPostProcessor;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import org.egovframe.rte.bat.core.listener.EgovStepPostProcessor;
-import org.egovframe.brte.sample.example.event.EgovEmailEventNoticeTrigger;
 
 /**
  * 이벤트 알림을 호출 하는 리스너 클래스 빈으로 등록된 

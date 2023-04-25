@@ -15,10 +15,10 @@
  */
 package org.egovframe.rte.itl.webservice;
 
-import java.util.Map;
-
 import org.egovframe.rte.itl.integration.EgovIntegrationMessageHeader;
 import org.egovframe.rte.itl.integration.message.simple.SimpleMessage;
+
+import java.util.Map;
 
 /**
  * 전자정부 웹 서비스 메시지 구현 클래스

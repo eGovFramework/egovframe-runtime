@@ -15,14 +15,13 @@
  */
 package org.egovframe.rte.itl.integration.type;
 
+import org.egovframe.rte.itl.integration.message.typed.TypedMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import org.egovframe.rte.itl.integration.message.typed.TypedMap;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * 연계 서비스의 표준 메시지를 정의 클래스

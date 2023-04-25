@@ -1,11 +1,10 @@
 package org.egovframe.rte.psl.dataaccess.dao;
 
+import org.egovframe.rte.psl.dataaccess.EgovAbstractDAO;
+import org.springframework.stereotype.Repository;
+
 import java.util.List;
 import java.util.Map;
-
-import org.egovframe.rte.psl.dataaccess.EgovAbstractDAO;
-
-import org.springframework.stereotype.Repository;
 
 @Repository("mapTypeDAO")
 @SuppressWarnings("deprecation")

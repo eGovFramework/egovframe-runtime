@@ -15,22 +15,19 @@
  */
 package org.egovframe.rte.ptl.mvc.tags.ui;
 
-import java.io.IOException;
-
 import org.egovframe.rte.ptl.mvc.tags.ui.pagination.DefaultPaginationManager;
 import org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 import org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationManager;
 import org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationRenderer;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
-
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
-import org.springframework.web.servlet.DispatcherServlet;
-import org.springframework.web.servlet.support.RequestContextUtils;
+import java.io.IOException;
 
 /**
  *PaginationTag.java

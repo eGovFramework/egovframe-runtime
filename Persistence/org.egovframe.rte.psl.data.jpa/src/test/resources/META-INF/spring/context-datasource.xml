@@ -6,29 +6,7 @@
 		http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
 		http://www.springframework.org/schema/beans 
 		http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
-<!--  
-	<jdbc:embedded-database id="dataSource" type="H2" />
- -->
-<!-- 
- 		<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-			<property name="driverClassName" value="org.hsqldb.jdbcDriver" />
-			<property name="url" value="jdbc:hsqldb:mem:testdb" />
-			<property name="username" value="sa" />
-			<property name="password" value="" />
-		</bean>
-  -->
-<!-- 	
-	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-		<property name="driverClassName" value="${jdbc.driver}"/>
-		<property name="url" value="${jdbc.dburl}"/>
-		<property name="username" value="${jdbc.username}"/>
-        <property name="password" value="${jdbc.password}"/>
-        <property name="defaultAutoCommit" value="false"/>
-        <property name="poolPreparedStatements" value="true"/>
-	</bean>
--->
 
 	<jdbc:embedded-database id="dataSource" type="HSQL"/>
-
 
 </beans>

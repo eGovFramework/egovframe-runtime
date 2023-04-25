@@ -16,11 +16,10 @@
 package org.egovframe.rte.fdl.cmmn.exception.handler;
 
 import org.egovframe.rte.mail.SimpleSSLMail;
-
-import javax.annotation.Resource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.Resource;
 
 /**
  * Handler Sample : Exception 발생시 조건매칭후 메일을 발송한다.

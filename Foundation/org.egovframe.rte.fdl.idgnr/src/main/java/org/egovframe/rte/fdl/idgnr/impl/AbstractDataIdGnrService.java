@@ -15,14 +15,12 @@
  */
 package org.egovframe.rte.fdl.idgnr.impl;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
 import org.egovframe.rte.fdl.idgnr.EgovIdGnrService;
+import org.springframework.beans.factory.DisposableBean;
 
 import javax.sql.DataSource;
-
-import org.springframework.beans.factory.DisposableBean;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 /**
  * ID Generation 서비스를 위한 Data Id  Abstract Service

@@ -1,24 +1,18 @@
 package org.egovframe.rte.ptl.mvc.tags.ui.pagination;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertEquals;
-
-import java.util.HashMap;
-
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.PageContext;
-
+import org.egovframe.rte.ptl.mvc.tags.ui.PaginationTag;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.mock.web.MockPageContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import org.egovframe.rte.ptl.mvc.tags.ui.PaginationTag;
-import org.egovframe.rte.ptl.mvc.tags.ui.pagination.DefaultPaginationManager;
-import org.egovframe.rte.ptl.mvc.tags.ui.pagination.DefaultPaginationRenderer;
-import org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
-import org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationRenderer;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.PageContext;
+import java.util.HashMap;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath*:META-INF/spring/pagination/test-servlet.xml")

@@ -1,13 +1,12 @@
 package org.egovframe.rte.psl.data.jpa.repository;
 
-import java.util.List;
-
 import org.egovframe.rte.psl.data.jpa.domain.User;
 import org.egovframe.rte.psl.data.jpa.domain.UserPK;
-
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
+
+import java.util.List;
 
 public interface UserRepository extends CrudRepository<User, UserPK> {
 
@@ -20,4 +19,5 @@ public interface UserRepository extends CrudRepository<User, UserPK> {
 
 	@Query("select u from User u where u.firstname = :name or u.lastname = :name")
 	List<User> findByFirstnameOrLastname(@Param("name") String name);
+
 }

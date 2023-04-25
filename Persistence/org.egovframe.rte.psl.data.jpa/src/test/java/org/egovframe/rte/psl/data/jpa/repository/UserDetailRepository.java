@@ -1,12 +1,11 @@
 package org.egovframe.rte.psl.data.jpa.repository;
 
+import org.egovframe.rte.psl.data.jpa.domain.User;
+import org.springframework.data.repository.CrudRepository;
+
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-
-import org.egovframe.rte.psl.data.jpa.domain.User;
-
-import org.springframework.data.repository.CrudRepository;
 
 public interface UserDetailRepository extends CrudRepository<User, Long> {
 

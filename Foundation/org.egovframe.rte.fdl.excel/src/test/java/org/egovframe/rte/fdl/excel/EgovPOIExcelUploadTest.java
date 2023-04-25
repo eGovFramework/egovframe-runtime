@@ -1,12 +1,5 @@
 package org.egovframe.rte.fdl.excel;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.util.Properties;
-
-import javax.annotation.Resource;
-import javax.sql.DataSource;
-
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,6 +13,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import javax.sql.DataSource;
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.Properties;
 
 /**
  * FileServiceTest is TestCase of File Handling Service

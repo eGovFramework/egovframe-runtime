@@ -15,10 +15,9 @@
 
 package org.egovframe.brte.sample.common.domain.trade;
 
-import java.math.BigDecimal;
 import org.springframework.batch.item.ItemReader;
 
-import org.egovframe.brte.sample.common.domain.trade.Trade;
+import java.math.BigDecimal;
 
 /**
  * 원천소스에서 read 하는 것이 아닌, items 를 사용자 설정만큼 생성하는 클래스

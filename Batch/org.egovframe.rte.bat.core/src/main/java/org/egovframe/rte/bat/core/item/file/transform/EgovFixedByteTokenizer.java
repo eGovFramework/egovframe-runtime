@@ -15,13 +15,14 @@
  */
 package org.egovframe.rte.bat.core.item.file.transform;
 
+import org.egovframe.rte.bat.core.item.file.EgovFlatFileByteReader;
+import org.springframework.batch.item.file.transform.IncorrectLineLengthException;
+import org.springframework.batch.item.file.transform.Range;
+
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.egovframe.rte.bat.core.item.file.EgovFlatFileByteReader;
-import org.springframework.batch.item.file.transform.IncorrectLineLengthException;
-import org.springframework.batch.item.file.transform.Range;
 
 /**
  * Reader를 통해서 읽어들인 String을 Byte길이로 잘라서 배열에 추가하는 클래스

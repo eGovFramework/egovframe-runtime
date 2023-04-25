@@ -1,26 +1,19 @@
 package org.egovframe.rte.fdl.logging;
 
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-
-import org.egovframe.rte.fdl.logging.sample.LogLayoutSample;
-import org.egovframe.rte.fdl.logging.sample.LogLevelDebug;
-import org.egovframe.rte.fdl.logging.sample.LogLevelError;
-import org.egovframe.rte.fdl.logging.sample.LogLevelFatal;
-import org.egovframe.rte.fdl.logging.sample.LogLevelInfo;
-import org.egovframe.rte.fdl.logging.sample.LogLevelWarn;
-import org.egovframe.rte.fdl.logging.sample.LogTestSample;
-import org.egovframe.rte.fdl.logging.util.LogFileUtil;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
+import org.egovframe.rte.fdl.logging.sample.*;
+import org.egovframe.rte.fdl.logging.util.LogFileUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.io.File;
+
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath*:META-INF/spring/context-common.xml" })

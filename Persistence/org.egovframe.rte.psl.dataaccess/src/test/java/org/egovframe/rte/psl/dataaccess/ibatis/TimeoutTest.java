@@ -1,17 +1,10 @@
 package org.egovframe.rte.psl.dataaccess.ibatis;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.io.Reader;
-import java.sql.SQLException;
-
+import com.ibatis.common.resources.Resources;
+import com.ibatis.sqlmap.client.SqlMapClient;
+import com.ibatis.sqlmap.client.SqlMapClientBuilder;
 import org.egovframe.rte.psl.dataaccess.TestBase;
 import org.egovframe.rte.psl.dataaccess.dao.EmpDAO;
-
-import javax.annotation.Resource;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,9 +16,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ibatis.common.resources.Resources;
-import com.ibatis.sqlmap.client.SqlMapClient;
-import com.ibatis.sqlmap.client.SqlMapClientBuilder;
+import javax.annotation.Resource;
+import java.io.Reader;
+import java.sql.SQLException;
+
+import static org.junit.Assert.*;
 
 /**
  *  == 개정이력(Modification Information) ==

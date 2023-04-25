@@ -31,6 +31,15 @@
  */
 package org.egovframe.rte.fdl.idgnr.impl;
 
+import org.egovframe.rte.fdl.cmmn.exception.FdlException;
+import org.egovframe.rte.fdl.idgnr.EgovIdGnrService;
+import org.egovframe.rte.fdl.idgnr.EgovIdGnrStrategy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.MessageSource;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.InetAddress;
@@ -42,16 +51,6 @@ import java.security.SecureRandom;
 import java.util.Random;
 import java.util.StringTokenizer;
 import java.util.UUID;
-
-import org.egovframe.rte.fdl.cmmn.exception.FdlException;
-import org.egovframe.rte.fdl.idgnr.EgovIdGnrService;
-import org.egovframe.rte.fdl.idgnr.EgovIdGnrStrategy;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.MessageSource;
 
 /**
  * ID Generation 서비스를 위한 UUID 구현 클래스

@@ -16,12 +16,12 @@
 
 package org.egovframe.rte.psl.orm.ibatis.support;
 
+import org.springframework.jdbc.support.lob.LobCreator;
+import org.springframework.jdbc.support.lob.LobHandler;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import org.springframework.jdbc.support.lob.LobCreator;
-import org.springframework.jdbc.support.lob.LobHandler;
 
 /**
  * iBATIS TypeHandler implementation for Strings that get mapped to CLOBs.

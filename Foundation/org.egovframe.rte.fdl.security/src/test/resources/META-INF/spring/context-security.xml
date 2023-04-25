@@ -15,17 +15,6 @@
 	</beans:bean>
 
 	<beans:bean id="roleHierarchy" class="org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl" >
-		<!-- XML 사용
-		<beans:property name="hierarchy">
-			<beans:value>
-				ROLE_ADMIN > ROLE_USER
-				ROLE_USER > ROLE_RESTRICTED
-				ROLE_RESTRICTED > IS_AUTHENTICATED_FULLY
-				IS_AUTHENTICATED_REMEMBERED > IS_AUTHENTICATED_ANONYMOUSLY
-			</beans:value>
-		</beans:property>
-		-->
-		<!-- DB 사용 -->
 		<beans:property name="hierarchy" ref="hierarchyStrings"/>
 	</beans:bean>
 
@@ -33,38 +22,19 @@
 		<beans:property name="securedObjectService" ref="securedObjectService"/>
 	</beans:bean>
 
-	<!--
-	Access Decision Manager는 자동으로 생성되기 때문에 선언 불필요
-	bean id : org.springframework.security.access.vote.AffirmativeBased#0
-	※ #0 부분은 숫자 부분은 선언 순으로 순차적으로 생성됨
-	-->
-	<!--
-	<beans:bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
-		<beans:property name="allowIfAllAbstainDecisions" value="false" />
-		<beans:property name="decisionVoters">
-			<beans:list>
-				<beans:bean class="org.springframework.security.access.vote.RoleVoter">
-					<beans:property name="rolePrefix" value="ROLE_" />
-				</beans:bean>
-				<beans:bean class="org.springframework.security.access.vote.AuthenticatedVoter" />
-			</beans:list>
-		</beans:property>
-	</beans:bean>
-	-->
-
 	<beans:bean id="filterSecurityInterceptor" class="org.springframework.security.web.access.intercept.FilterSecurityInterceptor">
 		<beans:property name="authenticationManager" ref="org.springframework.security.authenticationManager" />
 		<beans:property name="accessDecisionManager" ref="accessDecisionManager" />
 		<beans:property name="securityMetadataSource" ref="databaseSecurityMetadataSource" />
 	</beans:bean>
-	
-   <beans:bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
-	<beans:constructor-arg>
-		 <beans:list>
-		 		<beans:bean class="org.springframework.security.access.vote.AuthenticatedVoter" />
-		 		<beans:bean class="org.springframework.security.access.vote.RoleVoter" />
-		 </beans:list>
-	</beans:constructor-arg> 
+
+	<beans:bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
+		<beans:constructor-arg>
+			<beans:list>
+				<beans:bean class="org.springframework.security.access.vote.AuthenticatedVoter" />
+				<beans:bean class="org.springframework.security.access.vote.RoleVoter" />
+			</beans:list>
+		</beans:constructor-arg>
 	</beans:bean>
 
 	<beans:bean id="databaseSecurityMetadataSource" class="org.egovframe.rte.fdl.security.intercept.EgovReloadableFilterInvocationSecurityMetadataSource">
@@ -72,15 +42,9 @@
 		<beans:property name="securedObjectService" ref="securedObjectService"/>
 	</beans:bean>
 
-	<!--  url  -->
 	<beans:bean id="requestMap" class="org.egovframe.rte.fdl.security.intercept.UrlResourcesMapFactoryBean" init-method="init">
 		<beans:property name="securedObjectService" ref="securedObjectService"/>
 	</beans:bean>
-
-	<!-- 지정 불필요 : request-matcher 참조 -->
-	<!--
-	<beans:bean id="regexUrlPathMatcher" class="org.springframework.security.web.util.matcher.RegexRequestMatcher" />
- 	-->
 
  	<http pattern="/css/**" security="none"/>
     <http pattern="/images/**" security="none"/>
@@ -90,25 +54,19 @@
 
 	<http request-matcher="regex">
 		<headers defaults-disabled="true">
-			<frame-options policy="SAMEORIGIN"/><!-- spring security 4 대응 코드 -->
+			<frame-options policy="SAMEORIGIN"/>
 		</headers>
-		<csrf disabled="true"/> <!-- spring security 4 대응 코드 -->
-		<access-denied-handler error-page="/denied"/> <!-- spring security 4 대응 코드 -->
+		<csrf disabled="true" request-matcher-ref="" token-repository-ref="" />
+		<access-denied-handler error-page="/denied"/>
 		<form-login login-processing-url="/j_spring_security_check"
 					authentication-failure-url="/cvpl/EgovCvplLogin.do?login_error=1"
 					default-target-url="/index.jsp?flag=L"
 					login-page="/cvpl/EgovCvplLogin.do" />
 		<anonymous />
 		<logout logout-success-url="/cvpl/EgovCvplLogin.do"/>
-
-		<!-- for authorization -->
 		<custom-filter before="FILTER_SECURITY_INTERCEPTOR" ref="filterSecurityInterceptor"/>
 	</http>
 
-	<!--
-	authentication-manager 기본 생성 bean id :  org.springframework.security.authenticationManager
-		(alias로 변경할 수 있음)
-	-->
 	<authentication-manager>
 		<authentication-provider user-service-ref="jdbcUserService">
 			<password-encoder ref="messageDigestPasswordEncoder" />
@@ -119,15 +77,6 @@
 		<beans:constructor-arg name="algorithm" value="MD5" />
 		<beans:property name="encodeHashAsBase64" value="true" />
 	</beans:bean>
-
-	<!-- userDetailsServiceWrapper -->
-	<!-- customizing user table, authorities table -->
-
-	<!--
-	<jdbc-user-service id="jdbcUserService" data-source-ref="dataSource"
-		users-by-username-query="SELECT USER_ID,PASSWORD,ENABLED,BIRTH_DAY FROM USERS WHERE USER_ID = ?"
-		authorities-by-username-query="SELECT USER_ID,AUTHORITY FROM AUTHORITIES WHERE USER_ID = ?"/>
-	-->
 
 	<beans:bean id="jdbcUserService" class="org.egovframe.rte.fdl.security.userdetails.jdbc.EgovJdbcUserDetailsManager" >
 		<beans:property name="usersByUsernameQuery" value="SELECT USER_ID,PASSWORD,ENABLED,USER_NAME,BIRTH_DAY,SSN FROM USERS WHERE USER_ID = ?"/>
@@ -147,7 +96,6 @@
 	<beans:bean id="methodSecurityInterceptor" class="org.springframework.security.access.intercept.aopalliance.MethodSecurityInterceptor">
 		<beans:property name="validateConfigAttributes" value="false" />
 		<beans:property name="authenticationManager" ref="org.springframework.security.authenticationManager"/>
-		<!-- <beans:property name="accessDecisionManager" ref="org.springframework.security.access.vote.AffirmativeBased#0"/> -->
 		<beans:property name="accessDecisionManager" ref="accessDecisionManager" />
 		<beans:property name="securityMetadataSource" ref="delegatingMethodSecurityMetadataSource" />
 	</beans:bean>
@@ -170,19 +118,5 @@
 		<beans:property name="securedObjectService" ref="securedObjectService"/>
 		<beans:property name="resourceType" value="method"/>
 	</beans:bean>
-
-	<!-- pointcut -->
-	<!-- if no map, there is a error that "this map must not be empty; it must contain at least one entry" -->
-	<!-- // so there is dummy entry
-	<beans:bean id="protectPointcutPostProcessor" class="org.springframework.security.config.method.ProtectPointcutPostProcessor">
-		<beans:constructor-arg ref="methodSecurityMetadataSources" />
-		<beans:property name="pointcutMap" ref="pointcutMap"/>
-	</beans:bean>
-
-	<beans:bean id="pointcutMap" class="org.egovframe.rte.fdl.security.intercept.MethodResourcesMapFactoryBean" init-method="init">
-		<beans:property name="securedObjectService" ref="securedObjectService"/>
-		<beans:property name="resourceType" value="pointcut"/>
-	</beans:bean>
-	-->
 
 </beans:beans>

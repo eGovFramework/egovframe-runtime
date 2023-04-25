@@ -1,17 +1,9 @@
 package org.egovframe.rte.psl.data.jpa;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import org.egovframe.rte.psl.data.jpa.domain.Department;
 import org.egovframe.rte.psl.data.jpa.domain.Employee;
 import org.egovframe.rte.psl.data.jpa.repository.DepartmentRepository;
 import org.egovframe.rte.psl.data.jpa.repository.EmployeeRepository;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,6 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath*:META-INF/spring/context-*.xml")

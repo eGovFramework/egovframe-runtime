@@ -16,9 +16,9 @@
 
 package org.egovframe.brte.sample.common.domain.trade;
 
-import java.math.BigDecimal;
-
 import org.springframework.batch.item.ItemProcessor;
+
+import java.math.BigDecimal;
 
 /**
  * CustomerCreditIncreaseProcessor

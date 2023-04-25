@@ -1,13 +1,12 @@
 package org.egovframe.rte.fdl.cmmn;
 
-import java.util.Locale;
-
 import org.egovframe.rte.fdl.cmmn.exception.FdlException;
-
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
+
+import java.util.Locale;
 
 public class FdlExceptionTestService implements ApplicationContextAware {
 	private MessageSource messageSource;

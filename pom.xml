@@ -1,15 +1,21 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
 	<groupId>org.egovframe.rte</groupId>
 	<artifactId>org.egovframe.rte.root</artifactId>
+	<version>4.1.0</version>
 	<packaging>pom</packaging>
-	<version>4.0.0</version>
 	<name>org.egovframe.rte.root</name>
 
 	<modules>
 
+		<!-- Batch -->
+		<module>Batch/org.egovframe.rte.bat.core</module>
+
 		<!-- Foundation Layer -->
+		<module>Foundation/org.egovframe.rte.fdl.access</module>
 		<module>Foundation/org.egovframe.rte.fdl.cmmn</module>
 		<module>Foundation/org.egovframe.rte.fdl.crypto</module>
 		<module>Foundation/org.egovframe.rte.fdl.excel</module>
@@ -20,22 +26,18 @@
 		<module>Foundation/org.egovframe.rte.fdl.security</module>
 		<module>Foundation/org.egovframe.rte.fdl.string</module>
 		<module>Foundation/org.egovframe.rte.fdl.xml</module>
-		<module>Foundation/org.egovframe.rte.fdl.access</module>
-
-		<!-- Persistence -->
-		<module>Persistence/org.egovframe.rte.psl.dataaccess</module>
-		<module>Persistence/org.egovframe.rte.psl.data.jpa</module>
-		<module>Persistence/org.egovframe.rte.psl.data.mongodb</module>
-
-		<!-- Presentation -->
-		<module>Presentation/org.egovframe.rte.ptl.mvc</module>
 
 		<!-- Integration -->
 		<module>Integration/org.egovframe.rte.itl.integration</module>
 		<module>Integration/org.egovframe.rte.itl.webservice</module>
 
-		<!-- Batch -->
-		<module>Batch/org.egovframe.rte.bat.core</module>
+		<!-- Persistence -->
+		<module>Persistence/org.egovframe.rte.psl.data.jpa</module>
+		<module>Persistence/org.egovframe.rte.psl.data.mongodb</module>
+		<module>Persistence/org.egovframe.rte.psl.dataaccess</module>
+
+		<!-- Presentation -->
+		<module>Presentation/org.egovframe.rte.ptl.mvc</module>
 
 	</modules>
 

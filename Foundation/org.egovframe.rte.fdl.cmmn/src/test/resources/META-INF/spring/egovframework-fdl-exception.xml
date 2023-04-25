@@ -7,7 +7,7 @@
 		<property name="useCodeAsDefaultMessage" value="true"/>
 		<property name="basenames">
 			<list>
-				<value>message/egovframework-fdl-exception-message</value>
+				<value>message.egovframework-fdl-exception-message</value>
 			</list>
 		</property>
 	</bean>

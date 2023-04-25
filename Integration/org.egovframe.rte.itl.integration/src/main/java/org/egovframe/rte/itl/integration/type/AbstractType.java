@@ -15,12 +15,12 @@
  */
 package org.egovframe.rte.itl.integration.type;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * 연계 서비스의 표준 메시지의 Type을 정의하기 위한 기본 클래스

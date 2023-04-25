@@ -15,11 +15,10 @@
  */
 package org.egovframe.rte.itl.integration.metadata;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.egovframe.rte.itl.integration.util.Validatable;
-
 import org.springframework.util.StringUtils;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * 연계 서비스 메타 데이터 중 '서비스'를 정의하기 위한 구현 클래스

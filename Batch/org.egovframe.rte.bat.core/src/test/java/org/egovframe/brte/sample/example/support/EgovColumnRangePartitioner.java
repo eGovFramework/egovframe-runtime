@@ -14,14 +14,13 @@
  */
 package org.egovframe.brte.sample.example.support;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.sql.DataSource;
-
 import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.jdbc.core.JdbcTemplate;
+
+import javax.sql.DataSource;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * DB 파티션 처리를 위해 테이블의 범위를 자동으로 지정하여 각각의 파티션에 할당하는 클래스 Data 들이

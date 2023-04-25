@@ -14,10 +14,6 @@
  */
 package org.egovframe.brte.sample.example.test;
 
-import static org.junit.Assert.assertEquals;
-
-import javax.sql.DataSource;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,6 +26,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
+
+import javax.sql.DataSource;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * 배치 실행로그 를 확인하기 위한 테스트 (Registry와 DB)

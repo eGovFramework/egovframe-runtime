@@ -1,22 +1,20 @@
 package org.egovframe.rte.fdl.logging;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-
-import org.egovframe.rte.fdl.logging.sample.MarkerFilterTestSample;
-import org.egovframe.rte.fdl.logging.util.LogFileUtil;
-
-import javax.annotation.Resource;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
+import org.egovframe.rte.fdl.logging.sample.MarkerFilterTestSample;
+import org.egovframe.rte.fdl.logging.util.LogFileUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.annotation.Resource;
+import java.io.File;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath*:META-INF/spring/context-common.xml" })
@@ -57,7 +55,7 @@ public class Log4j2FilterTest {
 			assertTrue(!LogFileUtil.contains(logFileDir, "DEBUG"));
 			assertEquals(2, LogFileUtil.countWords(logFileDir, "ERROR"));
 
-			String[] tailLines = LogFileUtil.getTailLines(logFile, 35);
+			String[] tailLines = LogFileUtil.getTailLines(logFile, 37);
 			assertTrue(tailLines[0].endsWith("- An ArithmeticException have been thrown"));
 			// 엔트리 메서드는 메서드 명으로 로그 메세지가 출력됨 (ex. entry() - entry, exit() - exit ...)
 			assertTrue(tailLines[1].endsWith("- Catching"));

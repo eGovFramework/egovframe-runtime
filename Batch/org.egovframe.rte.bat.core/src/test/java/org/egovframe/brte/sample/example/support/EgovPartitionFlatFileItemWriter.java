@@ -16,23 +16,9 @@
 
 package org.egovframe.brte.sample.example.support;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.Writer;
-import java.nio.channels.Channels;
-import java.nio.channels.FileChannel;
-import java.nio.charset.UnsupportedCharsetException;
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.batch.item.ExecutionContext;
-import org.springframework.batch.item.ItemStream;
-import org.springframework.batch.item.ItemStreamException;
-import org.springframework.batch.item.WriteFailedException;
-import org.springframework.batch.item.WriterNotOpenException;
+import org.springframework.batch.item.*;
 import org.springframework.batch.item.file.FlatFileFooterCallback;
 import org.springframework.batch.item.file.FlatFileHeaderCallback;
 import org.springframework.batch.item.file.ResourceAwareItemWriterItemStream;
@@ -44,6 +30,12 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
+
+import java.io.*;
+import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
+import java.nio.charset.UnsupportedCharsetException;
+import java.util.List;
 
 /**
  * Partition 작업 실행시 여러 쓰레드에서 공유하여 하나의 target파일에 Write함. writer 설정시 scope=step 을

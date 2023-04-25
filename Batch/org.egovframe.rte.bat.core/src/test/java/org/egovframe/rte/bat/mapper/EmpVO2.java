@@ -1,8 +1,5 @@
 package org.egovframe.rte.bat.mapper;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
 public class EmpVO2 {
 	private static final long serialVersionUID = -8049578957221741496L;
 

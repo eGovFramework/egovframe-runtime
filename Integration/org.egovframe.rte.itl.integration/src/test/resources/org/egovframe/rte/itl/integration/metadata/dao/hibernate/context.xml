@@ -26,13 +26,6 @@
 
     <jdbc:embedded-database id="myDataSource" type="HSQL" />
 
-    <!-- <bean id="myDataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
-        <property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
-        <property name="url" value="jdbc:hsqldb:mem:test/test;showdown=true"/>
-        <property name="username" value="sa"/>
-        <property name="password" value=""/>
-    </bean> -->
-
     <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
         <property name="dataSource" ref="myDataSource"/>
         <property name="mappingResources">

@@ -15,13 +15,9 @@
  */
 package org.egovframe.rte.fdl.idgnr.impl;
 
-import java.math.BigDecimal;
-import java.util.Locale;
-
 import org.egovframe.rte.fdl.cmmn.exception.FdlException;
 import org.egovframe.rte.fdl.idgnr.EgovIdGnrService;
 import org.egovframe.rte.fdl.idgnr.EgovIdGnrStrategy;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -30,6 +26,9 @@ import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
+
+import java.math.BigDecimal;
+import java.util.Locale;
 
 /**
  * ID Generation 서비스를 위한 Abstract Service

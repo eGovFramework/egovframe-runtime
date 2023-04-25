@@ -16,13 +16,6 @@
 
 package org.egovframe.brte.sample.example.support;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.sql.DataSource;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.core.ExitStatus;
@@ -37,6 +30,12 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.util.Assert;
 import org.springframework.util.SerializationUtils;
+
+import javax.sql.DataSource;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * 작업수행에 필요한 자료를 가져오기 위해 BATCH_STAGING 테이블을 Select 하는 리더

@@ -15,11 +15,10 @@
  */
 package org.egovframe.rte.itl.webservice.data;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.egovframe.rte.itl.integration.util.Validatable;
-
 import org.springframework.util.StringUtils;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * 전자정부 웹 서비스 설정 정보 중 Param 매핑 정보 구현 클래스

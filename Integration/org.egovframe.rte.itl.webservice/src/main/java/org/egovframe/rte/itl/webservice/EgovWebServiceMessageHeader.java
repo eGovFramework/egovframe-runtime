@@ -15,14 +15,13 @@
  */
 package org.egovframe.rte.itl.webservice;
 
-import java.util.Calendar;
-
 import org.egovframe.rte.itl.integration.EgovIntegrationMessageHeader;
 import org.egovframe.rte.itl.integration.type.RecordType;
 import org.egovframe.rte.itl.integration.type.Type;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import java.util.Calendar;
 
 /**
  * 전자정부 웹 서비스 메시지 헤더 구현 클래스

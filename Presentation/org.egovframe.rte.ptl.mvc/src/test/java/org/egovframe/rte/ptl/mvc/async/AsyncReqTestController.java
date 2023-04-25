@@ -1,14 +1,13 @@
 package org.egovframe.rte.ptl.mvc.async;
 
-import java.util.concurrent.Callable;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.concurrent.Callable;
 
 @Controller
 public class AsyncReqTestController {

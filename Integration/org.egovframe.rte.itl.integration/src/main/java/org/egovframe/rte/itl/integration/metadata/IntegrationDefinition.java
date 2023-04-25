@@ -15,12 +15,11 @@
  */
 package org.egovframe.rte.itl.integration.metadata;
 
+import org.egovframe.rte.itl.integration.util.Validatable;
+import org.springframework.util.StringUtils;
+
 import java.util.Calendar;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import org.egovframe.rte.itl.integration.util.Validatable;
-
-import org.springframework.util.StringUtils;
 
 /**
  * 연계 서비스 메타 데이터 중 '연계 정의' 구현 클래스

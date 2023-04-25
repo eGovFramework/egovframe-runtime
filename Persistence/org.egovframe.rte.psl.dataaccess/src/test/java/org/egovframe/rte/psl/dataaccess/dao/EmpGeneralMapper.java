@@ -1,19 +1,11 @@
 package org.egovframe.rte.psl.dataaccess.dao;
 
+import org.egovframe.rte.psl.dataaccess.EgovAbstractMapper;
+import org.egovframe.rte.psl.dataaccess.vo.*;
+import org.springframework.stereotype.Repository;
+
 import java.util.Iterator;
 import java.util.List;
-
-import org.egovframe.rte.psl.dataaccess.EgovAbstractMapper;
-import org.egovframe.rte.psl.dataaccess.vo.DeptIncludesEmpListVO;
-import org.egovframe.rte.psl.dataaccess.vo.DeptVO;
-import org.egovframe.rte.psl.dataaccess.vo.EmpDeptSimpleCompositeVO;
-import org.egovframe.rte.psl.dataaccess.vo.EmpExtendsDeptVO;
-import org.egovframe.rte.psl.dataaccess.vo.EmpIncludesDeptVO;
-import org.egovframe.rte.psl.dataaccess.vo.EmpIncludesEmpListVO;
-import org.egovframe.rte.psl.dataaccess.vo.EmpIncludesMgrVO;
-import org.egovframe.rte.psl.dataaccess.vo.EmpVO;
-
-import org.springframework.stereotype.Repository;
 
 @Repository("empGeneralMapper")
 public class EmpGeneralMapper extends EgovAbstractMapper {

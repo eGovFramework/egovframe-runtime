@@ -15,13 +15,15 @@
  */
 package org.egovframe.rte.bat.core.item.database;
 
-import static org.springframework.util.ClassUtils.getShortName;
-import java.util.HashMap;
-import java.util.Map;
-import org.mybatis.spring.batch.MyBatisPagingItemReader;
 import org.egovframe.rte.bat.support.EgovJobVariableListener;
 import org.egovframe.rte.bat.support.EgovResourceVariable;
 import org.egovframe.rte.bat.support.EgovStepVariableListener;
+import org.mybatis.spring.batch.MyBatisPagingItemReader;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.springframework.util.ClassUtils.getShortName;
 
 /**
  * EgovMyBatisPagingItemReader 클래스

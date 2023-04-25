@@ -2,7 +2,6 @@ package org.egovframe.rte.psl.dataaccess.dao;
 
 import org.egovframe.rte.psl.dataaccess.EgovAbstractMapper;
 import org.egovframe.rte.psl.dataaccess.vo.TypeTestVO;
-
 import org.springframework.stereotype.Repository;
 
 @Repository("dataTypeTestMapper")

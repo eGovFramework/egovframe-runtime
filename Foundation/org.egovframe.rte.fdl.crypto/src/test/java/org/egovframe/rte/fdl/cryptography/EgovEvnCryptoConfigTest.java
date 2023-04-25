@@ -1,18 +1,16 @@
 package org.egovframe.rte.fdl.cryptography;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
-import javax.annotation.Resource;
-
+import org.egovframe.rte.fdl.property.EgovPropertyService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import org.egovframe.rte.fdl.cryptography.EgovEnvCryptoService;
-import org.egovframe.rte.fdl.property.EgovPropertyService;
+import javax.annotation.Resource;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:/META-INF/spring/config/crypto-config.xml" })

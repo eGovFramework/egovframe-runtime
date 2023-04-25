@@ -1,14 +1,12 @@
 package org.egovframe.rte.ptl.mvc.bind;
 
-import java.util.Iterator;
-import java.util.Map;
-
 import org.egovframe.rte.ptl.mvc.bind.annotation.CommandMap;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Iterator;
+import java.util.Map;
 
 @SuppressWarnings("deprecation")
 @Controller

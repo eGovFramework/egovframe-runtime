@@ -15,10 +15,11 @@
  */
 package org.egovframe.rte.bat.core.item.file.transform;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.springframework.batch.item.file.transform.ExtractorLineAggregator;
 import org.springframework.util.Assert;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Object 배열로 구성된 item 정보들을 Write 하기위해 fixedLength 방식으로 String화 하는 클래스

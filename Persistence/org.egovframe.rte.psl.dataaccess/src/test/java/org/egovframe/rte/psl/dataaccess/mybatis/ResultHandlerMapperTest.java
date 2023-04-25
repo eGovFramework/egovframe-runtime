@@ -1,19 +1,9 @@
 package org.egovframe.rte.psl.dataaccess.mybatis;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-import java.util.Properties;
-
 import org.egovframe.rte.psl.dataaccess.TestBase;
 import org.egovframe.rte.psl.dataaccess.dao.EmpMapper;
 import org.egovframe.rte.psl.dataaccess.mapper.EmployerMapper;
 import org.egovframe.rte.psl.dataaccess.resulthandler.FileWritingResultHandler;
-
-import javax.annotation.Resource;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,6 +15,12 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.io.File;
+import java.util.Properties;
+
+import static org.junit.Assert.*;
 
 /**
  * FileWritingResultHandler 테스트

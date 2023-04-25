@@ -1,11 +1,5 @@
 package org.egovframe.rte.fdl.excel;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,6 +16,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
+
+import javax.servlet.ServletException;
+import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * FileServiceTest is TestCase of File Handling Service

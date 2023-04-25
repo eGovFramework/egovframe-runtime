@@ -1,20 +1,12 @@
 package org.egovframe.rte.itl.integration.metadata.dao.hibernate;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import org.egovframe.rte.itl.integration.metadata.OrganizationDefinition;
-import org.egovframe.rte.itl.integration.metadata.ServiceDefinition;
-import org.egovframe.rte.itl.integration.metadata.SystemDefinition;
-
-import javax.sql.DataSource;
-
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.ReplacementDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
 import org.dbunit.operation.DatabaseOperation;
+import org.egovframe.rte.itl.integration.metadata.OrganizationDefinition;
+import org.egovframe.rte.itl.integration.metadata.ServiceDefinition;
+import org.egovframe.rte.itl.integration.metadata.SystemDefinition;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,6 +15,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ResourceUtils;
+
+import javax.sql.DataSource;
+
+import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations="/org/egovframe/rte/itl/integration/metadata/dao/hibernate/context.xml")

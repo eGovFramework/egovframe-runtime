@@ -15,12 +15,12 @@
  */
 package org.egovframe.rte.fdl.security.userdetails;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * 사용자 계정 정보를 관리하기 위한 클래스

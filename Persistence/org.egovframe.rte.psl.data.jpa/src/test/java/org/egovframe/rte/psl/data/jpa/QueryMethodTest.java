@@ -1,6 +1,14 @@
 package org.egovframe.rte.psl.data.jpa;
 
-import static org.junit.Assert.assertEquals;
+import org.egovframe.rte.psl.data.jpa.domain.User;
+import org.egovframe.rte.psl.data.jpa.repository.UserDetailRepository;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -9,16 +17,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.egovframe.rte.psl.data.jpa.domain.User;
-import org.egovframe.rte.psl.data.jpa.repository.UserDetailRepository;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.annotation.Transactional;
+import static org.junit.Assert.assertEquals;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)

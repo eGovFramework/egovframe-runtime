@@ -15,9 +15,9 @@
  */
 package org.egovframe.rte.itl.integration.message.simple;
 
-import java.util.Calendar;
-
 import org.egovframe.rte.itl.integration.EgovIntegrationMessageHeader;
+
+import java.util.Calendar;
 
 /**
  * 전자정부 연계 서비스의 표준 메시지 헤더 클래스

@@ -1,21 +1,15 @@
 package org.egovframe.rte.itl.integration.type.support;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.egovframe.rte.itl.integration.metadata.RecordTypeDefinition;
 import org.egovframe.rte.itl.integration.metadata.RecordTypeFieldDefinition;
 import org.egovframe.rte.itl.integration.metadata.dao.RecordTypeDefinitionDao;
-import org.egovframe.rte.itl.integration.type.CircularInheritanceException;
-import org.egovframe.rte.itl.integration.type.ListType;
-import org.egovframe.rte.itl.integration.type.NoSuchTypeException;
-import org.egovframe.rte.itl.integration.type.PrimitiveType;
-import org.egovframe.rte.itl.integration.type.RecordType;
-import org.egovframe.rte.itl.integration.type.Type;
-
+import org.egovframe.rte.itl.integration.type.*;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class TypeLoaderUsingMetadataTest {
 	private static TypeLoaderUsingMetadata typeLoader;

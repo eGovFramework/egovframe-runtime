@@ -15,11 +15,12 @@
  */
 package org.egovframe.rte.bat.core.item.database.support;
 
+import org.springframework.batch.item.database.ItemPreparedStatementSetter;
+
 import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Map;
-import org.springframework.batch.item.database.ItemPreparedStatementSetter;
 
 /**
  * EgovItemPreparedStatementSetter

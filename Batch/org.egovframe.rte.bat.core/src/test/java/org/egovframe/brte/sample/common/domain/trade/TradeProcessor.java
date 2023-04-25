@@ -18,7 +18,6 @@ package org.egovframe.brte.sample.common.domain.trade;
 
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.validator.ValidationException;
-import org.egovframe.brte.sample.common.domain.trade.Trade;
 
 /**
  * TradeProcessor

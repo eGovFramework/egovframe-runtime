@@ -1,36 +1,27 @@
 package org.egovframe.rte.fdl.logging;
 
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-import java.util.Map;
-
-import org.egovframe.rte.fdl.logging.sample.LogLevelDebug;
-import org.egovframe.rte.fdl.logging.sample.LogLevelError;
-import org.egovframe.rte.fdl.logging.sample.LogLevelFatal;
-import org.egovframe.rte.fdl.logging.sample.LogLevelInfo;
-import org.egovframe.rte.fdl.logging.sample.LogLevelWarn;
-import org.egovframe.rte.fdl.logging.sample.service.LogTestService;
-import org.egovframe.rte.fdl.logging.sample.service.SomeVO;
-import org.egovframe.rte.fdl.logging.sample.service.impl.LogTestServiceImpl;
-import org.egovframe.rte.fdl.logging.util.LogFileUtil;
-
-import javax.annotation.Resource;
-
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.core.appender.FileAppender;
+import org.egovframe.rte.fdl.logging.sample.*;
+import org.egovframe.rte.fdl.logging.sample.service.LogTestService;
+import org.egovframe.rte.fdl.logging.sample.service.SomeVO;
+import org.egovframe.rte.fdl.logging.sample.service.impl.LogTestServiceImpl;
+import org.egovframe.rte.fdl.logging.util.LogFileUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.annotation.Resource;
+import java.io.File;
+import java.util.Map;
+
+import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath*:META-INF/spring/context-common.xml" })

@@ -1,11 +1,5 @@
 package org.egovframe.rte.itl.webservice;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-
-import java.util.Calendar;
-
 import org.egovframe.rte.itl.integration.EgovIntegrationMessage;
 import org.egovframe.rte.itl.integration.EgovIntegrationMessageHeader;
 import org.egovframe.rte.itl.integration.EgovIntegrationMessageHeader.ResultCode;
@@ -14,8 +8,11 @@ import org.egovframe.rte.itl.integration.metadata.OrganizationDefinition;
 import org.egovframe.rte.itl.integration.metadata.ServiceDefinition;
 import org.egovframe.rte.itl.integration.metadata.SystemDefinition;
 import org.egovframe.rte.itl.webservice.service.EgovWebServiceClient;
-
 import org.junit.Test;
+
+import java.util.Calendar;
+
+import static org.junit.Assert.*;
 
 public class EgovWebServiceTest
 {

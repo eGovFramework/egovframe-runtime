@@ -15,6 +15,14 @@
  */
 package org.egovframe.rte.bat.core.item.database;
 
+import org.egovframe.rte.bat.support.EgovJobVariableListener;
+import org.egovframe.rte.bat.support.EgovResourceVariable;
+import org.egovframe.rte.bat.support.EgovStepVariableListener;
+import org.mybatis.spring.batch.MyBatisBatchItemWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.ReflectionUtils;
+
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -25,13 +33,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.mybatis.spring.batch.MyBatisBatchItemWriter;
-import org.egovframe.rte.bat.support.EgovResourceVariable;
-import org.egovframe.rte.bat.support.EgovJobVariableListener;
-import org.egovframe.rte.bat.support.EgovStepVariableListener;
-import org.springframework.util.ReflectionUtils;
 
 /**
  * EgovMyBatisBatchItemWriter 클래스

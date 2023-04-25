@@ -1,42 +1,45 @@
 package org.egovframe.rte.psl.data.mongodb;
 
-import static org.junit.Assert.assertEquals;
-import static org.springframework.data.mongodb.core.query.Criteria.where;
-
-import java.net.UnknownHostException;
-import javax.annotation.Resource;
-import org.junit.Before;
+import org.egovframe.rte.psl.data.mongodb.domain.Person;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.egovframe.rte.psl.data.mongodb.domain.SimplePerson;
+
+import static org.junit.Assert.assertEquals;
+import static org.springframework.data.mongodb.core.query.Criteria.where;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:/META-INF/spring/context-data-*.xml")
+@ContextConfiguration(locations = "classpath:META-INF/spring/context-data-mongodb.xml")
 public class MongoOperationsAuthTest {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoOperationsAuthTest.class);
 
-    @Resource(name = "mongoTemplate")
+    @Autowired
     private MongoTemplate mongoTemplate;
 
-    @Before
-    public void setUp() {
-    }
-
     @Test
-    public void testBasicOperations() throws UnknownHostException {
-        MongoOperations mongoOps = mongoTemplate;
-        mongoOps.save(new SimplePerson("Joe", 34));
-        SimplePerson person = mongoOps.findOne(new Query(where("name").is("Joe")), SimplePerson.class);
-        assertEquals("Joe", person.getName());
-        mongoOps.dropCollection("person");
+    public void testBasicOperations() {
+        MongoOperations mongoOperations = mongoTemplate;
+
+        Person person = new Person();
+        person.setId("1001");
+        person.setName("Kim");
+        person.setAge(20);
+        mongoOperations.save(person, "person");
+
+        Person person1 = mongoOperations.findOne(new Query(where("name").is("Kim").and("age").is(20)), Person.class);
+        LOGGER.info("##### MongoOperationsAnonymousTest person : " + person1);
+        assertEquals(person.getId(), person1.getId());
+        assertEquals(person.getName(), person1.getName());
+        assertEquals(person.getAge(), person1.getAge());
+
+        mongoOperations.dropCollection("person");
     }
 
 }

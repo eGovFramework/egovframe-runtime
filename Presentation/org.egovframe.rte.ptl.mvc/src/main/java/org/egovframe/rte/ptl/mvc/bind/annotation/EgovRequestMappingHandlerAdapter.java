@@ -15,14 +15,13 @@
  */
 package org.egovframe.rte.ptl.mvc.bind.annotation;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.egovframe.rte.ptl.mvc.bind.AnnotationCommandMapArgumentResolver;
-
 import org.springframework.web.method.annotation.MapMethodProcessor;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * EgovRequestMappingHandlerAdapter.java

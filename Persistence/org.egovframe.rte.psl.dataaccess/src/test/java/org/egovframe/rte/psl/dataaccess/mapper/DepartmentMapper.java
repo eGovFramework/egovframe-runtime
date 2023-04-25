@@ -1,13 +1,12 @@
 package org.egovframe.rte.psl.dataaccess.mapper;
 
-import java.math.BigDecimal;
-
-import org.egovframe.rte.psl.dataaccess.vo.DeptVO;
-
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+import org.egovframe.rte.psl.dataaccess.vo.DeptVO;
+
+import java.math.BigDecimal;
 
 @Mapper("departmentMapper")
 public interface DepartmentMapper {

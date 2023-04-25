@@ -1,11 +1,10 @@
 package org.egovframe.rte.psl.dataaccess;
 
-import java.util.Properties;
+import org.junit.Before;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
-
-import org.junit.Before;
+import java.util.Properties;
 
 public class TestBase {
 

@@ -15,9 +15,10 @@
  */
 package org.egovframe.rte.fdl.cmmn.exception;
 
+import org.springframework.context.MessageSource;
+
 import java.text.MessageFormat;
 import java.util.Locale;
-import org.springframework.context.MessageSource;
 
 /**
  * EgovBizException : 비즈니스 서비스 구현체에서 발생시키는 Biz Exception .

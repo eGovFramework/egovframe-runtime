@@ -16,16 +16,15 @@
  */
 package org.egovframe.rte.fdl.xml;
 
-import java.io.IOException;
-import java.util.Set;
+import org.apache.xerces.parsers.DOMParser;
 import org.egovframe.rte.fdl.xml.error.ErrorChecker;
 import org.egovframe.rte.fdl.xml.exception.ValidatorException;
-import org.apache.xerces.parsers.DOMParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXNotRecognizedException;
-import org.xml.sax.SAXNotSupportedException;
+
+import java.io.IOException;
+import java.util.Set;
 
 /**
  * DOMValidator Class

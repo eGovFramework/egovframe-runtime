@@ -1,12 +1,9 @@
 package org.egovframe.rte.psl.data.mongodb;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import com.mongodb.BasicDBObject;
-import java.util.List;
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
+import org.egovframe.rte.psl.data.mongodb.domain.Address;
+import org.egovframe.rte.psl.data.mongodb.domain.Person;
+import org.egovframe.rte.psl.data.mongodb.repository.PersonRepository;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,26 +19,29 @@ import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.egovframe.rte.psl.data.mongodb.domain.Address;
-import org.egovframe.rte.psl.data.mongodb.domain.Person;
-import org.egovframe.rte.psl.data.mongodb.repository.PersonRepository;
+
+import javax.annotation.PostConstruct;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath*:META-INF/spring/context-data-*.xml")
+@ContextConfiguration(locations = "classpath:META-INF/spring/context-data-mongodb.xml")
 public class PersonRepositoryTest {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(PersonRepositoryTest.class);
 
     @Autowired
-    private PersonRepository repository;
-
-    @Resource(name = "mongoTemplate")
     private MongoTemplate mongoTemplate;
+
+    @Autowired
+    private PersonRepository personRepository;
 
     private Person makePerson() {
         Person person = new Person();
-        person.setFirstname("Gildong");
-        person.setLastname("Hong");
+        person.setId("1001");
+        person.setName("Jung");
+        person.setAge(20);
 
         Address address = new Address();
         address.setZipCode("100-100");
@@ -61,65 +61,63 @@ public class PersonRepositoryTest {
     @Before
     public void setUp() {
         Person person = makePerson();
-        person = repository.save(person);
-        LOGGER.info("Persion ID : " + person.getId());
+        person = personRepository.save(person);
+        LOGGER.info("##### PersonRepositoryTest Persion ID : " + person.getId());
     }
 
     @After
     public void tearDown() {
-        repository.deleteAll();
+        personRepository.deleteAll();
     }
 
     @Test
     public void readsFirstPageCorrectly() {
         PageRequest pageable = PageRequest.of(0, 10);
-        Page<Person> persons = repository.findAll(pageable);
-        LOGGER.info("Persons Total elements : " + persons.getTotalElements());
+        Page<Person> persons = personRepository.findAll(pageable);
+        LOGGER.info("##### PersonRepositoryTest Persons Total elements : " + persons.getTotalElements());
         assertTrue(persons.isFirst());
     }
 
     @Test
     public void testQueryMethods() {
-        List<Person> list = repository.findByLastname("Hong");
-        LOGGER.info("Number of Hong = : " + list.size());
+        List<Person> list = personRepository.findByName("Jung");
+        LOGGER.info("##### PersonRepositoryTest List : " + list.size());
         assertEquals(1, list.size());
 
         PageRequest pageable = PageRequest.of(0, 10);
-        Page<Person> persons = repository.findByFirstname("Gildong", pageable);
+        Page<Person> persons = personRepository.findByName("Jung", pageable);
 
         assertTrue(persons.isFirst());
         assertEquals(1L, persons.getTotalElements());
         assertEquals(1, persons.getTotalPages());
 
-        Person hong = list.get(0);
-        LOGGER.info("Hong Person id = " + hong.getId());
+        Person personList = list.get(0);
+        LOGGER.info("##### PersonRepositoryTest personList : " + personList);
 
-        Address address = hong.getAddress();
-        Person found = repository.findByAddress(address);
-        LOGGER.info("Found Person id = " + hong.getId());
+        Address address = personList.getAddress();
+        Person personAddress = personRepository.findByAddress(address);
+        LOGGER.info("##### PersonRepositoryTest Found personAddress : " + personAddress);
 
-        assertEquals(hong, found);
+        assertEquals(personList, personAddress);
     }
 
     @Test
-    public void testDeleteMothods() {
-        Long deleted = repository.deletePersonByLastname("Hong");
-        assertEquals(1L, deleted.longValue());
-        List<Person> list = repository.deleteByLastname("Hong");
-        assertEquals(0, list.size());
+    public void testQueryAnnotation() {
+        List<Person> list = personRepository.findByPersonName("Jung");
+        assertEquals(1, list.size());
     }
 
     @Test
     public void testGeoSpatialMethods() {
         Point point = new Point(43.1, 48.1);
         Distance distance = new Distance(200, Metrics.KILOMETERS);
-        List<Person> list = repository.findByLocationNear(point, distance);
+        List<Person> list = personRepository.findByLocationNear(point, distance);
         assertEquals(1, list.size());
     }
 
     @Test
-    public void testQueryAnnotation() {
-        List<Person> list = repository.findByThePersonsFirstname("Gildong");
+    public void testDeleteMothods() {
+        List<Person> list = personRepository.deleteByName("Jung");
         assertEquals(1, list.size());
     }
 

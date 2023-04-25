@@ -15,9 +15,10 @@
  */
 package org.egovframe.rte.fdl.cmmn.exception;
 
+import org.springframework.context.MessageSource;
+
 import java.text.MessageFormat;
 import java.util.Locale;
-import org.springframework.context.MessageSource;
 
 /**
  * 전자정부 표준프레임워크에서 사용하는 Exception.

@@ -1,21 +1,20 @@
 package org.egovframe.rte.fdl.logging;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.egovframe.rte.fdl.logging.sample.LogLayoutSample;
+import org.egovframe.rte.fdl.logging.util.LogFileUtil;
+import org.junit.Test;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.egovframe.rte.fdl.logging.sample.LogLayoutSample;
-import org.egovframe.rte.fdl.logging.util.LogFileUtil;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class LogTargetTest {
-	
+
 	/**
 	 * 아래는 ConsoleAppender를 테스트하는 메소드 egovframework Logger: level=DEBUG,
 	 * appender=Console

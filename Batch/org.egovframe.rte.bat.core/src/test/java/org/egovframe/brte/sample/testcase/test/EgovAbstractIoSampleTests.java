@@ -15,15 +15,8 @@
  */
 package org.egovframe.brte.sample.testcase.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.egovframe.brte.sample.common.domain.trade.CustomerCredit;
 import org.egovframe.brte.sample.common.domain.trade.CustomerCreditIncreaseProcessor;
-
 import org.junit.Test;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
@@ -40,6 +33,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * IoSample 실행을 위한 기본 클래스

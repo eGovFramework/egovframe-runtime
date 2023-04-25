@@ -1,14 +1,12 @@
 package org.egovframe.rte.psl.dataaccess.dao;
 
-import java.util.List;
-
 import org.egovframe.rte.psl.dataaccess.EgovAbstractMapper;
 import org.egovframe.rte.psl.dataaccess.vo.JobHistVO;
-
-import javax.annotation.Resource;
-
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 @Repository("jobHistMapper")
 public class JobHistMapper extends EgovAbstractMapper {

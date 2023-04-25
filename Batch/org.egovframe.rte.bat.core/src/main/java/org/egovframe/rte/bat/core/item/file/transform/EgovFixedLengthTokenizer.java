@@ -15,11 +15,12 @@
  */
 package org.egovframe.rte.bat.core.item.file.transform;
 
+import org.springframework.batch.item.file.transform.IncorrectLineLengthException;
+import org.springframework.batch.item.file.transform.Range;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.springframework.batch.item.file.transform.IncorrectLineLengthException;
-import org.springframework.batch.item.file.transform.Range;
 
 /**
  * EgovFixedLengthTokenizer 클래스

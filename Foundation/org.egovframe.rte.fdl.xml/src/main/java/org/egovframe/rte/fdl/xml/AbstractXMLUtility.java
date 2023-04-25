@@ -16,20 +16,6 @@
  */
 package org.egovframe.rte.fdl.xml;
 
-import java.io.CharArrayReader;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamResult;
-
 import org.egovframe.rte.fdl.logging.util.EgovResourceReleaser;
 import org.egovframe.rte.fdl.xml.exception.ValidatorException;
 import org.jdom2.Document;
@@ -43,6 +29,16 @@ import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.springframework.util.ReflectionUtils;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+
+import javax.xml.transform.*;
+import javax.xml.transform.stream.StreamResult;
+import java.io.CharArrayReader;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 /**
  * XML문서 파싱 작업시 공통적으로 사용하는 메소드를 포함하는 추상 클래스.

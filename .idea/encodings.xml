@@ -1,4 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="Encoding" addBOMForNewFiles="with NO BOM" />
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/Batch/org.egovframe.rte.bat.core/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Batch/org.egovframe.rte.bat.core/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Foundation/org.egovframe.rte.fdl.access/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Foundation/org.egovframe.rte.fdl.access/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Foundation/org.egovframe.rte.fdl.cmmn/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Foundation/org.egovframe.rte.fdl.cmmn/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Foundation/org.egovframe.rte.fdl.excel/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Foundation/org.egovframe.rte.fdl.excel/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Foundation/org.egovframe.rte.fdl.filehandling/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Foundation/org.egovframe.rte.fdl.filehandling/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Foundation/org.egovframe.rte.fdl.idgnr/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Foundation/org.egovframe.rte.fdl.idgnr/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Foundation/org.egovframe.rte.fdl.logging/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Foundation/org.egovframe.rte.fdl.logging/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Foundation/org.egovframe.rte.fdl.property/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Foundation/org.egovframe.rte.fdl.property/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Foundation/org.egovframe.rte.fdl.security/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Foundation/org.egovframe.rte.fdl.security/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Foundation/org.egovframe.rte.fdl.string/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Foundation/org.egovframe.rte.fdl.string/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Foundation/org.egovframe.rte.fdl.xml/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Foundation/org.egovframe.rte.fdl.xml/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Integration/org.egovframe.rte.itl.integration/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Integration/org.egovframe.rte.itl.integration/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Integration/org.egovframe.rte.itl.webservice/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Integration/org.egovframe.rte.itl.webservice/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Persistence/org.egovframe.rte.psl.data.jpa/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Persistence/org.egovframe.rte.psl.data.jpa/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Persistence/org.egovframe.rte.psl.data.mongodb/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Persistence/org.egovframe.rte.psl.data.mongodb/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Persistence/org.egovframe.rte.psl.dataaccess/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Persistence/org.egovframe.rte.psl.dataaccess/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Presentation/org.egovframe.rte.ptl.mvc/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Presentation/org.egovframe.rte.ptl.mvc/src/main/resources" charset="UTF-8" />
+  </component>
 </project>

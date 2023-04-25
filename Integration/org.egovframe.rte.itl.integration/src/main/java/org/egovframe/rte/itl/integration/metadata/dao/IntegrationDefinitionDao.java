@@ -15,9 +15,9 @@
  */
 package org.egovframe.rte.itl.integration.metadata.dao;
 
-import java.util.List;
-
 import org.egovframe.rte.itl.integration.metadata.IntegrationDefinition;
+
+import java.util.List;
 
 /**
  * 연계 서비스 메타 데이터의 IntegrationDefinition을 읽어오기 위한 DAO 인터페이스

@@ -1,22 +1,8 @@
 package org.egovframe.rte.fdl.security;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.lang.reflect.Method;
-import java.util.*;
-
 import org.egovframe.rte.fdl.security.userdetails.EgovUserDetailsVO;
 import org.egovframe.rte.fdl.security.userdetails.util.EgovUserDetailsHelper;
 import org.egovframe.rte.fdl.security.web.CategoryController;
-
-import javax.annotation.Resource;
-import javax.servlet.Filter;
-import javax.sql.DataSource;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,6 +34,14 @@ import org.springframework.security.web.access.intercept.FilterSecurityIntercept
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.annotation.Resource;
+import javax.servlet.Filter;
+import javax.sql.DataSource;
+import java.lang.reflect.Method;
+import java.util.*;
+
+import static org.junit.Assert.*;
 
 /**
  * @author sjyoon

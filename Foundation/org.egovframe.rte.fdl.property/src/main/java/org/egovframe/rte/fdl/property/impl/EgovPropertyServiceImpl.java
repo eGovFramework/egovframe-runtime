@@ -15,23 +15,12 @@
  */
 package org.egovframe.rte.fdl.property.impl;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
-
 import org.apache.commons.collections.ExtendedProperties;
 import org.egovframe.rte.fdl.cmmn.exception.FdlException;
 import org.egovframe.rte.fdl.property.EgovPropertyService;
-
-import org.apache.commons.collections.ExtendedProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -42,6 +31,9 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.util.Assert;
+
+import java.io.IOException;
+import java.util.*;
 
 /**
  * Property 서비스의 구현 클래스
@@ -341,7 +333,7 @@ public class EgovPropertyServiceImpl implements EgovPropertyService, Application
 	 * 파일위치정보를 가지고 resources 정보 추출
 	 * @param location 파일위치
 	 * @param encoding Encoding 정보
-	 * @throws Exception
+	 * @throws IOException
 	 */
 	private void loadPropertyResources(String location, String encoding) throws IOException {
 		if (resourceLoader instanceof ResourcePatternResolver) {
@@ -357,7 +349,7 @@ public class EgovPropertyServiceImpl implements EgovPropertyService, Application
 	 * 멀티로 지정된 경우 처리를 위해 LOOP 처리
 	 * @param resources 리소스정보
 	 * @param encoding 인코딩정보
-	 * @throws Exception
+	 * @throws IOException
 	 */
 	private void loadPropertyLoop(Resource[] resources, String encoding) throws IOException {
 		Assert.notNull(resources, "Resource array must not be null");
@@ -370,7 +362,7 @@ public class EgovPropertyServiceImpl implements EgovPropertyService, Application
 	 * 파일 정보를 읽어서 egovProperties에 저장
 	 * @param resource 리소스정보
 	 * @param encoding 인코딩정보
-	 * @throws Exception
+	 * @throws IOException
 	 */
 	private void loadPropertyRes(Resource resource, String encoding) throws IOException {
 		LOGGER.debug(messageSource.getMessage("debug.properties.filename", new String[] { resource.getFilename(), encoding }, Locale.getDefault()));

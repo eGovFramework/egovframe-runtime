@@ -18,10 +18,7 @@
 
 package org.egovframe.rte.fdl.excel.util;
 
-import java.util.Map;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -29,6 +26,11 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.view.AbstractView;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 /**
  * AbstractExcelView support for XSSFWorkbook (xmlx format; POI 3.5+).
@@ -139,7 +141,7 @@ public abstract class AbstractPOIExcelView extends AbstractView {
 	 * @param text the text to put in the cell
 	 */
 	protected void setText(XSSFCell cell, String text) {
-		cell.setCellType(XSSFCell.CELL_TYPE_STRING);
+		cell.setCellType(CellType.STRING);
 		cell.setCellValue(text);
 	}
 

@@ -1,9 +1,5 @@
 package org.egovframe.rte.fdl.property;
 
-import static org.junit.Assert.assertEquals;
-
-import javax.annotation.Resource;
-
 import org.egovframe.rte.fdl.cmmn.exception.FdlException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,8 +7,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.io.IOError;
+import javax.annotation.Resource;
 import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * PropertyServiceRefreshTest

@@ -17,7 +17,6 @@ package org.egovframe.rte.itl.integration.type.support;
 
 import org.egovframe.rte.itl.integration.type.NoSuchTypeException;
 import org.egovframe.rte.itl.integration.type.PrimitiveType;
-
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.util.StringUtils;

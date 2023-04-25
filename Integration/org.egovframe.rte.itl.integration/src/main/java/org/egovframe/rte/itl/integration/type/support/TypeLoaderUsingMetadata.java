@@ -15,24 +15,17 @@
  */
 package org.egovframe.rte.itl.integration.type.support;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.egovframe.rte.itl.integration.metadata.RecordTypeDefinition;
 import org.egovframe.rte.itl.integration.metadata.RecordTypeFieldDefinition;
 import org.egovframe.rte.itl.integration.metadata.dao.RecordTypeDefinitionDao;
-import org.egovframe.rte.itl.integration.type.CircularInheritanceException;
-import org.egovframe.rte.itl.integration.type.ListType;
-import org.egovframe.rte.itl.integration.type.NoSuchTypeException;
-import org.egovframe.rte.itl.integration.type.PrimitiveType;
-import org.egovframe.rte.itl.integration.type.RecordType;
-import org.egovframe.rte.itl.integration.type.Type;
-import org.egovframe.rte.itl.integration.type.TypeLoader;
-
+import org.egovframe.rte.itl.integration.type.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * 전자정부 연계 서비스의 표준 메시지의 Type을 읽어오기 위한 클래스

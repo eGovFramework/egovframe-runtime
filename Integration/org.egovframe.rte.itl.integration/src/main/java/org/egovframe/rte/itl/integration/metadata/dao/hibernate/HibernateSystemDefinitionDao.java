@@ -15,14 +15,13 @@
  */
 package org.egovframe.rte.itl.integration.metadata.dao.hibernate;
 
-import java.util.List;
-
 import org.egovframe.rte.itl.integration.metadata.SystemDefinition;
 import org.egovframe.rte.itl.integration.metadata.dao.SystemDefinitionDao;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
+
+import java.util.List;
 
 /**
  * 연계 서비스 SystemDefinitionDao 구현 클래스.

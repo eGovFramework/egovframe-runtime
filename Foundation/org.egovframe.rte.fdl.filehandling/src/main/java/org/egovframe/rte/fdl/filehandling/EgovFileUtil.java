@@ -15,36 +15,19 @@
  */
 package org.egovframe.rte.fdl.filehandling;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.regex.Pattern;
-import org.egovframe.rte.fdl.logging.util.EgovResourceReleaser;
-import org.egovframe.rte.fdl.string.EgovStringUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.vfs2.FileContent;
-import org.apache.commons.vfs2.FileName;
-import org.apache.commons.vfs2.FileObject;
-import org.apache.commons.vfs2.FileSystemException;
-import org.apache.commons.vfs2.FileSystemManager;
-import org.apache.commons.vfs2.FileType;
-import org.apache.commons.vfs2.Selectors;
-import org.apache.commons.vfs2.VFS;
+import org.apache.commons.vfs2.*;
+import org.egovframe.rte.fdl.logging.util.EgovResourceReleaser;
+import org.egovframe.rte.fdl.string.EgovStringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.FileNotFoundException;
+import java.io.*;
+import java.text.DateFormat;
+import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * 파일 서비스을 제공하는 유틸 클래스.
@@ -506,7 +489,7 @@ public class EgovFileUtil {
 	 */
 	public static List<String> grep(final Object[] search, final String pattern) throws Exception {
 		Pattern searchPattern = Pattern.compile(pattern);
-		String[] strings = searchPattern.split(search.toString());
+		String[] strings = searchPattern.split(Arrays.toString(search));
 		List<String> list = new ArrayList<String>();
 		for (int i = 0; i < strings.length; i++) {
 			list.add(strings[i]);
@@ -525,7 +508,7 @@ public class EgovFileUtil {
 		Pattern searchPattern = Pattern.compile(pattern);
 		List<String> lists = FileUtils.readLines(file);
 		Object[] search = lists.toArray();
-		String[] strings = searchPattern.split(search.toString());
+		String[] strings = searchPattern.split(Arrays.toString(search));
 		List<String> list = new ArrayList<String>();
 		for (int i = 0; i < strings.length; i++) {
 			list.add(strings[i]);

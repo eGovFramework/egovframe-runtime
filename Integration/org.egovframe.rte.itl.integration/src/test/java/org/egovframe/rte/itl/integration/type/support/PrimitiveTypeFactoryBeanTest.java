@@ -1,17 +1,16 @@
 package org.egovframe.rte.itl.integration.type.support;
 
-import static org.junit.Assert.assertEquals;
-
 import org.egovframe.rte.itl.integration.type.PrimitiveType;
-
-import javax.annotation.Resource;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.annotation.Resource;
+
+import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations="/org/egovframe/rte/itl/integration/type/support/context.xml")

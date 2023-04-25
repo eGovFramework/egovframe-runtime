@@ -1,23 +1,14 @@
 package org.egovframe.rte.psl.dataaccess.dao;
 
-import java.util.Iterator;
-import java.util.List;
-
-import org.egovframe.rte.psl.dataaccess.EgovAbstractMapper;
-import org.egovframe.rte.psl.dataaccess.vo.DeptIncludesEmpListVO;
-import org.egovframe.rte.psl.dataaccess.vo.DeptVO;
-import org.egovframe.rte.psl.dataaccess.vo.EmpDeptSimpleCompositeVO;
-import org.egovframe.rte.psl.dataaccess.vo.EmpExtendsDeptVO;
-import org.egovframe.rte.psl.dataaccess.vo.EmpIncludesDeptVO;
-import org.egovframe.rte.psl.dataaccess.vo.EmpIncludesEmpListVO;
-import org.egovframe.rte.psl.dataaccess.vo.EmpIncludesMgrVO;
-import org.egovframe.rte.psl.dataaccess.vo.EmpVO;
-
-import javax.annotation.Resource;
-
 import org.apache.ibatis.session.RowBounds;
+import org.egovframe.rte.psl.dataaccess.EgovAbstractMapper;
+import org.egovframe.rte.psl.dataaccess.vo.*;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
+
+import javax.annotation.Resource;
+import java.util.Iterator;
+import java.util.List;
 
 @Repository("empBatchMapper")
 public class EmpBatchMapper extends EgovAbstractMapper {

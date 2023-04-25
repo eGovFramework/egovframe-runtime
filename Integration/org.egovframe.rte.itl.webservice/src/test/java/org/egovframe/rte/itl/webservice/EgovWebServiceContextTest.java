@@ -1,10 +1,5 @@
 package org.egovframe.rte.itl.webservice;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.egovframe.rte.itl.integration.EgovIntegrationMessage;
 import org.egovframe.rte.itl.integration.EgovIntegrationServiceProvider;
 import org.egovframe.rte.itl.integration.metadata.IntegrationDefinition;
@@ -24,14 +19,17 @@ import org.egovframe.rte.itl.webservice.service.EgovWebServiceClassLoader;
 import org.egovframe.rte.itl.webservice.service.ServiceBridge;
 import org.egovframe.rte.itl.webservice.service.ServiceEndpointInfo;
 import org.egovframe.rte.itl.webservice.service.ServiceEndpointInterfaceInfo;
-
-import javax.xml.ws.Holder;
-
 import org.junit.Test;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
+
+import javax.xml.ws.Holder;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class EgovWebServiceContextTest {
 

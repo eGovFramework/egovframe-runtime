@@ -16,18 +16,17 @@
  */
 package org.egovframe.rte.fdl.xml;
 
-import java.io.IOException;
-import java.util.Set;
-
 import org.egovframe.rte.fdl.xml.error.ErrorChecker;
 import org.egovframe.rte.fdl.xml.exception.ValidatorException;
 import org.egovframe.rte.fdl.xml.impl.ContentHandlerImpl;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
+
+import java.io.IOException;
+import java.util.Set;
 
 /**
  * SAXValidator Class

@@ -18,7 +18,6 @@ package org.egovframe.rte.ptl.mvc.bind.exception;
 import org.egovframe.rte.fdl.cmmn.exception.BaseException;
 import org.egovframe.rte.fdl.cmmn.exception.EgovBizException;
 import org.egovframe.rte.fdl.cmmn.exception.FdlException;
-
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 

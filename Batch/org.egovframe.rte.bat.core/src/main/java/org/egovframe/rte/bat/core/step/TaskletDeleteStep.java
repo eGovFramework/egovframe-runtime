@@ -1,7 +1,5 @@
 package org.egovframe.rte.bat.core.step;
 
-import java.io.File;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +10,8 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
+
+import java.io.File;
 
 public class TaskletDeleteStep implements Tasklet, InitializingBean {
 

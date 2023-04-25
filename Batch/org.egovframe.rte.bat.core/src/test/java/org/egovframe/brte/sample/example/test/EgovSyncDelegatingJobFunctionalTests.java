@@ -16,9 +16,7 @@
 
 package org.egovframe.brte.sample.example.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
+import org.egovframe.brte.sample.common.domain.person.PersonService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.batch.core.JobExecution;
@@ -26,7 +24,9 @@ import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.egovframe.brte.sample.common.domain.person.PersonService;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * JobLauncher 설정을 통한 동기/비동기 처리기능을 테스트  

@@ -15,13 +15,12 @@
  */
 package org.egovframe.rte.mail;
 
-import java.util.Properties;
-
 import javax.mail.Message;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.util.Properties;
 
 /**
  * EgovMail 구현체 (샘플용)
@@ -42,11 +41,9 @@ import javax.mail.internet.MimeMessage;
  */
 public class SimpleSSLMail extends EgovMail {
 
-
 	public void send(String subject, String content) throws Exception {
 		send(subject, content, "text/plain");
 	}
-
 
 	public void send(String subject, String content, String contentType) throws Exception {
 		Properties props = new Properties();
@@ -60,7 +57,7 @@ public class SimpleSSLMail extends EgovMail {
 		Transport transport = mailSession.getTransport();
 
 		MimeMessage message = new MimeMessage(mailSession);
-		message.setFrom(new InternetAddress("www.egovframe.org", "webmaster", "euc-kr"));
+		message.setFrom(new InternetAddress("www.egovframe.go.kr", "webmaster", "euc-kr"));
 		message.setSubject(subject);
 		message.setContent(content, contentType+";charset=utf-8");// "text/plain"
 
