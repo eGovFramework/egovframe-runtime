@@ -46,7 +46,7 @@ org.egovframe.rte
   ├─Persistence
   │  ├─org.egovframe.rte.psl.data.jpa
   │  ├─org.egovframe.rte.psl.data.mongodb
-  │  └─org.egovframe.rte.psl.data.dataaccess
+  │  └─org.egovframe.rte.psl.dataaccess
   └─Presentation
      ├─org.egovframe.rte.ptl.mvc
      └─spring-modules-validation
