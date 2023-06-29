@@ -70,7 +70,7 @@ org.egovframe.rte
 - `org.egovframe.rte.itl.webservice` : 전자정부 표준프레임워크 Integration 서비스에 따라 웹서비스를 요청하고 제공하기 위한 라이브러리
 - `org.egovframe.rte.psl.data.jpa` : Spring JPA 연동 예제 제공
 - `org.egovframe.rte.psl.data.mongodb` : Spring과 MongoDB 연동 예제 제공
-- `org.egovframe.rte.psl.data.dataaccess` : 데이터베이스 연결, 데이터처리, 트랜잭션 관리 기능을 제공
+- `org.egovframe.rte.psl.dataaccess` : 데이터베이스 연결, 데이터처리, 트랜잭션 관리 기능을 제공
 - `org.egovframe.rte.ptl.mvc` : 화면 처리를 위한 기능을 제공
 - `spring-modules-validation` : Form 데이터의 유효성을 검증하기 위한 라이브러리
 
@@ -85,3 +85,7 @@ org.egovframe.rte
 1. [실행환경 위키가이드](https://www.egovframe.go.kr/wiki/doku.php?id=egovframework:rte4.1)
 2. [개발환경 다운로드](https://www.egovframe.go.kr/home/sub.do?menuNo=94)
 3. [실행환경 다운로드](https://www.egovframe.go.kr/home/sub.do?menuNo=92)
+
+## 라이선스
+
+전자정부 표준프레임워크는 [Apache 2.0](https://www.egovframe.go.kr/home/sub.do?menuNo=23) 라이선스를 따르고 있는 오픈소스 프로그램입니다.
