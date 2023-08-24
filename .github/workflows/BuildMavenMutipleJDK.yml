@@ -19,7 +19,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix: # Oracle Java SE Development Kit is only available for version 17 and later.
-        distribution: [ 'zulu', 'temurin', 'adopt', 'liberica', 'microsoft', 'corretto', 'semeru' ]
+        distribution: [ 'zulu', 'temurin', 'adopt', 'liberica', 'corretto', 'semeru' ]
         os: [ 'ubuntu-latest', 'macos-latest', 'windows-latest' ]
         java : [ '8' ]
     steps:
