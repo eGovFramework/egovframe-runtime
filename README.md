@@ -1,4 +1,4 @@
-![Build JDK8](https://github.com/egovframe-contribution/egovframe-runtime_lat/actions/workflows/Maven_Multiple_Build.yml/badge.svg)
+[![Build Status](https://github.com/egovframe-contribution/egovframe-runtime_lat/actions/workflows/Maven_Multiple_Build.yml/badge.svg)](https://github.com/egovframe-contribution/egovframe-runtime_lat/actions/workflows/Maven_Multiple_Build.yml)
 # 표준프레임워크 실행환경 4.1.0
 
 ![java](https://img.shields.io/badge/java-007396?style=for-the-badge&logo=JAVA&logoColor=white)
