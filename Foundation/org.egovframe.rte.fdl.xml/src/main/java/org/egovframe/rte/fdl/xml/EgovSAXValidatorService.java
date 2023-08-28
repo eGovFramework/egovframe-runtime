@@ -71,7 +71,11 @@ public class EgovSAXValidatorService extends AbstractXMLUtility {
 		}
 
 		//파서를 생성한다. SAX 파서는 파서의 직접 생성이 가능하다.
-		XMLReader parser = XMLReaderFactory.createXMLReader("org.apache.xerces.parsers.SAXParser");
+
+		SAXParserFactory parserFactory = SAXParserFactory.newInstance();
+		SAXParser saxparser = parserFactory.newSAXParser();
+		XMLReader parser = saxparser.getXMLReader();
+
 		parser.setFeature("http://xml.org/sax/features/validation", isValid);
 		if (getSCHEMAFile() != null) {
 			parser.setFeature("http://apache.org/xml/features/validation/schema", true);
