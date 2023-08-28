@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.ArrayList;
+
 import static org.junit.Assert.*;
 
 
@@ -50,6 +52,19 @@ public class EgovObjectUtilTest {
 		assertTrue(EgovObjectUtil.isNull(null));
 	}
 
+	/**
+	 * [Flow #-2 Positive Case : check which Obejct is empty
+	 * @throws Exception
+	 */
+	@Test
+	public void testIsEmpty() throws Exception{
+		ArrayList<String> list = new ArrayList<>();
+		list.add("12124");
+
+		assertFalse(EgovObjectUtil.isEmpty(new Object()));
+		assertTrue(EgovObjectUtil.isEmpty(null));
+		assertFalse(EgovObjectUtil.isEmpty(list));
+	}
 
 	/**
 	 * @throws Exception
