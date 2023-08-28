@@ -71,7 +71,7 @@ public final class EgovObjectUtil {
 		Class<?> clazz;
 		try {
 			clazz = loadClass(className);
-			return clazz.newInstance();
+			return clazz.getDeclaredConstructor().newInstance();
 		} catch (ClassNotFoundException e) {
 			LOGGER.error("{} : Class is can not instantialized.", className);
 			throw new ClassNotFoundException();
