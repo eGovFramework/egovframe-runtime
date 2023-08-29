@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.FileNotFoundException;
 import java.io.*;
+import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -506,7 +507,7 @@ public class EgovFileUtil {
 	 */
 	public static List<String> grep(final File file, final String pattern) throws Exception {
 		Pattern searchPattern = Pattern.compile(pattern);
-		List<String> lists = FileUtils.readLines(file);
+		List<String> lists = FileUtils.readLines(file, Charset.defaultCharset());
 		Object[] search = lists.toArray();
 		String[] strings = searchPattern.split(Arrays.toString(search));
 		List<String> list = new ArrayList<String>();
