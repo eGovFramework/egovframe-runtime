@@ -22,7 +22,7 @@ import org.egovframe.rte.fdl.cryptography.EgovPasswordEncoder;
 import org.egovframe.rte.fdl.logging.util.EgovResourceReleaser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ReflectionUtils;
 
 import java.io.ByteArrayOutputStream;
@@ -41,7 +41,7 @@ public class EgovARIACryptoServiceImpl implements EgovARIACryptoService {
 	private EgovPasswordEncoder passwordEncoder;
 	private int blockSize = DEFAULT_BLOCKSIZE;
 
-	@Required
+	@Autowired(required=true)
 	public void setPasswordEncoder(EgovPasswordEncoder passwordEncoder) {
 		this.passwordEncoder = passwordEncoder;
 		LOGGER.debug("passwordEncoder's algorithm : {}", passwordEncoder.getAlgorithm());
