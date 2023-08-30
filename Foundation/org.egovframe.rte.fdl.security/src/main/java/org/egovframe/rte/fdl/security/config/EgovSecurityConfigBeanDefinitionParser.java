@@ -124,37 +124,37 @@ public class EgovSecurityConfigBeanDefinitionParser extends AbstractSingleBeanDe
 		String alwaysUseDefaultTargetUrl = element.getAttribute("alwaysUseDefaultTargetUrl");
 		if (StringUtils.hasText(alwaysUseDefaultTargetUrl)) {
 			bean.addPropertyValue("alwaysUseDefaultTargetUrl", alwaysUseDefaultTargetUrl);
-			EgovSecurityConfigShare.alwaysUseDefaultTargetUrl = Boolean.valueOf(alwaysUseDefaultTargetUrl);
+			EgovSecurityConfigShare.setAlwaysUseDefaultTargetUrl(Boolean.valueOf(alwaysUseDefaultTargetUrl));
 		}
 
 		String sniff = element.getAttribute("sniff");
 		if (StringUtils.hasText(sniff)) {
 			bean.addPropertyValue("sniff", sniff);
-			EgovSecurityConfigShare.sniff = Boolean.valueOf(sniff);
+			EgovSecurityConfigShare.setSniff(Boolean.valueOf(sniff));
 		}
 
 		String xFrameOptions = element.getAttribute("xframeOptions");
 		if (StringUtils.hasText(xFrameOptions)) {
 			bean.addPropertyValue("xframeOptions", xFrameOptions);
-			EgovSecurityConfigShare.xFrameOptions = xFrameOptions;
+			EgovSecurityConfigShare.setXFrameOptions(xFrameOptions);
 		}
 
 		String xssProtection = element.getAttribute("xssProtection");
 		if (StringUtils.hasText(xssProtection)) {
 			bean.addPropertyValue("xssProtection", xssProtection);
-			EgovSecurityConfigShare.xssProtection = Boolean.valueOf(xssProtection);  
+			EgovSecurityConfigShare.setXssProtection(Boolean.valueOf(xssProtection));
 		}
 
 		String cacheControl = element.getAttribute("cacheControl");
 		if (StringUtils.hasText(cacheControl)) {
 			bean.addPropertyValue("cacheControl", cacheControl);
-			EgovSecurityConfigShare.cacheControl = Boolean.valueOf(cacheControl);
+			EgovSecurityConfigShare.setCacheControl(Boolean.valueOf(cacheControl));
 		}
 
 		String csrf = element.getAttribute("csrf");
 		if (StringUtils.hasText(csrf)) {
 			bean.addPropertyValue("csrf", csrf);
-			EgovSecurityConfigShare.csrf = Boolean.valueOf(csrf);  
+			EgovSecurityConfigShare.setCsrf(Boolean.valueOf(csrf)); 
 		}
 
 		String csrfAccessDeniedUrl = element.getAttribute("csrfAccessDeniedUrl");

@@ -45,4 +45,28 @@ public class EgovSecurityConfigShare {
 
 	public static boolean csrf = false;
 
+	public static synchronized void setAlwaysUseDefaultTargetUrl(boolean alwaysUseDefaultTargetUrl){
+		EgovSecurityConfigShare.alwaysUseDefaultTargetUrl = alwaysUseDefaultTargetUrl;
+	}
+
+	public static synchronized void setSniff(boolean sniff){
+		EgovSecurityConfigShare.sniff = sniff;
+	}
+
+	public static synchronized void setXFrameOptions(String xFrameOptions){
+		EgovSecurityConfigShare.xFrameOptions = xFrameOptions;
+	}
+
+	public static synchronized void setXssProtection(boolean xssProtection){
+		EgovSecurityConfigShare.xssProtection = xssProtection;
+	}
+
+	public static synchronized void setCacheControl(boolean cacheControl){
+		EgovSecurityConfigShare.cacheControl = cacheControl;
+	}
+
+	public static synchronized void setCsrf(boolean csrf){
+		EgovSecurityConfigShare.csrf = csrf;
+	}
+
 }

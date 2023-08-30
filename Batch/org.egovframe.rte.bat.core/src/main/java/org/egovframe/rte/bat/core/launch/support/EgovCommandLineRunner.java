@@ -132,7 +132,7 @@ public class EgovCommandLineRunner {
 	/**
 	 * SystemExiter를 설정한다.
 	 */
-	public void setSystemExiter(SystemExiter systemExiter) {
+	public static void setSystemExiter(SystemExiter systemExiter) {
 		EgovCommandLineRunner.systemExiter = systemExiter;
 	}
 	
@@ -140,7 +140,7 @@ public class EgovCommandLineRunner {
 	 * 에러 message를 설정한다.
 	 * @param message
 	 */
-	public void setMessage(String message) {
+	public static void setMessage(String message) {
 		EgovCommandLineRunner.message = message;
 	}
 	
@@ -166,6 +166,10 @@ public class EgovCommandLineRunner {
 	 */
 	public void setJobLocator(JobLocator jobLocator) {
 		this.jobLocator = jobLocator;
+	}
+
+	public static void setEXESTART(int EXESTART){
+		EgovCommandLineRunner.EXESTART = EXESTART;
 	}
 
 	/**
@@ -262,7 +266,7 @@ public class EgovCommandLineRunner {
 			String message = "Job Terminated in error: " + e.getMessage();
 			//2017.02.15 장동한 시큐어코딩(ES)-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
 			LOGGER.error("["+e.getClass()+"] Try/Catch...job tart Runing : " + e.getMessage());
-			EgovCommandLineRunner.message = message;
+			EgovCommandLineRunner.setMessage(message);
 			return exitCodeMapper.intValue(ExitStatus.FAILED.getExitCode());
 		} finally {
 			if (context != null) {
@@ -301,7 +305,7 @@ public class EgovCommandLineRunner {
 					}
 				}
 			}
-			EXESTART += EXE_COUNT;
+			EgovCommandLineRunner.setEXESTART(EgovCommandLineRunner.EXESTART + EXE_COUNT);
 			lastInstances = jobExplorer.getJobInstances(jobIdentifier, EXESTART, EXE_COUNT);
 		}
 

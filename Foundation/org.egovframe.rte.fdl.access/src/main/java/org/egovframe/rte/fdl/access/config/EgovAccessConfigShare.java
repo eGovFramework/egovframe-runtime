@@ -37,4 +37,15 @@ public class EgovAccessConfigShare {
     public static String DEF_ACCESS_DENIED_URL = "/uat/uia/egovLoginUsr.do?auth_error=1";
     public static String DEF_REQUEST_MATCH_TYPE = "regex";
 
+    public static synchronized void setDEF_LOGIN_URL(String DEF_LOGIN_URL){
+        EgovAccessConfigShare.DEF_LOGIN_URL = DEF_LOGIN_URL;
+    }
+    public static synchronized void setDEF_ACCESS_DENIED_URL(String DEF_ACCESS_DENIED_URL){
+        EgovAccessConfigShare.DEF_ACCESS_DENIED_URL = DEF_ACCESS_DENIED_URL;
+    }
+    public static synchronized void setDEF_REQUEST_MATCH_TYPE(String DEF_REQUEST_MATCH_TYPE){
+        EgovAccessConfigShare.DEF_REQUEST_MATCH_TYPE = DEF_REQUEST_MATCH_TYPE;
+    }
+
+
 }

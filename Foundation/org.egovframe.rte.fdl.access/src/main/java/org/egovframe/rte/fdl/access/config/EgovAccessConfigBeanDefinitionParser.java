@@ -71,13 +71,13 @@ public class EgovAccessConfigBeanDefinitionParser extends AbstractSingleBeanDefi
         String loginUrl = element.getAttribute("loginUrl");
         if (StringUtils.hasText(loginUrl)) {
             builder.addPropertyValue("loginUrl", loginUrl);
-            EgovAccessConfigShare.DEF_LOGIN_URL = loginUrl;
+            EgovAccessConfigShare.setDEF_LOGIN_URL(loginUrl);
         }
 
         String accessDeniedUrl = element.getAttribute("accessDeniedUrl");
         if (StringUtils.hasText(accessDeniedUrl)) {
             builder.addPropertyValue("accessDeniedUrl", accessDeniedUrl);
-            EgovAccessConfigShare.DEF_ACCESS_DENIED_URL = accessDeniedUrl;
+            EgovAccessConfigShare.setDEF_ACCESS_DENIED_URL(accessDeniedUrl);
         }
 
         String sqlAuthorityUser = element.getAttribute("sqlAuthorityUser");
@@ -93,7 +93,7 @@ public class EgovAccessConfigBeanDefinitionParser extends AbstractSingleBeanDefi
         String requestMatcherType = element.getAttribute("requestMatcherType");
         if (StringUtils.hasText(requestMatcherType)) {
             builder.addPropertyValue("requestMatcherType", requestMatcherType);
-            EgovAccessConfigShare.DEF_REQUEST_MATCH_TYPE = requestMatcherType;
+            EgovAccessConfigShare.setDEF_REQUEST_MATCH_TYPE(requestMatcherType);
         }
 
         String excludeList = element.getAttribute("excludeList");
