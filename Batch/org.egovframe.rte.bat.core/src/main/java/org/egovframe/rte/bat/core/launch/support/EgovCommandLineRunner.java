@@ -403,5 +403,4 @@ public class EgovCommandLineRunner {
 		}
 		return jobParameters;
 	}
-
 }
