@@ -818,5 +818,4 @@ public class EgovDateUtil {
 		String tmp = sdf.format(date);
 		return tmp;
 	}
-
 }
