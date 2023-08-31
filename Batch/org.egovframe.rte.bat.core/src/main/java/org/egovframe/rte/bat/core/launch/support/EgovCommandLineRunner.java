@@ -266,7 +266,7 @@ public class EgovCommandLineRunner {
 		} catch (Throwable e) {
 			String message = "Job Terminated in error: " + e.getMessage();
 			//2017.02.15 장동한 시큐어코딩(ES)-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
-			LOGGER.error("["+e.getClass()+"] Try/Catch...job tart Runing : " + e.getMessage());
+			LOGGER.error("["+e.getClass()+"] Try/Catch...job start Running : " + e.getMessage());
 			EgovCommandLineRunner.message = message;
 			return exitCodeMapper.intValue(ExitStatus.FAILED.getExitCode());
 		} finally {
