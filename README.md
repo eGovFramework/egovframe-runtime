@@ -82,9 +82,10 @@ org.egovframe.rte
 
 ## 참조
 
-1. [실행환경 위키가이드](https://www.egovframe.go.kr/wiki/doku.php?id=egovframework:rte4.1)
-2. [개발환경 다운로드](https://www.egovframe.go.kr/home/sub.do?menuNo=94)
-3. [실행환경 다운로드](https://www.egovframe.go.kr/home/sub.do?menuNo=92)
+1. [Contribution 가이드](https://github.com/eGovFramework/egovframe-runtime/wiki)
+2. [실행환경 위키가이드](https://www.egovframe.go.kr/wiki/doku.php?id=egovframework:rte4.1)
+3. [개발환경 다운로드](https://www.egovframe.go.kr/home/sub.do?menuNo=94)
+4. [실행환경 다운로드](https://www.egovframe.go.kr/home/sub.do?menuNo=92)
 
 ## 라이선스
 
