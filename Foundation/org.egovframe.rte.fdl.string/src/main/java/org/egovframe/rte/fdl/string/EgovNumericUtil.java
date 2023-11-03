@@ -16,10 +16,11 @@
 package org.egovframe.rte.fdl.string;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * 숫자의 연산을 처리하는 유틸 클래스
- * 
+ *
  * <p><b>NOTE:</b> 숫자와 관련된 여러 기능을 제공하는 유틸이다. 숫자의 연산 및 올림, 내림 등의 기능을 제공한다.</p>
  * <pre>
  * -----------------------------------------------------------------------
@@ -33,7 +34,7 @@ import java.math.BigDecimal;
  * ROUND_UP : 무조건 올림
  * ROUND_CEILING : 무조건 올림 (음수일 경우에 무조건 내림)
  * </pre>
- * 
+ *
  * @author 실행환경 개발팀 윤성종
  * @since 2009.06.01
  * @version 1.0
@@ -47,41 +48,41 @@ import java.math.BigDecimal;
  */
 public class EgovNumericUtil {
 
-    /**
-     * 올림
-     */
-    public static final int ROUND_UP = BigDecimal.ROUND_UP;
+	/**
+	 * 올림
+	 */
+	public static final RoundingMode ROUND_UP = RoundingMode.UP;
 
-    /**
-     * 내림(절사)
-     */
-    public static final int ROUND_DOWN = BigDecimal.ROUND_DOWN;
+	/**
+	 * 내림(절사)
+	 */
+	public static final RoundingMode ROUND_DOWN = RoundingMode.DOWN;
 
-    /**
-     * 반올림
-     */
-    public static final int ROUND_HALF_UP = BigDecimal.ROUND_HALF_UP;
+	/**
+	 * 반올림
+	 */
+	public static final RoundingMode ROUND_HALF_UP = RoundingMode.HALF_UP;
 
-    /**
-     * 사용하지 않음
-     */
-    public static final int ROUND_UNNECESSARY = BigDecimal.ROUND_UNNECESSARY;
+	/**
+	 * 사용하지 않음
+	 */
+	public static final RoundingMode ROUND_UNNECESSARY = RoundingMode.UNNECESSARY;
 
-    /**
-     * <p>
-     * <strong>NumericHelper</strong>의 default 컨스트럭터(Constructor).
-     * </p>
-     */
-    protected EgovNumericUtil() {
-    }
+	/**
+	 * <p>
+	 * <strong>NumericHelper</strong>의 default 컨스트럭터(Constructor).
+	 * </p>
+	 */
+	protected EgovNumericUtil() {
+	}
 
-    /**
-     * <p>
-     * 문자열의 Number형 문자열인지 여부 (- 기호나 소수점도 포함)
-     * </p>
-     * @param source 검증 하고자 하는 문자열
-     * @return 숫자형 문자열 여부 (true : 숫자형)
-     */
+	/**
+	 * <p>
+	 * 문자열의 Number형 문자열인지 여부 (- 기호나 소수점도 포함)
+	 * </p>
+	 * @param source 검증 하고자 하는 문자열
+	 * @return 숫자형 문자열 여부 (true : 숫자형)
+	 */
 	public static boolean isNumber(String source) {
 		if (EgovStringUtil.isNull(source)) {
 			return false;
@@ -95,16 +96,16 @@ public class EgovNumericUtil {
 		}
 	}
 
-    /**
-     * <p>
-     * String형 값의 기본덧셈을 실행한다.
-     * </p>
-     * @param thisVal <code>String</code>
-     * @param addVal <code>String</code>
-     * @return 결과 값
-     * @see #plus(String, String, int)
-     * @see #plus(String, String, int, int)
-     */
+	/**
+	 * <p>
+	 * String형 값의 기본덧셈을 실행한다.
+	 * </p>
+	 * @param thisVal <code>String</code>
+	 * @param addVal <code>String</code>
+	 * @return 결과 값
+	 * @see #plus(String, String, int)
+	 * @see #plus(String, String, int, RoundingMode)
+	 */
 	public static String plus(String thisVal, String addVal) {
 		String result = null;
 		BigDecimal one = new BigDecimal(thisVal == null ? "0" : thisVal);
@@ -113,37 +114,37 @@ public class EgovNumericUtil {
 		return result;
 	}
 
-    /**
-     * <p>
-     * 덧셈한 결과값의 소숫점 자릿수만 지정한다.
-     * </p>
-     * @param thisVal <code>String</code>
-     * @param addVal <code>String</code>
-     * @param scale <code>int</code> 자리수지정
-     * @return 결과 값
-     * @see #plus(String, String, int, int)
-     * @see #plus(String, String)
-     */
-    public static String plus(String thisVal, String addVal, int scale) {
-        return plus(thisVal, addVal, scale, ROUND_UNNECESSARY);
-    }
+	/**
+	 * <p>
+	 * 덧셈한 결과값의 소숫점 자릿수만 지정한다.
+	 * </p>
+	 * @param thisVal <code>String</code>
+	 * @param addVal <code>String</code>
+	 * @param scale <code>int</code> 자리수지정
+	 * @return 결과 값
+	 * @see #plus(String, String, int, RoundingMode)
+	 * @see #plus(String, String)
+	 */
+	public static String plus(String thisVal, String addVal, int scale) {
+		return plus(thisVal, addVal, scale, ROUND_UNNECESSARY);
+	}
 
-    /**
-     * <p>
-     * 덧셈한 결과값의 자릿수와 올림,내림,절삭여부 지정한다.
-     * </p>
-     * @param thisVal <code>String</code>
-     * @param addVal <code>String</code>
-     * @param scale <code>int</code> 자리수지정
-     * @param roundMode <code>int</code> Round 여부 <br>
-     *        올 림 : {@link #ROUND_UP} <br>
-     *        내 림 : {@link #ROUND_DOWN} <br>
-     *        반올림 : {@link #ROUND_HALF_UP}
-     * @return 결과 값
-     * @see #plus(String, String, int)
-     * @see #plus(String, String)
-     */
-	public static String plus(String thisVal, String addVal, int scale, int roundMode) {
+	/**
+	 * <p>
+	 * 덧셈한 결과값의 자릿수와 올림,내림,절삭여부 지정한다.
+	 * </p>
+	 * @param thisVal <code>String</code>
+	 * @param addVal <code>String</code>
+	 * @param scale <code>int</code> 자리수지정
+	 * @param roundMode <code>RoundingMode</code> Round 여부 <br>
+	 *        올 림 : {@link #ROUND_UP} <br>
+	 *        내 림 : {@link #ROUND_DOWN} <br>
+	 *        반올림 : {@link #ROUND_HALF_UP}
+	 * @return 결과 값
+	 * @see #plus(String, String, int)
+	 * @see #plus(String, String)
+	 */
+	public static String plus(String thisVal, String addVal, int scale, RoundingMode roundMode) {
 		String result = null;
 		BigDecimal one = new BigDecimal(thisVal == null ? "0" : thisVal);
 		BigDecimal two = new BigDecimal(addVal == null ? "0" : addVal);
@@ -151,16 +152,16 @@ public class EgovNumericUtil {
 		return result;
 	}
 
-    /**
-     * <p>
-     * 기본뺄셈을 실행한다.
-     * </p>
-     * @param thisVal <code>String</code>
-     * @param addVal <code>String</code>
-     * @return 결과 값
-     * @see #minus(String, String, int)
-     * @see #minus(String, String, int, int)
-     */
+	/**
+	 * <p>
+	 * 기본뺄셈을 실행한다.
+	 * </p>
+	 * @param thisVal <code>String</code>
+	 * @param addVal <code>String</code>
+	 * @return 결과 값
+	 * @see #minus(String, String, int)
+	 * @see #minus(String, String, int, RoundingMode)
+	 */
 	public static String minus(String thisVal, String addVal) {
 		String result = null;
 		BigDecimal one = new BigDecimal(thisVal == null ? "0" : thisVal);
@@ -169,37 +170,37 @@ public class EgovNumericUtil {
 		return result;
 	}
 
-    /**
-     * <p>
-     * 뺄셈한 결과값의 자릿수만 지정한다.
-     * </p>
-     * @param thisVal <code>String</code>
-     * @param addVal <code>String</code>
-     * @param scale <code>int</code> 자리수지정
-     * @return 결과 값
-     * @see #minus(String, String, int, int)
-     * @see #minus(String, String)
-     */
-    public static String minus(String thisVal, String addVal, int scale) {
-        return minus(thisVal, addVal, scale, ROUND_UNNECESSARY);
-    }
+	/**
+	 * <p>
+	 * 뺄셈한 결과값의 자릿수만 지정한다.
+	 * </p>
+	 * @param thisVal <code>String</code>
+	 * @param addVal <code>String</code>
+	 * @param scale <code>int</code> 자리수지정
+	 * @return 결과 값
+	 * @see #minus(String, String, int, RoundingMode)
+	 * @see #minus(String, String)
+	 */
+	public static String minus(String thisVal, String addVal, int scale) {
+		return minus(thisVal, addVal, scale, ROUND_UNNECESSARY);
+	}
 
-    /**
-     * <p>
-     * 뺄셈한 결과값의 자릿수와 올림,내림,절삭여부 지정한다.
-     * </p>
-     * @param thisVal <code>String</code>
-     * @param addVal <code>String</code>
-     * @param scale <code>int</code> 자리수지정
-     * @param roundMode <code>int</code> Round 여부 <br>
-     *        올 림 : {@link #ROUND_UP} <br>
-     *        내 림 : {@link #ROUND_DOWN} <br>
-     *        반올림 : {@link #ROUND_HALF_UP}
-     * @return 결과 값
-     * @see #minus(String, String, int)
-     * @see #minus(String, String)
-     */
-	public static String minus(String thisVal, String addVal, int scale, int roundMode) {
+	/**
+	 * <p>
+	 * 뺄셈한 결과값의 자릿수와 올림,내림,절삭여부 지정한다.
+	 * </p>
+	 * @param thisVal <code>String</code>
+	 * @param addVal <code>String</code>
+	 * @param scale <code>int</code> 자리수지정
+	 * @param roundMode <code>RoundingMode</code> Round 여부 <br>
+	 *        올 림 : {@link #ROUND_UP} <br>
+	 *        내 림 : {@link #ROUND_DOWN} <br>
+	 *        반올림 : {@link #ROUND_HALF_UP}
+	 * @return 결과 값
+	 * @see #minus(String, String, int)
+	 * @see #minus(String, String)
+	 */
+	public static String minus(String thisVal, String addVal, int scale, RoundingMode roundMode) {
 		String result = null;
 		BigDecimal one = new BigDecimal(thisVal == null ? "0" : thisVal);
 		BigDecimal two = new BigDecimal(addVal == null ? "0" : addVal);
@@ -207,55 +208,55 @@ public class EgovNumericUtil {
 		return result;
 	}
 
-    /**
-     * <p>
-     * 기본곱셈을 실행한다.
-     * </p>
-     * @param thisVal <code>String</code>
-     * @param addVal <code>String</code>
-     * @return 결과 값
-     * @see #multiply(String, String, int)
-     * @see #multiply(String, String, int, int)
-     */
-    public static String multiply(String thisVal, String addVal) {
-        String result = null;
-        BigDecimal one = new BigDecimal(thisVal == null ? "0" : thisVal);
-        BigDecimal two = new BigDecimal(addVal == null ? "0" : addVal);
-        result = one.multiply(two).toString();
-        return result;
-    }
+	/**
+	 * <p>
+	 * 기본곱셈을 실행한다.
+	 * </p>
+	 * @param thisVal <code>String</code>
+	 * @param addVal <code>String</code>
+	 * @return 결과 값
+	 * @see #multiply(String, String, int)
+	 * @see #multiply(String, String, int, RoundingMode)
+	 */
+	public static String multiply(String thisVal, String addVal) {
+		String result = null;
+		BigDecimal one = new BigDecimal(thisVal == null ? "0" : thisVal);
+		BigDecimal two = new BigDecimal(addVal == null ? "0" : addVal);
+		result = one.multiply(two).toString();
+		return result;
+	}
 
-    /**
-     * <p>
-     * 곱셈한 결과값의 자릿수만 지정한다.
-     * </p>
-     * @param thisVal <code>String</code>
-     * @param addVal <code>String</code>
-     * @param scale <code>int</code> 자리수지정
-     * @return 결과 값
-     * @see #multiply(String, String, int, int)
-     * @see #multiply(String, String)
-     */
-    public static String multiply(String thisVal, String addVal, int scale) {
-        return multiply(thisVal, addVal, scale, ROUND_UNNECESSARY);
-    }
+	/**
+	 * <p>
+	 * 곱셈한 결과값의 자릿수만 지정한다.
+	 * </p>
+	 * @param thisVal <code>String</code>
+	 * @param addVal <code>String</code>
+	 * @param scale <code>int</code> 자리수지정
+	 * @return 결과 값
+	 * @see #multiply(String, String, int, RoundingMode)
+	 * @see #multiply(String, String)
+	 */
+	public static String multiply(String thisVal, String addVal, int scale) {
+		return multiply(thisVal, addVal, scale, ROUND_UNNECESSARY);
+	}
 
-    /**
-     * <p>
-     * 곱셈한 결과값의 자릿수와 올림,내림,절삭여부 지정한다.
-     * </p>
-     * @param thisVal <code>String</code>
-     * @param addVal <code>String</code>
-     * @param scale  <code>int</code> 자리수지정
-     * @param roundMode <code>int</code> Round 여부 <br>
-     *        올 림 : {@link #ROUND_UP} <br>
-     *        내 림 : {@link #ROUND_DOWN} <br>
-     *        반올림 : {@link #ROUND_HALF_UP}
-     * @return 결과 값
-     * @see #multiply(String, String, int)
-     * @see #multiply(String, String)
-     */
-	public static String multiply(String thisVal, String addVal, int scale, int roundMode) {
+	/**
+	 * <p>
+	 * 곱셈한 결과값의 자릿수와 올림,내림,절삭여부 지정한다.
+	 * </p>
+	 * @param thisVal <code>String</code>
+	 * @param addVal <code>String</code>
+	 * @param scale  <code>int</code> 자리수지정
+	 * @param roundMode <code>RoundingMode</code> Round 여부 <br>
+	 *        올 림 : {@link #ROUND_UP} <br>
+	 *        내 림 : {@link #ROUND_DOWN} <br>
+	 *        반올림 : {@link #ROUND_HALF_UP}
+	 * @return 결과 값
+	 * @see #multiply(String, String, int)
+	 * @see #multiply(String, String)
+	 */
+	public static String multiply(String thisVal, String addVal, int scale, RoundingMode roundMode) {
 		String result = null;
 		BigDecimal one = new BigDecimal(thisVal == null ? "0" : thisVal);
 		BigDecimal two = new BigDecimal(addVal == null ? "0" : addVal);
@@ -263,60 +264,60 @@ public class EgovNumericUtil {
 		return result;
 	}
 
-    /**
-     * <p>
-     * 기본나눗셈을 실행한다.
-     * </p>
-     * @param thisVal <code>String</code>
-     * @param addVal <code>String</code>
-     * @return 결과 값
-     * @see #divide(String, String, int)
-     * @see #divide(String, String, int, int)
-     */
-    public static String divide(String thisVal, String addVal) {
-        String result = null;
-        BigDecimal one = new BigDecimal(thisVal == null ? "0" : thisVal);
-        BigDecimal two = new BigDecimal(addVal == null ? "0" : addVal);
-        result = one.divide(two).toString();
-        return result;
-    }
+	/**
+	 * <p>
+	 * 기본나눗셈을 실행한다.
+	 * </p>
+	 * @param thisVal <code>String</code>
+	 * @param addVal <code>String</code>
+	 * @return 결과 값
+	 * @see #divide(String, String, RoundingMode)
+	 * @see #divide(String, String, int, RoundingMode)
+	 */
+	public static String divide(String thisVal, String addVal) {
+		String result = null;
+		BigDecimal one = new BigDecimal(thisVal == null ? "0" : thisVal);
+		BigDecimal two = new BigDecimal(addVal == null ? "0" : addVal);
+		result = one.divide(two).toString();
+		return result;
+	}
 
-    /**
-     * <p>
-     * 나눗셈의 결과값이 정수
-     * </p>
-     * @param thisVal <code>String</code>
-     * @param addVal <code>String</code>
-     * @param roundMode <code>int</code> Round 여부 <br>
-     *        올 림 : {@link #ROUND_UP} <br>
-     *        내 림 : {@link #ROUND_DOWN} <br>
-     *        반올림 : {@link #ROUND_HALF_UP}
-     * @return 결과 값
-     * @see #divide(String, String, int, int)
-     */
-    public static String divide(String thisVal, String addVal, int roundMode) {
-        String result = null;
-        BigDecimal one = new BigDecimal(thisVal == null ? "0" : thisVal);
-        BigDecimal two = new BigDecimal(addVal == null ? "0" : addVal);
-        result = one.divide(two, roundMode).toString();
-        return result;
-    }
+	/**
+	 * <p>
+	 * 나눗셈의 결과값이 정수
+	 * </p>
+	 * @param thisVal <code>String</code>
+	 * @param addVal <code>String</code>
+	 * @param roundMode <code>RoundingMode</code> Round 여부 <br>
+	 *        올 림 : {@link #ROUND_UP} <br>
+	 *        내 림 : {@link #ROUND_DOWN} <br>
+	 *        반올림 : {@link #ROUND_HALF_UP}
+	 * @return 결과 값
+	 * @see #divide(String, String, int, RoundingMode)
+	 */
+	public static String divide(String thisVal, String addVal, RoundingMode roundMode) {
+		String result = null;
+		BigDecimal one = new BigDecimal(thisVal == null ? "0" : thisVal);
+		BigDecimal two = new BigDecimal(addVal == null ? "0" : addVal);
+		result = one.divide(two, roundMode).toString();
+		return result;
+	}
 
-    /**
-     * <p>
-     * 나눗셈 결과값의 자릿수와 올림,내림,절삭여부 지정한다
-     * </p>
-     * @param thisVal <code>String</code>
-     * @param addVal <code>String</code>
-     * @param scale <code>int</code> 자리수지정
-     * @param roundMode <code>int</code> Round 여부 <br>
-     *        올 림 : {@link #ROUND_UP} <br>
-     *        내 림 : {@link #ROUND_DOWN} <br>
-     *        반올림 : {@link #ROUND_HALF_UP}
-     * @return String
-     * @see #divide(String, String, int)
-     */
-	public static String divide(String thisVal, String addVal, int scale, int roundMode) {
+	/**
+	 * <p>
+	 * 나눗셈 결과값의 자릿수와 올림,내림,절삭여부 지정한다
+	 * </p>
+	 * @param thisVal <code>String</code>
+	 * @param addVal <code>String</code>
+	 * @param scale <code>int</code> 자리수지정
+	 * @param roundMode <code>RoundingMode</code> Round 여부 <br>
+	 *        올 림 : {@link #ROUND_UP} <br>
+	 *        내 림 : {@link #ROUND_DOWN} <br>
+	 *        반올림 : {@link #ROUND_HALF_UP}
+	 * @return String
+	 * @see #divide(String, String, RoundingMode)
+	 */
+	public static String divide(String thisVal, String addVal, int scale, RoundingMode roundMode) {
 		String result = null;
 		BigDecimal one = new BigDecimal(thisVal == null ? "0" : thisVal);
 		BigDecimal two = new BigDecimal(addVal == null ? "0" : addVal);
@@ -324,19 +325,19 @@ public class EgovNumericUtil {
 		return result;
 	}
 
-    /**
-     * <p>
-     * 기본값을 scale 자릿수만큼 ROUND한다.
-     * </p>
-     * @param thisVal <code>String</code>
-     * @param scale <code>int</code> 자리수지정
-     * @param roundMode <code>int</code> Round 여부 <br>
-     *        올 림 : {@link #ROUND_UP} <br>
-     *        내 림 : {@link #ROUND_DOWN} <br>
-     *        반올림 : {@link #ROUND_HALF_UP}
-     * @return String
-     */
-	public static String setScale(String thisVal, int scale, int roundMode) {
+	/**
+	 * <p>
+	 * 기본값을 scale 자릿수만큼 ROUND한다.
+	 * </p>
+	 * @param thisVal <code>String</code>
+	 * @param scale <code>int</code> 자리수지정
+	 * @param roundMode <code>RoundingMode</code> Round 여부 <br>
+	 *        올 림 : {@link #ROUND_UP} <br>
+	 *        내 림 : {@link #ROUND_DOWN} <br>
+	 *        반올림 : {@link #ROUND_HALF_UP}
+	 * @return String
+	 */
+	public static String setScale(String thisVal, int scale, RoundingMode roundMode) {
 		BigDecimal one = new BigDecimal(thisVal == null ? "0" : thisVal);
 		return one.setScale(scale, roundMode).toString();
 	}
