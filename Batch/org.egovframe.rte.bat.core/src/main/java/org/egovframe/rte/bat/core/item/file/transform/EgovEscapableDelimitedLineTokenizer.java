@@ -185,13 +185,13 @@ public class EgovEscapableDelimitedLineTokenizer extends EgovAbstractLineTokeniz
 	}
 	
 	private String getRegexDelimiter(String delimiter) {
-		delimiter = delimiter.replaceAll("\\(", "\\\\(");
-		delimiter = delimiter.replaceAll("\\)", "\\\\)");
-		delimiter = delimiter.replaceAll("\\{", "\\\\{");
-		delimiter = delimiter.replaceAll("\\}", "\\\\}");
-		delimiter = delimiter.replaceAll("\\^", "\\\\^");
-		delimiter = delimiter.replaceAll("\\[", "\\\\[");
-		delimiter = delimiter.replaceAll("\\]", "\\\\]");
+		delimiter = delimiter.replace("\\(", "\\\\(");
+		delimiter = delimiter.replace("\\)", "\\\\)");
+		delimiter = delimiter.replace("\\{", "\\\\{");
+		delimiter = delimiter.replace("\\}", "\\\\}");
+		delimiter = delimiter.replace("\\^", "\\\\^");
+		delimiter = delimiter.replace("\\[", "\\\\[");
+		delimiter = delimiter.replace("\\]", "\\\\]");
 
 		delimiter = delimiter.replaceAll("[*]", "[*]");
 		delimiter = delimiter.replaceAll("[+]", "[+]");
