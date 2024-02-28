@@ -28,6 +28,9 @@ public class MongoOperationsAuthTest {
         MongoOperations mongoOperations = mongoTemplate;
 
         Person person = new Person();
+        mongoTemplate.dropCollection("person");
+        mongoTemplate.createCollection("person");
+
         person.setId("1001");
         person.setName("Kim");
         person.setAge(20);
@@ -39,7 +42,6 @@ public class MongoOperationsAuthTest {
         assertEquals(person.getName(), person1.getName());
         assertEquals(person.getAge(), person1.getAge());
 
-        mongoOperations.dropCollection("person");
     }
 
 }

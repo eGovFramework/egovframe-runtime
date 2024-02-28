@@ -33,7 +33,8 @@ import java.util.List;
  *
  * 수정일		수정자				수정내용
  * ----------------------------------------------
- * 2017.10.23	신용호				최초 생성
+ * 2017.10.23	신용호			최초 생성
+ * 2023.08.31	ESFC			불필요한 replaceAll을 replace 로 수정(getRegexDelimiter(), Contribution 반영)
  * </pre>
 */
 public class EgovEscapableDelimitedLineTokenizer extends EgovAbstractLineTokenizer {

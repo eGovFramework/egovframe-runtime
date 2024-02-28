@@ -10,6 +10,7 @@ import java.io.*;
 import java.math.BigDecimal;
 import java.security.DigestOutputStream;
 import java.security.MessageDigest;
+import java.util.Base64;
 
 import static org.junit.Assert.*;
 

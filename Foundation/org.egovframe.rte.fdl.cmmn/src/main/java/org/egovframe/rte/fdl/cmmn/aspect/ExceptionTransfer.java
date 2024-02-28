@@ -48,9 +48,9 @@ import java.util.Locale;
  *
  * 수정일		수정자				수정내용
  * ----------------------------------------------
- * 2009.05.30	Judd Cho			최초 생성
- * 2015.01.31	Vincent Han			코드 품질 개선 및 보완 (processHandling 메소드 Exception 처리)
- * 2020.08.31	ESFC				시큐어코딩(ES)-Private 배열에 Public 데이터 할당[CWE-496]
+ * 2009.05.30	Judd Cho		최초 생성
+ * 2015.01.31	Vincent Han		코드 품질 개선 및 보완 (processHandling 메소드 Exception 처리)
+ * 2020.08.31	ESFC			시큐어코딩(ES)-Private 배열에 Public 데이터 할당[CWE-496]
  * </pre>
  */
 public class ExceptionTransfer {

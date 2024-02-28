@@ -51,11 +51,7 @@ import java.util.regex.Pattern;
  */
 public class EgovFileUtil {
 
-	/**
-	 * 에러나 이벤트와 관련된 각종 메시지를 로깅하기 위한 Log 오브젝트.
-	 */
 	private static final Logger LOGGER = LoggerFactory.getLogger(EgovFileUtil.class);
-	
 	private static final int BUFFER_SIZE = 1024;
 	private static FileObject basefile;
 	private static FileSystemManager manager;
@@ -95,7 +91,7 @@ public class EgovFileUtil {
 	 * @param target <code>String</code>
 	 * @throws Exception
 	 */
-	public static void cp(String source, String target) throws Exception {
+	public static void cp(String source, String target) throws FileSystemException {
 		try {
 			final FileObject src = manager.resolveFile(basefile, source);
 			FileObject dest = manager.resolveFile(basefile, target);
@@ -108,13 +104,14 @@ public class EgovFileUtil {
 			throw new FileSystemException(fse);
 		}
 	}
+
 	/**
 	 * 지정한 위치의 파일을 대상 위치로 이동한다.
 	 * @param source <code>String</code>
 	 * @param target <code>String</code>
 	 * @throws Exception
 	 */
-	public static void mv(String source, String target) throws Exception {
+	public static void mv(String source, String target) throws FileSystemException {
 		try {
 			final FileObject src = manager.resolveFile(basefile, source);
 			FileObject dest = manager.resolveFile(basefile, target);
@@ -142,7 +139,7 @@ public class EgovFileUtil {
 	 * @return
 	 * @throws Exception
 	 */
-	public static long touch(final String filepath) throws Exception {
+	public static long touch(final String filepath) throws FileSystemException {
 		long currentTime = 0;
 		final FileObject file = manager.resolveFile(basefile, filepath);
 		if (!file.exists()) {
@@ -159,7 +156,7 @@ public class EgovFileUtil {
 	 * @param changDirectory <code>String</code>
 	 * @throws Exception
 	 */
-	public static void cd(final String changDirectory) throws Exception {
+	public static void cd(final String changDirectory) throws FileSystemException {
 		final String path;
 		if (!EgovStringUtil.isNull(changDirectory)) {
 			path = changDirectory;
@@ -226,6 +223,7 @@ public class EgovFileUtil {
 	private StringBuffer listChildren(final FileObject dir, final boolean recursive, final String prefix) throws FileSystemException {
 		StringBuffer line = new StringBuffer();
 		final FileObject[] children = dir.getChildren();
+
 		for (int i = 0; i < children.length; i++) {
 			final FileObject child = children[i];
 			line.append(prefix).append(child.getName().getBaseName());
@@ -251,6 +249,7 @@ public class EgovFileUtil {
 	public static String readFile(File file) throws IOException {
 		BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
 		String sResult = "";
+
 		try {
 			sResult = readFileContent(in);
 		} catch(IllegalArgumentException e) {
@@ -286,6 +285,7 @@ public class EgovFileUtil {
 	public static String readFile(File file, String encoding) throws IOException {
 		StringBuffer sb = new StringBuffer();
 		List<String> lines = FileUtils.readLines(file, encoding);
+
 		for (Iterator<String> it = lines.iterator();;) {
 			sb.append(it.next());
 			if (it.hasNext()) {
@@ -310,7 +310,6 @@ public class EgovFileUtil {
 			writer.write(text);
 		} catch (IOException e) {
 			LOGGER.error("Error creating File: {} : {}", file.getName(), e);
-		return;
 		} finally {
 			EgovResourceReleaser.close(writer);
 		}
@@ -340,6 +339,7 @@ public class EgovFileUtil {
 		final int size = (int) content.getSize();
 		final byte[] buf = new byte[size];
 		final InputStream in = content.getInputStream();
+
 		try {
 			int read = 0;
 			for (int pos = 0; pos < size && read >= 0; pos += read) {
@@ -476,7 +476,7 @@ public class EgovFileUtil {
 	 * @return 파일 객체
 	 * @throws Exception
 	 */
-	public static FileObject getFileObject(final String filepath) throws Exception {
+	public static FileObject getFileObject(final String filepath) throws FileSystemException {
 		FileSystemManager mgr = VFS.getManager();
 		return mgr.resolveFile(mgr.resolveFile(System.getProperty("user.dir")), filepath);
 	}
@@ -488,7 +488,7 @@ public class EgovFileUtil {
 	 * @return 파일 목록
 	 * @throws Exception
 	 */
-	public static List<String> grep(final Object[] search, final String pattern) throws Exception {
+	public static List<String> grep(final Object[] search, final String pattern) {
 		Pattern searchPattern = Pattern.compile(pattern);
 		String[] strings = searchPattern.split(Arrays.toString(search));
 		List<String> list = new ArrayList<String>();
@@ -505,7 +505,7 @@ public class EgovFileUtil {
 	 * @return 파일 목록
 	 * @throws Exception
 	 */
-	public static List<String> grep(final File file, final String pattern) throws Exception {
+	public static List<String> grep(final File file, final String pattern) throws IOException {
 		Pattern searchPattern = Pattern.compile(pattern);
 		List<String> lists = FileUtils.readLines(file, Charset.defaultCharset());
 		Object[] search = lists.toArray();

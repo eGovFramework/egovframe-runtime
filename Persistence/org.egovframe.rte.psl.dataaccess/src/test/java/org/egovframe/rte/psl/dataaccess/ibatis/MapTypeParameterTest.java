@@ -1,6 +1,6 @@
 package org.egovframe.rte.psl.dataaccess.ibatis;
 
-import org.apache.commons.collections.map.ListOrderedMap;
+import org.apache.commons.collections4.map.ListOrderedMap;
 import org.egovframe.rte.psl.dataaccess.TestBase;
 import org.egovframe.rte.psl.dataaccess.dao.MapTypeDAO;
 import org.junit.Before;

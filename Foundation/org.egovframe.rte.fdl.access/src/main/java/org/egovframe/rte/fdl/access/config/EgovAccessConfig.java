@@ -22,16 +22,16 @@ import javax.sql.DataSource;
  *
  * <p>Desc.: 설정 간소화 처리에 사용되는 bean으로 설정에 대한 정보를 보관</p>
  *
- * @author Egovframework Center
+ * @author ESFC
  * @since 2019.10.01
  * @version 3.9
  * <pre>
  * 개정이력(Modification Information)
  *
- * 수정일		수정자				    수정내용
+ * 수정일		수정자				수정내용
  * ----------------------------------------------
- * 2019.10.01	Egovframework Center	최초 생성
- * 2019.12.30	신용호					mappingPath 추가
+ * 2019.10.01	ESFC            최초 생성
+ * 2019.12.30   신용호            mappingPath 추가
  * </pre>
  */
 public class EgovAccessConfig {

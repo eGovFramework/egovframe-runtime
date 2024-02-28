@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -40,9 +41,9 @@ import java.util.regex.Pattern;
  *
  * 수정일		수정자				수정내용
  * ----------------------------------------------
- * 2009.06.01	윤성종				최초 생성
- * 2017.02.15	장동한				시큐어코딩(ES)-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
- * 2017.02.28	장동한				시큐어코딩(ES)-오류 메시지를 통한 정보노출[CWE-209]
+ * 2009.06.01	윤성종			최초 생성
+ * 2017.02.15	장동한			시큐어코딩(ES)-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
+ * 2017.02.28	장동한			시큐어코딩(ES)-오류 메시지를 통한 정보노출[CWE-209]
  * </pre>
  */
 public final class EgovStringUtil {
@@ -61,21 +62,16 @@ public final class EgovStringUtil {
 
     /**
      * isNull
-     * @param str
-     * @return
      */
 	public static boolean isNull(String str) {
 		if (str != null) {
 			str = str.trim();
 		}
-
-		return (str == null || "".equals(str));
+		return (str == null || str.isEmpty());
 	}
 
     /**
      * isApha
-     * @param str
-     * @return
      */
 	public static boolean isAlpha(String str) {
 		if (str == null) {
@@ -98,8 +94,6 @@ public final class EgovStringUtil {
 
     /**
      * isAlphaNumeric
-     * @param str
-     * @return
      */
 	public static boolean isAlphaNumeric(String str) {
 		if (str == null) {
@@ -122,8 +116,6 @@ public final class EgovStringUtil {
 
     /**
      * integer2string
-     * @param integer
-     * @return
      */
     public static String integer2string(int integer) {
         return ("" + integer);
@@ -131,8 +123,6 @@ public final class EgovStringUtil {
 
     /**
      * long2string
-     * @param longdata
-     * @return
      */
     public static String long2string(long longdata) {
         return String.valueOf(longdata);
@@ -140,8 +130,6 @@ public final class EgovStringUtil {
 
     /**
      * float2string
-     * @param floatdata
-     * @return
      */
     public static String float2string(float floatdata) {
         return String.valueOf(floatdata);
@@ -149,8 +137,6 @@ public final class EgovStringUtil {
 
     /**
      * double2string
-     * @param doubledata
-     * @return
      */
     public static String double2string(double doubledata) {
         return String.valueOf(doubledata);
@@ -158,8 +144,6 @@ public final class EgovStringUtil {
 
     /**
      * null2void
-     * @param str
-     * @return
      */
 	public static String null2void(String str) {
 		if (isNull(str)) {
@@ -170,8 +154,6 @@ public final class EgovStringUtil {
 
     /**
      * string2integer
-     * @param str
-     * @return
      */
 	public static int string2integer(String str) {
 		if (isNull(str)) {
@@ -182,8 +164,6 @@ public final class EgovStringUtil {
 
     /**
      * string2float
-     * @param str
-     * @return
      */
 	public static float string2float(String str) {
 		if (isNull(str)) {
@@ -194,8 +174,6 @@ public final class EgovStringUtil {
 
     /**
      * string2float
-     * @param str
-     * @return
      */
 	public static double string2double(String str) {
 		if (isNull(str)) {
@@ -206,8 +184,6 @@ public final class EgovStringUtil {
 
     /**
      * string2long
-     * @param str
-     * @return
      */
 	public static long string2long(String str) {
 		if (isNull(str)) {
@@ -218,9 +194,6 @@ public final class EgovStringUtil {
 
     /**
      * null2string
-     * @param str
-     * @param defaultValue
-     * @return
      */
 	public static String null2string(String str, String defaultValue) {
 		if (isNull(str)) {
@@ -231,9 +204,6 @@ public final class EgovStringUtil {
 
     /**
      * string2integer
-     * @param str
-     * @param defaultValue
-     * @return
      */
 	public static int string2integer(String str, int defaultValue) {
 		if (isNull(str)) {
@@ -244,9 +214,6 @@ public final class EgovStringUtil {
 
     /**
      * string2float
-     * @param str
-     * @param defaultValue
-     * @return
      */
 	public static float string2float(String str, float defaultValue) {
 		if (isNull(str)) {
@@ -257,9 +224,6 @@ public final class EgovStringUtil {
 
     /**
      * string2double
-     * @param str
-     * @param defaultValue
-     * @return
      */
 	public static double string2double(String str, double defaultValue) {
 		if (isNull(str)) {
@@ -270,9 +234,6 @@ public final class EgovStringUtil {
 
     /**
      * string2long
-     * @param str
-     * @param defaultValue
-     * @return
      */
 	public static long string2long(String str, long defaultValue) {
 		if (isNull(str)) {
@@ -283,9 +244,6 @@ public final class EgovStringUtil {
 
     /**
      * equals
-     * @param source
-     * @param target
-     * @return
      */
 	public static boolean equals(String source, String target) {
 		return null2void(source).equals(null2void(target));
@@ -293,10 +251,6 @@ public final class EgovStringUtil {
 
     /**
      * toSubString
-     * @param str
-     * @param beginIndex
-     * @param endIndex
-     * @return
      */
 	public static String toSubString(String str, int beginIndex, int endIndex) {
 		if (equals(str, "")) {
@@ -312,9 +266,6 @@ public final class EgovStringUtil {
 
     /**
      * toSubString
-     * @param source
-     * @param beginIndex
-     * @return
      */
 	public static String toSubString(String source, int beginIndex) {
 		if (equals(source, "")) {
@@ -328,13 +279,10 @@ public final class EgovStringUtil {
 
     /**
      * search
-     * @param source
-     * @param target
-     * @return
      */
 	public static int search(String source, String target) {
 		int result = 0;
-		String strCheck = new String(source);
+		String strCheck = source;
 		for (int i = 0; i < source.length();) {
 			int loc = strCheck.indexOf(target);
 			if (loc == -1) {
@@ -350,8 +298,6 @@ public final class EgovStringUtil {
 
     /**
      * trim
-     * @param str
-     * @return
      */
 	public static String trim(String str) {
 		return str.trim();
@@ -359,58 +305,37 @@ public final class EgovStringUtil {
 
     /**
      * Left trim
-     * @param str
-     * @return
      */
 	public static String ltrim(String str) {
-		int index = 0;
-		while (' ' == str.charAt(index++)) {
-
+		int i = 0;
+		while (i < str.length() && Character.isWhitespace(str.charAt(i))) {
+			i++;
 		}
-
-		if (index > 0) {
-			str = str.substring(index - 1);
-		}
-
-		return str;
+		return str.substring(i);
 	}
 
 	/**
 	 * Right trim
-	 * @param str
-	 * @return
 	 */
 	public static String rtrim(String str) {
-		int index = str.length();
-		while (' ' == str.charAt(--index)) {
-
+		int i = str.length()-1;
+		while (i >= 0 && Character.isWhitespace(str.charAt(i))) {
+			i--;
 		}
-
-		if (index < str.length()) {
-			str = str.substring(0, index + 1);
-		}
-
-		return str;
+		return str.substring(0, i+1);
 	}
 
 	/**
 	 * concat
-	 * @param str1
-	 * @param str2
-	 * @return
 	 */
 	public static String concat(String str1, String str2) {
-		StringBuffer sb = new StringBuffer(str1);
-		sb.append(str2);
-		return sb.toString();
+		StringBuilder result = new StringBuilder(str1);
+		result.append(str2);
+		return result.toString();
 	}
 
 	/**
 	 * Left pad
-	 * @param str
-	 * @param len
-	 * @param pad
-	 * @return
 	 */
 	public static String lPad(String str, int len, char pad) {
 		return lPad(str, len, pad, false);
@@ -418,35 +343,19 @@ public final class EgovStringUtil {
 
 	/**
 	 * Left pad
-	 * 
-	 * @param str
-	 * @param len
-	 * @param pad
-	 * @param isTrim
-	 * @return
 	 */
 	public static String lPad(String str, int len, char pad, boolean isTrim) {
-		if (isNull(str)) {
-			return null;
+		if (isNull(str)) return null;
+		if (isTrim) str = trim(str);
+        StringBuilder result = new StringBuilder(str);
+        for (int i = result.length(); i < len; i++) {
+			result.insert(0, pad);
 		}
-
-		if (isTrim) {
-			str = str.trim();
-		}
-
-		for (int i = str.length(); i < len; i++) {
-			str = pad + str;
-		}
-
-		return str;
+        return result.toString();
 	}
 
 	/**
 	 * Right pad
-	 * @param str
-	 * @param len
-	 * @param pad
-	 * @return
 	 */
 	public static String rPad(String str, int len, char pad) {
 		return rPad(str, len, pad, false);
@@ -454,60 +363,39 @@ public final class EgovStringUtil {
 
 	/**
 	 * Right pad
-	 * @param str
-	 * @param len
-	 * @param pad
-	 * @param isTrim
-	 * @return
 	 */
 	public static String rPad(String str, int len, char pad, boolean isTrim) {
-		if (isNull(str)) {
-			return null;
+		if (isNull(str)) return null;
+		if (isTrim) str = trim(str);
+        StringBuilder result = new StringBuilder(str);
+        for (int i = result.length(); i < len; i++) {
+			result.append(pad);
 		}
-
-		if (isTrim) {
-			str = str.trim();
-		}
-
-		for (int i = str.length(); i < len; i++) {
-			str = str + pad;
-		}
-
-		return str;
+		return result.toString();
 	}
 
 	/**
 	 * alignLeft
-	 * @param str
-	 * @param length
-	 * @return
 	 */
 	public static String alignLeft(String str, int length) {
 		return alignLeft(str, length, false);
 	}
 
     /**
-     * <p>
      * 문자열의 뒷쪽에 지정한 길이만큼 공백으로 채움
-     * </p>
-     * @param str
-     * @param length
-     * @param isEllipsis
-     * @return
      */
     public static String alignLeft(String str, int length, boolean isEllipsis) {
-        if (str.length() <= length) {
-            StringBuffer temp = new StringBuffer(str);
+		StringBuilder result = new StringBuilder(str);
+		if (str.length() <= length) {
             for (int i = 0; i < (length - str.length()); i++) {
-                temp.append(WHITE_SPACE);
+				result.append(WHITE_SPACE);
             }
-            return temp.toString();
+            return result.toString();
         } else {
             if (isEllipsis) {
-                StringBuffer temp = new StringBuffer(length);
-                temp.append(str.substring(0, length - 3));
-                temp.append("...");
-                return temp.toString();
+				result.append(str, 0, length - 3);
+				result.append("...");
+                return result.toString();
             } else {
                 return str.substring(0, length);
             }
@@ -516,9 +404,6 @@ public final class EgovStringUtil {
 
     /**
      * alignRight
-     * @param str
-     * @param length
-     * @return
      */
     public static String alignRight(String str, int length) {
         return alignRight(str, length, false);
@@ -526,25 +411,20 @@ public final class EgovStringUtil {
 
     /**
      * alignRight
-     * @param str
-     * @param length
-     * @param isEllipsis
-     * @return
      */
     public static String alignRight(String str, int length, boolean isEllipsis) {
-        if (str.length() <= length) {
-            StringBuffer temp = new StringBuffer(length);
+		StringBuilder result = new StringBuilder(length);
+		if (str.length() <= length) {
             for (int i = 0; i < (length - str.length()); i++) {
-                temp.append(WHITE_SPACE);
+				result.append(WHITE_SPACE);
             }
-            temp.append(str);
-            return temp.toString();
+			result.append(str);
+            return result.toString();
         } else {
             if (isEllipsis) {
-                StringBuffer temp = new StringBuffer(length);
-                temp.append(str.substring(0, length - 3));
-                temp.append("...");
-                return temp.toString();
+				result.append(str, 0, length - 3);
+				result.append("...");
+                return result.toString();
             } else {
                 return str.substring(0, length);
             }
@@ -553,9 +433,6 @@ public final class EgovStringUtil {
 
     /**
      * alignCenter
-     * @param str
-     * @param length
-     * @return
      */
     public static String alignCenter(String str, int length) {
         return alignCenter(str, length, false);
@@ -563,15 +440,11 @@ public final class EgovStringUtil {
 
     /**
      * alignCenter
-     * @param str
-     * @param length
-     * @param isEllipsis
-     * @return
      */
     public static String alignCenter(String str, int length, boolean isEllipsis) {
-        if (str.length() <= length) {
-            StringBuffer temp = new StringBuffer(length);
-            int leftMargin = (int) (length - str.length()) / 2;
+		StringBuilder result = new StringBuilder(length);
+		if (str.length() <= length) {
+            int leftMargin = (length - str.length()) / 2;
             int rightMargin;
             if ((leftMargin * 2) == (length - str.length())) {
                 rightMargin = leftMargin;
@@ -579,19 +452,18 @@ public final class EgovStringUtil {
                 rightMargin = leftMargin + 1;
             }
             for (int i = 0; i < leftMargin; i++) {
-                temp.append(WHITE_SPACE);
+				result.append(WHITE_SPACE);
             }
-            temp.append(str);
+			result.append(str);
             for (int i = 0; i < rightMargin; i++) {
-                temp.append(WHITE_SPACE);
+				result.append(WHITE_SPACE);
             }
-            return temp.toString();
+            return result.toString();
         } else {
             if (isEllipsis) {
-                StringBuffer temp = new StringBuffer(length);
-                temp.append(str.substring(0, length - 3));
-                temp.append("...");
-                return temp.toString();
+				result.append(str, 0, length - 3);
+				result.append("...");
+                return result.toString();
             } else {
                 return str.substring(0, length);
             }
@@ -600,8 +472,6 @@ public final class EgovStringUtil {
 
     /**
      * capitalize
-     * @param str
-     * @return
      */
     public static String capitalize(String str) {
         return !isNull(str) ? str.substring(0, 1).toUpperCase() + str.substring(1).toLowerCase() : str;
@@ -609,12 +479,8 @@ public final class EgovStringUtil {
 
     /**
      * isPatternMatch
-     * @param str
-     * @param pattern
-     * @return
-     * @throws Exception
      */
-	public static boolean isPatternMatch(String str, String pattern) throws Exception {
+	public static boolean isPatternMatch(String str, String pattern) {
 		Matcher matcher = Pattern.compile(pattern).matcher(str);
 		LOGGER.debug("{}", matcher);
 		return matcher.matches();
@@ -622,35 +488,26 @@ public final class EgovStringUtil {
 
 	/**
 	 * toEng
-	 * @param kor
-	 * @return
-	 * @throws UnsupportedEncodingException
-	 */
+     */
     public static String toEng(String kor) throws UnsupportedEncodingException {
         if (isNull(kor)) {
             return null;
         }
-        return new String(kor.getBytes("KSC5601"), "8859_1");
+        return new String(kor.getBytes("KSC5601"), StandardCharsets.ISO_8859_1);
     }
 
     /**
      * toKor
-     * @param en
-     * @return
-     * @throws UnsupportedEncodingException
      */
     public static String toKor(String en) throws UnsupportedEncodingException {
         if (isNull(en)) {
             return null;
         }
-        return new String(en.getBytes("8859_1"), "euc-kr");
+        return new String(en.getBytes(StandardCharsets.ISO_8859_1), "euc-kr");
     }
 
     /**
      * countOf
-     * @param str
-     * @param charToFind
-     * @return
      */
     public static int countOf(String str, String charToFind) {
         int findLength = charToFind.length();
@@ -670,7 +527,7 @@ public final class EgovStringUtil {
      */
 	public static String encodePassword(String password, String algorithm) {
 		byte[] unencodedPassword = password.getBytes();
-		MessageDigest md = null;
+		MessageDigest md;
 
 		try {
 			md = MessageDigest.getInstance(algorithm);
@@ -683,16 +540,15 @@ public final class EgovStringUtil {
 		md.reset();
 		md.update(unencodedPassword);
 		byte[] encodedPassword = md.digest();
-		StringBuffer buf = new StringBuffer();
+		StringBuilder result = new StringBuilder();
+        for (byte b : encodedPassword) {
+            if (((int) b & 0xff) < 0x10) {
+				result.append("0");
+            }
+			result.append(Long.toString((int) b & 0xff, 16));
+        }
 
-		for (int i = 0; i < encodedPassword.length; i++) {
-			if (((int) encodedPassword[i] & 0xff) < 0x10) {
-				buf.append("0");
-			}
-			buf.append(Long.toString((int) encodedPassword[i] & 0xff, 16));
-		}
-
-		return buf.toString();
+		return result.toString();
 	}
 
     /**
@@ -732,14 +588,14 @@ public final class EgovStringUtil {
      * @return String converting result
      */
 	public static String swapFirstLetterCase(String str) {
-		StringBuffer sbuf = new StringBuffer(str);
-		sbuf.deleteCharAt(0);
+		StringBuilder result = new StringBuilder(str);
+		result.deleteCharAt(0);
 		if (Character.isLowerCase(str.substring(0, 1).toCharArray()[0])) {
-			sbuf.insert(0, str.substring(0, 1).toUpperCase());
+			result.insert(0, str.substring(0, 1).toUpperCase());
 		} else {
-			sbuf.insert(0, str.substring(0, 1).toLowerCase());
+			result.insert(0, str.substring(0, 1).toLowerCase());
 		}
-		return sbuf.toString();
+		return result.toString();
 	}
 
     /**
@@ -790,7 +646,7 @@ public final class EgovStringUtil {
      * @return String[]
      */
 	public static String[] getStringArray(String str, String strToken) {
-		if (str.indexOf(strToken) != -1) {
+		if (str.contains(strToken)) {
 			StringTokenizer st = new StringTokenizer(str, strToken);
 			String[] stringArray = new String[st.countTokens()];
 			for (int i = 0; st.hasMoreTokens(); i++) {
@@ -830,7 +686,7 @@ public final class EgovStringUtil {
      * @return which empty string or not.
      */
 	public static boolean isEmpty(String str) {
-		return (str == null || str.length() == 0);
+		return (str == null || str.isEmpty());
 	}
 
     /**
@@ -846,7 +702,7 @@ public final class EgovStringUtil {
      */
 	public static String replace(String str, String replacedStr, String replaceStr) {
 		String newStr = "";
-		if (str.indexOf(replacedStr) != -1) {
+		if (str.contains(replacedStr)) {
 			String s1 = str.substring(0, str.indexOf(replacedStr));
 			String s2 = str.substring(str.indexOf(replacedStr) + 1);
 			newStr = s1 + replaceStr + s2;
@@ -933,14 +789,13 @@ public final class EgovStringUtil {
 			return false;
 		}
 		int strSize = str.length();
-		int validSize = invalidChars.length;
 		for (int i = 0; i < strSize; i++) {
 			char ch = str.charAt(i);
-			for (int j = 0; j < validSize; j++) {
-				if (invalidChars[j] == ch) {
-					return true;
-				}
-			}
+            for (char invalidChar : invalidChars) {
+                if (invalidChar == ch) {
+                    return true;
+                }
+            }
 		}
 		return false;
 	}
@@ -1048,12 +903,12 @@ public final class EgovStringUtil {
 			return null;
 		}
 		int difference = cipers - originalStrLength;
-		StringBuffer strBuf = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		for (int i = 0; i < difference; i++) {
-			strBuf.append(ch);
+			result.append(ch);
 		}
-		strBuf.append(originalStr);
-		return strBuf.toString();
+		result.append(originalStr);
+		return result.toString();
 	}
 
     /**
@@ -1061,15 +916,15 @@ public final class EgovStringUtil {
      * @param foo The text to check.
      * @return Whether empty.
      */
-	public static final boolean isEmptyTrimmed(String foo) {
-		return (foo == null || foo.trim().length() == 0);
+	public static boolean isEmptyTrimmed(String foo) {
+		return (foo == null || foo.trim().isEmpty());
 	}
 
     /**
      * Return token list
-     * @param lst
-     * @param separator
-     * @return
+     * @param lst using commas as separators
+     * @param separator separators
+	 * @return List result
      */
 	public static List<String> getTokens(String lst, String separator) {
 		List<String> tokens = new ArrayList<String>();
@@ -1090,8 +945,8 @@ public final class EgovStringUtil {
 
     /**
      * Return token list which is separated by ","
-     * @param lst
-     * @return
+	 * @param lst using commas as separators
+     * @return List result
      */
 	public static List<?> getTokens(String lst) {
         return getTokens(lst, ",");
@@ -1104,7 +959,7 @@ public final class EgovStringUtil {
      * @return String result
      */
 	public static String convertToCamelCase(String targetString, char posChar) {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		boolean nextUpper = false;
 		String allLower = targetString.toLowerCase();
 		for (int i = 0; i < allLower.length(); i++) {

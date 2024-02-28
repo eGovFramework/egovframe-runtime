@@ -14,7 +14,7 @@ import static org.junit.Assert.assertTrue;
 public class EgovDigestServiceTest {
     @Resource(name="digestService")
     EgovDigestService digestService;
-    
+
     @Test
     public void testDigest() {
 		String data = "egovframe";

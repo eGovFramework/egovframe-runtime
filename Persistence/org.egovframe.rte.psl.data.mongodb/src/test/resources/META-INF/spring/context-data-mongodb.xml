@@ -10,7 +10,7 @@
     <context:property-placeholder location="classpath:META-INF/spring/mongo.properties"/>
 
     <mongo:mongo-client id="mongoClient" host="${mongodb.host}" port="${mongodb.port}"
-                        credential="${mongodb.username}:${mongodb.password}" />
+                        credential="${mongodb.username}:${mongodb.password}@${mongodb.database}" />
 
     <mongo:db-factory id="mongoDbFactory" mongo-client-ref="mongoClient" dbname="${mongodb.database}" />
 

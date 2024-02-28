@@ -4,7 +4,6 @@ import org.egovframe.rte.fdl.cmmn.exception.FdlException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
@@ -29,12 +28,14 @@ import static org.junit.Assert.assertEquals;
  * </pre>
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath*:/spring/context-common.xml",
-    "classpath*:/spring/context-properties.xml" })
-public class PropertyServiceRefreshTest extends AbstractJUnit4SpringContextTests {
+@ContextConfiguration(locations = {
+        "classpath*:/spring/context-common.xml",
+        "classpath*:/spring/context-properties.xml"
+})
+public class PropertyServiceRefreshTest {
 
     @Resource(name = "propertyService")
-    protected EgovPropertyService propertyService = null;
+    protected EgovPropertyService propertyService;
 
     /**
      * 시스템 재가동없이 Property를 리로드
@@ -43,10 +44,16 @@ public class PropertyServiceRefreshTest extends AbstractJUnit4SpringContextTests
      */
     @Test
     public void testRefreshPropertiesFiles() throws IOException, FdlException {
-        assertEquals("first token", propertyService.getString("tokens_on_multiple_lines"));
+
+        for (String value : propertyService.getStringArray("tokens_on_multiple_lines")) {
+            System.out.println("##### tokens_on_multiple_lines >>> " + value);
+        }
+
+        assertEquals(4, propertyService.getStringArray("tokens_on_multiple_lines").length);
+        assertEquals("first token refresh", propertyService.getString("tokens_on_multiple_lines"));
         assertEquals(new Double(1234), new Double(propertyService.getDouble("number.double")));
         propertyService.refreshPropertyFiles();
-        assertEquals("first token", propertyService.getString("tokens_on_multiple_lines"));
+        assertEquals("first token refresh", propertyService.getString("tokens_on_multiple_lines"));
         assertEquals(new Double(1234), new Double(propertyService.getDouble("number.double")));
     }
 

@@ -14,7 +14,6 @@ import javax.annotation.Resource;
 
 import static org.junit.Assert.assertEquals;
 
-
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:/spring/context-ehcache.xml" })
 public class CacheableTest {
@@ -35,7 +34,5 @@ public class CacheableTest {
 		
 		assertEquals(((Employee)value.get()).getName(), employee.getName());
 	}
-
-
 
 }

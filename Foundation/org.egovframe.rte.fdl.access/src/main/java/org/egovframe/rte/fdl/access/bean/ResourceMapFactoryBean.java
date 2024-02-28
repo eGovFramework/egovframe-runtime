@@ -26,15 +26,15 @@ import java.util.Map;
  *
  * <p>Desc.: 접근제한 정보를 처리하는 factory bean 클래스</p>
  *
- * @author Egovframework Center
+ * @author ESFC
  * @since 2019.10.01
  * @version 3.9
  * <pre>
  * 개정이력(Modification Information)
  *
- * 수정일		수정자				    수정내용
+ * 수정일		수정자				수정내용
  * ----------------------------------------------
- * 2019.10.01	Egovframework Center	최초 생성
+ * 2019.10.01   ESFC            최초 생성
  *
  * </pre>
  */

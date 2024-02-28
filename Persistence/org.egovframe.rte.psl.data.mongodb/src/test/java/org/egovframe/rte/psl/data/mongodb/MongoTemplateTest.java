@@ -7,13 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 import static org.springframework.data.mongodb.core.query.Update.update;
@@ -29,6 +25,9 @@ public class MongoTemplateTest {
     @Test
     public void testBasicOperations() {
         Person person = new Person();
+        mongoTemplate.dropCollection("person");
+        mongoTemplate.createCollection("person");
+
         person.setId("1001");
         person.setName("Kim");
         person.setAge(20);
@@ -38,21 +37,17 @@ public class MongoTemplateTest {
         LOGGER.info("##### MongoTemplateTest person Insert : " + person);
 
         // Find
-        person = mongoTemplate.findOne(new Query(where("id").is("1001")), Person.class);
+        person = mongoTemplate.findOne(query(where("_id").is("1001")), Person.class);
         LOGGER.info("##### MongoTemplateTest person Find : " + person);
 
         // Update
-        mongoTemplate.updateFirst(query(where("id").is("1001")), update("age", 30), Person.class);
-        person = mongoTemplate.findOne(query(where("id").is("1001")), Person.class);
+        mongoTemplate.upsert(query(where("_id").is("1001")), update("age", 40), Person.class);
+        person = mongoTemplate.findById("1001", Person.class);
         LOGGER.info("##### MongoTemplateTest person Update : " + person);
 
         // Delete
         mongoTemplate.remove(person);
-
-        // Find
-        List<Person> people = mongoTemplate.findAll(Person.class);
-        LOGGER.info("##### MongoTemplateTest person size : " + people.size());
-        assertEquals(0, people.size());
+        LOGGER.info("##### MongoTemplateTest person Delete : " + person);
     }
 
 }

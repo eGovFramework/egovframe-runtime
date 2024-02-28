@@ -36,21 +36,23 @@ import java.util.Map;
  *
  * <p>Desc.: 인증 및 접근제한 인터셉터</p>
  *
- * @author Egovframework Center
+ * @author ESFC
  * @since 2019.10.01
  * @version 3.9
  * <pre>
  * 개정이력(Modification Information)
  *
- * 수정일		수정자				    수정내용
+ * 수정일		수정자				수정내용
  * ----------------------------------------------
- * 2019.10.01	Egovframework Center	최초 생성
+ * 2019.10.01	ESFC            최초 생성
  * </pre>
  */
 public class EgovAccessInterceptor implements HandlerInterceptor, ApplicationContextAware {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EgovAccessInterceptor.class);
     private ApplicationContext context;
+
+
 
     @Override
     public void setApplicationContext(ApplicationContext context) throws BeansException {
@@ -61,6 +63,8 @@ public class EgovAccessInterceptor implements HandlerInterceptor, ApplicationCon
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
         LOGGER.debug("##### EgovAccessInterceptor Start #####");
+
+
 
         // 인증 체크
         boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();

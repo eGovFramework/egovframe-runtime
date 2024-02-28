@@ -125,7 +125,7 @@ public class EgovNumericUtilTest {
 			assertEquals(ArithmeticException.class, exceptionClass);
 		}
 
-		assertEquals("1.22", EgovNumericUtil.divide("15.23", "12.45", EgovNumericUtil.ROUND_UP));
+		assertEquals("1.23", EgovNumericUtil.divide("15.23", "12.45", 2, EgovNumericUtil.ROUND_UP));
 
 		assertEquals("1.224", EgovNumericUtil.divide("15.23", "12.45", 3, EgovNumericUtil.ROUND_UP));
 

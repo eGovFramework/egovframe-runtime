@@ -15,6 +15,7 @@
  */
 package org.egovframe.rte.fdl.access.config;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -26,13 +27,14 @@ import org.springframework.util.StringUtils;
 import org.w3c.dom.Element;
 
 import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 
 /**
  * egov-access schema namespace 'config' element 처리를 담당하는 bean definition parser 클래스
  *
  * <p>Desc.: 설정 간소화 처리에 사용되는 bean definition parser</p>
  *
- * @author Egovframework Center
+ * @author ESFC
  * @since 2019.10.01
  * @version 3.9
  * <pre>
@@ -40,8 +42,8 @@ import java.io.ByteArrayInputStream;
  *
  * 수정일		수정자				    수정내용
  * ----------------------------------------------
- * 2019.10.01	Egovframework Center	최초 생성
- * 2019.12.30	신용호					mappingPath 추가
+ * 2019.10.01	ESFC                최초 생성
+ * 2019.12.30	신용호                mappingPath 추가
  * </pre>
  */
 public class EgovAccessConfigBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
@@ -56,7 +58,7 @@ public class EgovAccessConfigBeanDefinitionParser extends AbstractSingleBeanDefi
     @Override
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
 
-        LOGGER.debug("##### EgovAccessConfigBeanDefinitionParser doParse Execute #####");
+        LOGGER.debug("EgovAccessConfigBeanDefinitionParser doParse Execute !!!");
 
         String globalAuthen = element.getAttribute("globalAuthen");
         if (StringUtils.hasText(globalAuthen)) {
@@ -100,63 +102,55 @@ public class EgovAccessConfigBeanDefinitionParser extends AbstractSingleBeanDefi
         if (StringUtils.hasText(excludeList)) {
             builder.addPropertyValue("excludeList", excludeList);
         }
-        
+
         String mappingPath = element.getAttribute("mappingPath");
-        LOGGER.debug("##### EgovAccessConfigBeanDefinitionParser mappingPath >>> {}", mappingPath);
 
-        String beanDefinitionBuilderString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                "<beans xmlns=\"http://www.springframework.org/schema/beans\"\n" +
-                "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
-                "    xmlns:mvc=\"http://www.springframework.org/schema/mvc\"\n" +
-                "    xsi:schemaLocation=\"http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd\n" +
-                "        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd\">\n";
+        StringBuffer sb = new StringBuffer();
+        sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+        sb.append("<beans xmlns=\"http://www.springframework.org/schema/beans\"\n");
+        sb.append("    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
+        sb.append("    xmlns:mvc=\"http://www.springframework.org/schema/mvc\"\n");
+        sb.append("    xsi:schemaLocation=\"http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd\n");
+        sb.append("        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd\">\n");
+        sb.append("    <beans>\n");
+        sb.append("        <mvc:interceptors>\n");
+        sb.append("            <mvc:interceptor>\n");
+        sb.append("                <mvc:mapping path=\"").append(mappingPath).append("\"/>\n");
 
-        if ("dummy".equals(globalAuthen.toLowerCase()) || "security".equals(globalAuthen.toLowerCase())) {
-            beanDefinitionBuilderString += "    <beans profile=\"session\">\n";
-        } else {
-            beanDefinitionBuilderString += "    <beans profile=\"" + globalAuthen + "\">\n";
-        }
-
-        beanDefinitionBuilderString +=
-                "       <mvc:interceptors>\n" +
-                "           <mvc:interceptor>\n" +
-                "               <mvc:mapping path=\""+mappingPath+"\"/>\n";
-
-        String[] list = excludeList.split("\\,");
+        String[] list = excludeList.split(",");
         for (String path : list) {
-            beanDefinitionBuilderString += "<mvc:exclude-mapping path=\"" + path.trim() + "\" />\n";
+            sb.append("<mvc:exclude-mapping path=\"").append(path.trim()).append("\" />\n");
         }
 
-        beanDefinitionBuilderString +=
-                "               <bean class=\"org.egovframe.rte.fdl.access.interceptor.EgovAccessInterceptor\"/>\n" +
-                "           </mvc:interceptor>\n" +
-                "       </mvc:interceptors>\n" +
-                "   </beans>\n" +
-                "</beans>";
+        sb.append("                <bean class=\"org.egovframe.rte.fdl.access.interceptor.EgovAccessInterceptor\"/>\n");
+        sb.append("            </mvc:interceptor>\n");
+        sb.append("        </mvc:interceptors>\n");
+        sb.append("    </beans>\n");
+        sb.append("</beans>");
 
-        try {
-            parserContext.getReaderContext().getReader().setValidationMode(XmlBeanDefinitionReader.VALIDATION_XSD);
-            LOGGER.debug("##### EgovAccessConfigBeanDefinitionParser interceptor httpd load Start #####");
-            parserContext.getReaderContext().getReader().loadBeanDefinitions(
-                    new InputStreamResource(
-                            new ByteArrayInputStream(beanDefinitionBuilderString.getBytes("UTF-8"))
-                    )
-            );
-            LOGGER.debug("##### EgovAccessConfigBeanDefinitionParser interceptor httpd xml >>> {} #####", beanDefinitionBuilderString);
-            LOGGER.debug("##### EgovAccessConfigBeanDefinitionParser interceptor httpd load End #####");
-            parserContext.getReaderContext().getReader().setValidationMode(XmlBeanDefinitionReader.VALIDATION_AUTO);
-        } catch (IllegalArgumentException iae) {
-            LOGGER.error("##### EgovAccessConfigBeanDefinitionParser IllegalArgumentException >>> " + iae.getMessage());
-            throw new RuntimeException("##### EgovAccessConfigBeanDefinitionParser IllegalArgumentException >>> " + iae.getMessage());
-        } catch (Exception e) {
-            LOGGER.error("##### EgovAccessConfigBeanDefinitionParser Exception >>> " + e.getMessage());
-            throw new RuntimeException("##### EgovAccessConfigBeanDefinitionParser Exception >>> " + e.getMessage());
+        String profile = System.getProperty("spring.profiles.active");
+
+        LOGGER.debug("EgovAccessConfigBeanDefinitionParser profile >>> {}", profile);
+        LOGGER.debug("EgovAccessConfigBeanDefinitionParser globalAuthen >>> {}", globalAuthen);
+
+        if (((ObjectUtils.isEmpty(profile) && "session".equals(globalAuthen))) ||
+                (ObjectUtils.isNotEmpty(profile) && profile.contains(globalAuthen)) ) {
+            try {
+                parserContext.getReaderContext().getReader().setValidationMode(XmlBeanDefinitionReader.VALIDATION_XSD);
+                LOGGER.debug("EgovAccessConfigBeanDefinitionParser httpd load start...");
+                parserContext.getReaderContext().getReader().loadBeanDefinitions(new InputStreamResource(new ByteArrayInputStream(sb.toString().getBytes(StandardCharsets.UTF_8))));
+                LOGGER.debug("EgovAccessConfigBeanDefinitionParser httpd load end...");
+                parserContext.getReaderContext().getReader().setValidationMode(XmlBeanDefinitionReader.VALIDATION_AUTO);
+            } catch (IllegalArgumentException iae) {
+                LOGGER.error("[["+iae.getClass()+"/IllegalArgumentException] Try/Catch... Runing : "+ iae.getMessage());
+                throw new RuntimeException("[["+iae.getClass()+"/IllegalArgumentException] Try/Catch... Runing : "+ iae.getMessage());
+            } catch (Exception e) {
+                LOGGER.error("["+e.getClass()+"] Exception Try/Catch... Runing : " + e.getMessage());
+                throw new RuntimeException("["+e.getClass()+"] Exception Try/Catch... Runing : " + e.getMessage());
+            }
+
+            parserContext.getReaderContext().getReader().loadBeanDefinitions("classpath:/META-INF/spring/access/access-config.xml");
         }
-
-        LOGGER.debug("##### EgovAccessConfigBeanDefinitionParser access-config.xml load Start #####");
-        parserContext.getReaderContext().getReader().loadBeanDefinitions("classpath:/META-INF/spring/access/access-config.xml");
-        LOGGER.debug("##### EgovAccessConfigBeanDefinitionParser access-config.xml load End #####");
-
     }
 
 }

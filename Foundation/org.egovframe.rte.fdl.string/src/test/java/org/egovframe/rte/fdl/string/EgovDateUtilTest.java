@@ -15,7 +15,6 @@ import java.util.Date;
 
 import static org.junit.Assert.*;
 
-
 /**
  * @author sjyoon
  *
@@ -29,18 +28,18 @@ public class EgovDateUtilTest {
 	@Before
     public void onSetUp() throws Exception {
 
-		LOGGER.debug("###### EgovNumericUtilTest.onSetUp START ######");
+		LOGGER.debug("###### EgovDateUtilTest.onSetUp START ######");
 
-		LOGGER.debug("###### EgovNumericUtilTest.onSetUp END ######");
+		LOGGER.debug("###### EgovDateUtilTest.onSetUp END ######");
 
     }
 
     @After
     public void onTearDown() throws Exception {
 
-    	LOGGER.debug("###### EgovNumericUtilTest.onTearDown START ######");
+    	LOGGER.debug("###### EgovDateUtilTest.onTearDown START ######");
 
-    	LOGGER.debug("###### EgovNumericUtilTest.onTearDown END ######");
+    	LOGGER.debug("###### EgovDateUtilTest.onTearDown END ######");
     }
 
 	/**

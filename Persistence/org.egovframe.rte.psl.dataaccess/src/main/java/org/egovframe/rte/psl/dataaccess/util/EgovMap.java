@@ -15,7 +15,7 @@
  */
 package org.egovframe.rte.psl.dataaccess.util;
 
-import org.apache.commons.collections.map.ListOrderedMap;
+import org.apache.commons.collections4.map.ListOrderedMap;
 
 /**
  * Camel Case 표기법 변환 처리를 포함하는 Map 확장 클래스

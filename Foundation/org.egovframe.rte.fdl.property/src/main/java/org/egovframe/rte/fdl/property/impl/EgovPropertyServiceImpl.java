@@ -15,7 +15,9 @@
  */
 package org.egovframe.rte.fdl.property.impl;
 
-import org.apache.commons.collections.ExtendedProperties;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.commons.lang3.StringUtils;
 import org.egovframe.rte.fdl.cmmn.exception.FdlException;
 import org.egovframe.rte.fdl.property.EgovPropertyService;
 import org.slf4j.Logger;
@@ -33,13 +35,19 @@ import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.util.Assert;
 
 import java.io.IOException;
-import java.util.*;
+import java.io.InputStreamReader;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import static org.apache.commons.configuration2.PropertiesConfiguration.DEFAULT_ENCODING;
 
 /**
  * Property 서비스의 구현 클래스
- * 
+ *
  * <p><b>NOTE</b>: 이 서비스를 통해 어플리케이션에서 유일한 키값으로 키/값쌍을 가지고 오도록 서비스 한다.</p>
- * 
+ *
  * @author 실행환경 개발팀 김태호
  * @since 2009.02.01
  * @version 1.0
@@ -48,18 +56,17 @@ import java.util.*;
  *
  * 수정일		수정자				수정내용
  * ----------------------------------------------
- * 2009.02.01	김태호				최초 생성
- * 2014.08.12	Vincent Han			"properties" 속성이 없는 경우 처리
- * 2020.08.31	ESFC				Property 값을 정확히 등록하기 위해 put() 메소드를 addProperty() 메소드로 변경
+ * 2009.02.01	김태호			최초 생성
+ * 2014.08.12	Vincent Han		"properties" 속성이 없는 경우 처리
+ * 2020.08.31	ESFC			Property 값을 정확히 등록하기 위해 put() 메소드를 addProperty() 메소드로 변경
  * </pre>
  */
 public class EgovPropertyServiceImpl implements EgovPropertyService, ApplicationContextAware, InitializingBean, DisposableBean, ResourceLoaderAware {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(EgovPropertyServiceImpl.class);
 
-	private ExtendedProperties egovProperties = null;
-	private ResourceLoader resourceLoader = null;
-
+	private PropertiesConfiguration egovProperties;
+	private ResourceLoader resourceLoader;
 	private MessageSource messageSource;
 	private Set<?> extFileName;
 	private Map<?, ?> properties;
@@ -205,38 +212,10 @@ public class EgovPropertyServiceImpl implements EgovPropertyService, Application
 	}
 
 	/**
-	 * Vector 타입의 프로퍼티 값 얻기
-	 * @param name 프로퍼티키
-	 * @return Vector 타입의 값
-	 */
-	public Vector<?> getVector(String name) {
-		return getConfiguration().getVector(name);
-	}
-
-	/**
-	 * Vector 타입의 프로퍼티 값 얻기
-	 * @param name 프로퍼티키
-	 * @param def 디폴트 값
-	 * @return Vector 타입의 값
-	 */
-	public Vector<?> getVector(String name, Vector<?> def) {
-		return getConfiguration().getVector(name, def);
-	}
-
-	/**
-	 * 전체 키/값 쌍 얻기
-	 * @return Vector 타입의 값
-	 */
-	@SuppressWarnings("unchecked")
-	public Collection<String> getAllKeyValue() {
-		return getConfiguration().values();
-	}
-
-	/**
 	 * egovProperties 얻기
 	 * @return Properties of requested Service.
 	 */
-	private ExtendedProperties getConfiguration() {
+	private PropertiesConfiguration getConfiguration() {
 		return egovProperties;
 	}
 
@@ -267,7 +246,7 @@ public class EgovPropertyServiceImpl implements EgovPropertyService, Application
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void afterPropertiesSet() throws IOException, FdlException {
-		egovProperties = new ExtendedProperties();
+		egovProperties = new PropertiesConfiguration();
 
 		// 외부파일이 정의되었을때
 		if (extFileName != null) {
@@ -351,7 +330,7 @@ public class EgovPropertyServiceImpl implements EgovPropertyService, Application
 	 * @param encoding 인코딩정보
 	 * @throws IOException
 	 */
-	private void loadPropertyLoop(Resource[] resources, String encoding) throws IOException {
+	private void loadPropertyLoop(Resource[] resources, String encoding) {
 		Assert.notNull(resources, "Resource array must not be null");
 		for (int i = 0; i < resources.length; i++) {
 			loadPropertyRes(resources[i], encoding);
@@ -364,11 +343,15 @@ public class EgovPropertyServiceImpl implements EgovPropertyService, Application
 	 * @param encoding 인코딩정보
 	 * @throws IOException
 	 */
-	private void loadPropertyRes(Resource resource, String encoding) throws IOException {
+	private void loadPropertyRes(Resource resource, String encoding) {
 		LOGGER.debug(messageSource.getMessage("debug.properties.filename", new String[] { resource.getFilename(), encoding }, Locale.getDefault()));
-		ExtendedProperties egovProperty = new ExtendedProperties();
-		egovProperty.load(resource.getInputStream(), encoding);
-		egovProperties.combine(egovProperty);
+
+		try {
+			InputStreamReader inputStreamReader = new InputStreamReader(resource.getInputStream(), StringUtils.isEmpty(encoding) ? DEFAULT_ENCODING : encoding);
+			egovProperties.read(inputStreamReader);
+		} catch (ConfigurationException | IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }

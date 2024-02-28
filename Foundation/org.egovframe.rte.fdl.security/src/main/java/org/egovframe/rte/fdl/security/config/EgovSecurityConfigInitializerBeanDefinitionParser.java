@@ -36,24 +36,25 @@ import org.w3c.dom.Element;
  *
  * 수정일		수정자				수정내용
  * ----------------------------------------------
- * 2014.03.12	한성곤				Spring Security 설정 간소화 기능 추가
- * 2017.07.03	장동한				Spring Security 4.x 업그레이드(보안설정기능) 추가
+ * 2014.03.12	한성곤			Spring Security 설정 간소화 기능 추가
+ * 2017.07.03	장동한			Spring Security 4.x 업그레이드(보안설정기능) 추가
+ * 2023.08.31	ESFC			Spring 표현 언어(SpEL) 설정 옵션 추가
  * </pre>
  */
 public class EgovSecurityConfigInitializerBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(EgovSecurityConfigInitializerBeanDefinitionParser.class);
 
 	@Override
 	protected Class<?> getBeanClass(Element element) {
 		return SecurityConfigInitializer.class;
 	}
-	
+
 	@Override
 	protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-		
+
 		LOGGER.debug("Load '/META-INF/spring/security/security-config.xml'");
-		
+
 		parserContext.getReaderContext().getReader().loadBeanDefinitions("classpath*:/META-INF/spring/security/security-config.xml");
 		EgovSecurityHttp egovSecurityHttp = EgovSecurityHttp.getInstance();
 
@@ -62,20 +63,21 @@ public class EgovSecurityConfigInitializerBeanDefinitionParser extends AbstractS
 			LOGGER.debug("EgovSecurityConfigInitializerBeanDefinitionParser httpd load start...");
 		    /**
 		     * EgovSecurityHttp.getHttp
-		     * @param Sniff			 	: 응답에 대한 브라우저의 MIME 가로채기를 방지 옵션(활성:true, 비활성:false)
-		     * @param XFrameOptions 	: 프레임셋 동작여부 옵션(DENY:거부, SAMEORIGIN:허용) 
-		     * @param XssProtection 	: 브라우저가 XSS 공격에 사용될 수 있는 스크립트를 실행하지 않음 옵션(활성:true, 비활성:false)
-		     * @param Csrf 				: HTTP 요청과 악의적 인 웹 사이트의 요청을 거부 옵션(활성:true, 비활성:false)
-			 * @param CacheControl		: 브라우저 캐시를 수동으로 제어하기 위한 설정(캐시비활성:true, 캐시활성:false)
+			 * @param useExpressions	: Spring 표현 언어(SpEL) 설정 옵션(활성:true, 비활성:false)
+		     * @param sniff			 	: 응답에 대한 브라우저의 MIME 가로채기를 방지 옵션(활성:true, 비활성:false)
+		     * @param xFrameOptions 	: 프레임셋 동작여부 옵션(DENY:거부, SAMEORIGIN:허용)
+		     * @param xssProtection 	: 브라우저가 XSS 공격에 사용될 수 있는 스크립트를 실행하지 않음 옵션(활성:true, 비활성:false)
+			 * @param cacheControl		: 브라우저 캐시를 수동으로 제어하기 위한 설정(캐시비활성:true, 캐시활성:false)
+		     * @param csrf 				: HTTP 요청과 악의적 인 웹 사이트의 요청을 거부 옵션(활성:true, 비활성:false)
 		     * @return InputStreamResource
 		     */
 			parserContext.getReaderContext().getReader().loadBeanDefinitions(egovSecurityHttp.getHttp(
+					EgovSecurityConfigShare.useExpressions,
 					EgovSecurityConfigShare.sniff,
 					EgovSecurityConfigShare.xFrameOptions,
 					EgovSecurityConfigShare.xssProtection,
 					EgovSecurityConfigShare.cacheControl,
 					EgovSecurityConfigShare.csrf ));
-
 			parserContext.getReaderContext().getReader().setValidationMode(XmlBeanDefinitionReader.VALIDATION_AUTO);
 		} catch(IllegalArgumentException e) {
 		    LOGGER.error("[["+e.getClass()+"/IllegalArgumentException] Try/Catch... Runing : "+ e.getMessage());
@@ -92,7 +94,7 @@ public class EgovSecurityConfigInitializerBeanDefinitionParser extends AbstractS
 			LOGGER.debug("Load '/META-INF/spring/security/pointcut-config.xml'");
 			parserContext.getReaderContext().getReader().loadBeanDefinitions("classpath*:/META-INF/spring/security/pointcut-config.xml");
 		}
-		
+
 		String supportMethod = element.getAttribute("supportMethod");
 		if (supportMethod.equalsIgnoreCase("true")) {
 			LOGGER.debug("Load '/META-INF/spring/security/method-config.xml'");
