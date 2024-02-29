@@ -68,7 +68,7 @@ org.egovframe.rte
 - `org.egovframe.rte.fdl.idgnr` : 시스템을 개발할 때 필요한 유일한 ID를 생성할 수 있는 기능 제공
 - `org.egovframe.rte.fdl.logging` : 로그 처리와 관련된 기능 제공
 - `org.egovframe.rte.fdl.property` : 설정을 구성하거나 관리하는 기능 제공
-- `org.egovframe.rte.fdl.reactive` : 스프링 웸플럭스 구성과 관련된 기능 제공
+- `org.egovframe.rte.fdl.reactive` : 스프링 웹플럭스 구성과 관련된 기능 제공
 - `org.egovframe.rte.fdl.security` : 스프링 시큐리티를 기반으로 한 접근제어 권한관리 설정을 간소화할 수 있는 방법 제공
 - `org.egovframe.rte.fdl.string` : 시스템을 개발할 때 필요한 문자열 데이터를 다루기 위해 다양한 기능 제공
 - `org.egovframe.rte.fdl.xml` : XML 파일을 다루기 위해 다양한 기능 제공
