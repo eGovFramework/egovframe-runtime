@@ -1,4 +1,4 @@
-# 표준프레임워크 실행환경 4.1.0
+# 표준프레임워크 실행환경 4.2.0
 
 ![java](https://img.shields.io/badge/java-007396?style=for-the-badge&logo=JAVA&logoColor=white)
 ![Spring](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)
@@ -14,13 +14,12 @@
 - 실행환경 사용에 필수적이지 않은 서비스들은 [선택 서비스]로 분류하여 각 사업에서 선택적으로 적용할 수 있도록 제공
 - 핵심 서비스는 기본적으로 적용되며 선택 서비스는 각 사업의 필요에 맞게 개발환경을 통해 선택적으로 적용 가능
 
-### 실행환경 4.1.0 버전의 주요 특징
+### 실행환경 4.2.0 버전의 주요 특징
 
-- Spring Boot 2.7.0 지원
-- Spring Framework 5.3.20 버전으로 업그레이드
-- Spring Security 5.7.1 버전으로 업그레이드
-- Spring WebFlux 표준화 기반 구성을 위한 [WebFlux 적용 예제](https://www.egovframe.go.kr/home/sub.do?menuNo=37)<img width="912" alt="11" src="https://user-images.githubusercontent.com/51683963/230555013-4e5f2c3a-808a-42e0-89bd-6a783d20345a.png">
-
+- Spring Boot 2.7.12 지원
+- Spring Framework 5.3.27 버전으로 업그레이드
+- Spring Security 5.8.3 버전으로 업그레이드
+- 실행환경 4.2 라이브러리를 적용한 [WebFlux 예제](https://www.egovframe.go.kr/home/sub.do?menuNo=37)
 
 ## 실행환경 구성
 
@@ -37,6 +36,7 @@ org.egovframe.rte
   │  ├─org.egovframe.rte.fdl.idgnr
   │  ├─org.egovframe.rte.fdl.logging
   │  ├─org.egovframe.rte.fdl.property
+  │  ├─org.egovframe.rte.fdl.reactive
   │  ├─org.egovframe.rte.fdl.security
   │  ├─org.egovframe.rte.fdl.string
   │  └─org.egovframe.rte.fdl.xml
@@ -46,32 +46,43 @@ org.egovframe.rte
   ├─Persistence
   │  ├─org.egovframe.rte.psl.data.jpa
   │  ├─org.egovframe.rte.psl.data.mongodb
-  │  └─org.egovframe.rte.psl.dataaccess
+  │  ├─org.egovframe.rte.psl.dataaccess
+  │  ├─org.egovframe.rte.psl.reactive.cassandra
+  │  ├─org.egovframe.rte.psl.reactive.mongodb
+  │  ├─org.egovframe.rte.psl.reactive.r2dbc
+  │  └─org.egovframe.rte.psl.reavtive.redis
   └─Presentation
      ├─org.egovframe.rte.ptl.mvc
+     ├─org.egovframe.rte.ptl.reactive
      └─spring-modules-validation
 ```
 
 ### 실행환경 구성 설명
 
-- `org.egovframe.rte.bat.core` : 대용량 데이터 처리 지원을 위해 작업수행 및 결과 관리 및 스케줄링 관리 기능을 제공
-- `org.egovframe.rte.fdl.access` : Session 방식으로 접근제어 권한관리 설정을 간소화할 수 있는 방법을 제공
-- `org.egovframe.rte.fdl.cmmn` : 공통으로 사용되는 업무 흐름제어, 에러 처리 등의 기능을 제공
-- `org.egovframe.rte.fdl.crypto` : ARIA 블록암호 알고리즘 기반 암복호화 설정을 간소화할 수 있는 방법을 제공
-- `org.egovframe.rte.fdl.excel` : 엑셀파일을 구성하거나 서버에 업로드 다운로드 할 수 있는 기능을 제공
-- `org.egovframe.rte.fdl.filehandling` : 파일을 구성하거나 서버에 업로드 다운로드 할 수 있는 기능을 제공
-- `org.egovframe.rte.fdl.idgnr` : 시스템을 개발할 때 필요한 유일한 ID를 생성할 수 있는 기능을 제공
-- `org.egovframe.rte.fdl.logging` : 로그 처리와 관련된 기능을 제공
-- `org.egovframe.rte.fdl.property` : 설정을 구성하거나 관리하는 기능을 제공
-- `org.egovframe.rte.fdl.security` : 스프링 시큐리티를 기반으로 한 접근제어 권한관리 설정을 간소화할 수 있는 방법을 제공
-- `org.egovframe.rte.fdl.string` : 시스템을 개발할 때 필요한 문자열 데이터를 다루기 위해 다양한 기능을 제공
-- `org.egovframe.rte.fdl.xml` : XML 파일을 다루기 위해 다양한 기능을 제공
-- `org.egovframe.rte.itl.integration` : 전자정부 표준프레임워크 기반의 시스템이 타 시스템과의 연계를 위해 사용하는 인터페이스 표준을 정의
+- `org.egovframe.rte.bat.core` : 대용량 데이터 처리 지원을 위해 작업수행 및 결과 관리 및 스케줄링 관리 기능 제공
+- `org.egovframe.rte.fdl.access` : Session 방식으로 접근제어 권한관리 설정을 간소화할 수 있는 방법 제공
+- `org.egovframe.rte.fdl.cmmn` : 공통으로 사용되는 업무 흐름제어, 에러 처리 등의 기능 제공
+- `org.egovframe.rte.fdl.crypto` : ARIA 블록암호 알고리즘 기반 암복호화 설정을 간소화할 수 있는 방법 제공
+- `org.egovframe.rte.fdl.excel` : 엑셀파일을 구성하거나 서버에 업로드 다운로드 할 수 있는 기능 제공
+- `org.egovframe.rte.fdl.filehandling` : 파일을 구성하거나 서버에 업로드 다운로드 할 수 있는 기능 제공
+- `org.egovframe.rte.fdl.idgnr` : 시스템을 개발할 때 필요한 유일한 ID를 생성할 수 있는 기능 제공
+- `org.egovframe.rte.fdl.logging` : 로그 처리와 관련된 기능 제공
+- `org.egovframe.rte.fdl.property` : 설정을 구성하거나 관리하는 기능 제공
+- `org.egovframe.rte.fdl.reactive` : 스프링 웸플럭스 구성과 관련된 기능 제공
+- `org.egovframe.rte.fdl.security` : 스프링 시큐리티를 기반으로 한 접근제어 권한관리 설정을 간소화할 수 있는 방법 제공
+- `org.egovframe.rte.fdl.string` : 시스템을 개발할 때 필요한 문자열 데이터를 다루기 위해 다양한 기능 제공
+- `org.egovframe.rte.fdl.xml` : XML 파일을 다루기 위해 다양한 기능 제공
+- `org.egovframe.rte.itl.integration` : 전자정부 표준프레임워크 기반의 시스템이 타 시스템과의 연계를 위해 사용하는 인터페이스 표준 정의
 - `org.egovframe.rte.itl.webservice` : 전자정부 표준프레임워크 Integration 서비스에 따라 웹서비스를 요청하고 제공하기 위한 라이브러리
 - `org.egovframe.rte.psl.data.jpa` : Spring JPA 연동 예제 제공
 - `org.egovframe.rte.psl.data.mongodb` : Spring과 MongoDB 연동 예제 제공
-- `org.egovframe.rte.psl.dataaccess` : 데이터베이스 연결, 데이터처리, 트랜잭션 관리 기능을 제공
-- `org.egovframe.rte.ptl.mvc` : 화면 처리를 위한 기능을 제공
+- `org.egovframe.rte.psl.dataaccess` : 데이터베이스 연결, 데이터처리, 트랜잭션 관리 기능 제공
+- `org.egovframe.rte.psl.reactive.cassandra` : cassandra 연동(비동기) 기능 제공
+- `org.egovframe.rte.psl.reactive.mongodb` : mongodb 연동(비동기) 기능 제공
+- `org.egovframe.rte.psl.reactive.r2dbc` : r2dbc 연동(h2, 비동기) 기능 제공
+- `org.egovframe.rte.psl.reactive.redis` : redis 연동(비동기) 기능 제공
+- `org.egovframe.rte.ptl.mvc` : 화면 처리를 위한 기능 제공
+- `org.egovframe.rte.ptl.reactive` : 커스텀 어노테이션, 예외처리, 유효성검증 기능 제공 
 - `spring-modules-validation` : Form 데이터의 유효성을 검증하기 위한 라이브러리
 
 ## 실행환경 구동 방법
@@ -83,7 +94,7 @@ org.egovframe.rte
 ## 참조
 
 1. [Contribution 가이드](https://github.com/eGovFramework/egovframe-runtime/wiki)
-2. [실행환경 위키가이드](https://www.egovframe.go.kr/wiki/doku.php?id=egovframework:rte4.1)
+2. [실행환경 위키가이드](https://www.egovframe.go.kr/wiki/doku.php?id=egovframework:rte4.2)
 3. [개발환경 다운로드](https://www.egovframe.go.kr/home/sub.do?menuNo=94)
 4. [실행환경 다운로드](https://www.egovframe.go.kr/home/sub.do?menuNo=92)
 
