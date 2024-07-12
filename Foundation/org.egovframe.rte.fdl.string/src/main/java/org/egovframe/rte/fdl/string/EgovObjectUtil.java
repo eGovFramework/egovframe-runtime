@@ -15,9 +15,9 @@
  */
 package org.egovframe.rte.fdl.string;
 
-import com.sun.istack.internal.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.lang.Nullable;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
@@ -38,7 +38,8 @@ import java.util.Optional;
  *
  * 수정일		수정자				수정내용
  * ----------------------------------------------
- * 2009.06.01	윤성종				최초 생성
+ * 2009.06.01	윤성종			최초 생성
+ * 2023.08.31   ESFC			기능 추가(isEmpty(), Contribution 반영)
  * </pre>
  */
 public final class EgovObjectUtil {
@@ -142,7 +143,6 @@ public final class EgovObjectUtil {
     public static boolean isNull(Object object) {
         //return ((object == null) || object.equals(null));
 		return (object == null) ? true : false;
-
     }
 
 	/**
@@ -165,4 +165,5 @@ public final class EgovObjectUtil {
 			return obj instanceof Map ? ((Map)obj).isEmpty() : false;
 		}
 	}
+
 }

@@ -32,8 +32,8 @@ import java.sql.*;
  *
  * 수정일		수정자				수정내용
  * ----------------------------------------------
- * 2015.02.05	ESFC				최초 생성
- * 2020.08.31	ESFC				ES-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
+ * 2015.02.05	ESFC			최초 생성
+ * 2020.08.31	ESFC			ES-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
  * </pre>
  */
 public final class EgovResourceReleaser {

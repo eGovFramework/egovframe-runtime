@@ -26,6 +26,7 @@ import org.springframework.util.StringUtils;
 import org.w3c.dom.Element;
 
 import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 
 
 /**
@@ -67,14 +68,13 @@ public class EgovCryptoConfigBeanDefinitionParser extends AbstractSingleBeanDefi
 	 * @param element DefinitionElement 
 	 * @param parserContext DefinitionParserContext
 	 * @param bean BeanDefinitionBuilder 
-	 * 
-	 * @return void
-	 */
+	 *
+     */
 	@Override
 	protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder bean) {
 
 		LOGGER.debug("EgovCryptoConfigBeanDefinitionParser doParse Execute !!!");
-		
+
 		String initial = element.getAttribute("initial");
 		if (StringUtils.hasText(initial)) {
 			bean.addPropertyValue("initial", initial);
@@ -101,8 +101,14 @@ public class EgovCryptoConfigBeanDefinitionParser extends AbstractSingleBeanDefi
 				bean.addPropertyValue("algorithmKey", algorithmKey);
 			}
 		}
-		if(algorithmKey == null || algorithmKey.trim().equals("")){
+		if(algorithmKey == null || algorithmKey.trim().isEmpty()){
 			LOGGER.error("Egovframe EnvCrypto algorithmKey is not value!!! ");
+		} else {
+			if ("egovframe".equals(algorithmKey)) {
+				System.err.println("[EgovFramework Fatal ERROR] Since a fatal security threat may occur, " +
+						"the Crypto service default algorithm Key=\"egovframe\" must be changed to another keyword. " +
+						"For more details see https://www.egovframe.go.kr/wiki/doku.php?id=egovframework:rte4.1:fdl:crypto");
+			}
 		}
 
 		String algorithmKeyHash = element.getAttribute("algorithmKeyHash");
@@ -116,7 +122,7 @@ public class EgovCryptoConfigBeanDefinitionParser extends AbstractSingleBeanDefi
 				bean.addPropertyValue("algorithmKeyHash", algorithmKeyHash);
 			}
 		}
-		if(algorithmKeyHash == null || algorithmKeyHash.trim().equals("")){
+		if(algorithmKeyHash == null || algorithmKeyHash.trim().isEmpty()){
 			LOGGER.error("Egovframe EnvCrypto algorithmKeyHash is not value!!! ");
 		}
 		
@@ -131,53 +137,50 @@ public class EgovCryptoConfigBeanDefinitionParser extends AbstractSingleBeanDefi
 		}
 	
 		String sCryptoInit = "";
-		if(initial.toLowerCase().equals("true")){
+		if(initial.equalsIgnoreCase("true")){
 			sCryptoInit = "init-method=\"init\"";
 		}
-		
-		String sCryptoBeanDefinition = 
-		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + 
-		"<beans xmlns=\"http://www.springframework.org/schema/beans\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" + 
-		"    xmlns:p=\"http://www.springframework.org/schema/p\"\n" + 
-		"    xsi:schemaLocation=\"http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd\">\n" +
-		"\n" +
-		"	<bean id=\"egovEnvPasswordEncoderService\" class=\"org.egovframe.rte.fdl.cryptography.EgovPasswordEncoder\">\n" +
-		"		<property name=\"algorithm\" value=\""+ algorithm +"\"/>\n" + 
-		"		<property name=\"hashedPassword\" value=\"" + algorithmKeyHash +"\"/>\n" + 
-		"	</bean>\n" + 
-		"\n" + 
-		"	<bean id=\"egovEnvARIACryptoService\" class=\"org.egovframe.rte.fdl.cryptography.impl.EgovARIACryptoServiceImpl\">\n" +
-		"		<property name=\"passwordEncoder\" ref=\"egovEnvPasswordEncoderService\"/>\n" + 
-		"		<property name=\"blockSize\" value=\"" + cryptoBlockSize +"\"/>\n" + 
-		"	</bean>\n" + 
-		"\n" + 
-		"<bean id=\"egovEnvCryptoConfigurerService\" class=\"org.egovframe.rte.fdl.property.impl.EgovPropertyServiceImpl\">\n" + //destroy-method=\"destroy\"
-		"<property name=\"extFileName\">\n" +
-		"	<set>\n" +
-		"		<map>\n" +
-		"			<entry key=\"encoding\" value=\"UTF-8\"/>\n" +
-		"			<entry key=\"filename\" value=\"" + cryptoPropertyLocation + "\"/>\n" +
-		"		</map>\n" +
-		"	</set>\n" +
-		"</property>\n" +
-		"</bean>\n" +
-		"\n" + 
-		"	<bean id=\"egovEnvCryptoService\" class=\"org.egovframe.rte.fdl.cryptography.impl.EgovEnvCryptoServiceImpl\" "+sCryptoInit+">\n" +
-		"		<property name=\"passwordEncoder\" ref=\"egovEnvPasswordEncoderService\"/>\n" + 
-		"		<property name=\"cryptoService\" ref=\"egovEnvARIACryptoService\"/>\n" + 
-		"		<property name=\"cryptoConfigurer\" ref=\"egovEnvCryptoConfigurerService\"/>\n" + 
-		"		<property name=\"crypto\" value=\""+ crypto +"\"/>\n" + 
-		"		<property name=\"cryptoAlgorithm\" value=\""+ algorithm +"\"/>\n" + 
-		"		<property name=\"cyptoAlgorithmKey\" value=\""+ algorithmKey +"\"/>\n" + 
-		"		<property name=\"cyptoAlgorithmKeyHash\" value=\""+ algorithmKeyHash +"\"/>\n" + 
-		"		<property name=\"cryptoBlockSize\" value=\""+ cryptoBlockSize +"\"/>\n" + 
-		"	</bean>\n" + 
-		"</beans>\n";
+
+		StringBuffer sb = new StringBuffer();
+		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+		sb.append("<beans xmlns=\"http://www.springframework.org/schema/beans\"\n");
+		sb.append("    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
+		sb.append("    xmlns:p=\"http://www.springframework.org/schema/p\"\n");
+		sb.append("    xsi:schemaLocation=\"http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd\">\n");
+		sb.append("    <bean id=\"egovEnvPasswordEncoderService\" class=\"org.egovframe.rte.fdl.cryptography.EgovPasswordEncoder\">\n");
+		sb.append("        <property name=\"algorithm\" value=\"").append(algorithm).append("\"/>\n");
+		sb.append("        <property name=\"hashedPassword\" value=\"").append(algorithmKeyHash).append("\"/>\n");
+		sb.append("    </bean>\n");
+		sb.append("    <bean id=\"egovEnvARIACryptoService\" class=\"org.egovframe.rte.fdl.cryptography.impl.EgovARIACryptoServiceImpl\">\n");
+		sb.append("        <property name=\"passwordEncoder\" ref=\"egovEnvPasswordEncoderService\"/>\n");
+		sb.append("        <property name=\"blockSize\" value=\"").append(cryptoBlockSize).append("\"/>\n");
+		sb.append("    </bean>\n");
+		sb.append("    <bean id=\"egovEnvCryptoConfigurerService\" class=\"org.egovframe.rte.fdl.property.impl.EgovPropertyServiceImpl\">\n");
+		sb.append("        <property name=\"extFileName\">\n");
+		sb.append("            <set>\n");
+		sb.append("                <map>\n");
+		sb.append("                    <entry key=\"encoding\" value=\"UTF-8\"/>\n");
+		sb.append("                    <entry key=\"filename\" value=\"").append(cryptoPropertyLocation).append("\"/>\n");
+		sb.append("                </map>\n");
+		sb.append("            </set>\n");
+		sb.append("        </property>\n");
+		sb.append("    </bean>\n");
+		sb.append("    <bean id=\"egovEnvCryptoService\" class=\"org.egovframe.rte.fdl.cryptography.impl.EgovEnvCryptoServiceImpl\" ").append(sCryptoInit).append(">\n");
+		sb.append("        <property name=\"passwordEncoder\" ref=\"egovEnvPasswordEncoderService\"/>\n");
+		sb.append("        <property name=\"cryptoService\" ref=\"egovEnvARIACryptoService\"/>\n");
+		sb.append("        <property name=\"cryptoConfigurer\" ref=\"egovEnvCryptoConfigurerService\"/>\n");
+		sb.append("        <property name=\"crypto\" value=\"").append(crypto).append("\"/>\n");
+		sb.append("        <property name=\"cryptoAlgorithm\" value=\"").append(algorithm).append("\"/>\n");
+		sb.append("        <property name=\"cyptoAlgorithmKey\" value=\"").append(algorithmKey).append("\"/>\n");
+		sb.append("        <property name=\"cyptoAlgorithmKeyHash\" value=\"").append(algorithmKeyHash).append("\"/>\n");
+		sb.append("        <property name=\"cryptoBlockSize\" value=\"").append(cryptoBlockSize).append("\"/>\n");
+		sb.append("    </bean>\n");
+		sb.append("</beans>\n");
 
 		try {
 			parserContext.getReaderContext().getReader().setValidationMode(XmlBeanDefinitionReader.VALIDATION_XSD);
 			LOGGER.debug("EgovCryptoConfigBeanDefinitionParser httpd load start...");
-			parserContext.getReaderContext().getReader().loadBeanDefinitions(new InputStreamResource(new ByteArrayInputStream(sCryptoBeanDefinition.getBytes("UTF-8"))));
+			parserContext.getReaderContext().getReader().loadBeanDefinitions(new InputStreamResource(new ByteArrayInputStream(sb.toString().getBytes(StandardCharsets.UTF_8))));
 			LOGGER.debug("EgovCryptoConfigBeanDefinitionParser httpd load end...");
 			parserContext.getReaderContext().getReader().setValidationMode(XmlBeanDefinitionReader.VALIDATION_AUTO);
 		} catch(IllegalArgumentException e) {

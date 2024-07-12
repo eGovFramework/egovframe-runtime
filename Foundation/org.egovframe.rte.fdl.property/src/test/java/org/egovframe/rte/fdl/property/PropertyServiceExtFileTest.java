@@ -27,7 +27,8 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
 		"classpath*:/spring/context-common.xml",
- 		"classpath*:/spring/context-extfile.xml" })
+ 		"classpath*:/spring/context-extfile.xml"
+})
 public class PropertyServiceExtFileTest extends AbstractJUnit4SpringContextTests {
 
     @Resource(name = "propertyService")
@@ -39,9 +40,7 @@ public class PropertyServiceExtFileTest extends AbstractJUnit4SpringContextTests
      */
     @Test
     public void testPropertiesService() throws Exception {
-
         assertEquals("안녕하세요.", propertyService.getString("greet.message"));
-
     }
 
 }

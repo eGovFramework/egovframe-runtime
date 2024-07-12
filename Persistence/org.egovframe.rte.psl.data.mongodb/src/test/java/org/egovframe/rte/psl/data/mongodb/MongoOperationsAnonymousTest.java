@@ -29,19 +29,15 @@ public class MongoOperationsAnonymousTest {
     @Value("${mongodb.port}")
     private int mongodbPort;
 
-    @Value("${mongodb.database}")
-    private String mongodbDatabase;
-
     @Before
     public void setUp() {
         LOGGER.info("##### MongoDB host : " + mongodbHost);
         LOGGER.info("##### MongoDB port : " + mongodbPort);
-        LOGGER.info("##### MongoDB database : " + mongodbDatabase);
     }
 
     @Test
     public void testBasicOperations() {
-        MongoOperations mongoOperations = new MongoTemplate(MongoClients.create("mongodb://"+mongodbHost+":"+mongodbPort), mongodbDatabase);
+        MongoOperations mongoOperations = new MongoTemplate(MongoClients.create("mongodb://"+mongodbHost+":"+mongodbPort), "user");
 
         Person person = new Person();
         person.setId("1001");

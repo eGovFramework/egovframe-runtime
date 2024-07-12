@@ -29,15 +29,15 @@ import javax.sql.DataSource;
  *
  * <p>Desc.: 설정 간소화 처리에 사용되는 내부 factory bean</p>
  *
- * @author Egovframework Center
+ * @author ESFC
  * @since 2019.10.01
  * @version 3.9
  * <pre>
  * 개정이력(Modification Information)
  *
- * 수정일		수정자				    수정내용
+ * 수정일		수정자				수정내용
  * ----------------------------------------------
- * 2019.10.01	Egovframework Center	최초 생성
+ * 2019.10.01   ESFC            최초 생성
  * </pre>
  */
 public class AccessDataSourceFactoryBean implements FactoryBean<DataSource>, ApplicationContextAware {

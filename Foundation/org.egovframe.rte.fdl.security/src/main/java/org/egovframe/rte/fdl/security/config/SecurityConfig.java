@@ -28,11 +28,12 @@ import javax.sql.DataSource;
  * <pre>
  * 개정이력(Modification Information)
  *
- * 수정일		수정자					수정내용
+ * 수정일		수정자				수정내용
  * ----------------------------------------------
- * 2014.03.12	한성곤					Spring Security 설정 간소화 기능 추가
- * 2017.07.03	장동한					Spring Security 4.x 업그레이드(보안설정기능) 추가
- * 2020.05.27	Egovframework Center	CSRF Access Denied 처리 URL 추가
+ * 2014.03.12	한성곤			Spring Security 설정 간소화 기능 추가
+ * 2017.07.03	장동한			Spring Security 4.x 업그레이드(보안설정기능) 추가
+ * 2020.05.27	ESFC			CSRF Access Denied 처리 URL 추가
+ * 2023.08.31	ESFC			Spring 표현 언어(SpEL) 설정 옵션 추가
  * </pre>
  */
 public class SecurityConfig {
@@ -48,14 +49,15 @@ public class SecurityConfig {
 	private String jdbcUsersByUsernameQuery = DEF_USERS_BY_USERNAME_QUERY_SQL;
 	private String jdbcAuthoritiesByUsernameQuery = DEF_AUTHORITIES_BY_USERNAME_QUERY_SQL;
 	private String jdbcMapClass = "org.egovframe.rte.fdl.security.userdetails.DefaultMapUserDetailsMapping";
-	private String requestMatcherType = "regex";		// regex, ant, ciRegex (case-insensitive)
-	private String hash = "sha-256";					// hashing algorithm
-	private boolean hashBase64 = true;					// default = true
+	private String requestMatcherType = "regex";
+	private String hash = "sha-256";
+	private boolean hashBase64 = true;
 	private int concurrentMaxSessons;
 	private String concurrentExpiredUrl;
 	private boolean errorIfMaximumExceeded;
 	private String defaultTargetUrl;
 	private boolean alwaysUseDefaultTargetUrl;
+	private boolean useExpressions;
 	private boolean sniff;
 	private String xframeOptions;
 	private boolean xssProtection;
@@ -179,7 +181,9 @@ public class SecurityConfig {
 
 	public boolean isAlwaysUseDefaultTargetUrl() { return alwaysUseDefaultTargetUrl; }
 
-	public void setAlwaysUseDefaultTargetUrl(boolean alwaysUseDefaultTargetUrl) { this.alwaysUseDefaultTargetUrl = alwaysUseDefaultTargetUrl; }
+	public void setAlwaysUseDefaultTargetUrl(boolean alwaysUseDefaultTargetUrl) {
+		this.alwaysUseDefaultTargetUrl = alwaysUseDefaultTargetUrl;
+	}
 
 	public boolean isHashBase64() {
 		return hashBase64;
@@ -188,7 +192,15 @@ public class SecurityConfig {
 	public void setHashBase64(boolean hashBase64) {
 		this.hashBase64 = hashBase64;
 	}
-	
+
+	public boolean isUseExpression() {
+		return useExpressions;
+	}
+
+	public void setUseExpressions(boolean useExpressions) {
+		this.useExpressions = useExpressions;
+	}
+
 	public boolean isSniff() {
 		return sniff;
 	}

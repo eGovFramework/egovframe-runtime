@@ -36,8 +36,9 @@ import java.util.Locale;
  *
  * 수정일		수정자				수정내용
  * ----------------------------------------------
- * 2009.06.01	윤성종				최초 생성
- * 2017.02.28	장동한				시큐어코딩(ES)-Null Pointer 역참조[CWE-476]
+ * 2009.06.01	윤성종            최초 생성
+ * 2017.02.28	장동한            시큐어코딩(ES)-Null Pointer 역참조[CWE-476]
+ * 2023.08.31   ESFC            코드 리팩토링(addCalendar(), Contribution 반영)
  * </pre>
  */
 public class EgovDateUtil {
@@ -66,7 +67,7 @@ public class EgovDateUtil {
 	public static String getCalcDateAsString(String sYearPara, String sMonthPara, String sDayPara, int iTerm, String sGuBun) {
 		Calendar cd = new GregorianCalendar(Integer.parseInt(sYearPara), Integer.parseInt(sMonthPara) - 1, Integer.parseInt(sDayPara));
 
-		addCalender(iTerm, sGuBun, cd);
+        addCalendar(iTerm, sGuBun, cd);
 
 		return getFormalYear(cd) + getFormalMonth(cd) + getFormalDay(cd);
     }
@@ -94,7 +95,7 @@ public class EgovDateUtil {
 
 		Calendar cd = new GregorianCalendar(Integer.parseInt(sYearPara), Integer.parseInt(sMonthPara) - 1, Integer.parseInt(sDayPara));
 
-		addCalender(iTerm, sGuBun, cd);
+        addCalendar(iTerm, sGuBun, cd);
 
 		return getFormalYear(cd);
 	}
@@ -120,7 +121,7 @@ public class EgovDateUtil {
 	public static String getCalcMonthAsString(String sYearPara, String sMonthPara, String sDayPara, int iTerm, String sGuBun) {
 		Calendar cd = new GregorianCalendar(Integer.parseInt(sYearPara), Integer.parseInt(sMonthPara) - 1, Integer.parseInt(sDayPara));
 
-		addCalender(iTerm, sGuBun, cd);
+        addCalendar(iTerm, sGuBun, cd);
 
 		return getFormalMonth(cd);
 	}
@@ -146,7 +147,7 @@ public class EgovDateUtil {
 	public static String getCalcDayAsString(String sYearPara, String sMonthPara, String sDayPara, int iTerm, String sGuBun) {
 		Calendar cd = new GregorianCalendar(Integer.parseInt(sYearPara), Integer.parseInt(sMonthPara) - 1, Integer.parseInt(sDayPara));
 
-		addCalender(iTerm, sGuBun, cd);
+        addCalendar(iTerm, sGuBun, cd);
 
 		return getFormalDay(cd);
 	}
@@ -172,7 +173,7 @@ public class EgovDateUtil {
 	public static int getCalcYearAsInt(String sYearPara, String sMonthPara, String sDayPara, int iTerm, String sGuBun) {
 		Calendar cd = new GregorianCalendar(Integer.parseInt(sYearPara), Integer.parseInt(sMonthPara) - 1, Integer.parseInt(sDayPara));
 
-		addCalender(iTerm, sGuBun, cd);
+        addCalendar(iTerm, sGuBun, cd);
 
 		return cd.get(Calendar.YEAR);
 	}
@@ -198,7 +199,7 @@ public class EgovDateUtil {
 	public static int getCalcMonthAsInt(String sYearPara, String sMonthPara, String sDayPara, int iTerm, String sGuBun) {
 		Calendar cd = new GregorianCalendar(Integer.parseInt(sYearPara), Integer.parseInt(sMonthPara) - 1, Integer.parseInt(sDayPara));
 
-		addCalender(iTerm, sGuBun, cd);
+        addCalendar(iTerm, sGuBun, cd);
 
 		return cd.get(Calendar.MONTH) + 1;
 	}
@@ -224,26 +225,20 @@ public class EgovDateUtil {
 	public static int getCalcDayAsInt(String sYearPara, String sMonthPara, String sDayPara, int iTerm, String sGuBun) {
 		Calendar cd = new GregorianCalendar(Integer.parseInt(sYearPara), Integer.parseInt(sMonthPara) - 1, Integer.parseInt(sDayPara));
 
-		addCalender(iTerm, sGuBun, cd);
+        addCalendar(iTerm, sGuBun, cd);
 
 		return cd.get(Calendar.DAY_OF_MONTH);
 	}
 
-    /**
-	 * sGuBun의 종류에 따라 년/월/일 캘린더에 추가
-	 * @param iTerm
-	 * @param sGuBun
-	 * @param cd
-	 */
-    private static void addCalender(int iTerm, String sGuBun, Calendar cd) {
-		if (EgovStringUtil.equals(sGuBun, "day")) {
-			cd.add(Calendar.DATE, iTerm);
-		} else if (EgovStringUtil.equals(sGuBun, "month")) {
-			cd.add(Calendar.MONTH, iTerm);
-		} else if (EgovStringUtil.equals(sGuBun, "year")) {
-			cd.add(Calendar.YEAR, iTerm);
-		}
-	}
+    private static void addCalendar(int iTerm, String sGuBun, Calendar cd) {
+        if (EgovStringUtil.equals(sGuBun, "day")) {
+            cd.add(Calendar.DATE, iTerm);
+        } else if (EgovStringUtil.equals(sGuBun, "month")) {
+            cd.add(Calendar.MONTH, iTerm);
+        } else if (EgovStringUtil.equals(sGuBun, "year")) {
+            cd.add(Calendar.YEAR, iTerm);
+        }
+    }
 
     /**
      * <p>
@@ -818,4 +813,5 @@ public class EgovDateUtil {
 		String tmp = sdf.format(date);
 		return tmp;
 	}
+
 }

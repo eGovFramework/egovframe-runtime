@@ -49,7 +49,7 @@ public class HibernateIntegrationDefinitionDao extends HibernateDaoSupport imple
 	public IntegrationDefinition getIntegrationDefinition(String id) {
 		LOGGER.debug("get IntegrationDefinition (id = \"{}\")", id);
 
-		IntegrationDefinition integrationDefinition = getHibernateTemplate().get(IntegrationDefinition.class, id);
+		IntegrationDefinition integrationDefinition = (IntegrationDefinition) getHibernateTemplate().get(IntegrationDefinition.class, id);
 		// CHECKSTYLE:ON
 		LOGGER.debug("get IntegrationDefinition (id = \"{}\") = {}", id, integrationDefinition);
 

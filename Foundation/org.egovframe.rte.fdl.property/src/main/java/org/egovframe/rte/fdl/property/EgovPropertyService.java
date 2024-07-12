@@ -18,9 +18,7 @@ package org.egovframe.rte.fdl.property;
 import org.egovframe.rte.fdl.cmmn.exception.FdlException;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Iterator;
-import java.util.Vector;
 
 /**
  * Property 서비스의 인터페이스 클래스
@@ -151,29 +149,8 @@ public interface EgovPropertyService {
     String[] getStringArray(String name);
 
     /**
-     * Vector 타입의 프로퍼티 값 얻기
-     * @param name 프로퍼티키
-     * @return Vector 타입의 값
-     */
-    Vector<?> getVector(String name);
-
-    /**
-     * Vector 타입의 프로퍼티 값 얻기
-     * @param name 프로퍼티키
-     * @param def 디폴트 값
-     * @return Vector 타입의 값
-     */
-    Vector<?> getVector(String name, Vector<?> def);
-
-    /**
      * resource 변경시 refresh
      */
     void refreshPropertyFiles() throws FdlException, IOException;
-
-    /**
-     * 전체 키/값 쌍 얻기
-     * @return Collection 타입의 값
-     */
-    Collection<?> getAllKeyValue();
 
 }

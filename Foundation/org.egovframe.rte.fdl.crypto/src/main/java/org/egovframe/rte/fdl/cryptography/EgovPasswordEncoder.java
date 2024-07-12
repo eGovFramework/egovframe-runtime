@@ -33,7 +33,6 @@
 package org.egovframe.rte.fdl.cryptography;
 
 import org.jasypt.util.password.ConfigurablePasswordEncryptor;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class EgovPasswordEncoder {
 
@@ -49,7 +48,6 @@ public class EgovPasswordEncoder {
 		this.algorithm = algorithm;
 	}
 
-	@Autowired(required=true)
 	public void setHashedPassword(String hashedPassword) {
 		this.hashedPassword = hashedPassword;
 	}

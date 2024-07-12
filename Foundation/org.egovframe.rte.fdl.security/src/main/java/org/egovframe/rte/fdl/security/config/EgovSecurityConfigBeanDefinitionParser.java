@@ -31,10 +31,11 @@ import org.w3c.dom.Element;
  * <pre>
  * 개정이력(Modification Information)
  *
- * 수정일		수정자					수정내용
+ * 수정일		수정자				수정내용
  * ----------------------------------------------
- * 2014.03.12	한성곤					Spring Security 설정 간소화 기능 추가
- * 2020.05.27	Egovframework Center	CSRF Access Denied 처리 URL 추가
+ * 2014.03.12	한성곤			Spring Security 설정 간소화 기능 추가
+ * 2020.05.27	ESFC			CSRF Access Denied 처리 URL 추가
+ * 2023.08.31	ESFC			Spring 표현 언어(SpEL) 설정 옵션 추가
  * </pre>
  */
 public class EgovSecurityConfigBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
@@ -46,6 +47,7 @@ public class EgovSecurityConfigBeanDefinitionParser extends AbstractSingleBeanDe
 
 	@Override
 	protected void doParse(Element element, BeanDefinitionBuilder bean) {
+
 		String loginUrl = element.getAttribute("loginUrl");
 		if (StringUtils.hasText(loginUrl)) {
 			bean.addPropertyValue("loginUrl", loginUrl);
@@ -124,13 +126,19 @@ public class EgovSecurityConfigBeanDefinitionParser extends AbstractSingleBeanDe
 		String alwaysUseDefaultTargetUrl = element.getAttribute("alwaysUseDefaultTargetUrl");
 		if (StringUtils.hasText(alwaysUseDefaultTargetUrl)) {
 			bean.addPropertyValue("alwaysUseDefaultTargetUrl", alwaysUseDefaultTargetUrl);
-			EgovSecurityConfigShare.alwaysUseDefaultTargetUrl = Boolean.valueOf(alwaysUseDefaultTargetUrl);
+			EgovSecurityConfigShare.alwaysUseDefaultTargetUrl = Boolean.parseBoolean(alwaysUseDefaultTargetUrl);
+		}
+
+		String useExpressions = element.getAttribute("useExpressions");
+		if (StringUtils.hasText(useExpressions)) {
+			bean.addPropertyValue("useExpressions", useExpressions);
+			EgovSecurityConfigShare.useExpressions = Boolean.parseBoolean(useExpressions);
 		}
 
 		String sniff = element.getAttribute("sniff");
 		if (StringUtils.hasText(sniff)) {
 			bean.addPropertyValue("sniff", sniff);
-			EgovSecurityConfigShare.sniff = Boolean.valueOf(sniff);
+			EgovSecurityConfigShare.sniff = Boolean.parseBoolean(sniff);
 		}
 
 		String xFrameOptions = element.getAttribute("xframeOptions");
@@ -142,25 +150,26 @@ public class EgovSecurityConfigBeanDefinitionParser extends AbstractSingleBeanDe
 		String xssProtection = element.getAttribute("xssProtection");
 		if (StringUtils.hasText(xssProtection)) {
 			bean.addPropertyValue("xssProtection", xssProtection);
-			EgovSecurityConfigShare.xssProtection = Boolean.valueOf(xssProtection);  
+			EgovSecurityConfigShare.xssProtection = Boolean.parseBoolean(xssProtection);
 		}
 
 		String cacheControl = element.getAttribute("cacheControl");
 		if (StringUtils.hasText(cacheControl)) {
 			bean.addPropertyValue("cacheControl", cacheControl);
-			EgovSecurityConfigShare.cacheControl = Boolean.valueOf(cacheControl);
+			EgovSecurityConfigShare.cacheControl = Boolean.parseBoolean(cacheControl);
 		}
 
 		String csrf = element.getAttribute("csrf");
 		if (StringUtils.hasText(csrf)) {
 			bean.addPropertyValue("csrf", csrf);
-			EgovSecurityConfigShare.csrf = Boolean.valueOf(csrf);  
+			EgovSecurityConfigShare.csrf = Boolean.parseBoolean(csrf);
 		}
 
 		String csrfAccessDeniedUrl = element.getAttribute("csrfAccessDeniedUrl");
 		if (StringUtils.hasText(csrfAccessDeniedUrl)) {
 			bean.addPropertyValue("csrfAccessDeniedUrl", csrfAccessDeniedUrl);
 		}
+
 	}
 
 }

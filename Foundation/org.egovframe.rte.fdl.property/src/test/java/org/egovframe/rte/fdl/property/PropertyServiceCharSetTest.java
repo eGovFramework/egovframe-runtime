@@ -24,17 +24,18 @@ import static org.junit.Assert.assertEquals;
  * </pre>
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath*:/spring/context-common.xml",
-    "classpath*:/spring/context-properties.xml" })
+@ContextConfiguration(locations = {
+        "classpath*:/spring/context-common.xml",
+        "classpath*:/spring/context-properties.xml"
+})
 public class PropertyServiceCharSetTest {
 
     @Resource(name = "propertyService")
-    protected EgovPropertyService propertyService = null;
+    protected EgovPropertyService propertyService;
 
     @Test
     public void testKoreanLangFromPropertiesFile() throws Exception {
         assertEquals("안녕하세요.", propertyService.getString("greet.message"));
-
     }
 
     @Test

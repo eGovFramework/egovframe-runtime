@@ -33,15 +33,15 @@ import java.util.Map;
  *
  * <p>Desc.: 사용자 계정 정보를 처리하는 유틸 클래스</p>
  *
- * @author Egovframework Center
+ * @author ESFC
  * @since 2019.10.01
  * @version 3.9
  * <pre>
  * 개정이력(Modification Information)
  *
- * 수정일		수정자				    수정내용
+ * 수정일		수정자				수정내용
  * ----------------------------------------------
- * 2019.10.01	Egovframework Center	최초 생성
+ * 2019.10.01	ESFC			최초 생성
  * </pre>
  */
 public class EgovUserDetailsHelper {

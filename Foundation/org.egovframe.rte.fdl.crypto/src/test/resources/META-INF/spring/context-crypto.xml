@@ -20,7 +20,7 @@
 
 	<bean id="digestService" class="org.egovframe.rte.fdl.cryptography.impl.EgovDigestServiceImpl">
 		<property name="algorithm" value="SHA-256" />	<!-- default : SHA-256 -->
-		<property name="plainDigest" value="false" />	<!-- default : false -->
+		<property name="plainDigest" value="true" />	<!-- default : false -->
 	</bean>
 
 	<bean id="generalCryptoService" class="org.egovframe.rte.fdl.cryptography.impl.EgovGeneralCryptoServiceImpl">

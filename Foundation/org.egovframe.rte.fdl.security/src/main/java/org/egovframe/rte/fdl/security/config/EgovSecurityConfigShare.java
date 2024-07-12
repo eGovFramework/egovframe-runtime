@@ -28,12 +28,15 @@ package org.egovframe.rte.fdl.security.config;
  *
  * 수정일		수정자				수정내용
  * ---------------------------------------------
- * 2014.03.12	장동한				SpringSecurity 4.x 업그레이드 추가
+ * 2014.03.12	장동한			SpringSecurity 4.x 업그레이드 추가
+ * 2023.08.31	ESFC			Spring 표현 언어(SpEL) 설정 옵션 추가
  * </pre>
  */
 public class EgovSecurityConfigShare {
 
 	public static boolean alwaysUseDefaultTargetUrl = true;
+
+	public static boolean useExpressions = false;
 
 	public static boolean sniff = true;
 

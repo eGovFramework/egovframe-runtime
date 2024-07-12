@@ -23,7 +23,6 @@ import org.jasypt.encryption.pbe.StandardPBEBigDecimalEncryptor;
 import org.jasypt.encryption.pbe.StandardPBEByteEncryptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ReflectionUtils;
 
 import java.io.*;
@@ -48,7 +47,6 @@ public class EgovGeneralCryptoServiceImpl implements EgovGeneralCryptoService {
 		LOGGER.debug("General Crypto Service's algorithm : {}", algorithm);
 	}
 
-	@Autowired(required=true)
 	public void setPasswordEncoder(EgovPasswordEncoder passwordEncoder) {
 		this.passwordEncoder = passwordEncoder;
 		LOGGER.debug("passwordEncoder's algorithm : {}", passwordEncoder.getAlgorithm());

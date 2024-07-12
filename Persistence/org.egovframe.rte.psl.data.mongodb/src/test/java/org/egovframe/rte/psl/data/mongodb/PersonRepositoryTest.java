@@ -27,7 +27,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:META-INF/spring/context-data-mongodb.xml")
+@ContextConfiguration(locations = {"classpath:META-INF/spring/context-common.xml",
+        "classpath:META-INF/spring/context-data-mongodb.xml"})
 public class PersonRepositoryTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(PersonRepositoryTest.class);
 
@@ -39,8 +40,11 @@ public class PersonRepositoryTest {
 
     private Person makePerson() {
         Person person = new Person();
+        mongoTemplate.dropCollection("person");
+        mongoTemplate.createCollection("person");
+
         person.setId("1001");
-        person.setName("Jung");
+        person.setName("Kim");
         person.setAge(20);
 
         Address address = new Address();
@@ -80,12 +84,12 @@ public class PersonRepositoryTest {
 
     @Test
     public void testQueryMethods() {
-        List<Person> list = personRepository.findByName("Jung");
+        List<Person> list = personRepository.findByName("Kim");
         LOGGER.info("##### PersonRepositoryTest List : " + list.size());
         assertEquals(1, list.size());
 
         PageRequest pageable = PageRequest.of(0, 10);
-        Page<Person> persons = personRepository.findByName("Jung", pageable);
+        Page<Person> persons = personRepository.findByName("Kim", pageable);
 
         assertTrue(persons.isFirst());
         assertEquals(1L, persons.getTotalElements());
@@ -103,7 +107,8 @@ public class PersonRepositoryTest {
 
     @Test
     public void testQueryAnnotation() {
-        List<Person> list = personRepository.findByPersonName("Jung");
+        List<Person> list;
+        list = personRepository.findByPersonName("Kim");
         assertEquals(1, list.size());
     }
 
@@ -111,13 +116,15 @@ public class PersonRepositoryTest {
     public void testGeoSpatialMethods() {
         Point point = new Point(43.1, 48.1);
         Distance distance = new Distance(200, Metrics.KILOMETERS);
-        List<Person> list = personRepository.findByLocationNear(point, distance);
+        List<Person> list;
+        list = personRepository.findByLocationNear(point, distance);
         assertEquals(1, list.size());
     }
 
     @Test
     public void testDeleteMothods() {
-        List<Person> list = personRepository.deleteByName("Jung");
+        List<Person> list;
+        list = personRepository.deleteByName("Kim");
         assertEquals(1, list.size());
     }
 

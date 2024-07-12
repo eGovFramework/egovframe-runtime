@@ -3,11 +3,9 @@ package org.egovframe.rte.fdl.property;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
-import java.util.Vector;
 
 import static org.junit.Assert.*;
 
@@ -26,55 +24,45 @@ import static org.junit.Assert.*;
  * </pre>
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath*:/spring/context-common.xml",
-    "classpath*:/spring/context-properties.xml" })
-public class PropertyServiceBasicTest extends AbstractJUnit4SpringContextTests {
+@ContextConfiguration(locations = {
+        "classpath*:/spring/context-common.xml",
+        "classpath*:/spring/context-properties.xml"
+})
+public class PropertyServiceBasicTest {
 
     @Resource(name = "propertyService")
     protected EgovPropertyService propertyService;
 
     /**
      * 기본 처리 테스트
-     * @throws Exception
-     *         fail to test
+     * @throws Exception fail to test
      */
     @Test
     public void testPropertiesService() throws Exception {
+
+        assertEquals("안녕하세요.", propertyService.getString("greet.message"));
 
         assertNotNull(propertyService.getString("tokens_on_multiple_lines"));
 
         assertEquals("1234", propertyService.getString("AAAA"));
 
-        assertEquals(new Double(1234), new Double(propertyService
-            .getDouble("number.double")));
+        assertEquals(new Double(1234), new Double(propertyService.getDouble("number.double")));
 
-        assertEquals(new Float(1234), new Float(propertyService
-            .getFloat("number.float")));
+        assertEquals(new Float(1234), new Float(propertyService.getFloat("number.float")));
 
-        assertEquals(new Integer(1234), new Integer(propertyService
-            .getInt("number.int")));
+        assertEquals(new Integer(1234), new Integer(propertyService.getInt("number.int")));
 
-        assertEquals(new Long(1234), new Long(propertyService
-            .getLong("number.long")));
-
-        assertEquals(2, propertyService.getVector("tokens_on_a_line").size());
-
-        assertEquals(0, propertyService.getVector("notexist_tokens_on_a_line",
-            new Vector<Object>()).size());
+        assertEquals(new Long(1234), new Long(propertyService.getLong("number.long")));
 
         assertNotNull(propertyService.getString("AAAA", ""));
 
-        assertEquals(new Double(1234), new Double(propertyService.getDouble(
-            "number.double", 123.4)));
+        assertEquals(new Double(1234), new Double(propertyService.getDouble("number.double", 123.4)));
 
-        assertEquals(new Float(1234), new Float(propertyService.getFloat(
-            "number.float", (float) 123.4)));
+        assertEquals(new Float(1234), new Float(propertyService.getFloat("number.float", (float) 123.4)));
 
-        assertEquals(new Integer(1234), new Integer(propertyService.getInt(
-            "number.int", 123)));
+        assertEquals(new Integer(1234), new Integer(propertyService.getInt("number.int", 123)));
 
-        assertEquals(new Long(1234), new Long(propertyService.getLong(
-            "number.long", 1234)));
+        assertEquals(new Long(1234), new Long(propertyService.getLong("number.long", 1234)));
 
         assertNotNull(propertyService.getKeys());
 
@@ -84,13 +72,11 @@ public class PropertyServiceBasicTest extends AbstractJUnit4SpringContextTests {
 
         assertTrue(!propertyService.getBoolean("notexistboolean", false));
 
-        assertEquals(2,
-            propertyService.getStringArray("tokens_on_a_line").length);
+        assertEquals(2, propertyService.getStringArray("tokens_on_a_line").length);
 
         System.out.println(propertyService.getString("special.test"));
 
-        assertEquals("~!@#$%^&*()_+;{}|", propertyService
-            .getString("special.test"));
+        assertEquals("~!@#$%^&*()_+;{}|", propertyService.getString("special.test"));
 
     }
 
