@@ -15,29 +15,33 @@
  */
 package org.egovframe.rte.fdl.excel;
 
+import java.io.InputStream;
+
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.InputStream;
-
 /**
  * 엑셀 서비스를 제공하는 인터페이스.
  * 
- * <p><b>NOTE:</b> 엑셀 서비스를 제공하기 위해 여러 기능들을 선언하는 인터페이스이다.</p>
+ * <p>
+ * <b>NOTE:</b> 엑셀 서비스를 제공하기 위해 여러 기능들을 선언하는 인터페이스이다.
+ * </p>
  * 
  * @author 실행환경 개발팀 윤성종
  * @since 2009.06.01
  * @version 1.0
- * <pre>
+ * 
+ *          <pre>
  * 개정이력(Modification Information)
  *
  * 수정일		수정자				수정내용
  * ----------------------------------------------
- * 2009.06.01	윤성종				최초 생성
- * 2013.05.22	이기하				XSSF, SXSSF 형식 추가
- * 2014.05.14	이기하				XSSF형식 구분자 추가 및 workbook으로 변경
- * </pre>
+ *   2009.06.01  윤성종          최초 생성
+ *   2013.05.22  이기하          XSSF, SXSSF 형식 추가
+ *   2014.05.14  이기하          XSSF형식 구분자 추가 및 workbook으로 변경
+ *   2024.08.17  이백행          시큐어코딩 Exception 제거
+ *          </pre>
  */
 public interface EgovExcelService {
 
@@ -47,18 +51,16 @@ public interface EgovExcelService {
 	 * @param wb
 	 * @param filepath
 	 * @return
-	 * @throws Exception
 	 */
-	public Workbook createWorkbook(Workbook wb, String filepath) throws Exception;
+	Workbook createWorkbook(Workbook wb, String filepath);
 
 	/**
 	 * 엑셀 Template를 로딩하여 엑셀파일을 생성한다.
 	 * 
 	 * @param templateName
 	 * @return
-	 * @throws Exception
 	 */
-	public Workbook loadExcelTemplate(String templateName) throws Exception;
+	Workbook loadExcelTemplate(String templateName);
 
 	/**
 	 * xlsx 엑셀 Template를 로딩하여 엑셀파일을 생성한다.
@@ -66,18 +68,16 @@ public interface EgovExcelService {
 	 * @param templateName
 	 * @param type
 	 * @return
-	 * @throws Exception
 	 */
-	public XSSFWorkbook loadExcelTemplate(String templateName, XSSFWorkbook type) throws Exception;
+	XSSFWorkbook loadExcelTemplate(String templateName, XSSFWorkbook type);
 
 	/**
 	 * 엑셀 파일을 로딩한다.
 	 * 
 	 * @param filepath
 	 * @return
-	 * @throws Exception
 	 */
-	public Workbook loadWorkbook(String filepath) throws Exception;
+	Workbook loadWorkbook(String filepath);
 
 	/**
 	 * xlsx 엑셀 파일을 로딩한다.
@@ -85,18 +85,16 @@ public interface EgovExcelService {
 	 * @param filepath
 	 * @param type
 	 * @return
-	 * @throws Exception
 	 */
-	public XSSFWorkbook loadWorkbook(String filepath, XSSFWorkbook type) throws Exception;
+	XSSFWorkbook loadWorkbook(String filepath, XSSFWorkbook type);
 
 	/**
 	 * 엑셀 파일을 로딩한다.
 	 * 
 	 * @param fileIn
 	 * @return
-	 * @throws Exception
 	 */
-	public Workbook loadWorkbook(InputStream fileIn) throws Exception;
+	Workbook loadWorkbook(InputStream fileIn);
 
 	/**
 	 * xlsx 엑셀 파일을 로딩한다.
@@ -104,9 +102,8 @@ public interface EgovExcelService {
 	 * @param fileIn
 	 * @param type
 	 * @return
-	 * @throws Exception
 	 */
-	public XSSFWorkbook loadWorkbook(InputStream fileIn, XSSFWorkbook type) throws Exception;
+	XSSFWorkbook loadWorkbook(InputStream fileIn, XSSFWorkbook type);
 
 	/**
 	 * 엑셀파일을 업로드하여 DB에 일괄저장한다.<br/>
@@ -115,12 +112,11 @@ public interface EgovExcelService {
 	 * 
 	 * @param queryId
 	 * @param sheet
-	 * @param start (default : 0)
+	 * @param start     (default : 0)
 	 * @param commitCnt (default :0)
 	 * @return
-	 * @throws Exception
 	 */
-	public Integer uploadExcel(String queryId, Sheet sheet, int start, long commitCnt) throws Exception;
+	Integer uploadExcel(String queryId, Sheet sheet, int start, long commitCnt);
 
 	/**
 	 * 엑셀파일을 업로드하여 DB에 일괄저장한다.<br/>
@@ -128,12 +124,11 @@ public interface EgovExcelService {
 	 * 
 	 * @param queryId
 	 * @param fileIn
-	 * @param start (default : 0)
+	 * @param start     (default : 0)
 	 * @param commitCnt (default : 0)
 	 * @return
-	 * @throws Exception
 	 */
-	public Integer uploadExcel(String queryId, InputStream fileIn, int start, long commitCnt) throws Exception;
+	Integer uploadExcel(String queryId, InputStream fileIn, int start, long commitCnt);
 
 	/**
 	 * xlxs 엑셀파일을 업로드하여 DB에 일괄저장한다.<br/>
@@ -145,9 +140,8 @@ public interface EgovExcelService {
 	 * @param commitCnt
 	 * @param type
 	 * @return
-	 * @throws Exception
 	 */
-	public Integer uploadExcel(String queryId, InputStream fileIn, int start, long commitCnt, XSSFWorkbook type) throws Exception;
+	Integer uploadExcel(String queryId, InputStream fileIn, int start, long commitCnt, XSSFWorkbook type);
 
 	/**
 	 * 엑셀파일을 저장한다.
@@ -155,9 +149,8 @@ public interface EgovExcelService {
 	 * @param queryId
 	 * @param fileIn
 	 * @return
-	 * @throws Exception
 	 */
-	public Integer uploadExcel(String queryId, InputStream fileIn) throws Exception;
+	Integer uploadExcel(String queryId, InputStream fileIn);
 
 	/**
 	 * xlsx 엑셀파일을 저장한다.
@@ -165,9 +158,8 @@ public interface EgovExcelService {
 	 * @param queryId
 	 * @param fileIn
 	 * @return
-	 * @throws Exception
 	 */
-	public Integer uploadExcel(String queryId, InputStream fileIn, XSSFWorkbook type) throws Exception;
+	Integer uploadExcel(String queryId, InputStream fileIn, XSSFWorkbook type);
 
 	/**
 	 * 엑셀파일을 업로드하여 DB에 일괄저장한다.<br/>
@@ -176,12 +168,11 @@ public interface EgovExcelService {
 	 * @param queryId
 	 * @param fileIn
 	 * @param sheetIndex
-	 * @param start (default : 0)
-	 * @param commitCnt (default : 0)
+	 * @param start      (default : 0)
+	 * @param commitCnt  (default : 0)
 	 * @return
-	 * @throws Exception
 	 */
-	public Integer uploadExcel(String queryId, InputStream fileIn, short sheetIndex, int start, long commitCnt) throws Exception;
+	Integer uploadExcel(String queryId, InputStream fileIn, short sheetIndex, int start, long commitCnt);
 
 	/**
 	 * xlsx 엑셀파일을 업로드하여 DB에 일괄저장한다.<br/>
@@ -190,13 +181,13 @@ public interface EgovExcelService {
 	 * @param queryId
 	 * @param fileIn
 	 * @param sheetIndex
-	 * @param start (default : 0)
-	 * @param commitCnt (default : 0)
+	 * @param start      (default : 0)
+	 * @param commitCnt  (default : 0)
 	 * @param type
 	 * @return
-	 * @throws Exception
 	 */
-	public Integer uploadExcel(String queryId, InputStream fileIn, short sheetIndex, int start, long commitCnt, XSSFWorkbook type) throws Exception;
+	Integer uploadExcel(String queryId, InputStream fileIn, short sheetIndex, int start, long commitCnt,
+			XSSFWorkbook type);
 
 	/**
 	 * 엑셀파일을 업로드하여 DB에 일괄저장한다.<br/>
@@ -205,12 +196,11 @@ public interface EgovExcelService {
 	 * @param queryId
 	 * @param fileIn
 	 * @param sheetName
-	 * @param start (default : 0)
+	 * @param start     (default : 0)
 	 * @param commitCnt (default : 0)
 	 * @return
-	 * @throws Exception
 	 */
-	public Integer uploadExcel(String queryId, InputStream fileIn, String sheetName, int start, long commitCnt) throws Exception;
+	Integer uploadExcel(String queryId, InputStream fileIn, String sheetName, int start, long commitCnt);
 
 	/**
 	 * xlsx 엑셀파일을 업로드하여 DB에 일괄저장한다.<br/>
@@ -219,12 +209,12 @@ public interface EgovExcelService {
 	 * @param queryId
 	 * @param fileIn
 	 * @param sheetName
-	 * @param start (default : 0)
+	 * @param start     (default : 0)
 	 * @param commitCnt (default : 0)
 	 * @param type
 	 * @return
-	 * @throws Exception
 	 */
-	public Integer uploadExcel(String queryId, InputStream fileIn, String sheetName, int start, long commitCnt, XSSFWorkbook type) throws Exception;
+	Integer uploadExcel(String queryId, InputStream fileIn, String sheetName, int start, long commitCnt,
+			XSSFWorkbook type);
 
 }

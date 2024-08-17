@@ -20,30 +20,34 @@ import org.apache.poi.ss.usermodel.Row;
 /**
  * 엑셀파일의 DB업로드용 VO매핑 클래스.
  * 
- * <p><b>NOTE:</b> 엑셀파일의 DB 업로드 기능을 제공하기 위한 사용자 VO 매핑 추상클래스이다.</p>
+ * <p>
+ * <b>NOTE:</b> 엑셀파일의 DB 업로드 기능을 제공하기 위한 사용자 VO 매핑 추상클래스이다.
+ * </p>
  * 
  * @author 실행환경 개발팀 윤성종
  * @since 2009.06.01
  * @version 1.0
- * <pre>
+ * 
+ *          <pre>
  * 개정이력(Modification Information)
  *
  * 수정일		수정자				수정내용
  * ----------------------------------------------
- * 2009.06.01   윤성종              최초 생성
- * 2014.05.14   이기하              HSSFRow -> Row 변경
- * </pre>
+ *   2009.06.01  윤성종          최초 생성
+ *   2014.05.14  이기하          HSSFRow -> Row 변경
+ *   2024.08.17  이백행          시큐어코딩 Exception 제거
+ *          </pre>
  */
 // CHECKSTYLE:OFF
 public abstract class EgovExcelMapping {
 // CHECKSTYLE:ON
 
-    /**
-     * 엑셀파일의 DB 업로드를 위한 사용자 VO 매핑 메소드
-     * @param row
-     * @return
-     * @throws Exception
-     */
-    public abstract Object mappingColumn(Row row) throws Exception;
+	/**
+	 * 엑셀파일의 DB 업로드를 위한 사용자 VO 매핑 메소드
+	 * 
+	 * @param row
+	 * @return
+	 */
+	public abstract Object mappingColumn(Row row);
 
 }
