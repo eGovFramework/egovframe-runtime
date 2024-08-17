@@ -19,6 +19,7 @@ import java.util.Locale;
 
 import javax.annotation.Resource;
 
+import org.egovframe.rte.fdl.cmmn.exception.BaseRuntimeException;
 import org.egovframe.rte.fdl.cmmn.exception.EgovBizException;
 import org.egovframe.rte.fdl.cmmn.trace.LeaveaTrace;
 import org.slf4j.Logger;
@@ -45,7 +46,8 @@ import org.springframework.context.i18n.LocaleContextHolder;
  * 수정일		수정자				수정내용
  * ----------------------------------------------
  *   2014.06.01  Daniela Kwon  최초생성
- *   2024.08.15  이백행          Exception 을 EgovBizException 으로 수정
+ *   2024.08.17  이백행          Exception 을 EgovBizException 으로 수정
+ *   2024.08.18  이백행          processRuntimeException 추가
  *          </pre>
  */
 public abstract class EgovAbstractServiceImpl {
@@ -145,6 +147,95 @@ public abstract class EgovAbstractServiceImpl {
 
 	protected interface ExceptionCreator {
 		EgovBizException createBizException(MessageSource messageSource);
+	}
+
+	/**
+	 * BaseRuntimeException 발생을 위한 메소드.
+	 * 
+	 * @param msgKey 메세지리소스에서 제공되는 메세지의 키값
+	 * @return BaseRuntimeException BaseRuntimeException 객체
+	 */
+	protected BaseRuntimeException processRuntimeException(final String msgKey) {
+		return processRuntimeException(msgKey, new String[] {});
+	}
+
+	/**
+	 * BaseRuntimeException 발생을 위한 메소드.
+	 * 
+	 * @param msgKey    메세지리소스에서 제공되는 메세지의 키값
+	 * @param exception 발생한 Exception(내부적으로 취하고 있다가 에러핸들링시 사용)
+	 * @return BaseRuntimeException BaseRuntimeException 객체
+	 */
+	protected BaseRuntimeException processRuntimeException(final String msgKey, Exception exception) {
+		return processRuntimeException(msgKey, new String[] {}, exception);
+	}
+
+	/**
+	 * BaseRuntimeException 발생을 위한 메소드.
+	 * 
+	 * @param msgKey  메세지리소스에서 제공되는 메세지의 키값
+	 * @param msgArgs msgKey의 메세지에서 변수에 취환되는 값들
+	 * @return BaseRuntimeException BaseRuntimeException 객체
+	 */
+	protected BaseRuntimeException processRuntimeException(final String msgKey, final String[] msgArgs) {
+		return processRuntimeException(msgKey, msgArgs, null);
+	}
+
+	/**
+	 * BaseRuntimeException 발생을 위한 메소드.
+	 * 
+	 * @param msgKey    메세지리소스에서 제공되는 메세지의 키값
+	 * @param msgArgs   msgKey의 메세지에서 변수에 취환되는 값들
+	 * @param exception 발생한 Exception(내부적으로 취하고 있다가 에러핸들링시 사용)
+	 * @return BaseRuntimeException BaseRuntimeException 객체
+	 */
+	protected BaseRuntimeException processRuntimeException(final String msgKey, final String[] msgArgs,
+			final Exception exception) {
+		return processRuntimeException(msgKey, msgArgs, exception, LocaleContextHolder.getLocale());
+	}
+
+	/**
+	 * BaseRuntimeException 발생을 위한 메소드.
+	 * 
+	 * @param msgKey    메세지리소스에서 제공되는 메세지의 키값
+	 * @param msgArgs   msgKey의 메세지에서 변수에 취환되는 값들
+	 * @param exception 발생한 Exception(내부적으로 취하고 있다가 에러핸들링시 사용)
+	 * @param locale    명시적 국가/언어지정
+	 * @return BaseRuntimeException BaseRuntimeException 객체
+	 */
+	protected BaseRuntimeException processRuntimeException(final String msgKey, final String[] msgArgs,
+			final Exception exception, Locale locale) {
+		return processRuntimeException(msgKey, msgArgs, exception, locale, null);
+	}
+
+	/**
+	 * BaseRuntimeException 발생을 위한 메소드.
+	 * 
+	 * @param msgKey           메세지리소스에서 제공되는 메세지의 키값
+	 * @param msgArgs          msgKey의 메세지에서 변수에 취환되는 값들
+	 * @param exception        발생한 Exception(내부적으로 취하고 있다가 에러핸들링시 사용)
+	 * @param locale           명시적 국가/언어지정
+	 * @param exceptionCreator 외부에서 별도의 Exception 생성기 지정
+	 * @return BaseRuntimeException BaseRuntimeException 객체
+	 */
+	protected BaseRuntimeException processRuntimeException(final String msgKey, final String[] msgArgs,
+			final Exception exception, final Locale locale, RuntimeExceptionCreator exceptionCreator) {
+		RuntimeExceptionCreator eC = null;
+		if (exceptionCreator == null) {
+			eC = new RuntimeExceptionCreator() {
+				@Override
+				public BaseRuntimeException createRuntimeException(MessageSource messageSource) {
+					return new BaseRuntimeException(messageSource, msgKey, msgArgs, locale, exception);
+				}
+			};
+		} else {
+			eC = exceptionCreator;
+		}
+		return eC.createRuntimeException(messageSource);
+	}
+
+	protected interface RuntimeExceptionCreator {
+		BaseRuntimeException createRuntimeException(MessageSource messageSource);
 	}
 
 	/**
