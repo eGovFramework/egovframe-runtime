@@ -6,16 +6,28 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.net.URLEncoder;
+
 public class EgovARIAErrorTest {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(EgovARIAErrorTest.class);
 	
 	public static void main(String[] args) {
-		
-		
-		String[] arrCryptoString = { 
-                "ckimage/2018/12"
-              };
+
+
+		String[] givenStrs = {
+				"ckimage/2018/12",
+				"FILE_000000000000001",
+				"FILE_000000000000002",
+				"FILE_000000000000003",
+				"FILE_000000000000004",
+				"FILE_000000000000005",
+				"FILE_000000000000006",
+				"FILE_000000000000007",
+				"FILE_000000000000008",
+				"FILE_000000000000009",
+				"FILE_000000000000010",
+		};
 
 		
 		LOGGER.info("------------------------------------------------------");		
@@ -26,16 +38,25 @@ public class EgovARIAErrorTest {
 		
 		String label = "";
 		try {
-			for(int i=0; i < arrCryptoString.length; i++) {		
+            for (String str : givenStrs) {
 
-				LOGGER.info(label+" 원본(orignal):" + arrCryptoString[i]);
-				LOGGER.info(label+" 인코딩(encrypted):" + cryptoService.encrypt(arrCryptoString[i]) );
-				LOGGER.info(label+" 디코딩(decrypted):" + cryptoService.decrypt(cryptoService.encrypt(arrCryptoString[i])) );
-				if( cryptoService.decrypt(cryptoService.encrypt(arrCryptoString[i])).equals(arrCryptoString[i]) ) {
-					LOGGER.info(label+" 통과 !!!");
-				}
-				LOGGER.info("------------------------------------------------------");
-			}
+                String encrypt = cryptoService.encrypt(str);
+                LOGGER.info(label + " 원본(orignal):" + str);
+                LOGGER.info(label + " 인코딩(encrypted):" + encrypt);
+                LOGGER.info(label + " 디코딩(decrypted):" + cryptoService.decrypt(encrypt));
+                LOGGER.info(label + " URL인코딩(encrypted+url):" + URLEncoder.encode(encrypt, "UTF-8"));
+
+                if (!encrypt.equals(URLEncoder.encode(encrypt, "UTF-8"))) {
+                    LOGGER.error(label + " 실패 !!!(URL SAFE 실패)");
+                    return;
+                } else if (cryptoService.decrypt(encrypt).equals(str)) {
+                    LOGGER.info(label + " 통과 !!!");
+                } else {
+                    LOGGER.error(label + " 실패 !!!");
+                    return;
+                }
+                LOGGER.info("------------------------------------------------------");
+            }
 		} catch (IllegalArgumentException e) {
 			LOGGER.error("["+e.getClass()+"] IllegalArgumentException : " + e.getMessage());
 			//e.printStackTrace();

@@ -23,9 +23,6 @@ import org.egovframe.rte.fdl.property.EgovPropertyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -148,8 +145,8 @@ public class EgovEnvCryptoServiceImpl implements EgovEnvCryptoService {
 	 */
 	public String encrypt(String encrypt){
 		try {
-			return URLEncoder.encode(new String(new Base64().encode(cryptoService.encrypt( encrypt.getBytes(StandardCharsets.UTF_8), this.getCyptoAlgorithmKey()))), "UTF-8");
-		} catch(IllegalArgumentException | UnsupportedEncodingException e) {
+			return new String(Base64.encodeBase64(cryptoService.encrypt(encrypt.getBytes(StandardCharsets.UTF_8), this.getCyptoAlgorithmKey()), false, true));
+		} catch(IllegalArgumentException e) {
 			LOGGER.error("[IllegalArgumentException] Try/Catch...usingParameters Runing : "+ e.getMessage());
 		}
 		return encrypt;
@@ -162,8 +159,8 @@ public class EgovEnvCryptoServiceImpl implements EgovEnvCryptoService {
 	 */
 	public String decrypt(String decrypt){
 		try {
-			return new String(cryptoService.decrypt(new Base64().decode(URLDecoder.decode(decrypt,"UTF-8").getBytes(StandardCharsets.UTF_8)), this.cyptoAlgorithmKey));
-		} catch(IllegalArgumentException | UnsupportedEncodingException e) {
+			return new String(cryptoService.decrypt(Base64.decodeBase64(decrypt.getBytes(StandardCharsets.UTF_8)), this.cyptoAlgorithmKey));
+		} catch(IllegalArgumentException e) {
 			LOGGER.error("[IllegalArgumentException] Try/Catch...usingParameters Runing : "+ e.getMessage());
 		}
 		return decrypt;
