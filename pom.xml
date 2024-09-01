@@ -5,9 +5,34 @@
 
 	<groupId>org.egovframe.rte</groupId>
 	<artifactId>org.egovframe.rte.root</artifactId>
-	<version>4.1.0</version>
+	<version>4.2.0</version>
 	<packaging>pom</packaging>
 	<name>org.egovframe.rte.root</name>
+
+	<properties>
+		<org.egovframe.rte.version>4.2.0</org.egovframe.rte.version>
+		<spring.maven.artifact.version>5.3.27</spring.maven.artifact.version>
+		<java.version>1.8</java.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<maven.project.info.reports.plugin.version>3.4.4</maven.project.info.reports.plugin.version>
+		<maven.surefire.report.plugin.version>3.1.0</maven.surefire.report.plugin.version>
+		<maven.javadoc.plugin.version>3.5.0</maven.javadoc.plugin.version>
+		<maven.jxr.plugin.version>3.3.0</maven.jxr.plugin.version>
+		<emma.maven.plugin.version>1.0-alpha-3</emma.maven.plugin.version>
+	</properties>
+	<repositories>
+		<repository>
+			<id>egovframe</id>
+			<url>https://maven.egovframe.go.kr/maven/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 
 	<modules>
 
@@ -23,6 +48,7 @@
 		<module>Foundation/org.egovframe.rte.fdl.idgnr</module>
 		<module>Foundation/org.egovframe.rte.fdl.logging</module>
 		<module>Foundation/org.egovframe.rte.fdl.property</module>
+		<module>Foundation/org.egovframe.rte.fdl.reactive</module>
 		<module>Foundation/org.egovframe.rte.fdl.security</module>
 		<module>Foundation/org.egovframe.rte.fdl.string</module>
 		<module>Foundation/org.egovframe.rte.fdl.xml</module>
@@ -36,9 +62,120 @@
 		<module>Persistence/org.egovframe.rte.psl.data.mongodb</module>
 		<module>Persistence/org.egovframe.rte.psl.dataaccess</module>
 
+		<!-- Persistence Reactive-->
+		<module>Persistence/org.egovframe.rte.psl.reactive.cassandra</module>
+		<module>Persistence/org.egovframe.rte.psl.reactive.mongodb</module>
+		<module>Persistence/org.egovframe.rte.psl.reactive.r2dbc</module>
+		<module>Persistence/org.egovframe.rte.psl.reactive.redis</module>
+
 		<!-- Presentation -->
 		<module>Presentation/org.egovframe.rte.ptl.mvc</module>
+		<module>Presentation/org.egovframe.rte.ptl.reactive</module>
 
 	</modules>
+
+	<build>
+		<defaultGoal>install</defaultGoal>
+		<directory>${basedir}/target</directory>
+		<finalName>${project.artifactId}-${project.version}</finalName>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.11.0</version>
+					<configuration>
+						<source>${java.version}</source>
+						<target>${java.version}</target>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>hibernate3-maven-plugin</artifactId>
+					<version>3.0</version>
+					<dependencies>
+						<dependency>
+							<groupId>org.hsqldb</groupId>
+							<artifactId>hsqldb</artifactId>
+							<version>2.7.2</version>
+							<classifier>jdk8</classifier>
+						</dependency>
+					</dependencies>
+				</plugin>
+				<!-- PMD manven plugin -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-pmd-plugin</artifactId>
+					<version>3.21.0</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>3.2.1</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- JavaDoc -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.5.0</version>
+				<configuration>
+					<doclint>none</doclint>
+				</configuration>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>3.1.0</version>
+				<executions>
+					<execution>
+						<id>deploy</id>
+						<phase>deploy</phase>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- EMMA -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.1.0</version>
+				<configuration>
+					<skipTests>true</skipTests>
+					<reportFormat>xml</reportFormat>
+					<excludes>
+						<exclude>**/Abstract*.java</exclude>
+						<exclude>**/*Suite.java</exclude>
+					</excludes>
+					<includes>
+						<include>**/*Test.java</include>
+					</includes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>emma-maven-plugin</artifactId>
+				<version>1.0-alpha-3</version>
+				<inherited>true</inherited>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>
