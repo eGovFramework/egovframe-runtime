@@ -22,19 +22,6 @@
         </license>
     </licenses>
 
-    <repositories>
-        <repository>
-            <id>egovframe</id>
-            <url>https://maven.egovframe.go.kr/maven/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-
     <dependencies>
         <dependency>
             <groupId>org.egovframe.rte</groupId>

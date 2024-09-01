@@ -21,6 +21,7 @@
 		<maven.jxr.plugin.version>3.3.0</maven.jxr.plugin.version>
 		<emma.maven.plugin.version>1.0-alpha-3</emma.maven.plugin.version>
 	</properties>
+
 	<repositories>
 		<repository>
 			<id>egovframe</id>
