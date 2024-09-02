@@ -5,7 +5,7 @@
 
 	<groupId>org.egovframe.rte</groupId>
 	<artifactId>org.egovframe.rte.root</artifactId>
-	<version>4.1.0</version>
+	<version>4.2.0</version>
 	<packaging>pom</packaging>
 	<name>org.egovframe.rte.root</name>
 
