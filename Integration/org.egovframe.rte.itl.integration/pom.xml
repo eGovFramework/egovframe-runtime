@@ -110,7 +110,7 @@
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>hibernate3-maven-plugin</artifactId>
                 </plugin>
-                <!-- PMD manven plugin -->
+                <!-- PMD maven plugin -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-pmd-plugin</artifactId>
