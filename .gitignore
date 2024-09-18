@@ -3,6 +3,7 @@
 
 # Log file #
 *.log
+dailyRollingSample.log.*
 
 # BlueJ files #
 *.ctxt
