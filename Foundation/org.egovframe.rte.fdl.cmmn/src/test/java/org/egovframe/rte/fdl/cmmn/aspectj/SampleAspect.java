@@ -19,7 +19,7 @@ public class SampleAspect {
     //@Pointcut("execution(public * *(..))")
     public void beforeTargetMethod(JoinPoint thisJoinPoint) {
     	
-  	  Class clazz = thisJoinPoint.getTarget().getClass();
+//  	  Class clazz = thisJoinPoint.getTarget().getClass();
       String className = thisJoinPoint.getTarget().getClass().getSimpleName();
       String methodName = thisJoinPoint.getSignature().getName();
       
@@ -35,7 +35,7 @@ public class SampleAspect {
     @Before("execution(public * *(..))")
     public void Pointcut(JoinPoint thisJoinPoint) {
     	
-    	  Class clazz = thisJoinPoint.getTarget().getClass();
+//    	  Class clazz = thisJoinPoint.getTarget().getClass();
           String className = thisJoinPoint.getTarget().getClass().getSimpleName();
           String methodName = thisJoinPoint.getSignature().getName();;
       
@@ -46,7 +46,7 @@ public class SampleAspect {
     @Around("execution(public * *(..))")
     public Object aroundTargetMethod(ProceedingJoinPoint thisJoinPoint) throws Throwable {
     	
-    	  Class clazz = thisJoinPoint.getTarget().getClass();
+//    	  Class clazz = thisJoinPoint.getTarget().getClass();
           String className = thisJoinPoint.getTarget().getClass().getSimpleName();
           String methodName = thisJoinPoint.getSignature().getName();
           
