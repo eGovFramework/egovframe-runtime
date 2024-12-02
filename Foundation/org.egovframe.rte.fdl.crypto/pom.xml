@@ -19,7 +19,7 @@
 
     <properties>
         <org.egovframe.rte.version>4.2.0</org.egovframe.rte.version>
-        <spring.maven.artifact.version>5.3.27</spring.maven.artifact.version>
+        <spring.maven.artifact.version>6.1.14</spring.maven.artifact.version>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
