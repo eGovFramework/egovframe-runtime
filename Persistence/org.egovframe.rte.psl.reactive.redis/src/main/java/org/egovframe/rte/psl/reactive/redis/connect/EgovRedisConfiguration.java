@@ -16,6 +16,7 @@
 package org.egovframe.rte.psl.reactive.redis.connect;
 
 import org.springframework.data.redis.connection.ReactiveRedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 
 /**
@@ -36,16 +37,22 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
  */
 public class EgovRedisConfiguration {
 
-    private String host;
-    private int port;
+    private final String host;
+    private final int port;
+    private final String password;
 
-    public EgovRedisConfiguration(String host, int port) {
+    public EgovRedisConfiguration(String host, int port, String password) {
         this.host = host;
         this.port = port;
+        this.password = password;
     }
 
     public ReactiveRedisConnectionFactory reactiveRedisConnectionFactory() {
-        return new LettuceConnectionFactory(this.host, this.port);
+        RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
+        redisStandaloneConfiguration.setHostName(host);
+        redisStandaloneConfiguration.setPort(port);
+        redisStandaloneConfiguration.setPassword(password);
+        return new LettuceConnectionFactory(redisStandaloneConfiguration);
     }
 
 }

@@ -40,11 +40,7 @@ public class EgovNullCheckValidation implements ConstraintValidator<EgovNullChec
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        if (ObjectUtils.isEmpty(value)) {
-            return false;
-        } else {
-            return true;
-        }
+        return !ObjectUtils.isEmpty(value);
     }
 
 }

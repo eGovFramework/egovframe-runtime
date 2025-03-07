@@ -30,8 +30,9 @@ import org.apache.poi.ss.usermodel.Row;
  *
  * 수정일		수정자				수정내용
  * ----------------------------------------------
- * 2009.06.01   윤성종              최초 생성
- * 2014.05.14   이기하              HSSFRow -> Row 변경
+ * 2009.06.01   윤성종         최초 생성
+ * 2014.05.14   이기하         HSSFRow -> Row 변경
+ * 2024.08.17   이백행         시큐어코딩 Exception 제거
  * </pre>
  */
 // CHECKSTYLE:OFF
@@ -40,10 +41,10 @@ public abstract class EgovExcelMapping {
 
     /**
      * 엑셀파일의 DB 업로드를 위한 사용자 VO 매핑 메소드
+     *
      * @param row
-     * @return
-     * @throws Exception
-     */
-    public abstract Object mappingColumn(Row row) throws Exception;
+    * @return
+    */
+    public abstract Object mappingColumn(Row row);
 
 }

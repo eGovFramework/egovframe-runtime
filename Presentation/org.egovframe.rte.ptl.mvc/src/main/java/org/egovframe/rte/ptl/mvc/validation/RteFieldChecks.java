@@ -35,9 +35,9 @@ import org.springmodules.validation.commons.FieldChecks;
  * 수정일		수정자				수정내용
  * ----------------------------------------------
  * 2009.05.30	함철				최초 생성
- * 2011.09.23	이기하				validateEnglish 메소드 추가
- * 2013.03.22	한성곤				패스워드 관련 점검 메소드 추가
- * 2020.07.22	윤주호				패스워드 점검 강화 관련 메소드 수정
+ * 2011.09.23	이기하			validateEnglish 메소드 추가
+ * 2013.03.22	한성곤			패스워드 관련 점검 메소드 추가
+ * 2020.07.22	윤주호			패스워드 점검 강화 관련 메소드 수정
  * </pre>
  */
 public class RteFieldChecks extends FieldChecks {

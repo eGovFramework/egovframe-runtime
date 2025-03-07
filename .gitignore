@@ -19,20 +19,37 @@
 *.tar.gz
 *.rar
 
-# Setting Files #
-.idea/
-.settings/
+# IntelliJ project files
+.idea
+*.iml
+out
+gen
+
+# macOS
+*.DS_Store
+*.AppleDouble
+*.LSOverride
+
+# maven
+target/
 .project
 .classpath
+**/.mvn/wrapper/
+**/mvnw*
 
-.git/
-.svn/
-
-# Build #
-target/
-
-# OS
-.DS_Store
+# eclipse
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+.recommenders
+.sts4-cache/
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml #
 hs_err_pid*

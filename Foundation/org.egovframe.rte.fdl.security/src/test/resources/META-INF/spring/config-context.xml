@@ -5,12 +5,12 @@
 	   xmlns:egov-security="http://maven.egovframe.go.kr/schema/egov-security"
 	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 	   http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
-	   http://maven.egovframe.go.kr/schema/egov-security http://maven.egovframe.go.kr/schema/egov-security/egov-security-4.2.0.xsd">
+	   http://maven.egovframe.go.kr/schema/egov-security http://maven.egovframe.go.kr/schema/egov-security/egov-security-4.3.0.xsd">
 
 	<security:http pattern="/css/**" security="none"/>
-    <security:http pattern="/images/**" security="none"/>
- 	<security:http pattern="/js/**" security="none"/>
- 	<security:http pattern="\A/WEB-INF/jsp/.*\Z" request-matcher="regex" security="none"/>
+	<security:http pattern="/images/**" security="none"/>
+	<security:http pattern="/js/**" security="none"/>
+	<security:http pattern="\A/WEB-INF/jsp/.*\Z" request-matcher="regex" security="none"/>
 
 	<egov-security:config id="securityConfig"
 		loginUrl="/cvpl/EgovCvplLogin.do"

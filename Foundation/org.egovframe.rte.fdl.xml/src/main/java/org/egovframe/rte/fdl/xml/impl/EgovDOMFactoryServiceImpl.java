@@ -25,9 +25,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * DOMValidator 생성 Factory Class
- * 
+ *
  * @author 개발프레임웍크 실행환경 개발팀 김종호
- * @since 2009.03.18
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -38,38 +37,42 @@ import org.slf4j.LoggerFactory;
  * 2015.02.10	Vincent Han			클래스 명명 규칙 수정 (EgovConcreteDOMFactory -> EgovDOMFactoryServiceImpl)
  * 2017.02.28	장동한				시큐어코딩(ES)-오류 메시지를 통한 정보노출[CWE-209]
  * </pre>
+ * @since 2009.03.18
  */
 public class EgovDOMFactoryServiceImpl extends EgovAbstractXMLFactoryService {
 
-	/** DOMValidator  **/
-	private EgovDOMValidatorService domvalidator = null;
-
     private static final Logger LOGGER = LoggerFactory.getLogger(EgovDOMFactoryServiceImpl.class);
 
-	/**
-	 * DOMValidatorService 생성자
-	 * @return EgovDOMValidatorService - DOMValidator
-	 */
-	@Override
-	public EgovDOMValidatorService createDOMValidator() {
-		domvalidator = new EgovDOMValidatorService();
-		return domvalidator;
-	}
+    /**
+     * DOMValidator
+     **/
+    private EgovDOMValidatorService domvalidator = null;
 
-	/**
-	 * EgovSAXValidatorService 생성자
-	 * @return EgovSAXValidatorService - SAXValidator
-	 * @exception UnsupportedException
-	 */
-	@Override
-	public EgovSAXValidatorService createSAXValidator() {
-		try {
-			throw new UnsupportedException("Unsupported type");
-		} catch (UnsupportedException e) {
-			//2017.02.28 장동한 시큐어코딩(ES)-오류 메시지를 통한 정보노출[CWE-209]
-			LOGGER.error("["+e.getClass()+"] Try/Catch...createSAXValidator() Runing : " + e.getMessage());
-		}
-		return null;
-	}
+    /**
+     * DOMValidatorService 생성자
+     *
+     * @return EgovDOMValidatorService - DOMValidator
+     */
+    @Override
+    public EgovDOMValidatorService createDOMValidator() {
+        domvalidator = new EgovDOMValidatorService();
+        return domvalidator;
+    }
+
+    /**
+     * EgovSAXValidatorService 생성자
+     *
+     * @return EgovSAXValidatorService - SAXValidator
+     */
+    @Override
+    public EgovSAXValidatorService createSAXValidator() {
+        try {
+            throw new UnsupportedException("Unsupported type");
+        } catch (UnsupportedException e) {
+            //2017.02.28 장동한 시큐어코딩(ES)-오류 메시지를 통한 정보노출[CWE-209]
+            LOGGER.error("[" + e.getClass() + "] Try/Catch...createSAXValidator() Runing : " + e.getMessage());
+        }
+        return null;
+    }
 
 }

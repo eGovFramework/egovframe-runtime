@@ -105,13 +105,4 @@ public class AnsiX923Padding implements CryptoPadding {
 		return name;
 	}
 
-	public void print(byte[] data) {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("[").append(data.length).append("] ");
-		for (int i = 0; i < data.length; i++) {
-			buffer.append(data[i]).append(" ");
-		}
-		System.out.println(buffer.toString());
-	}
-
 }

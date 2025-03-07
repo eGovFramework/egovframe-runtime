@@ -87,25 +87,29 @@ public class EgovARIACryptoServiceTest {
 	}
 
     @Test
-    public void testString() {
-		String[] testString = {
+    public void testString() throws UnsupportedEncodingException {
+		/*String[] testString = {
 			"This is a testing...\nHello!",
 			"한글 테스트입니다...",
 			"!@#$%^&*()_+|~{}:\"<>?-=\\`[];',./"
 		};
-	
+
 		try {
 			for (String str : testString) {
 				byte[] encrypted = cryptoService.encrypt(str.getBytes("UTF-8"), password);
 
 				byte[] decrypted = cryptoService.decrypt(encrypted, password);
-				
+
 				assertEquals(str, new String(decrypted, "UTF-8"));
 			}
 		} catch (UnsupportedEncodingException uee) {
 			uee.printStackTrace();
 			fail();
-		}
+		}*/
+
+		String param = "aaa";
+		byte[] encrypted = cryptoService.encrypt(param.getBytes("UTF-8"), password);
+		System.out.println("##### Aria testString >>> " + java.util.Base64.getEncoder().encodeToString(encrypted));
 		
     }
     

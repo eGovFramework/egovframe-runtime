@@ -22,28 +22,28 @@ public interface EgovDigestService {
      * 
      * @param algorithm
      */
-    public void setAlgorithm(String algorithm);
+    void setAlgorithm(String algorithm);
     
     /**
      * Digest 알고리즘.
      * 
      * @return
      */
-    public String getAlgorithm();
+    String getAlgorithm();
     
     /**
      * Plain digest.
      * 
      * @param isPlainDigest
      */
-    public void setPlainDigest(boolean isPlainDigest);
+    void setPlainDigest(boolean isPlainDigest);
     
     /**
      * Plain digest.
      * 
      * @return
      */
-    public boolean isPlainDigest();
+    boolean isPlainDigest();
     
     /**
      * Digest 처리.
@@ -52,7 +52,7 @@ public interface EgovDigestService {
      * @return
      * @throws Exception
      */
-    public byte[] digest(byte[] data);
+    byte[] digest(byte[] data);
     
     /**
      * 확인 처리.
@@ -61,6 +61,6 @@ public interface EgovDigestService {
      * @param digestByte
      * @return
      */
-    public boolean matches(byte[] messageByte, byte[] digestByte);
+    boolean matches(byte[] messageByte, byte[] digestByte);
 
 }

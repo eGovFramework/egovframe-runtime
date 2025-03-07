@@ -17,10 +17,11 @@ public class RedisConfiguration {
 
     private String host = "localhost";
     private int port = 6379;
+    private String password = "rhdxhd12";
 
     @Bean(name="reactiveRedisConnectionFactory")
     public ReactiveRedisConnectionFactory reactiveRedisConnectionFactory() {
-        EgovRedisConfiguration egovRedisConfiguration = new EgovRedisConfiguration(this.host, this.port);
+        EgovRedisConfiguration egovRedisConfiguration = new EgovRedisConfiguration(this.host, this.port, this.password);
         return egovRedisConfiguration.reactiveRedisConnectionFactory();
     }
 

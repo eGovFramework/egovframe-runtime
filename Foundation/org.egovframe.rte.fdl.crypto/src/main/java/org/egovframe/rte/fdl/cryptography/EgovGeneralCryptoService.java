@@ -22,13 +22,13 @@ public interface EgovGeneralCryptoService extends EgovCryptoService {
      * 
      * @param algorithm
      */
-    public void setAlgorithm(String algorithm);
+    void setAlgorithm(String algorithm);
     
     /**
      * 암복호화 알고리즘.
      * 
      * @return
      */
-    public String getAlgorithm();
+    String getAlgorithm();
 
 }

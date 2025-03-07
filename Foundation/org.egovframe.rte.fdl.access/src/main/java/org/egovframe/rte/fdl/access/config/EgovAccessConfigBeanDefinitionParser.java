@@ -44,6 +44,7 @@ import java.nio.charset.StandardCharsets;
  * ----------------------------------------------
  * 2019.10.01	ESFC                최초 생성
  * 2019.12.30	신용호                mappingPath 추가
+ * 2024.03.29   ESFC            	intercpetor 생성 조건 수정
  * </pre>
  */
 public class EgovAccessConfigBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
@@ -57,9 +58,6 @@ public class EgovAccessConfigBeanDefinitionParser extends AbstractSingleBeanDefi
 
     @Override
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-
-        LOGGER.debug("EgovAccessConfigBeanDefinitionParser doParse Execute !!!");
-
         String globalAuthen = element.getAttribute("globalAuthen");
         if (StringUtils.hasText(globalAuthen)) {
             builder.addPropertyValue("globalAuthen", globalAuthen);
@@ -130,26 +128,23 @@ public class EgovAccessConfigBeanDefinitionParser extends AbstractSingleBeanDefi
 
         String profile = System.getProperty("spring.profiles.active");
 
-        LOGGER.debug("EgovAccessConfigBeanDefinitionParser profile >>> {}", profile);
-        LOGGER.debug("EgovAccessConfigBeanDefinitionParser globalAuthen >>> {}", globalAuthen);
-
-        if (((ObjectUtils.isEmpty(profile) && "session".equals(globalAuthen))) ||
-                (ObjectUtils.isNotEmpty(profile) && profile.contains(globalAuthen)) ) {
-            try {
-                parserContext.getReaderContext().getReader().setValidationMode(XmlBeanDefinitionReader.VALIDATION_XSD);
-                LOGGER.debug("EgovAccessConfigBeanDefinitionParser httpd load start...");
-                parserContext.getReaderContext().getReader().loadBeanDefinitions(new InputStreamResource(new ByteArrayInputStream(sb.toString().getBytes(StandardCharsets.UTF_8))));
-                LOGGER.debug("EgovAccessConfigBeanDefinitionParser httpd load end...");
-                parserContext.getReaderContext().getReader().setValidationMode(XmlBeanDefinitionReader.VALIDATION_AUTO);
-            } catch (IllegalArgumentException iae) {
-                LOGGER.error("[["+iae.getClass()+"/IllegalArgumentException] Try/Catch... Runing : "+ iae.getMessage());
-                throw new RuntimeException("[["+iae.getClass()+"/IllegalArgumentException] Try/Catch... Runing : "+ iae.getMessage());
-            } catch (Exception e) {
-                LOGGER.error("["+e.getClass()+"] Exception Try/Catch... Runing : " + e.getMessage());
-                throw new RuntimeException("["+e.getClass()+"] Exception Try/Catch... Runing : " + e.getMessage());
+        if ("session".equals(globalAuthen)) {
+            if (ObjectUtils.isEmpty(profile) || globalAuthen.contains(profile)) {
+                try {
+                    parserContext.getReaderContext().getReader().setValidationMode(XmlBeanDefinitionReader.VALIDATION_XSD);
+                    LOGGER.debug("EgovAccessConfigBeanDefinitionParser httpd load start...");
+                    parserContext.getReaderContext().getReader().loadBeanDefinitions(new InputStreamResource(new ByteArrayInputStream(sb.toString().getBytes(StandardCharsets.UTF_8))));
+                    LOGGER.debug("EgovAccessConfigBeanDefinitionParser httpd load end...");
+                    parserContext.getReaderContext().getReader().setValidationMode(XmlBeanDefinitionReader.VALIDATION_AUTO);
+                } catch (IllegalArgumentException iae) {
+                    LOGGER.error("[["+iae.getClass()+"/IllegalArgumentException] Try/Catch... Runing : "+ iae.getMessage());
+                    throw new RuntimeException("[["+iae.getClass()+"/IllegalArgumentException] Try/Catch... Runing : "+ iae.getMessage());
+                } catch (Exception e) {
+                    LOGGER.error("["+e.getClass()+"] Exception Try/Catch... Runing : " + e.getMessage());
+                    throw new RuntimeException("["+e.getClass()+"] Exception Try/Catch... Runing : " + e.getMessage());
+                }
+                parserContext.getReaderContext().getReader().loadBeanDefinitions("classpath:/META-INF/spring/access/access-config.xml");
             }
-
-            parserContext.getReaderContext().getReader().loadBeanDefinitions("classpath:/META-INF/spring/access/access-config.xml");
         }
     }
 

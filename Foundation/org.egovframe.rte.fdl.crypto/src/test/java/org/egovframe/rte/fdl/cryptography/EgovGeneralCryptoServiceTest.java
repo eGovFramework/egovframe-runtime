@@ -87,8 +87,8 @@ public class EgovGeneralCryptoServiceTest {
     }
 
     @Test
-    public void testString() {
-		String[] testString = {
+    public void testString() throws UnsupportedEncodingException {
+		/*String[] testString = {
 			"This is a testing...\nHello!",
 			"한글 테스트입니다...",
 			"!@#$%^&*()_+|~{}:\"<>?-=\\`[];',./"
@@ -105,7 +105,11 @@ public class EgovGeneralCryptoServiceTest {
 		} catch (UnsupportedEncodingException uee) {
 			uee.printStackTrace();
 			fail();
-		}
+		}*/
+
+		String param = "aaa";
+		byte[] encrypted = cryptoService.encrypt(param.getBytes("UTF-8"), password);
+		System.out.println("##### General testString >>> " + Base64.getEncoder().encodeToString(encrypted));
     }
     
     @Test

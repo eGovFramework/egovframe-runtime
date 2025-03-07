@@ -53,7 +53,7 @@ public class RoleAndUrlFactoryBean implements FactoryBean<String>, ApplicationCo
     public String getObject() throws Exception {
         EgovAccessConfig config = context.getBean(EgovAccessConfig.class);
         if (config == null) {
-            throw new NoSuchBeanDefinitionException("##### RoleAndUrlFactoryBean EgovAccessConfig is not defined");
+            throw new NoSuchBeanDefinitionException("### RoleAndUrlFactoryBean EgovAccessConfig is not defined");
         }
 
         if (StringUtils.hasText(config.getSqlRoleAndUrl())) {

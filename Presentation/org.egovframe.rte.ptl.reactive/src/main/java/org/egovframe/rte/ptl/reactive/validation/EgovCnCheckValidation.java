@@ -38,12 +38,12 @@ import java.util.regex.Pattern;
  */
 public class EgovCnCheckValidation implements ConstraintValidator<EgovCnCheck, String> {
 
+    private static final Pattern CN_PATTERN = Pattern.compile("^[\\d]{13}+$");
+
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
         String mValue = value.replaceAll("-", "");
-        String regex = "^[\\d]{13}+$";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(mValue);
+        Matcher matcher = CN_PATTERN.matcher(mValue);
         boolean check = matcher.find();
         if (!check) {
             return false;
@@ -51,16 +51,11 @@ public class EgovCnCheckValidation implements ConstraintValidator<EgovCnCheck, S
 
         int sum = 0;
         int[] weightArray = {1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2};
-        for (int i = 0; i < 12; i++) {
+        for (int i = 0; i < weightArray.length; i++) {
             sum += weightArray[i] * Integer.parseInt(mValue.substring(i,i+1));
         }
-        int total = 10 - sum % 10;
-        total = total % 10;
-        if (total == Integer.parseInt(mValue.substring(12))) {
-            return true;
-        } else {
-            return false;
-        }
+        int total = (10 - sum % 10) % 10;
+        return total == Integer.parseInt(mValue.substring(12));
     }
 
 }

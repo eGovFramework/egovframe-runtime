@@ -15,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath*:/spring/*.xml" })
+@ContextConfiguration(locations = { "classpath*:/spring/context-*.xml" })
 public class ServiceExceptionHandlerTests {
 	@Resource(name = "helloService")
 	private HelloService helloService;

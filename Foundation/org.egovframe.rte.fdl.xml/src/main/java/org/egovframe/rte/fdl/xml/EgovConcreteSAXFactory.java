@@ -22,10 +22,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * SAXValidator 생성 Factory Class
- * 
- * @deprecated use EgovSAXFactoryService class
+ *
  * @author 개발프레임웍크 실행환경 개발팀 김종호
- * @since 2009.03.18
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -34,38 +32,43 @@ import org.slf4j.LoggerFactory;
  * ----------------------------------------------
  * 2009.03.18	김종호				최초생성
  * </pre>
+ * @since 2009.03.18
+ * @deprecated use EgovSAXFactoryService class
  */
 @Deprecated
 public class EgovConcreteSAXFactory extends abstractXMLFactoryService {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(EgovConcreteSAXFactory.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EgovConcreteSAXFactory.class);
 
-	/** SAXValidator **/
-	private EgovSAXValidatorService saxValidator = null;
+    /**
+     * SAXValidator
+     **/
+    private EgovSAXValidatorService saxValidator = null;
 
-	/**
-	 * DOMValidatorService 생성자
-	 * @return EgovDOMValidatorService - DOMValidator
-	 * @exception UnsupportedException
-	 */
-	@Override
-	public EgovDOMValidatorService CreateDOMValidator() {
-		try {
-			throw new UnsupportedException("지원되지 않는 방식입니다.");
-		} catch (UnsupportedException e) {
-			LOGGER.debug(e.getMessage());
-		}
-		return null;
-	}
+    /**
+     * DOMValidatorService 생성자
+     *
+     * @return EgovDOMValidatorService - DOMValidator
+     */
+    @Override
+    public EgovDOMValidatorService CreateDOMValidator() {
+        try {
+            throw new UnsupportedException("지원되지 않는 방식입니다.");
+        } catch (UnsupportedException e) {
+            LOGGER.debug(e.getMessage());
+        }
+        return null;
+    }
 
-	/**
-	 * EgovSAXValidatorService 생성자
-	 * @return EgovSAXValidatorService - SAXValidator
-	 */
-	@Override
-	public EgovSAXValidatorService CreateSAXValidator() {
-		saxValidator = new EgovSAXValidatorService();
-		return saxValidator;
-	}
+    /**
+     * EgovSAXValidatorService 생성자
+     *
+     * @return EgovSAXValidatorService - SAXValidator
+     */
+    @Override
+    public EgovSAXValidatorService CreateSAXValidator() {
+        saxValidator = new EgovSAXValidatorService();
+        return saxValidator;
+    }
 
 }

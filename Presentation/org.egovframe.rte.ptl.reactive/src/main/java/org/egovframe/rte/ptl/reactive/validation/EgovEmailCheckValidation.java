@@ -38,17 +38,12 @@ import java.util.regex.Pattern;
  */
 public class EgovEmailCheckValidation implements ConstraintValidator<EgovEmailCheck, String> {
 
+    private final static Pattern EMAIL_PATTERN = Pattern.compile("[0-9a-zA-Z]+(.[_a-z0-9-]+)*@(?:\\w+\\.)+\\w+$");
+
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        String regex = "[0-9a-zA-Z]+(.[_a-z0-9-]+)*@(?:\\w+\\.)+\\w+$";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(value);
-        boolean check = matcher.find();
-        if (!check) {
-            return false;
-        } else {
-            return true;
-        }
+        Matcher matcher = EMAIL_PATTERN.matcher(value);
+        return matcher.find();
     }
 
 }

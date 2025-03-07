@@ -20,10 +20,13 @@ import org.egovframe.rte.fdl.xml.impl.EgovSAXFactoryServiceImpl;
  *  # Copyright (C) by MOPAS All right reserved.
  */
 public class EgovXmlset {
-	/** abstractXMLFactoryService 상속한 EgovConcreteDOMFactory **/ 
+
+	/** abstractXMLFactoryService 상속한 EgovConcreteDOMFactory **/
 	private EgovDOMFactoryServiceImpl domconcrete;
-	/** abstractXMLFactoryService 상속한 EgovConcreteSAXFactory **/ 
+
+	/** abstractXMLFactoryService 상속한 EgovConcreteSAXFactory **/
 	private EgovSAXFactoryServiceImpl saxconcrete;
+
 	/**
 	 * 구성 Class EgovConcreteDOMFactory 설정 
 	 * @param domconcrete - 구상 Class EgovConcreteDOMFactory
@@ -32,6 +35,7 @@ public class EgovXmlset {
 	{
 		this.domconcrete = domconcrete;
 	}
+
 	/**
 	 * 구성 Class EgovConcreteDOMFactory 리턴 
 	 * @return 구성 Class EgovConcreteDOMFactory
@@ -40,6 +44,7 @@ public class EgovXmlset {
 	 {
 		 return domconcrete;
 	 }
+
 	/**
 	 * 구성 Class EgovConcreteSAXFactory 설정 
 	 * @param saxconcrete - 구상 Class EgovConcreteSAXFactory
@@ -48,6 +53,7 @@ public class EgovXmlset {
 	{
 		this.saxconcrete = saxconcrete;
 	}
+
 	/**
 	 * 구성 Class EgovConcreteSAXFactory 리턴 
 	 * @return 구성 Class EgovConcreteSAXFactory

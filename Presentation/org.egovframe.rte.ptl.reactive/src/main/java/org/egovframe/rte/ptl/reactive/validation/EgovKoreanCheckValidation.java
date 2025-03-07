@@ -38,17 +38,12 @@ import java.util.regex.Pattern;
  */
 public class EgovKoreanCheckValidation implements ConstraintValidator<EgovKoreanCheck, String> {
 
+    private final static Pattern KOREAN_PATTERN = Pattern.compile("^[ㄱ-ㅎ가-힣]*$");
+
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        String regex = "^[ㄱ-ㅎ가-힣]*$";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(value);
-        boolean check = matcher.find();
-        if (!check) {
-            return false;
-        } else {
-            return true;
-        }
+        Matcher matcher = KOREAN_PATTERN.matcher(value);
+        return matcher.find();
     }
 
 }

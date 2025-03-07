@@ -1,4 +1,4 @@
-# 표준프레임워크 실행환경 4.2.0
+# 표준프레임워크 실행환경 4.3.0
 
 ![java](https://img.shields.io/badge/java-007396?style=for-the-badge&logo=JAVA&logoColor=white)
 ![Spring](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)
@@ -14,12 +14,11 @@
 - 실행환경 사용에 필수적이지 않은 서비스들은 [선택 서비스]로 분류하여 각 사업에서 선택적으로 적용할 수 있도록 제공
 - 핵심 서비스는 기본적으로 적용되며 선택 서비스는 각 사업의 필요에 맞게 개발환경을 통해 선택적으로 적용 가능
 
-### 실행환경 4.2.0 버전의 주요 특징
+### 실행환경 4.3.0 버전의 주요 특징
 
-- Spring Boot 2.7.12 지원
-- Spring Framework 5.3.27 버전으로 업그레이드
-- Spring Security 5.8.3 버전으로 업그레이드
-- 실행환경 4.2 라이브러리를 적용한 [WebFlux 예제](https://www.egovframe.go.kr/home/sub.do?menuNo=37)
+- Spring Boot 2.7.18 지원
+- Spring Framework 5.3.37 버전으로 업그레이드
+- Spring Security 5.8.13 버전으로 업그레이드
 
 ## 실행환경 구성
 
@@ -94,7 +93,7 @@ org.egovframe.rte
 ## 참조
 
 1. [Contribution 가이드](https://github.com/eGovFramework/egovframe-runtime/wiki)
-2. [실행환경 위키가이드](https://www.egovframe.go.kr/wiki/doku.php?id=egovframework:rte4.2)
+2. [실행환경 위키가이드](https://www.egovframe.go.kr/wiki/doku.php?id=egovframework:rte4.3)
 3. [개발환경 다운로드](https://www.egovframe.go.kr/home/sub.do?menuNo=94)
 4. [실행환경 다운로드](https://www.egovframe.go.kr/home/sub.do?menuNo=92)
 

@@ -38,20 +38,23 @@ import java.util.regex.Pattern;
  */
 public class EgovPwdCheckValidation implements ConstraintValidator<EgovPwdCheck, String> {
 
+    private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[~!@#$%^&*?])(?=\\S+$).{8,20}$");
+    private static final Pattern REPETITIVE_PATTERN = Pattern.compile(".*(.)\\1{2,}.*");
+
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        boolean check1 = passwordCheck(value);
-        if (!check1) {
+        // 비밀번호 패턴 검증
+        if (!passwordCheck(value)) {
             return false;
         }
 
-        boolean check2 = repetitivePasswordCheck(value);
-        if (check2) {
+        // 동일한 문자 반복 패턴 검증
+        if (repetitivePasswordCheck(value)) {
             return false;
         }
 
-        boolean check3 = consecutivePasswordCheck(value);
-        if (check3) {
+        // 연속된 문자 패턴 검증
+        if (consecutivePasswordCheck(value)) {
             return false;
         }
 
@@ -59,46 +62,39 @@ public class EgovPwdCheckValidation implements ConstraintValidator<EgovPwdCheck,
     }
 
     /**
-     * 8이상 20자리 이하 자리수, 공백 체크, 영문자, 숫자, 특수 문자(~!@#$%^&*?)의 조합 체크
+     * 8자 이상 20자 이하, 공백 없는 영문자, 숫자, 특수 문자(~!@#$%^&*?)의 조합 체크
      */
     public static boolean passwordCheck(String value) {
-        String regex = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[~!@#$%^&*?])(?=\\S+$).{8,20}$";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(value);
-        return matcher.find();
+        Matcher matcher = PASSWORD_PATTERN.matcher(value);
+        return matcher.matches();
     }
 
     /**
-     * 동일한 문자열 3개 이상(ex: aaa, bbb, 111, etc.) 체크
+     * 동일한 문자열 3개 이상 반복 (ex: aaa, bbb, 111 등) 체크
      */
     public static boolean repetitivePasswordCheck(String value) {
-        String regex = ".*(.)\\1{2,}.*";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(value);
-        return matcher.find();
+        Matcher matcher = REPETITIVE_PATTERN.matcher(value);
+        return matcher.matches();
     }
 
     /**
-     * 연속된 문자열 3개 이상(ex: abc, def, 123, etc.) 체크
+     * 연속된 문자열 3개 이상 (ex: abc, def, 123 등) 체크
      */
     public static boolean consecutivePasswordCheck(String value) {
         String tmpValue = value.toUpperCase();
-        int tmpLength = tmpValue.length();
-        int[] tmpArray = new int[tmpLength];
-        for (int i = 0; i < tmpLength; i++) {
-            tmpArray[i] = tmpValue.charAt(i);
-        }
-
-        for (int i = 0; i < tmpLength - 2; i++) {
-            // 범위 A-Z / 0-9
-            if ((tmpArray[i] > 47 && tmpArray[i + 2] < 58) || (tmpArray[i] > 64 && tmpArray[i + 2] < 91)) {
-                if (Math.abs(tmpArray[i + 2] - tmpArray[i + 1]) == 1 && Math.abs(tmpArray[i + 2] - tmpArray[i]) == 2) {
-                    return true;
-                }
+        for (int i = 0; i < tmpValue.length() - 2; i++) {
+            if (isConsecutive(tmpValue.charAt(i), tmpValue.charAt(i + 1), tmpValue.charAt(i + 2))) {
+                return true;
             }
         }
-
         return false;
+    }
+
+    /**
+     * 세 개의 문자가 연속된지 확인하는 메서드
+     */
+    private static boolean isConsecutive(char first, char second, char third) {
+        return (second - first == 1) && (third - second == 1);
     }
 
 }

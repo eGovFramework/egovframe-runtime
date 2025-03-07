@@ -145,7 +145,6 @@ public abstract class EgovAbstractDAO extends SqlMapClientDaoSupport {
 	 * @param queryId - 삭제 처리 SQL mapping 쿼리 ID
 	 * @param parameterObject - 삭제 처리 SQL mapping 입력 데이터(일반적으로 key 조건)를 세팅한 파라메터 객체(보통 VO 또는 Map)
 	 * @param requiredRowsAffected - 삭제할 row 수
-	 * @return DBMS가 지원하는 경우 delete 적용 결과 count
 	 */
 	public void delete(String queryId, Object parameterObject, int requiredRowsAffected) {
 		getSqlMapClientTemplate().delete(queryId, parameterObject, requiredRowsAffected);

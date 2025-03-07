@@ -38,18 +38,13 @@ import java.util.regex.Pattern;
  */
 public class EgovPhoneCheckValidation implements ConstraintValidator<EgovPhoneCheck, String> {
 
+    private final static Pattern PHONE_PATTERN = Pattern.compile("^\\d{2,3}\\d{3,4}\\d{4}$");
+
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
         String mValue = value.replaceAll("-", "");
-        String regex = "^\\d{2,3}\\d{3,4}\\d{4}$";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(mValue);
-        boolean check = matcher.find();
-        if (!check) {
-            return false;
-        } else {
-            return true;
-        }
+        Matcher matcher = PHONE_PATTERN.matcher(mValue);
+        return matcher.find();
     }
 
 }
