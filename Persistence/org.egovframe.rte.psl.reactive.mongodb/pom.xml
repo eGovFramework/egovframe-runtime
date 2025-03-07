@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.egovframe.rte</groupId>
     <artifactId>org.egovframe.rte.psl.reactive.mongodb</artifactId>
-    <version>4.2.0</version>
+    <version>4.3.0</version>
     <packaging>jar</packaging>
     <name>org.egovframe.rte.psl.reactive.mongodb</name>
     <description>The eGovernment Standard Framework</description>
@@ -18,8 +18,8 @@
     </licenses>
 
     <properties>
-        <org.egovframe.rte.version>4.2.0</org.egovframe.rte.version>
-        <spring.maven.artifact.version>5.3.27</spring.maven.artifact.version>
+        <org.egovframe.rte.version>4.3.0</org.egovframe.rte.version>
+        <spring.maven.artifact.version>5.3.37</spring.maven.artifact.version>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -41,6 +41,11 @@
     <dependencies>
         <!-- Commons -->
         <dependency>
+            <groupId>org.egovframe.rte</groupId>
+            <artifactId>org.egovframe.rte.fdl.logging</artifactId>
+            <version>${org.egovframe.rte.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webflux</artifactId>
             <version>${spring.maven.artifact.version}</version>
@@ -58,34 +63,34 @@
         <dependency>
             <groupId>io.projectreactor</groupId>
             <artifactId>reactor-core</artifactId>
-            <version>3.4.29</version>
+            <version>3.4.39</version>
         </dependency>
         <!-- MongoDB -->
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-mongodb</artifactId>
-            <version>3.4.12</version>
+            <version>3.4.18</version>
         </dependency>
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongodb-driver-reactivestreams</artifactId>
-            <version>4.9.1</version>
+            <version>4.11.2</version>
         </dependency>
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongodb-driver-core</artifactId>
-            <version>4.9.1</version>
+            <version>4.11.2</version>
         </dependency>
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongodb-driver-sync</artifactId>
-            <version>4.9.1</version>
+            <version>4.11.2</version>
         </dependency>
         <!-- Test -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.28</version>
+            <version>1.18.32</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -97,7 +102,7 @@
         <dependency>
             <groupId>io.projectreactor</groupId>
             <artifactId>reactor-test</artifactId>
-            <version>3.4.29</version>
+            <version>3.4.39</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -109,7 +114,7 @@
         <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
-            <version>5.1.0</version>
+            <version>5.2.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -127,7 +132,7 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>3.24.2</version>
+            <version>3.26.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -141,7 +146,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.11.0</version>
+                    <version>3.13.0</version>
                     <configuration>
                         <source>${java.version}</source>
                         <target>${java.version}</target>
@@ -164,7 +169,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-pmd-plugin</artifactId>
-                    <version>3.21.0</version>
+                    <version>3.23.0</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -172,7 +177,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.2.1</version>
+                <version>3.3.1</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -186,7 +191,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.5.0</version>
+                <version>3.7.0</version>
                 <configuration>
                     <doclint>none</doclint>
                 </configuration>
@@ -202,7 +207,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.1.2</version>
                 <executions>
                     <execution>
                         <id>deploy</id>
@@ -214,7 +219,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.3.0</version>
                 <configuration>
                     <skipTests>true</skipTests>
                     <reportFormat>xml</reportFormat>
@@ -268,7 +273,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.3.0</version>
                 <inherited>true</inherited>
                 <reportSets>
                     <reportSet>
@@ -282,11 +287,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.5.0</version>
+                <version>3.7.0</version>
                 <configuration>
                     <minmemory>128m</minmemory>
                     <maxmemory>512m</maxmemory>
-                    <additionalJOption>-Xdoclint:none</additionalJOption>
                 </configuration>
             </plugin>
             <!-- Generating Java Source in HTML -->

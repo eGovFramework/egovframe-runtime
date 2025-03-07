@@ -44,16 +44,16 @@ import org.slf4j.LoggerFactory;
  */
 public final class EgovExcelUtil {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(EgovExcelUtil.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EgovExcelUtil.class);
 
-	private EgovExcelUtil() {
-	}
+    private EgovExcelUtil() {
+    }
 
     /**
-     * 엑셀의 셀값을 String 타입으로 변환하여 리턴한다.
-     * @param cell <code>Cell</code>
-     * @return 결과 값
-     */
+    * 엑셀의 셀값을 String 타입으로 변환하여 리턴한다.
+    * @param cell <code>Cell</code>
+    * @return 결과 값
+    */
     public static String getValue(Cell cell) {
         String result = "";
         if (null == cell) {
@@ -62,31 +62,32 @@ public final class EgovExcelUtil {
 
         if (cell.getCellType() == CellType.BOOLEAN) {
             LOGGER.debug("### Cell.CELL_TYPE_BOOLEAN : {}", CellType.BOOLEAN);
-            result = String.valueOf(cell.getBooleanCellValue());
+        result = String.valueOf(cell.getBooleanCellValue());
         } else if (cell.getCellType() == CellType.ERROR) {
             LOGGER.debug("### Cell.CELL_TYPE_ERROR : {}", CellType.ERROR);
         } else if (cell.getCellType() == CellType.FORMULA) {
             LOGGER.debug("### Cell.CELL_TYPE_FORMULA : {}", CellType.FORMULA);
-			String stringValue = null;
-			String longValue = null;
-			try {
-				stringValue = cell.getRichStringCellValue().getString();
-				longValue = doubleToString(cell.getNumericCellValue());
-			//2017.02.15 장동한 시큐어코딩(ES)-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]	
+            String stringValue = null;
+            String longValue = null;
+            try {
+                stringValue = cell.getRichStringCellValue().getString();
+                longValue = doubleToString(cell.getNumericCellValue());
+                //2017.02.15 장동한 시큐어코딩(ES)-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
             } catch(IllegalArgumentException e) {
                 LOGGER.error("[IllegalArgumentException] Try/Catch... Runing : "+ e.getMessage());
             }
-
             if (stringValue != null) {
-				result = stringValue;
-			} else if (longValue != null) {
-				result = longValue;
-			} else {
-				result = cell.getCellFormula();
-			}
+                result = stringValue;
+            } else if (longValue != null) {
+                result = longValue;
+            } else {
+                result = cell.getCellFormula();
+            }
         } else if (cell.getCellType() == CellType.NUMERIC) {
-            LOGGER.debug("### Cell.CELL_TYPE_NUMERIC : {}", CellType.NUMERIC);
-            result = DateUtil.isCellDateFormatted(cell) ? EgovDateUtil.toString(cell.getDateCellValue(), "yyyy/MM/dd", null) : doubleToString(cell.getNumericCellValue());
+        LOGGER.debug("### Cell.CELL_TYPE_NUMERIC : {}", CellType.NUMERIC);
+            result = DateUtil.isCellDateFormatted(cell)
+                    ? EgovDateUtil.toString(cell.getDateCellValue(), "yyyy/MM/dd", null)
+                    : doubleToString(cell.getNumericCellValue());
         } else if (cell.getCellType() == CellType.STRING) {
             LOGGER.debug("### Cell.CELL_TYPE_STRING : {}", CellType.STRING);
             result = cell.getRichStringCellValue().getString();

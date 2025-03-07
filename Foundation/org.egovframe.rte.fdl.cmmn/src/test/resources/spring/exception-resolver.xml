@@ -7,10 +7,8 @@
 		<property name="defaultErrorView" value="common/error" />
 		<property name="exceptionMappings">
 			<props>
-				<prop key="org.egovframe.rte.bsl.exception.web.ExceptionCase1">common/exceptionViewCase1
-				</prop>
-				<prop key="org.egovframe.rte.bsl.exception.web.ExceptionCase2">common/exceptionViewCase2
-				</prop>
+				<prop key="org.egovframe.rte.bsl.exception.web.ExceptionCase1">common/exceptionViewCase1</prop>
+				<prop key="org.egovframe.rte.bsl.exception.web.ExceptionCase2">common/exceptionViewCase2</prop>
 			</props>
 		</property>
 	</bean>

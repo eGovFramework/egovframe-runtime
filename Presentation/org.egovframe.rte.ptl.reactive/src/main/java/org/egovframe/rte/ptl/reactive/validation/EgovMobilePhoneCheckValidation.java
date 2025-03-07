@@ -38,18 +38,13 @@ import java.util.regex.Pattern;
  */
 public class EgovMobilePhoneCheckValidation implements ConstraintValidator<EgovMobilePhoneCheck, String> {
 
+    private final static Pattern MOBILE_PHONE_PATTERN = Pattern.compile("^01(?:0|1|[6-9])(?:\\d{3}|\\d{4})\\d{4}$");
+
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
         String mValue = value.replaceAll("-", "");
-        String regex = "^01(?:0|1|[6-9])(?:\\d{3}|\\d{4})\\d{4}$";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(mValue);
-        boolean check = matcher.find();
-        if (!check) {
-            return false;
-        } else {
-            return true;
-        }
+        Matcher matcher = MOBILE_PHONE_PATTERN.matcher(mValue);
+        return matcher.find();
     }
 
 }

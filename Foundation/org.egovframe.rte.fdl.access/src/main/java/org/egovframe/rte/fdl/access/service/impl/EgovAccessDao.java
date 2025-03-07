@@ -77,13 +77,11 @@ public class EgovAccessDao implements ApplicationContextAware {
     }
 
     public List<Map<String, Object>> getAuthorityUser() {
-        LOGGER.debug("##### EgovAccessDao getAuthorityUser >>> {} ", getAuthorityUserQuery());
         List<Map<String, Object>> list = this.jdbcTemplate.queryForList(getAuthorityUserQuery());
         return list;
     }
 
     public List<Map<String, Object>> getRoleAndUrl() {
-        LOGGER.debug("##### EgovAccessDao getRoleAndUrl >>> {} ", getRoleAndUrlQuery());
         List<Map<String, Object>> list = this.jdbcTemplate.queryForList(getRoleAndUrlQuery());
         return list;
     }

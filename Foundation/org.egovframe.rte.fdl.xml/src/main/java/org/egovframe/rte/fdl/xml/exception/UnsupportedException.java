@@ -19,7 +19,6 @@ package org.egovframe.rte.fdl.xml.exception;
  * Exception 상속하는 클래스로 지원되지 않는 메소드 호출시 발생
  *
  * @author 개발프레임웍크 실행환경 개발팀 김종호
- * @since 2009.03.18
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -28,20 +27,22 @@ package org.egovframe.rte.fdl.xml.exception;
  * ----------------------------------------------
  * 2009.03.18	김종호				최초생성
  * </pre>
+ * @since 2009.03.18
  */
 public class UnsupportedException extends Exception {
 
-	/**
-	 * serialVersion UID
-	 */
-	private static final long serialVersionUID = -5468858259564805366L;
+    /**
+     * serialVersion UID
+     */
+    private static final long serialVersionUID = -5468858259564805366L;
 
-	/**
-	 * UnsupportedException 생성자
-	 *  @param msg - exception message
-	 */
-	public UnsupportedException(String msg) {
-		super(msg);
-	}
+    /**
+     * UnsupportedException 생성자
+     *
+     * @param msg - exception message
+     */
+    public UnsupportedException(String msg) {
+        super(msg);
+    }
 
 }

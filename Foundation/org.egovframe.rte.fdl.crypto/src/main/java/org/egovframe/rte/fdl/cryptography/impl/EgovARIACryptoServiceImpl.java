@@ -29,16 +29,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 
 public class EgovARIACryptoServiceImpl implements EgovARIACryptoService {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(EgovARIACryptoServiceImpl.class); // Logger 처리
-	private final Base64 base64 = new Base64();
+	private static final Logger LOGGER = LoggerFactory.getLogger(EgovARIACryptoServiceImpl.class);
 
-	private static final int DEFAULT_BLOCKSIZE = 1024;
 	private static final int BLOCKSIZE_MODULAR = 16;
 	private EgovPasswordEncoder passwordEncoder;
-	private int blockSize = DEFAULT_BLOCKSIZE;
+	private int blockSize = 1024;
 
 	public void setPasswordEncoder(EgovPasswordEncoder passwordEncoder) {
 		this.passwordEncoder = passwordEncoder;
@@ -92,7 +91,7 @@ public class EgovARIACryptoServiceImpl implements EgovARIACryptoService {
 				}
 				byte[] fileArray = baos.toByteArray();
 				fileString = new String(Base64.encodeBase64(fileArray));
-				byte[] enc = cipher.encrypt(fileString.getBytes("UTF-8"));
+				byte[] enc = cipher.encrypt(fileString.getBytes(StandardCharsets.UTF_8));
 				String encString = Base64.encodeBase64String(enc);
 				FileUtils.writeStringToFile(trgtFile, encString, "UTF-8", true);
 			} catch (IOException e) {
@@ -129,7 +128,7 @@ public class EgovARIACryptoServiceImpl implements EgovARIACryptoService {
 				String readEncString = FileUtils.readFileToString(encryptedFile, "UTF-8");
 				byte[] decEnc = Base64.decodeBase64(readEncString);
 				byte[] dec = cipher.decrypt(decEnc);
-				String decBase64String = new String(dec, "UTF-8");
+				String decBase64String = new String(dec, StandardCharsets.UTF_8);
 				byte[] data = Base64.decodeBase64(decBase64String);
 				FileUtils.writeByteArrayToFile(trgtFile, data);
 			} catch (IOException e) {

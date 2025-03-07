@@ -35,7 +35,5 @@ public class SampleServiceImpl implements SampleService {
 		newOrder.setDescription("This is the new XYZ order");
 		return newOrder;
 	}
-	
-	
 
 }

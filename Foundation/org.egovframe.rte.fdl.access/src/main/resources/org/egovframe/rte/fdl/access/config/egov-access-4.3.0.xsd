@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://maven.egovframe.go.kr/schema/egov-access"
+			xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+			xmlns:beans="http://www.springframework.org/schema/beans"
+			targetNamespace="http://maven.egovframe.go.kr/schema/egov-access"
+			elementFormDefault="qualified"
+			attributeFormDefault="unqualified">
+
+	<xsd:import namespace="http://www.springframework.org/schema/beans"/>
+
+	<xsd:element name="config">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="beans:identifiedType">
+					<xsd:attribute name="globalAuthen" type="xsd:string" use="required">
+						<xsd:annotation>
+							<xsd:documentation>Egovframework global property authentication type</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="dataSource" type="xsd:string" use="required">
+						<xsd:annotation>
+							<xsd:documentation>Specify the dataSource bean name</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="loginUrl" type="xsd:string" use="required">
+						<xsd:annotation>
+							<xsd:documentation>Egovframework login url</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="accessDeniedUrl" type="xsd:string" use="required">
+						<xsd:annotation>
+							<xsd:documentation>The URL for the access denied page</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="sqlAuthorityUser" type="xsd:string" use="required">
+						<xsd:annotation>
+							<xsd:documentation>An SQL statement to query for a user's granted authorities given a username</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="sqlRoleAndUrl" type="xsd:string" use="required">
+						<xsd:annotation>
+							<xsd:documentation>An SQL statement to query role, url given a username.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="requestMatcherType" type="xsd:string" use="required">
+						<xsd:annotation>
+							<xsd:documentation>Define the pattern of url to match</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="excludeList" type="xsd:string" use="required">
+						<xsd:annotation>
+							<xsd:documentation>Define interceptor Exclude List</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="mappingPath" type="xsd:string" use="required">
+						<xsd:annotation>
+							<xsd:documentation>Define interceptor Mapping Path</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+
+</xsd:schema>

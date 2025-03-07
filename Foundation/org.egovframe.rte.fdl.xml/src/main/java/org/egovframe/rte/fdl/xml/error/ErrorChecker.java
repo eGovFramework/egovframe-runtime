@@ -28,7 +28,6 @@ import java.util.Set;
  * Set에 저장하는 역할을 한다
  *
  * @author 개발프레임웍크 실행환경 개발팀 김종호
- * @since 2009.03.18
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -37,49 +36,56 @@ import java.util.Set;
  * ----------------------------------------------
  * 2009.03.18	김종호				최초생성
  * </pre>
+ * @since 2009.03.18
  */
 public class ErrorChecker extends DefaultHandler {
 
-	/** 에러 메시지를 저장하는 Set **/
-	private final Set<String> errorReport = new HashSet<String>();
+    /**
+     * 에러 메시지를 저장하는 Set
+     **/
+    private final Set<String> errorReport = new HashSet<>();
 
-	/**
-	 * DefaultHandler의 error 메소드를 오버라이드하는 메소드로,
-	 * XML 문서 파싱시 error 레벨에 해당하는 에러가 발생하면
-	 * 파서가 error() 메소드에 에러 메시지를 전달한다.
-	 * @param e - SAXParseException
-	 */
-	public void error(SAXParseException e) {
-		errorReport.add("Parsing error:  " + e.getMessage());
-	}
+    /**
+     * DefaultHandler의 error 메소드를 오버라이드하는 메소드로,
+     * XML 문서 파싱시 error 레벨에 해당하는 에러가 발생하면
+     * 파서가 error() 메소드에 에러 메시지를 전달한다.
+     *
+     * @param e - SAXParseException
+     */
+    public void error(SAXParseException e) {
+        errorReport.add("Parsing error:  " + e.getMessage());
+    }
 
-	/**
-	 * DefaultHandler의 warning 메소드를 오버라이드하는 메소드로,
-	 * XML 문서 파싱시 warning 레벨에 해당하는 에러가 발생하면
-	 * 파서가 warning() 메소드에 에러 메시지를 전달한다.
-	 * @param e - SAXParseException
-	 */
-	public void warning(SAXParseException e) {
-		errorReport.add("Parsing problem:  " + e.getMessage());
-	}
+    /**
+     * DefaultHandler의 warning 메소드를 오버라이드하는 메소드로,
+     * XML 문서 파싱시 warning 레벨에 해당하는 에러가 발생하면
+     * 파서가 warning() 메소드에 에러 메시지를 전달한다.
+     *
+     * @param e - SAXParseException
+     */
+    public void warning(SAXParseException e) {
+        errorReport.add("Parsing problem:  " + e.getMessage());
+    }
 
-	/**
-	 * DefaultHandler의 fatalError 메소드를 오버라이드하는 메소드로,
-	 * XML 문서 파싱시 fatalError 레벨에 해당하는 에러가 발생하면
-	 * 파서가 fatalError() 메소드에 에러 메시지를 전달한다.
-	 * @param e - SAXParseException
-	 */
-	public void fatalError(SAXParseException e) {
-		errorReport.add("Parsing Fatal error:  " + e.getMessage());
-	}
+    /**
+     * DefaultHandler의 fatalError 메소드를 오버라이드하는 메소드로,
+     * XML 문서 파싱시 fatalError 레벨에 해당하는 에러가 발생하면
+     * 파서가 fatalError() 메소드에 에러 메시지를 전달한다.
+     *
+     * @param e - SAXParseException
+     */
+    public void fatalError(SAXParseException e) {
+        errorReport.add("Parsing Fatal error:  " + e.getMessage());
+    }
 
-	/**
-	 * XML 문서 파싱시 발생한 에러를 저장하고 있는 에러 메시지들을 반환.
-	 * @param
-	 * @return Set
-	 */
-	public Set<String> getErrorReport() {
-		return errorReport;
-	}
+    /**
+     * XML 문서 파싱시 발생한 에러를 저장하고 있는 에러 메시지들을 반환.
+     *
+     * @param
+     * @return Set
+     */
+    public Set<String> getErrorReport() {
+        return errorReport;
+    }
 
 }

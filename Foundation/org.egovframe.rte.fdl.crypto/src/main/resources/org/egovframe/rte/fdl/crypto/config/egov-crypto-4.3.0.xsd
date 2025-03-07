@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://maven.egovframe.go.kr/schema/egov-crypto"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:beans="http://www.springframework.org/schema/beans"
+    targetNamespace="http://maven.egovframe.go.kr/schema/egov-crypto"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified">
+
+   <xsd:import namespace="http://www.springframework.org/schema/beans"/>
+   
+	<xsd:element name="config">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="beans:identifiedType">
+
+					<xsd:attribute name="initial" type="xsd:boolean" default="false">
+						<xsd:annotation>
+							<xsd:documentation>egovframework database crypto initial</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+
+					<xsd:attribute name="crypto" type="xsd:boolean" default="false">
+						<xsd:annotation>
+							<xsd:documentation>egovframework database crypto status</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+
+					<xsd:attribute name="algorithm" type="xsd:string" default="SHA-256">
+						<xsd:annotation>
+							<xsd:documentation>egovframework database crypto algorithm</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+
+					<xsd:attribute name="algorithmKey" type="xsd:string">
+						<xsd:annotation>
+							<xsd:documentation>egovframework database crypto algorithm key</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+
+					<xsd:attribute name="algorithmKeyHash" type="xsd:string">
+						<xsd:annotation>
+							<xsd:documentation>egovframework database crypto algorithm key Hash</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+
+					<xsd:attribute name="cryptoBlockSize" type="xsd:positiveInteger" default="1024">
+						<xsd:annotation>
+							<xsd:documentation>egovframework database crypto algorithm block size</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+
+					<xsd:attribute name="cryptoPropertyLocation" type="xsd:string" default="classpath:/egovframework/egovProps/globals.properties">
+						<xsd:annotation>
+							<xsd:documentation>egovframework database crypto property location</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+
+</xsd:schema>

@@ -43,7 +43,8 @@ import java.nio.charset.StandardCharsets;
  *
  * 수정일		수정자				수정내용
  * ----------------------------------------------
- * 2018.08.09	장동한				최초 생성
+ * 2018.08.09	장동한			최초 생성
+ * 2024.08.22   kiboomhan		URL Safe 암호화 방식 적용
  * </pre>
  */
 public class EgovEnvCryptoServiceImpl implements EgovEnvCryptoService {
@@ -148,7 +149,7 @@ public class EgovEnvCryptoServiceImpl implements EgovEnvCryptoService {
 	 */
 	public String encrypt(String encrypt){
 		try {
-			return URLEncoder.encode(new String(new Base64().encode(cryptoService.encrypt( encrypt.getBytes(StandardCharsets.UTF_8), this.getCyptoAlgorithmKey()))), "UTF-8");
+			return URLEncoder.encode(new String(Base64.encodeBase64(cryptoService.encrypt(encrypt.getBytes(StandardCharsets.UTF_8), this.getCyptoAlgorithmKey()), false, true)), "UTF-8");
 		} catch(IllegalArgumentException | UnsupportedEncodingException e) {
 			LOGGER.error("[IllegalArgumentException] Try/Catch...usingParameters Runing : "+ e.getMessage());
 		}
@@ -162,7 +163,7 @@ public class EgovEnvCryptoServiceImpl implements EgovEnvCryptoService {
 	 */
 	public String decrypt(String decrypt){
 		try {
-			return new String(cryptoService.decrypt(new Base64().decode(URLDecoder.decode(decrypt,"UTF-8").getBytes(StandardCharsets.UTF_8)), this.cyptoAlgorithmKey));
+			return new String(cryptoService.decrypt(Base64.decodeBase64(URLDecoder.decode(decrypt,"UTF-8").getBytes(StandardCharsets.UTF_8)), this.cyptoAlgorithmKey));
 		} catch(IllegalArgumentException | UnsupportedEncodingException e) {
 			LOGGER.error("[IllegalArgumentException] Try/Catch...usingParameters Runing : "+ e.getMessage());
 		}
@@ -176,7 +177,7 @@ public class EgovEnvCryptoServiceImpl implements EgovEnvCryptoService {
 	 */
 	public String encryptNone(String encrypt){
 		try {
-			return new String(new Base64().encode(cryptoService.encrypt( encrypt.getBytes(StandardCharsets.UTF_8), this.getCyptoAlgorithmKey())));
+			return new String(Base64.encodeBase64(cryptoService.encrypt(encrypt.getBytes(StandardCharsets.UTF_8), this.getCyptoAlgorithmKey()), false, true), StandardCharsets.UTF_8);
 		} catch(IllegalArgumentException e) {
 			LOGGER.error("[IllegalArgumentException] Try/Catch...usingParameters Runing : "+ e.getMessage());
 		}
@@ -190,7 +191,7 @@ public class EgovEnvCryptoServiceImpl implements EgovEnvCryptoService {
 	 */
 	public String decryptNone(String decrypt){
 		try {
-			return new String(cryptoService.decrypt(new Base64().decode(decrypt.getBytes(StandardCharsets.UTF_8)), this.cyptoAlgorithmKey));
+			return new String(cryptoService.decrypt(Base64.decodeBase64(decrypt.getBytes(StandardCharsets.UTF_8)), this.cyptoAlgorithmKey));
 		} catch(IllegalArgumentException e) {
 			LOGGER.error("[IllegalArgumentException] Try/Catch...usingParameters Runing : "+ e.getMessage());
 		}

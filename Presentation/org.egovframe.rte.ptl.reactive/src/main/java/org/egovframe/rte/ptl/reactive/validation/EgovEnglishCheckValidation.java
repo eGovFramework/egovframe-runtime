@@ -38,17 +38,12 @@ import java.util.regex.Pattern;
  */
 public class EgovEnglishCheckValidation implements ConstraintValidator<EgovEnglishCheck, String> {
 
+    private final static Pattern ENGLISH_PATTERN = Pattern.compile("^[a-zA-Z]*$");
+
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        String regex = "^[a-zA-Z]*$";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(value);
-        boolean check = matcher.find();
-        if (!check) {
-            return false;
-        } else {
-            return true;
-        }
+        Matcher matcher = ENGLISH_PATTERN.matcher(value);
+        return matcher.find();
     }
 
 }

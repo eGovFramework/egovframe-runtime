@@ -20,6 +20,7 @@ public class EgovDigestServiceTest {
 		String data = "egovframe";
 
 		byte[] digested = digestService.digest(data.getBytes());
+        System.out.println("encryptString >>> " + new String(digested));
 
 		assertTrue(digestService.matches(data.getBytes(), digested));
     }

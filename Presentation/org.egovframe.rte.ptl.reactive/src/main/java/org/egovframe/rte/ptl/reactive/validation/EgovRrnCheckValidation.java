@@ -38,12 +38,12 @@ import java.util.regex.Pattern;
  */
 public class EgovRrnCheckValidation implements ConstraintValidator<EgovRrnCheck, String> {
 
+    private static final Pattern RRN_PATTERN = Pattern.compile("^[\\d]{6}[1-4][\\d]{6}+$");
+
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
         String mValue = value.replaceAll("-", "");
-        String regex = "^[\\d]{6}[1-4][\\d]{6}+$";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(mValue);
+        Matcher matcher = RRN_PATTERN.matcher(mValue);
         boolean check = matcher.find();
         if (!check) {
             return false;
@@ -57,11 +57,7 @@ public class EgovRrnCheckValidation implements ConstraintValidator<EgovRrnCheck,
         int total = 11 - sum % 11;
         if (total == 10) total = 0;
         if (total == 11) total = 1;
-        if (total == Integer.parseInt(mValue.substring(12))) {
-            return true;
-        } else {
-            return false;
-        }
+        return total == Integer.parseInt(mValue.substring(12));
     }
 
 }

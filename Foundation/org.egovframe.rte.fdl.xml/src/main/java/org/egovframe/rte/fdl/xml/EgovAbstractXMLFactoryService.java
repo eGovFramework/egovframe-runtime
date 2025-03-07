@@ -18,9 +18,8 @@ package org.egovframe.rte.fdl.xml;
 
 /**
  * Factory Class
- * 
+ *
  * @author 개발프레임웍크 실행환경 개발팀 김종호
- * @since 2009. 03.10
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -30,19 +29,22 @@ package org.egovframe.rte.fdl.xml;
  * 2009.03.10	김종호				최초생성
  * 2015.02.10	Vincent Han			클래스 명명 규칙 수정 (abstractXMLFactoryService -> EgovAbstractXMLFactoryService)
  * </pre>
+ * @since 2009. 03.10
  */
 public abstract class EgovAbstractXMLFactoryService {
 
-	/**
-	 * DOM 파서를 사용할 수 있도록 Service 생성
-	 * @return EgovDOMValidatorService
-	 */
-	public abstract EgovDOMValidatorService createDOMValidator();
+    /**
+     * DOM 파서를 사용할 수 있도록 Service 생성
+     *
+     * @return EgovDOMValidatorService
+     */
+    public abstract EgovDOMValidatorService createDOMValidator();
 
-	/**
-	* SAX 파서를 사용할 수 있도록 Service 생성
-	* @return EgovSAXValidatorService
-	*/
-	public abstract EgovSAXValidatorService createSAXValidator();
+    /**
+     * SAX 파서를 사용할 수 있도록 Service 생성
+     *
+     * @return EgovSAXValidatorService
+     */
+    public abstract EgovSAXValidatorService createSAXValidator();
 
 }

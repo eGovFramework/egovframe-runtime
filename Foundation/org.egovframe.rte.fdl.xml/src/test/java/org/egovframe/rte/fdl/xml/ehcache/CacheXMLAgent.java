@@ -1,150 +1,131 @@
 package org.egovframe.rte.fdl.xml.ehcache;
 
 import org.egovframe.rte.fdl.xml.SharedObject;
-import org.jdom2.Attribute;
-import org.jdom2.Element;
-import org.jdom2.JDOMException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.*;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.Iterator;
 import java.util.List;
 
 public class CacheXMLAgent {
 
-	String cacheServerIP;
-	int cacheServerPort=0;
-	String Storekey;
-	String Retrievekey;
-	String XMLFileName;
-	private static final Logger LOGGER  = LoggerFactory.getLogger(CacheXMLAgent.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CacheXMLAgent.class);
 
-	public void setXMLFileName(String XMLFileName)
-	{
-		this.XMLFileName = XMLFileName;
-	}
+    String cacheServerIP;
+    int cacheServerPort = 0;
+    String Storekey;
+    String Retrievekey;
+    String XMLFileName;
 
-    public void setPortNIp(String cacheServerIP,int cacheServerPort)
-    {
-    	this.cacheServerIP = cacheServerIP;
-    	this.cacheServerPort = cacheServerPort; //64208
+    public void setXMLFileName(String XMLFileName) {
+        this.XMLFileName = XMLFileName;
     }
 
-    public void setStorekey(String Storekey)
-    {
-    	this.Storekey = Storekey;
+    public void setPortNIp(String cacheServerIP, int cacheServerPort) {
+        this.cacheServerIP = cacheServerIP;
+        this.cacheServerPort = cacheServerPort; //64208
     }
 
-    public void setRetrievekey(String Retrievekey)
-    {
-    	this.Retrievekey = Retrievekey;
+    public void setStorekey(String Storekey) {
+        this.Storekey = Storekey;
     }
 
-    public void sendCacheServer(List<?> list)
-	{
-		Socket socket = null;
-		ObjectOutputStream oos= null;
-		ObjectInputStream ooi= null;
-		SharedObject sObject = null;
+    public void setRetrievekey(String Retrievekey) {
+        this.Retrievekey = Retrievekey;
+    }
 
-		try {
-			LOGGER.debug("CacheXMLAgent cacheServerIP >>> " + cacheServerIP);
-			LOGGER.debug("CacheXMLAgent cacheServerPort >>> " + cacheServerPort);
-			LOGGER.debug("CacheXMLAgent Storekey >>> " + Storekey);
-			socket = new Socket(cacheServerIP, cacheServerPort);
-			oos = new ObjectOutputStream(socket.getOutputStream());
-			sObject = new SharedObject(Storekey,list);
+    public void sendCacheServer(List<?> list) {
+		LOGGER.debug("CacheXMLAgent cacheServerIP >>> {}", cacheServerIP);
+		LOGGER.debug("CacheXMLAgent cacheServerPort >>> {}", cacheServerPort);
+		LOGGER.debug("CacheXMLAgent Storekey >>> {}", Storekey);
+
+		try (Socket socket = new Socket(cacheServerIP, cacheServerPort);
+			 ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+			 ObjectInputStream ooi = new ObjectInputStream(socket.getInputStream())) {
+
+			SharedObject sObject = new SharedObject(Storekey, list);
 			oos.writeObject(sObject);
-			ooi = new ObjectInputStream(socket.getInputStream());
-			sObject = (SharedObject)ooi.readObject();
+			oos.flush();
 
-			LOGGER.debug("서버로 부터 Message : {}", sObject.getValue());
-		} catch(Throwable t) {
-			t.printStackTrace();
-		} finally {
-			try { oos.close(); } catch(Throwable t) {t.printStackTrace();}
-			try { socket.close(); } catch(Throwable t) {t.printStackTrace();}
+			SharedObject response = (SharedObject) ooi.readObject();
+			LOGGER.debug("CacheXMLAgent Message from server: {}", response.getValue());
+
+		} catch (ClassNotFoundException | IOException e) {
+			LOGGER.debug("CacheXMLAgent sendCacheServer(List<?> list) Exeption >>> {}", e.getMessage());
 		}
-	}
+    }
 
-    public SharedObject getCacheServer()
-	{
-		Socket socket = null;
-		ObjectOutputStream oos= null;
-		ObjectInputStream ooi= null;
+    public SharedObject getCacheServer() {
+		LOGGER.debug("CacheXMLAgent getCacheServer cacheServerIP >>> {}", cacheServerIP);
+		LOGGER.debug("CacheXMLAgent getCacheServer cacheServerPort >>> {}", cacheServerPort);
+		LOGGER.debug("CacheXMLAgent getCacheServer Storekey >>> {}", Storekey);
+
 		SharedObject sObject = null;
 
-		try {
-			LOGGER.debug("CacheXMLAgent getCacheServer cacheServerIP >>> " + cacheServerIP);
-			LOGGER.debug("CacheXMLAgent getCacheServer cacheServerPort >>> " + cacheServerPort);
-			LOGGER.debug("CacheXMLAgent getCacheServer Storekey >>> " + Storekey);
-			socket = new Socket(cacheServerIP, cacheServerPort);
-			oos = new ObjectOutputStream(socket.getOutputStream());
-			sObject = new SharedObject("*",Retrievekey);
+		try (Socket socket = new Socket(cacheServerIP, cacheServerPort);
+			 ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+			 ObjectInputStream ooi = new ObjectInputStream(socket.getInputStream())) {
+
+			sObject = new SharedObject("*", Retrievekey);
 			oos.writeObject(sObject);
-			ooi = new ObjectInputStream(socket.getInputStream());
-			sObject = (SharedObject)ooi.readObject();
-		} catch(Throwable t) {
-			t.printStackTrace();
-			System.exit(1);
-		} finally {
-			try { oos.close(); } catch(Throwable t) {t.printStackTrace();}
-			try { socket.close(); } catch(Throwable t) {t.printStackTrace();}
+			oos.flush();
+
+			sObject = (SharedObject) ooi.readObject();
+
+		} catch (ClassNotFoundException | IOException e) {
+			LOGGER.debug("CacheXMLAgent getCacheServer() Exeption >>> {}", e.getMessage());
 		}
 
 		return sObject;
-	}
-
-    public void viewEelement(List<?> list)
-    {
-		Iterator<?> i = list.iterator();
-		while (i.hasNext()) {
-			Element element = (Element) i.next();
-			List<?> attList = element.getAttributes();
-			if (attList.size() != 0)
-			{
-				// 역시 속성리스트를 다시 iterator 로 담고
-				Iterator<?> ii = attList.iterator();
-
-				while(ii.hasNext()) {
-					/** Attribute 파싱 **/
-					// iterator 로 부터 하나의 속성을 꺼내와서...
-					Attribute at = (Attribute)ii.next();
-					LOGGER.debug("attribute : {} attribute value : ", at.getName(), at.getValue());
-					LOGGER.debug("Element1 Name : {} Element1 Value : {}", (String)element.getName(), (String)element.getValue());
-				}        // end of while
-			}        // end of 속성 if
-
-			List<?> list2 = element.getChildren();
-			if(list2.size() > 1)
-			{
-				viewEelement(list2);
-			}
-		}
     }
 
-	/**
-	* @param args
-	*/
-	public static void main(String[] args) throws IOException,JDOMException{
-		String cacheServerIP = "192.168.100.162";
-		String Storekey = "1";
-		String XMLFileName = "spring/context-sql.xml";
-		int cacheServerPort = 64208;
+	public void viewElement(Element element) {
+		NamedNodeMap attributes = element.getAttributes();
+		if (attributes.getLength() > 0) {
+			for (int i = 0; i < attributes.getLength(); i++) {
+				Attr attr = (Attr) attributes.item(i);
+				LOGGER.info(String.format("Attribute : %s, Attribute value : %s", attr.getName(), attr.getValue()));
+			}
+			LOGGER.info(String.format("Element Name: %s, Element Value: %s", element.getNodeName(), element.getTextContent()));
+		}
 
-		CacheXMLAgent cxa = new CacheXMLAgent();
-		cxa.setPortNIp(cacheServerIP, cacheServerPort);
-		cxa.setStorekey(Storekey);
-		cxa.setXMLFileName(XMLFileName);
-		cxa.setRetrievekey("1");
-
-		SharedObject sobject =  cxa.getCacheServer();
-		List<?> list_ = (List<?>)sobject.getValue();
-		cxa.viewEelement(list_);
+		NodeList children = element.getChildNodes();
+		for (int i = 0; i < children.getLength(); i++) {
+			Node childNode = children.item(i);
+			if (childNode instanceof Element) {
+				viewElement((Element) childNode);
+			}
+		}
 	}
+
+	public static void main(String[] args) {
+		try {
+			String cacheServerIP = "192.168.100.162";
+			String storeKey = "1";
+			String xmlFileName = "spring/context-sql.xml";
+			int cacheServerPort = 64208;
+
+			File xmlFile = new File(xmlFileName);
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse(xmlFile);
+			doc.getDocumentElement().normalize();
+
+			CacheXMLAgent cxa = new CacheXMLAgent();
+			Element rootElement = doc.getDocumentElement();
+			cxa.viewElement(rootElement);
+		} catch (IOException | ParserConfigurationException | SAXException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 }

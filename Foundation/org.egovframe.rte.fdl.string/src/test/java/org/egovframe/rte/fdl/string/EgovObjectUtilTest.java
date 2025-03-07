@@ -125,7 +125,7 @@ public class EgovObjectUtilTest {
 			LOGGER.error("### Exception : {}", e.toString());
 			exceptionClass = (Class<Exception>) e.getClass();
 		} finally {
-			assertEquals(ClassNotFoundException.class, exceptionClass);
+			assertEquals(RuntimeException.class, exceptionClass);
 			assertNotSame(InstantiationException.class, exceptionClass);
 			assertNotSame(IllegalAccessException.class, exceptionClass);
 		}

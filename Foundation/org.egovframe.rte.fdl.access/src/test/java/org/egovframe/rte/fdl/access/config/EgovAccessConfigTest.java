@@ -1,6 +1,5 @@
 package org.egovframe.rte.fdl.access.config;
 
-import org.egovframe.rte.fdl.access.bean.AuthorityResourceMetadata;
 import org.egovframe.rte.fdl.access.interceptor.EgovAccessUtil;
 import org.egovframe.rte.fdl.access.service.EgovUserDetailsHelper;
 import org.junit.After;
@@ -8,27 +7,23 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.stream.Collectors;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"classpath*:META-INF/spring/*.xml"})
 public class EgovAccessConfigTest {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(EgovAccessConfigTest.class);
     protected MockHttpServletRequest request;
     protected MockHttpSession session;
 
@@ -50,49 +45,44 @@ public class EgovAccessConfigTest {
 
     @Test
     public void test() {
-
-        ApplicationContext context = new ClassPathXmlApplicationContext("classpath:META-INF/spring/context-access.xml", "classpath:META-INF/spring/test-config.xml");
-        String[] contextList = context.getBeanDefinitionNames();
-        for (String bean : contextList) {
-            LOGGER.debug("##### EgovAccessConfigTest context list >>> {} ", context.getBean(bean).getClass());
-        }
-
         String requestMatchType = "regex";
-        //String url = "/sym/ccm/zip/EgovCcmZipList.do";
-        String url = "/EgovContent.do";
-        boolean matchStatus = false;
-        List<String> authorityList = EgovUserDetailsHelper.getAuthorities();
-        LOGGER.debug("##### EgovAccessConfigTest authorityList : {} #####", authorityList);
-        String authority = "";
-        for (String str : Objects.requireNonNull(authorityList)) {
-            authority = str;
-        }
 
-        AuthorityResourceMetadata authorityResourceMetadata = context.getBean(AuthorityResourceMetadata.class);
-        List<Map<String, Object>> list = authorityResourceMetadata.getResourceMap();
-        Iterator<Map<String, Object>> iterator = list.iterator();
-        Map<String, Object> tempMap;
-        while (iterator.hasNext()) {
-            tempMap = iterator.next();
-            if (authority.equals(tempMap.get("authority"))) {
-                if ("ant".equals(requestMatchType)) {
-                    LOGGER.debug("##### EgovAccessConfigTest Ant pattern #####");
-                    matchStatus = EgovAccessUtil.antMatcher((String) tempMap.get("url"), url);
-                    LOGGER.debug("##### EgovAccessConfigTest ant pattern : {} #####", tempMap.get("url"));
-                    LOGGER.debug("##### EgovAccessConfigTest ant url : {} #####", url);
-                    LOGGER.debug("##### EgovAccessConfigTest ant match status : {} #####", matchStatus);
-                } else {
-                    LOGGER.debug("##### EgovAccessConfigTest Regex pattern #####");
-                    matchStatus = EgovAccessUtil.regexMatcher((String) tempMap.get("url"), url);
-                    LOGGER.debug("##### EgovAccessConfigTest regex pattern : {} #####", tempMap.get("url"));
-                    LOGGER.debug("##### EgovAccessConfigTest regex url : {} #####", url);
-                    LOGGER.debug("##### EgovAccessConfigTest regex match status : {} #####", matchStatus);
+        String authUrl = "/sym/ccm/zip/EgovCcmZipList.do";
+        Assert.assertTrue(authCheck(requestMatchType, authUrl));
+    }
+
+    public Boolean authCheck(String requestMatchType, String url) {
+        boolean authCheck = false;
+        List<String> authList = EgovUserDetailsHelper.getAuthorities();
+        List<Map<String, Object>> rolesList = EgovUserDetailsHelper.getRoles();
+
+        if (!ObjectUtils.isEmpty(authList) && !ObjectUtils.isEmpty(rolesList)) {
+            List<String> urlList = new ArrayList<>();
+            List<String> roleList = new ArrayList<>();
+            for (String auth : authList) {
+                Iterator<Map<String, Object>> iterator = rolesList.iterator();
+                Map<String, Object> roleMap;
+                while (iterator.hasNext()) {
+                    roleMap = iterator.next();
+                    if (auth.equals(roleMap.get("authority"))) {
+                        roleList.add((String) roleMap.get("url"));
+                    }
                 }
+            }
+
+            urlList = roleList.stream().distinct().collect(Collectors.toList());
+
+            for (String authUrl : urlList) {
+                if ("ant".equals(requestMatchType)) {
+                    authCheck = EgovAccessUtil.antMatcher(authUrl, url);
+                } else {
+                    authCheck = EgovAccessUtil.regexMatcher(authUrl, url);
+                }
+                if (authCheck) break;
             }
         }
 
-        Assert.assertTrue(matchStatus);
-
+        return authCheck;
     }
 
 }

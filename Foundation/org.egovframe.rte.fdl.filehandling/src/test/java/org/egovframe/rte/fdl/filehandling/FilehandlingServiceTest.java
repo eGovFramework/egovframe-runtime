@@ -412,7 +412,7 @@ public class FilehandlingServiceTest {
 			"    <modelVersion>4.0.0</modelVersion>",
 			"    <groupId>org.egovframe.rte</groupId>",
 			"    <artifactId>org.egovframe.rte.fdl.filehandling</artifactId>",
-			"    <version>4.2.0</version>",
+			"    <version>4.3.0</version>",
 			"    <packaging>jar</packaging>",
 			"    <name>org.egovframe.rte.fdl.filehandling</name>"
     	};

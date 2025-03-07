@@ -276,9 +276,6 @@ public abstract class EgovAbstractMapper extends SqlSessionDaoSupport {
 	 *
 	 * @param queryId - 리스트 조회 처리 SQL mapping 쿼리 ID
 	 * @param handler - 조회 결과를 제어하기 위해 구현한 ResultHandler
-	 * @return
-	 *
-	 * @return 결과 List 객체 - SQL mapping 파일에서 지정한 resultType/resultMap 에 의한 결과 객체(보통 VO 또는 Map)의 List
 	 */
 	public void listToOutUsingResultHandler(String queryId, ResultHandler handler) {
 		getSqlSession().select(queryId, handler);

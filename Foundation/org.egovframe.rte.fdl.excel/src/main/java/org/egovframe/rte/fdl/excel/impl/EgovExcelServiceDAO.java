@@ -16,11 +16,9 @@
 package org.egovframe.rte.fdl.excel.impl;
 
 import com.ibatis.sqlmap.client.SqlMapClient;
-import com.ibatis.sqlmap.client.SqlMapExecutor;
 import org.egovframe.rte.psl.orm.ibatis.SqlMapClientCallback;
 import org.egovframe.rte.psl.orm.ibatis.support.SqlMapClientDaoSupport;
 
-import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -60,16 +58,13 @@ public class EgovExcelServiceDAO extends SqlMapClientDaoSupport {
      */
 	public Integer batchInsert(final String queryId, final List<Object> list) {
         return (Integer) getSqlMapClientTemplate().execute(
-            new SqlMapClientCallback<Object>() {
-
-                public Object doInSqlMapClient(SqlMapExecutor executor) throws SQLException {
+                (SqlMapClientCallback<Object>) executor -> {
                     executor.startBatch();
                     for (Iterator<Object> itr = list.iterator(); itr.hasNext();) {
                         executor.insert(queryId, itr.next());
                     }
                     return executor.executeBatch();
-                }
-            });
+                });
     }
 
     /**
@@ -82,17 +77,14 @@ public class EgovExcelServiceDAO extends SqlMapClientDaoSupport {
      */
 	public Integer batchInsert(final String queryId, final List<Object> list, final int start) {
         return (Integer) getSqlMapClientTemplate().execute(
-            new SqlMapClientCallback<Object>() {
-
-                public Object doInSqlMapClient(SqlMapExecutor executor) throws SQLException {
+                (SqlMapClientCallback<Object>) executor -> {
                     executor.startBatch();
                     int size = list.size();
                     for (int i = start; i < size; i++) {
                         executor.insert(queryId, list.get(i));
                     }
                     return executor.executeBatch();
-                }
-            });
+                });
     }
 
 }

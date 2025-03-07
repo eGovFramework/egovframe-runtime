@@ -2,10 +2,9 @@
 		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-
 	<groupId>org.egovframe.rte</groupId>
 	<artifactId>org.egovframe.rte.root</artifactId>
-	<version>4.1.0</version>
+	<version>4.3.0</version>
 	<packaging>pom</packaging>
 	<name>org.egovframe.rte.root</name>
 
@@ -23,6 +22,7 @@
 		<module>Foundation/org.egovframe.rte.fdl.idgnr</module>
 		<module>Foundation/org.egovframe.rte.fdl.logging</module>
 		<module>Foundation/org.egovframe.rte.fdl.property</module>
+		<module>Foundation/org.egovframe.rte.fdl.reactive</module>
 		<module>Foundation/org.egovframe.rte.fdl.security</module>
 		<module>Foundation/org.egovframe.rte.fdl.string</module>
 		<module>Foundation/org.egovframe.rte.fdl.xml</module>
@@ -35,9 +35,15 @@
 		<module>Persistence/org.egovframe.rte.psl.data.jpa</module>
 		<module>Persistence/org.egovframe.rte.psl.data.mongodb</module>
 		<module>Persistence/org.egovframe.rte.psl.dataaccess</module>
+		<module>Persistence/org.egovframe.rte.psl.reactive.cassandra</module>
+		<module>Persistence/org.egovframe.rte.psl.reactive.mongodb</module>
+		<module>Persistence/org.egovframe.rte.psl.reactive.r2dbc</module>
+		<module>Persistence/org.egovframe.rte.psl.reactive.redis</module>
 
 		<!-- Presentation -->
 		<module>Presentation/org.egovframe.rte.ptl.mvc</module>
+		<module>Presentation/org.egovframe.rte.ptl.reactive</module>
+		<module>Presentation/spring-modules-validation</module>
 
 	</modules>
 
