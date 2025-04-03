@@ -129,7 +129,7 @@ public class EgovAccessConfigBeanDefinitionParser extends AbstractSingleBeanDefi
         String profile = System.getProperty("spring.profiles.active");
 
         if ("session".equals(globalAuthen)) {
-            if (ObjectUtils.isEmpty(profile) || globalAuthen.contains(profile)) {
+            if (ObjectUtils.isEmpty(profile) || profile.contains(globalAuthen)) {
                 try {
                     parserContext.getReaderContext().getReader().setValidationMode(XmlBeanDefinitionReader.VALIDATION_XSD);
                     LOGGER.debug("EgovAccessConfigBeanDefinitionParser httpd load start...");
