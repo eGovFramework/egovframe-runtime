@@ -8,7 +8,7 @@ import org.egovframe.rte.psl.dataaccess.vo.DeptVO;
 
 import java.math.BigDecimal;
 
-@Mapper("departmentMapper")
+@EgovMapper("departmentMapper")
 public interface DepartmentMapper {
 
 	@Select("select DEPT_NO as deptNo, DEPT_NAME as deptName, LOC as loc from DEPT where DEPT_NO = #{deptNo}")

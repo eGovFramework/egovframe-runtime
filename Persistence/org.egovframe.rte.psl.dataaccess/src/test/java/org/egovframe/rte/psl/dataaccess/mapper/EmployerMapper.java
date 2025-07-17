@@ -14,7 +14,7 @@ import java.util.List;
  *   2014.01.22 권윤정  FileUsingResultHandler테스트를 위한 selectEmpListToOutFileUsingResultHandler() 메서드 추가
  *
  */
-@Mapper("employerMapper")
+@EgovMapper("employerMapper")
 public interface EmployerMapper {
 
 	public List<EmpVO> selectEmployerList(EmpVO vo);
