@@ -45,7 +45,7 @@ public class MapperConfigurer extends MapperScannerConfigurer {
 	 * 기본 정보(anntationClass, sqlSessionFactoryBeanName)으로 설정한다.
 	 */
 	public MapperConfigurer() {
-		super.setAnnotationClass(Mapper.class);
+		super.setAnnotationClass(EgovMapper.class);
 		super.setSqlSessionFactoryBeanName("sqlSession");
 	}
 }
