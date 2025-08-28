@@ -12,6 +12,8 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
+		<!-- JaCoCo가 주입할 argLine을 받을 변수 -->
+		<surefireArgLine></surefireArgLine>
 	</properties>
 
 	<modules>
@@ -60,9 +62,21 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>3.2.5</version>
+					<version>3.3.0</version>
 					<configuration>
-						<argLine>-Dfile.encoding=UTF-8 -Duser.timezone=Asia/Seoul</argLine>
+						<argLine>
+							${surefireArgLine}
+							-Dfile.encoding=UTF-8 -Duser.timezone=Asia/Seoul
+							--add-opens=java.base/java.lang=ALL-UNNAMED
+							--add-opens=java.base/java.lang.reflect=ALL-UNNAMED
+							--add-opens=java.base/java.util=ALL-UNNAMED
+							--add-opens=java.base/java.io=ALL-UNNAMED
+							--add-opens=java.base/java.net=ALL-UNNAMED
+							--add-opens=java.base/sun.nio.ch=ALL-UNNAMED
+							--add-opens=java.base/java.lang.invoke=ALL-UNNAMED
+							--add-exports=java.base/jdk.internal.reflect=ALL-UNNAMED
+							--illegal-access=permit
+						</argLine>
 						<reportFormat>xml</reportFormat>
 						<excludes>
 							<exclude>**/Abstract*.java</exclude>
@@ -78,25 +92,52 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-failsafe-plugin</artifactId>
-					<version>3.2.5</version>
+					<version>3.3.0</version>
 					<configuration>
-						<argLine>-Dfile.encoding=UTF-8 -Duser.timezone=Asia/Seoul</argLine>
+						<argLine>
+							${surefireArgLine}
+							-Dfile.encoding=UTF-8 -Duser.timezone=Asia/Seoul
+							--add-opens=java.base/java.lang=ALL-UNNAMED
+							--add-opens=java.base/java.lang.reflect=ALL-UNNAMED
+							--add-opens=java.base/java.util=ALL-UNNAMED
+							--add-opens=java.base/java.io=ALL-UNNAMED
+							--add-opens=java.base/java.net=ALL-UNNAMED
+							--add-opens=java.base/sun.nio.ch=ALL-UNNAMED
+							--add-opens=java.base/java.lang.invoke=ALL-UNNAMED
+							--add-exports=java.base/jdk.internal.reflect=ALL-UNNAMED
+							--illegal-access=permit
+						</argLine>
 						<includes>
 							<include>**/*IT.java</include>
 							<include>**/*IntegrationTest.java</include>
 						</includes>
 					</configuration>
-					<executions>
-						<execution>
-							<goals>
-								<goal>integration-test</goal>
-								<goal>verify</goal>
-							</goals>
-						</execution>
-					</executions>
 				</plugin>
 			</plugins>
 		</pluginManagement>
+
+		<!-- 실제 실행 선언: 모든 모듈에 상속되어 동작 -->
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<!-- version/config은 pluginManagement에서 상속 -->
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+				<!-- version/config은 pluginManagement에서 상속 -->
+			</plugin>
+		</plugins>
 	</build>
 
 </project>
