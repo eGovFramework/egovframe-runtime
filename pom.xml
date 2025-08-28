@@ -8,6 +8,12 @@
 	<packaging>pom</packaging>
 	<name>org.egovframe.rte.root</name>
 
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<java.version>1.8</java.version>
+	</properties>
+
 	<modules>
 
 		<!-- Batch -->
@@ -46,5 +52,51 @@
 		<module>Presentation/spring-modules-validation</module>
 
 	</modules>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<!-- Surefire Plugin for Unit Tests -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>3.2.5</version>
+					<configuration>
+						<argLine>-Dfile.encoding=UTF-8 -Duser.timezone=Asia/Seoul</argLine>
+						<reportFormat>xml</reportFormat>
+						<excludes>
+							<exclude>**/Abstract*.java</exclude>
+							<exclude>**/*Suite.java</exclude>
+						</excludes>
+						<includes>
+							<include>**/*Test.java</include>
+						</includes>
+					</configuration>
+				</plugin>
+
+				<!-- Failsafe Plugin for Integration Tests -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-failsafe-plugin</artifactId>
+					<version>3.2.5</version>
+					<configuration>
+						<argLine>-Dfile.encoding=UTF-8 -Duser.timezone=Asia/Seoul</argLine>
+						<includes>
+							<include>**/*IT.java</include>
+							<include>**/*IntegrationTest.java</include>
+						</includes>
+					</configuration>
+					<executions>
+						<execution>
+							<goals>
+								<goal>integration-test</goal>
+								<goal>verify</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
 
 </project>
