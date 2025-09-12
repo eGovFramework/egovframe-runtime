@@ -63,9 +63,9 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.egovframe.rte</groupId>
+            <groupId>org.springmodules</groupId>
             <artifactId>spring-modules-validation</artifactId>
-            <version>0.9</version>
+            <version>0.8a</version>
         </dependency>
         <dependency>
             <groupId>commons-validator</groupId>
