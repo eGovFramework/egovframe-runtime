@@ -22,7 +22,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <org.egovframe.rte.version>5.0.0</org.egovframe.rte.version>
-        <spring.framework.version>6.2.11</spring.framework.version>
+        <spring.framework.version>6.2.17</spring.framework.version>
         <spring.data.r2dbc.version>3.5.1</spring.data.r2dbc.version>
         <reactor.version>3.7.5</reactor.version>
         <r2dbc.h2.version>1.0.0.RELEASE</r2dbc.h2.version>
