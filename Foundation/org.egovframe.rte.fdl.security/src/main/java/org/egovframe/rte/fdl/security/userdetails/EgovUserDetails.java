@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 MOPAS(Ministry of Public Administration and Security).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,12 +24,11 @@ import java.util.Collection;
 
 /**
  * 사용자 계정 정보를 관리하기 위한 클래스
- * 
+ *
  * <p><b>NOTE:</b>org.springframework.security.userdetails.UserDetails
  * 인터페이스를 확장하여 사용자 계정의 여러가지 정보를 세션으로 관리할 수 있다.</p>
- * 
+ *
  * @author 실행환경 개발팀 윤성종
- * @since 2009.06.01
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -39,40 +38,41 @@ import java.util.Collection;
  * 2009.06.01   윤성종             최초 생성
  * 2014.01.22   한성곤             Spring Security 3.2.X 업그레이드 적용
  * </pre>
+ * @since 2009.06.01
  */
 public class EgovUserDetails extends User {
 
     /**
-	 * Generated Serial Version ID
-	 */
-	private static final long serialVersionUID = 2517403097977414969L;
+     * Generated Serial Version ID
+     */
+    private static final long serialVersionUID = 2517403097977414969L;
 
-	private Object egovVO;
+    private Object egovVO;
 
     /**
      * User 클래스의 생성자 Override
-     * 
-     * @param username 사용자계정
-     * @param password 사용자 패스워드
-     * @param enabled 사용자계정 사용여부
+     *
+     * @param username              사용자계정
+     * @param password              사용자 패스워드
+     * @param enabled               사용자계정 사용여부
      * @param accountNonExpired
      * @param credentialsNonExpired
      * @param accountNonLocked
      * @param authorities
-     * @param egovVO 사용자 VO객체
+     * @param egovVO                사용자 VO객체
      * @throws IllegalArgumentException
      */
     public EgovUserDetails(String username, String password, boolean enabled,
-            boolean accountNonExpired, boolean credentialsNonExpired,
-            boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities,
-            Object egovVO) throws IllegalArgumentException {
+                           boolean accountNonExpired, boolean credentialsNonExpired,
+                           boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities,
+                           Object egovVO) throws IllegalArgumentException {
         super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
         this.egovVO = egovVO;
     }
 
     /**
      * EgovUserDetails 생성자
-     * 
+     *
      * @param username
      * @param password
      * @param enabled
@@ -80,13 +80,13 @@ public class EgovUserDetails extends User {
      * @throws IllegalArgumentException
      */
     public EgovUserDetails(String username, String password, boolean enabled, Object egovVO) throws IllegalArgumentException {
-    	this(username, password, enabled, true, true, true,
-    			Arrays.asList(new GrantedAuthority[] {new SimpleGrantedAuthority("HOLDER")}), egovVO);
+        this(username, password, enabled, true, true, true,
+                Arrays.asList(new GrantedAuthority[]{new SimpleGrantedAuthority("HOLDER")}), egovVO);
     }
 
     /**
      * 인증 객체 얻기.
-     * 
+     *
      * @return 사용자VO 객체
      */
     public Object getEgovUserVO() {
@@ -95,7 +95,7 @@ public class EgovUserDetails extends User {
 
     /**
      * 인증 객체 지정.
-     * 
+     *
      * @param egovVO 사용자VO객체
      */
     public void setEgovUserVO(Object egovVO) {

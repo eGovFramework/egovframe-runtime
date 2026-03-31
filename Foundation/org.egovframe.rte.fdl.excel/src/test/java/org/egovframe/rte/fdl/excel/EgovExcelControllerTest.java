@@ -1,93 +1,75 @@
 package org.egovframe.rte.fdl.excel;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.mock.web.MockHttpServletRequest;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.egovframe.rte.fdl.excel.config.ExcelTestConfig;
+import org.egovframe.rte.fdl.excel.download.CategoryExcelController;
+import org.egovframe.rte.fdl.excel.download.CategoryExcelView;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletConfig;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.GenericWebApplicationContext;
-import org.springframework.web.servlet.DispatcherServlet;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.servlet.view.BeanNameViewResolver;
 
-import javax.servlet.ServletException;
-import java.io.IOException;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-/**
- * FileServiceTest is TestCase of File Handling Service
- * @author Seongjong Yoon
- */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:/META-INF/spring/*.xml"})
-public class EgovExcelControllerTest extends AbstractJUnit4SpringContextTests {
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = ExcelTestConfig.class)
+public class EgovExcelControllerTest {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(EgovExcelControllerTest.class);
+    private MockMvc mockMvc;
 
-    @Autowired
-    ApplicationContext applicationContext;
-
-    DispatcherServlet dispatcher;
-
-	@Before
-    public void init() throws ServletException {
-        this.dispatcher = new DispatcherServlet() {
-			protected WebApplicationContext createWebApplicationContext(WebApplicationContext parent) {
-                GenericWebApplicationContext wac = new GenericWebApplicationContext();
-                wac.setParent(applicationContext);
-                wac.refresh();
-                return wac;
-            }
-        };
-
-		this.dispatcher.init(new MockServletConfig());
-
-        LOGGER.debug("######  EgovExcelServiceControllerTest  ######");
+    @BeforeEach
+    public void setup() {
+        ViewResolver viewResolver = new BeanNameViewResolver();
+        this.mockMvc = MockMvcBuilders.standaloneSetup(new CategoryExcelController())
+                .setViewResolvers(viewResolver)
+                .setSingleView(new CategoryExcelView())
+                .build();
     }
 
     /**
      * [Flow #-6] 엑셀 파일 생성 : 멥으로 데이터를 전송하여 엑셀로 다운로드
      */
-	@Test
-	public void testExcelDownloadMap() throws ServletException, IOException {
-		LOGGER.debug("################################################");
+    @Test
+    public void testExcelDownloadMap() throws Exception {
+        MockHttpServletResponse response = mockMvc.perform(get("/sale/listExcelCategory.do"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse();
 
-		MockHttpServletRequest request = new MockHttpServletRequest("GET","/sale/listExcelCategory.do");
-		MockHttpServletResponse response = new MockHttpServletResponse();
-
-		dispatcher.service(request, response);
-
-		LOGGER.debug("## status : {}", response.getStatus());
-		assertEquals(200, response.getStatus());
-
-		LOGGER.debug("response.getContentType() : {}", response.getContentType());
-		assertEquals("application/vnd.ms-excel", response.getContentType());
-	}
+        // 엑셀 내용을 파싱하여 검증
+        InputStream is = new ByteArrayInputStream(response.getContentAsByteArray());
+        HSSFWorkbook workbook = new HSSFWorkbook(is);
+        HSSFSheet sheet = workbook.getSheetAt(0);
+        assertEquals("User List", sheet.getRow(0).getCell(0).getStringCellValue());
+    }
 
     /**
      * [Flow #-7] 엑셀 파일 생성 :  VO로 데이터를 전송하여 엑셀로 다운로드
      */
-	@Test
-	public void testExcelDownloadVO() throws ServletException, IOException {
-		LOGGER.debug("################################################");
+    @Test
+    public void testExcelDownloadVO() throws Exception {
+        MockHttpServletResponse response = mockMvc.perform(get("/sale/listExcelVOCategory.do"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse();
 
-		MockHttpServletRequest request = new MockHttpServletRequest("GET","/sale/listExcelVOCategory.do");
-		MockHttpServletResponse response = new MockHttpServletResponse();
+        // 엑셀 내용을 파싱하여 검증
+        InputStream is = new ByteArrayInputStream(response.getContentAsByteArray());
+        HSSFWorkbook workbook = new HSSFWorkbook(is);
+        HSSFSheet sheet = workbook.getSheetAt(0);
+        assertEquals("User List", sheet.getRow(0).getCell(0).getStringCellValue());
+    }
 
-		dispatcher.service(request, response);
-
-		LOGGER.debug("## status : " + response.getStatus());
-		assertEquals(200, response.getStatus());
-
-		LOGGER.debug("response.getContentType() : {}", response.getContentType());
-		assertEquals("application/vnd.ms-excel", response.getContentType());
-	}
 }

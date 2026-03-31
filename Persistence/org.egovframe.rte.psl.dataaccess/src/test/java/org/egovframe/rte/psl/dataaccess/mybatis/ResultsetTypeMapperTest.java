@@ -1,169 +1,148 @@
 package org.egovframe.rte.psl.dataaccess.mybatis;
 
-import org.egovframe.rte.psl.dataaccess.TestBase;
+import jakarta.annotation.Resource;
+import org.egovframe.rte.psl.dataaccess.config.DataAccessTestConfig;
 import org.egovframe.rte.psl.dataaccess.dao.EmpMapper;
 import org.egovframe.rte.psl.dataaccess.vo.EmpVO;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
+import javax.sql.DataSource;
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- *  == 개정이력(Modification Information) ==
- *   
- *   수정일      수정자           수정내용
- *  -------    --------    ---------------------------
- *   2014.01.22 권윤정  SimpleJdbcTestUtils -> JdbcTestUtils 변경
- *   2014.01.22 권윤정  SimpleJdbcTemplate -> JdbcTemplate 변경
- * 
+ * == 개정이력(Modification Information) ==
+ * <p>
+ * 수정일      수정자           수정내용
+ * -------    --------    ---------------------------
+ * 2014.01.22 권윤정  SimpleJdbcTestUtils -> JdbcTestUtils 변경
+ * 2014.01.22 권윤정  SimpleJdbcTemplate -> JdbcTemplate 변경
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath*:META-INF/spring/context-*.xml" })
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = DataAccessTestConfig.class)
 @Transactional
-public class ResultsetTypeMapperTest extends TestBase {
+public class ResultsetTypeMapperTest {
 
-	@Resource(name = "empMapper")
-	EmpMapper empMapper;
+    @Resource(name = "dataSource")
+    private DataSource dataSource;
 
-	@Before
-	public void onSetUp() throws Exception {
-		ScriptUtils.executeSqlScript(dataSource.getConnection(), new ClassPathResource("META-INF/testdata/sample_schema_ddl_" + usingDBMS + ".sql"));
+    @Resource(name = "empMapper")
+    private EmpMapper empMapper;
 
-		// init data
-		ScriptUtils.executeSqlScript(dataSource.getConnection(), new ClassPathResource("META-INF/testdata/sample_schema_initdata_" + usingDBMS + ".sql"));
-	}
+    @BeforeEach
+    public void onSetUp() throws SQLException {
+        try (Connection conn = dataSource.getConnection()) {
+            ScriptUtils.executeSqlScript(conn, new ClassPathResource("/META-INF/testdata/testdb.sql"));
+        }
+    }
 
-	@SuppressWarnings({ "unchecked" })
-	@Rollback(false)
-	@Test
-	public void testResultSetType() throws Exception {
-		// 검색조건 없이 전체 EMP 리스트 조회
+    @Rollback(false)
+    @Test
+    public void testResultSetType() {
+        List<EmpVO> resultList = empMapper.selectEmpList("selectEmpUsingResultSetType", null);
 
-		// select
-		List<EmpVO> resultList = empMapper.selectEmpList("selectEmpUsingResultSetType", null);
+        // check
+        assertNotNull(resultList);
+        assertEquals(14, resultList.size());
+        assertEquals(new BigDecimal(7369), resultList.get(0).getEmpNo());
+        assertEquals(new BigDecimal(7499), resultList.get(1).getEmpNo());
+        assertEquals(new BigDecimal(7521), resultList.get(2).getEmpNo());
+        assertEquals(new BigDecimal(7566), resultList.get(3).getEmpNo());
+        assertEquals(new BigDecimal(7654), resultList.get(4).getEmpNo());
+        assertEquals(new BigDecimal(7698), resultList.get(5).getEmpNo());
+        assertEquals(new BigDecimal(7782), resultList.get(6).getEmpNo());
+        assertEquals(new BigDecimal(7788), resultList.get(7).getEmpNo());
+        assertEquals(new BigDecimal(7839), resultList.get(8).getEmpNo());
+        assertEquals(new BigDecimal(7844), resultList.get(9).getEmpNo());
+        assertEquals(new BigDecimal(7876), resultList.get(10).getEmpNo());
+        assertEquals(new BigDecimal(7900), resultList.get(11).getEmpNo());
+        assertEquals(new BigDecimal(7902), resultList.get(12).getEmpNo());
+        assertEquals(new BigDecimal(7934), resultList.get(13).getEmpNo());
 
-		// check
-		assertNotNull(resultList);
-		assertEquals(14, resultList.size());
-		assertEquals(new BigDecimal(7369), resultList.get(0).getEmpNo());
-		assertEquals(new BigDecimal(7499), resultList.get(1).getEmpNo());
-		assertEquals(new BigDecimal(7521), resultList.get(2).getEmpNo());
-		assertEquals(new BigDecimal(7566), resultList.get(3).getEmpNo());
-		assertEquals(new BigDecimal(7654), resultList.get(4).getEmpNo());
-		assertEquals(new BigDecimal(7698), resultList.get(5).getEmpNo());
-		assertEquals(new BigDecimal(7782), resultList.get(6).getEmpNo());
-		assertEquals(new BigDecimal(7788), resultList.get(7).getEmpNo());
-		assertEquals(new BigDecimal(7839), resultList.get(8).getEmpNo());
-		assertEquals(new BigDecimal(7844), resultList.get(9).getEmpNo());
-		assertEquals(new BigDecimal(7876), resultList.get(10).getEmpNo());
-		assertEquals(new BigDecimal(7900), resultList.get(11).getEmpNo());
-		assertEquals(new BigDecimal(7902), resultList.get(12).getEmpNo());
-		assertEquals(new BigDecimal(7934), resultList.get(13).getEmpNo());
+        resultList = (List<EmpVO>) empMapper.selectList("selectEmpUsingResultSetType", 5, 3);
 
-		// skip 5, max 3 부분 범위 조회
-		resultList = (List<EmpVO>) empMapper.selectList("selectEmpUsingResultSetType", 5, 3);
+        assertNotNull(resultList);
+        assertEquals(3, resultList.size());
+        assertEquals(new BigDecimal(7698), resultList.get(0).getEmpNo());
+        assertEquals(new BigDecimal(7782), resultList.get(1).getEmpNo());
+        assertEquals(new BigDecimal(7788), resultList.get(2).getEmpNo());
+    }
 
-		assertNotNull(resultList);
-		assertEquals(3, resultList.size());
-		assertEquals(new BigDecimal(7698), resultList.get(0).getEmpNo());
-		assertEquals(new BigDecimal(7782), resultList.get(1).getEmpNo());
-		assertEquals(new BigDecimal(7788), resultList.get(2).getEmpNo());
+    @Rollback(false)
+    @Test
+    public void testResultSetTypeScrollInsensitive() {
+        List<EmpVO> resultList = empMapper.selectEmpList("selectEmpUsingResultSetTypeScrollInsensitive", null);
 
-	}
+        // check
+        assertNotNull(resultList);
+        assertEquals(14, resultList.size());
+        assertEquals(new BigDecimal(7369), resultList.get(0).getEmpNo());
+        assertEquals(new BigDecimal(7499), resultList.get(1).getEmpNo());
+        assertEquals(new BigDecimal(7521), resultList.get(2).getEmpNo());
+        assertEquals(new BigDecimal(7566), resultList.get(3).getEmpNo());
+        assertEquals(new BigDecimal(7654), resultList.get(4).getEmpNo());
+        assertEquals(new BigDecimal(7698), resultList.get(5).getEmpNo());
+        assertEquals(new BigDecimal(7782), resultList.get(6).getEmpNo());
+        assertEquals(new BigDecimal(7788), resultList.get(7).getEmpNo());
+        assertEquals(new BigDecimal(7839), resultList.get(8).getEmpNo());
+        assertEquals(new BigDecimal(7844), resultList.get(9).getEmpNo());
+        assertEquals(new BigDecimal(7876), resultList.get(10).getEmpNo());
+        assertEquals(new BigDecimal(7900), resultList.get(11).getEmpNo());
+        assertEquals(new BigDecimal(7902), resultList.get(12).getEmpNo());
+        assertEquals(new BigDecimal(7934), resultList.get(13).getEmpNo());
 
-	@SuppressWarnings({ "unchecked" })
-	@Rollback(false)
-	@Test
-	public void testResultSetTypeScrollInsensitive() throws Exception {
-		// 검색조건 없이 전체 EMP 리스트 조회
+        resultList = (List<EmpVO>) empMapper.selectList("selectEmpUsingResultSetTypeScrollInsensitive", 5, 3);
 
-		// select
-		List<EmpVO> resultList = empMapper.selectEmpList("selectEmpUsingResultSetTypeScrollInsensitive", null);
+        assertNotNull(resultList);
+        assertEquals(3, resultList.size());
+        assertEquals(new BigDecimal(7698), resultList.get(0).getEmpNo());
+        assertEquals(new BigDecimal(7782), resultList.get(1).getEmpNo());
+        assertEquals(new BigDecimal(7788), resultList.get(2).getEmpNo());
+    }
 
-		// check
-		assertNotNull(resultList);
-		assertEquals(14, resultList.size());
-		assertEquals(new BigDecimal(7369), resultList.get(0).getEmpNo());
-		assertEquals(new BigDecimal(7499), resultList.get(1).getEmpNo());
-		assertEquals(new BigDecimal(7521), resultList.get(2).getEmpNo());
-		assertEquals(new BigDecimal(7566), resultList.get(3).getEmpNo());
-		assertEquals(new BigDecimal(7654), resultList.get(4).getEmpNo());
-		assertEquals(new BigDecimal(7698), resultList.get(5).getEmpNo());
-		assertEquals(new BigDecimal(7782), resultList.get(6).getEmpNo());
-		assertEquals(new BigDecimal(7788), resultList.get(7).getEmpNo());
-		assertEquals(new BigDecimal(7839), resultList.get(8).getEmpNo());
-		assertEquals(new BigDecimal(7844), resultList.get(9).getEmpNo());
-		assertEquals(new BigDecimal(7876), resultList.get(10).getEmpNo());
-		assertEquals(new BigDecimal(7900), resultList.get(11).getEmpNo());
-		assertEquals(new BigDecimal(7902), resultList.get(12).getEmpNo());
-		assertEquals(new BigDecimal(7934), resultList.get(13).getEmpNo());
+    @Rollback(false)
+    @Test
+    public void testResultSetTypeScrollSensitive() {
+        List<EmpVO> resultList = empMapper.selectEmpList("selectEmpUsingResultSetTypeScrollSensitive", null);
 
-		// skip 5, max 3 부분 범위 조회
-		resultList = (List<EmpVO>) empMapper.selectList("selectEmpUsingResultSetTypeScrollInsensitive", 5, 3);
+        // check
+        assertNotNull(resultList);
+        assertEquals(14, resultList.size());
+        assertEquals(new BigDecimal(7369), resultList.get(0).getEmpNo());
+        assertEquals(new BigDecimal(7499), resultList.get(1).getEmpNo());
+        assertEquals(new BigDecimal(7521), resultList.get(2).getEmpNo());
+        assertEquals(new BigDecimal(7566), resultList.get(3).getEmpNo());
+        assertEquals(new BigDecimal(7654), resultList.get(4).getEmpNo());
+        assertEquals(new BigDecimal(7698), resultList.get(5).getEmpNo());
+        assertEquals(new BigDecimal(7782), resultList.get(6).getEmpNo());
+        assertEquals(new BigDecimal(7788), resultList.get(7).getEmpNo());
+        assertEquals(new BigDecimal(7839), resultList.get(8).getEmpNo());
+        assertEquals(new BigDecimal(7844), resultList.get(9).getEmpNo());
+        assertEquals(new BigDecimal(7876), resultList.get(10).getEmpNo());
+        assertEquals(new BigDecimal(7900), resultList.get(11).getEmpNo());
+        assertEquals(new BigDecimal(7902), resultList.get(12).getEmpNo());
+        assertEquals(new BigDecimal(7934), resultList.get(13).getEmpNo());
 
-		assertNotNull(resultList);
-		assertEquals(3, resultList.size());
-		assertEquals(new BigDecimal(7698), resultList.get(0).getEmpNo());
-		assertEquals(new BigDecimal(7782), resultList.get(1).getEmpNo());
-		assertEquals(new BigDecimal(7788), resultList.get(2).getEmpNo());
+        resultList = (List<EmpVO>) empMapper.selectList("selectEmpUsingResultSetTypeScrollSensitive", 5, 3);
 
-	}
-
-	@SuppressWarnings({ "unchecked" })
-	@Rollback(false)
-	@Test
-	public void testResultSetTypeScrollSensitive() throws Exception {
-		// 검색조건 없이 전체 EMP 리스트 조회
-
-		List<EmpVO> resultList;
-
-		// select
-		// try {
-		resultList = empMapper.selectEmpList("selectEmpUsingResultSetTypeScrollSensitive", null);
-
-		// if (isOracle) {
-		// fail("Oracle 인 경우 SCROLL_SENSITIVE 인 resultSetType 설정을 하면 에러가 납니다.");
-		// }
-
-		// check
-		assertNotNull(resultList);
-		assertEquals(14, resultList.size());
-		assertEquals(new BigDecimal(7369), resultList.get(0).getEmpNo());
-		assertEquals(new BigDecimal(7499), resultList.get(1).getEmpNo());
-		assertEquals(new BigDecimal(7521), resultList.get(2).getEmpNo());
-		assertEquals(new BigDecimal(7566), resultList.get(3).getEmpNo());
-		assertEquals(new BigDecimal(7654), resultList.get(4).getEmpNo());
-		assertEquals(new BigDecimal(7698), resultList.get(5).getEmpNo());
-		assertEquals(new BigDecimal(7782), resultList.get(6).getEmpNo());
-		assertEquals(new BigDecimal(7788), resultList.get(7).getEmpNo());
-		assertEquals(new BigDecimal(7839), resultList.get(8).getEmpNo());
-		assertEquals(new BigDecimal(7844), resultList.get(9).getEmpNo());
-		assertEquals(new BigDecimal(7876), resultList.get(10).getEmpNo());
-		assertEquals(new BigDecimal(7900), resultList.get(11).getEmpNo());
-		assertEquals(new BigDecimal(7902), resultList.get(12).getEmpNo());
-		assertEquals(new BigDecimal(7934), resultList.get(13).getEmpNo());
-
-		// skip 5, max 3 부분 범위 조회
-		resultList = (List<EmpVO>) empMapper.selectList("selectEmpUsingResultSetTypeScrollSensitive", 5, 3);
-
-		assertNotNull(resultList);
-		assertEquals(3, resultList.size());
-		assertEquals(new BigDecimal(7698), resultList.get(0).getEmpNo());
-		assertEquals(new BigDecimal(7782), resultList.get(1).getEmpNo());
-		assertEquals(new BigDecimal(7788), resultList.get(2).getEmpNo());
-
-	}
+        assertNotNull(resultList);
+        assertEquals(3, resultList.size());
+        assertEquals(new BigDecimal(7698), resultList.get(0).getEmpNo());
+        assertEquals(new BigDecimal(7782), resultList.get(1).getEmpNo());
+        assertEquals(new BigDecimal(7788), resultList.get(2).getEmpNo());
+    }
 
 }

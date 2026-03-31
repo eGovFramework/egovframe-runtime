@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2014 MOSPA(Ministry of Security and Public Administration).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@ package org.egovframe.rte.bat.item;
 
 import org.egovframe.rte.bat.core.item.database.EgovJdbcBatchItemWriter;
 import org.egovframe.rte.bat.core.item.database.support.EgovMethodMapItemPreparedStatementSetter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.egovframe.rte.bat.core.item.file.transform.EgovFieldExtractor;
 import org.egovframe.rte.bat.core.item.file.transform.EgovFixedLengthLineAggregator;
 import org.springframework.batch.core.JobParameters;
@@ -29,13 +31,13 @@ import org.springframework.batch.item.file.transform.FieldExtractor;
 import org.springframework.batch.item.file.transform.LineAggregator;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.WritableResource;
 
 import javax.sql.DataSource;
-import java.util.List;
+import java.io.IOException;
 
 /**
  * @author 서경석
- * @since 2014.11.05
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -46,246 +48,291 @@ import java.util.List;
  * 2014.11.28	표준프레임워크		공통컴포넌트 추가 적용 (패키지 변경)
  * 2017.02.15	장동한				시큐어코딩(ES)-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
  * </pre>
+ * @since 2014.11.05
  */
 public class DefaultItemWriter<T> implements ItemStreamWriter<T> {
 
-	// Output Resource Type - key
-	private static final String XML_CONF_FLAG_KEY = ".writer.xml.conf.flag";
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultItemWriter.class);
+    private static final String XML_CONF_FLAG_KEY = ".writer.xml.conf.flag";
+    private static final String WRITER_RESOURCE_TYPE_KEY = ".writer.resource.type";
+    private static final String WRITER_RESOURCE_NAME_KEY = ".writer.resource.name";
+    private static final String WRITER_FIELD_NAMES_KEY = ".writer.field.names";
+    private static final String WRITER_FIELD_RANGES_KEY = ".writer.field.ranges";
+    private static final String WRITER_DELIMITER_KEY = ".writer.delimiter";
+    private static final String WRITER_SQL_KEY = ".writer.sql";
+    private static final String WRITER_PARAMS_KEY = ".writer.params";
+    private static final String DELIMITED_FILE_TYPE = "delimitedFile";
+    private static final String FIXED_LENGTH_FILE_TYPE = "fixedLengthFile";
+    private static final String JDBC_DB_TYPE = "jdbcDb";
 
-	private static final String WRITER_RESOURCE_TYPE_KEY = ".writer.resource.type";
-	private static final String WRITER_RESOURCE_NAME_KEY = ".writer.resource.name";
-	private static final String WRITER_FIELD_NAMES_KEY = ".writer.field.names";
-	private static final String WRITER_FIELD_RANGES_KEY = ".writer.field.ranges";
-	private static final String WRITER_DELIMITER_KEY = ".writer.delimiter";
-	private static final String WRITER_SQL_KEY = ".writer.sql";
-	private static final String WRITER_PARAMS_KEY = ".writer.params";
+    /**
+     * XML 설정 내용을 출력하기 위한 설정
+     */
+    boolean printXmlConf = false;
 
-	// Output Resource Type - Value
-	private static final String DELIMITED_FILE_TYPE = "delimitedFile";
-	private static final String FIXED_LENGTH_FILE_TYPE = "fixedLengthFile";
-	private static final String JDBC_DB_TYPE = "jdbcDb";
+    /**
+     * 실제 동작하는 Reader
+     */
+    private ItemWriter<T> writer;
 
-	// XML 설정 내용을 출력하기 위한 설정
-	boolean printXmlConf = false;
+    /**
+     * 공통 설정
+     */
+    private String stepName;
+    private JobParameters jobParameters;
+    private String writerResourceType;
 
-	// 실제 동작하는 Reader
-	private ItemWriter<T> writer;
+    /**
+     * File 입력인 경우 사용되는 설정
+     */
+    private Resource resource;
+    private String resourceName;
+    private String[] fieldNames;
+    private String names;
+    private String delimiter;
+    private int[] fieldRanges;
+    private String ranges;
 
-	// 공통 설정
-	private String stepName;
-	private JobParameters jobParameters;
-	private String writerResourceType;
+    /**
+     * DB 입력인 경우 사용되는 설정
+     */
+    private DataSource dataSource;
+    private String sql;
+    private String[] params;
+    private String tempParams;
 
-	// File 입력인 경우 사용되는 설정
-	private Resource resource;		// 공통
-	private String resourceName;	// 공통
-	private String[] fieldNames;	// 공통
-	private String names;			// 공통
-	private String delimiter;		// delimited 방식인 경우
-	private int[] fieldRanges;		// fixedLength 방식인 경우
-	private String ranges;
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
-	// DB 입력인 경우 사용되는 설정
-	private DataSource dataSource;
-	private String sql;
-	private String[] params;
-	private String tempParams;
+    @BeforeStep
+    public void beforeStep(StepExecution stepExecution) throws ClassNotFoundException {
+        this.stepName = stepExecution.getStepName();
+        this.jobParameters = stepExecution.getJobParameters();
+        String flag = jobParameters.getString(stepName + XML_CONF_FLAG_KEY);
+        if ((flag != null) && "true".equalsIgnoreCase(flag)) {
+            printXmlConf = true;
+        }
+        makeWriterConfigValue();
+    }
 
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
-	}
+    @Override
+    public void open(ExecutionContext executionContext) throws ItemStreamException {
+        makeItemWriter();
+        if (this.writer instanceof ItemStream) {
+            ((ItemStream) this.writer).open(executionContext);
+        }
+    }
 
-	@BeforeStep
-	public void beforeStep(StepExecution stepExecution) throws ClassNotFoundException{
-	    this.stepName = stepExecution.getStepName();
-	    this.jobParameters = stepExecution.getJobParameters();
-	    String flag = jobParameters.getString(stepName + XML_CONF_FLAG_KEY);
-	    if((flag != null) && "true".equalsIgnoreCase(flag)) {
-	    	printXmlConf = true;
-	    }
-	    makeWriterConfigValue();
-	}
+    @Override
+    public void update(ExecutionContext executionContext) throws ItemStreamException {
+        if (this.writer instanceof ItemStream) {
+            ((ItemStream) this.writer).update(executionContext);
+        }
+    }
 
-	@Override
-	public void open(ExecutionContext executionContext) throws ItemStreamException {
-		makeItemWriter();
-		if(this.writer instanceof ItemStream) {
-			((ItemStream) this.writer).open(executionContext);
-		}
-	}
+    @Override
+    public void close() throws ItemStreamException {
+        if (this.writer instanceof ItemStream) {
+            ((ItemStream) this.writer).close();
+        }
+    }
 
-	@Override
-	public void update(ExecutionContext executionContext) throws ItemStreamException {
-		if(this.writer instanceof ItemStream) {
-			((ItemStream) this.writer).update(executionContext);
-		}
-	}
+    @Override
+    public void write(Chunk<? extends T> chunk) throws Exception {
+        this.writer.write(chunk);
+    }
 
-	@Override
-	public void close() throws ItemStreamException {
-		if(this.writer instanceof ItemStream) {
-			((ItemStream) this.writer).close();
-		}
-	}
+    private void makeWriterConfigValue() {
+        if (jobParameters.getString(stepName + WRITER_RESOURCE_TYPE_KEY) != null) {
+            this.writerResourceType = jobParameters.getString(stepName + WRITER_RESOURCE_TYPE_KEY);
+            if (DELIMITED_FILE_TYPE.equalsIgnoreCase(this.writerResourceType) || FIXED_LENGTH_FILE_TYPE.equalsIgnoreCase(this.writerResourceType)) {
+                // 입력 리소스가 File인 경우 공통 처리 부분
+                this.resourceName = jobParameters.getString(stepName + WRITER_RESOURCE_NAME_KEY);
+                this.names = jobParameters.getString(stepName + WRITER_FIELD_NAMES_KEY);
+                if (DELIMITED_FILE_TYPE.equalsIgnoreCase(this.writerResourceType)) {
+                    this.delimiter = jobParameters.getString(stepName + WRITER_DELIMITER_KEY);
+                    if (this.resourceName == null || this.delimiter == null || this.names == null) {
+                        throw new RuntimeException(stepName + "스텝의 Writer 설정에서 resourceName, delimiter, names는 필수입니다. 다음 처럼 설정하세요.\n"
+                                + stepName + ".writer.resourceName=file:./inputs/csvData.csv "
+                                + stepName + ".writer.delimiter=, "
+                                + stepName + ".writer.fieldNames=name,age ");
+                    }
+                } else {
+                    this.ranges = jobParameters.getString(stepName + WRITER_FIELD_RANGES_KEY);
+                    if (this.resourceName == null || ranges == null || this.names == null) {
+                        throw new RuntimeException(stepName + "스텝의 Reader 설정에서 resourceName, fieldRanges, names는 필수입니다. 다음 처럼 설정하세요.\n"
+                                + stepName + ".writer.resourceName=./target/test-outputs/txtOutput.txt "
+                                + stepName + ".writer.fieldRanges=9,2 "
+                                + stepName + ".writer.fieldNames=name,age ");
+                    }
+                    String[] rangeArray = ranges.split(",");
+                    this.fieldRanges = new int[rangeArray.length];
+                    for (int idx = 0; idx < rangeArray.length; idx++) {
+                        fieldRanges[idx] = Integer.parseInt(rangeArray[idx]);
+                    }
+                }
+                this.resource = new FileSystemResource(resourceName);
+                this.fieldNames = names.split(",");
+            } else if (JDBC_DB_TYPE.equalsIgnoreCase(this.writerResourceType)) {
+                this.sql = jobParameters.getString(stepName + WRITER_SQL_KEY);
+                tempParams = jobParameters.getString(stepName + WRITER_PARAMS_KEY);
+                if (this.sql == null || tempParams == null) {
+                    throw new RuntimeException(stepName + "스텝의 Writer 설정에서 sql, params는 필수입니다. 다음 처럼 설정하세요.\n"
+                            + stepName + ".writer.sql=UPDATE CUSTOMER set credit =? where name =? "
+                            + stepName + ".writer.params=credit,name ");
+                }
+                this.params = tempParams.split(",");
+            }
+        } else {
+            throw new RuntimeException(stepName
+                    + ".writerResourceType=delimitedFile'처럼, 출력 리소스 타입을 Job 파라미터로 입력하세요.\n"
+                    + "리소스 타입 종류) delimitedFile, fixedLengthFile, jdbcDb");
+        }
+    }
 
-	@Override
-	public void write(List<? extends T> items) throws Exception {
-		this.writer.write(items);
-	}
+    private DelimitedLineAggregator<T> makeDelimitedLineAggregator(FieldExtractor<T> fieldExtractor) {
+        DelimitedLineAggregator<T> lineAggregator = new DelimitedLineAggregator<T>();
+        lineAggregator.setDelimiter(this.delimiter);
+        lineAggregator.setFieldExtractor(fieldExtractor);
+        return lineAggregator;
+    }
 
-	private void makeWriterConfigValue() {
-		if(jobParameters.getString(stepName + WRITER_RESOURCE_TYPE_KEY) != null) {
-			this.writerResourceType = jobParameters.getString(stepName + WRITER_RESOURCE_TYPE_KEY);
-			if(DELIMITED_FILE_TYPE.equalsIgnoreCase(this.writerResourceType) || FIXED_LENGTH_FILE_TYPE.equalsIgnoreCase(this.writerResourceType)) {
-		    	// 입력 리소스가 File인 경우 공통 처리 부분
-		    	this.resourceName= jobParameters.getString(stepName + WRITER_RESOURCE_NAME_KEY);
-		    	this.names = jobParameters.getString(stepName + WRITER_FIELD_NAMES_KEY);
-		    	if(DELIMITED_FILE_TYPE.equalsIgnoreCase(this.writerResourceType)){
-		    		this.delimiter = jobParameters.getString(stepName + WRITER_DELIMITER_KEY);
-		    		if(this.resourceName == null || this.delimiter == null || this.names == null ) {
-				    	throw new RuntimeException(stepName + "스텝의 Writer 설정에서 resourceName, delimiter, names는 필수입니다. 다음 처럼 설정하세요.\n" 
-				    			+ stepName + ".writer.resourceName=file:./inputs/csvData.csv "
-								+ stepName + ".writer.delimiter=, "
-								+ stepName + ".writer.fieldNames=name,age ");
-				    }
-		    	} else {
-			    	this.ranges = jobParameters.getString(stepName + WRITER_FIELD_RANGES_KEY);
-			    	if(this.resourceName == null || ranges == null || this.names == null ) {
-				    	throw new RuntimeException(stepName + "스텝의 Reader 설정에서 resourceName, fieldRanges, names는 필수입니다. 다음 처럼 설정하세요.\n"
-				    			+ stepName + ".writer.resourceName=file:./target/test-outputs/txtOutput.txt "
-								+ stepName + ".writer.fieldRanges=9,2 "
-								+ stepName + ".writer.fieldNames=name,age ");
-				    } 
-				    String[] rangeArray = ranges.split(",");
-				    this.fieldRanges = new int[rangeArray.length];
-				    for(int idx=0; idx<rangeArray.length; idx++) {
-				    	fieldRanges[idx] = Integer.parseInt(rangeArray[idx]);
-				    }
-		    	}
-		    	this.resource = new FileSystemResource(resourceName);
-			    this.fieldNames = names.split(",");
-			} else if(JDBC_DB_TYPE.equalsIgnoreCase(this.writerResourceType)){
-				this.sql = jobParameters.getString(stepName + WRITER_SQL_KEY);
-				tempParams = jobParameters.getString(stepName + WRITER_PARAMS_KEY);
-				if(this.sql == null || tempParams == null) {
-			    	throw new RuntimeException(stepName + "스텝의 Writer 설정에서 sql, params는 필수입니다. 다음 처럼 설정하세요.\n"
-			    			+ stepName + ".writer.sql=UPDATE CUSTOMER set credit =? where name =? "
-							+ stepName + ".writer.params=credit,name ");
-			    }
-				this.params = tempParams.split(",");
-			}
-		} else {
-		    throw new RuntimeException(stepName
-					+ ".writerResourceType=delimitedFile'처럼, 출력 리소스 타입을 Job 파라미터로 입력하세요.\n"
-					+ "리소스 타입 종류) delimitedFile, fixedLengthFile, jdbcDb");
-		}
-	}
+    private EgovFixedLengthLineAggregator<T> makeEgovFixedLengthLineAggregator(FieldExtractor<T> fieldExtractor) {
+        EgovFixedLengthLineAggregator<T> lineAggregator = new EgovFixedLengthLineAggregator<T>();
+        lineAggregator.setFieldExtractor(fieldExtractor);
+        lineAggregator.setFieldRanges(fieldRanges);
+        return lineAggregator;
+    }
 
-	private DelimitedLineAggregator<T> makeDelimitedLineAggregator(FieldExtractor<T> fieldExtractor) {
-		DelimitedLineAggregator<T> lineAggregator = new DelimitedLineAggregator<T>();
-		lineAggregator.setDelimiter(this.delimiter);
-		lineAggregator.setFieldExtractor(fieldExtractor);
-		return lineAggregator;
-	}
+    private FieldExtractor<T> makeFieldExtractor() {
+        EgovFieldExtractor<T> fieldExtractor = new EgovFieldExtractor<T>();
+        fieldExtractor.setNames(this.fieldNames);
+        fieldExtractor.afterPropertiesSet();
+        return fieldExtractor;
+    }
 
-	private EgovFixedLengthLineAggregator<T> makeEgovFixedLengthLineAggregator(FieldExtractor<T> fieldExtractor) {
-		EgovFixedLengthLineAggregator<T> lineAggregator = new EgovFixedLengthLineAggregator<T>();
-		lineAggregator.setFieldExtractor(fieldExtractor);
-		lineAggregator.setFieldRanges(fieldRanges);
-		return lineAggregator;
-	}
+    // 2026.02.28 KISA 보안취약점 조치
+    // Job 파라미터에 따른 다중 타입 Writer 생성 - Job 파라미터 값 검증 및 Writer 생성 실패 시 자원 해제
+    private void makeItemWriter() {
+        if (DELIMITED_FILE_TYPE.equalsIgnoreCase(this.writerResourceType) || FIXED_LENGTH_FILE_TYPE.equalsIgnoreCase(this.writerResourceType)) {
+            FieldExtractor<T> fieldExtractor = makeFieldExtractor();
+            LineAggregator<T> lineAggregator = null;
+            if (DELIMITED_FILE_TYPE.equalsIgnoreCase(this.writerResourceType)) {
+                lineAggregator = makeDelimitedLineAggregator(fieldExtractor);
+            } else {
+                lineAggregator = makeEgovFixedLengthLineAggregator(fieldExtractor);
+            }
+            this.writer = new FlatFileItemWriter<T>();
+            // 2026.02.28 KISA 보안취약점 조치
+            try {
+                ((FlatFileItemWriter<T>) this.writer).setResource((WritableResource) this.resource);
+                ((FlatFileItemWriter<T>) this.writer).setLineAggregator(lineAggregator);
+                ((FlatFileItemWriter<T>) this.writer).afterPropertiesSet();
+            } catch (IllegalArgumentException e) {
+                closeWriterOnFailure();
+                throw new RuntimeException("[" + e.getClass().getSimpleName() + "] " + this.writerResourceType + " 타입의 File을 write 하기 위한 FlatFileItemWriter 생성에 실패 하였습니다. : " + e.getMessage(), e);
+            } catch (IllegalStateException e) {
+                closeWriterOnFailure();
+                throw new RuntimeException("[" + e.getClass().getSimpleName() + "] " + this.writerResourceType + " 타입의 File을 write 하기 위한 FlatFileItemWriter 생성에 실패 하였습니다. : " + e.getMessage(), e);
+            } catch (IOException e) {
+                closeWriterOnFailure();
+                throw new RuntimeException("[" + e.getClass().getSimpleName() + "] " + this.writerResourceType + " 타입의 File을 write 하기 위한 FlatFileItemWriter 생성에 실패 하였습니다. : " + e.getMessage(), e);
+            } catch (Exception e) {
+                closeWriterOnFailure();
+                throw new RuntimeException("[" + e.getClass().getSimpleName() + "] " + this.writerResourceType + " 타입의 File을 write 하기 위한 FlatFileItemWriter 생성에 실패 하였습니다. : " + e.getMessage(), e);
+            }
+        } else if (JDBC_DB_TYPE.equalsIgnoreCase(this.writerResourceType)) {
+            EgovMethodMapItemPreparedStatementSetter<T> preparedStatementSetter = new EgovMethodMapItemPreparedStatementSetter<T>();
+            this.writer = new EgovJdbcBatchItemWriter<T>();
+            // 2026.02.28 KISA 보안취약점 조치
+            try {
+                ((EgovJdbcBatchItemWriter<T>) this.writer).setDataSource(this.dataSource);
+                ((EgovJdbcBatchItemWriter<T>) this.writer).setParams(this.params);
+                ((EgovJdbcBatchItemWriter<T>) this.writer).setSql(this.sql);
+                ((EgovJdbcBatchItemWriter<T>) this.writer).setItemPreparedStatementSetter(preparedStatementSetter);
+                ((EgovJdbcBatchItemWriter<T>) this.writer).setAssertUpdates(true);
+                ((EgovJdbcBatchItemWriter<T>) this.writer).afterPropertiesSet();
+            } catch (IllegalArgumentException e) {
+                closeWriterOnFailure();
+                throw new RuntimeException("[" + e.getClass().getSimpleName() + "] " + this.writerResourceType + " 타입의 DB을 write 하기 위한 EgovJdbcBatchItemWriter 생성에 실패 하였습니다. : " + e.getMessage(), e);
+            } catch (IllegalStateException e) {
+                closeWriterOnFailure();
+                throw new RuntimeException("[" + e.getClass().getSimpleName() + "] " + this.writerResourceType + " 타입의 DB을 write 하기 위한 EgovJdbcBatchItemWriter 생성에 실패 하였습니다. : " + e.getMessage(), e);
+            } catch (Exception e) {
+                closeWriterOnFailure();
+                throw new RuntimeException("[" + e.getClass().getSimpleName() + "] " + this.writerResourceType + " 타입의 DB을 write 하기 위한 EgovJdbcBatchItemWriter 생성에 실패 하였습니다. : " + e.getMessage(), e);
+            }
+        }
+        printXmlConfig();
+    }
 
-	private FieldExtractor<T> makeFieldExtractor() {
-		EgovFieldExtractor<T> fieldExtractor = new EgovFieldExtractor<T>();
-		fieldExtractor.setNames(this.fieldNames);
-		fieldExtractor.afterPropertiesSet();
-		return fieldExtractor;
-	}
+    // 2026.03.24 KISA 보안취약점 조치
+    // makeItemWriter 초기화 실패 시 생성된 writer의 자원을 해제한다.
+    private void closeWriterOnFailure() {
+        if (this.writer != null) {
+            try {
+                if (this.writer instanceof ItemStream) {
+                    ((ItemStream) this.writer).close();
+                }
+            } catch (ItemStreamException e) {
+                LOGGER.debug("[" + e.getClass().getSimpleName() + "] Writer close failed during cleanup after init failure: {}", e.getMessage());
+            } catch (Exception e) {
+                LOGGER.debug("[" + e.getClass().getSimpleName() + "] Writer close failed during cleanup after init failure: {}", e.getMessage());
+            } finally {
+                this.writer = null;
+            }
+        }
+    }
 
-	private void makeItemWriter() {
-		if(DELIMITED_FILE_TYPE.equalsIgnoreCase(this.writerResourceType) || FIXED_LENGTH_FILE_TYPE.equalsIgnoreCase(this.writerResourceType)) {
-			FieldExtractor<T> fieldExtractor = makeFieldExtractor();
-			LineAggregator<T> lineAggregator = null;
-			if(DELIMITED_FILE_TYPE.equalsIgnoreCase(this.writerResourceType)) {
-				lineAggregator = makeDelimitedLineAggregator(fieldExtractor);
-			} else {
-				lineAggregator = makeEgovFixedLengthLineAggregator(fieldExtractor);
-			}
-			this.writer = new FlatFileItemWriter<T>();
-			try {
-				((FlatFileItemWriter<T>)this.writer).setResource(this.resource);
-				((FlatFileItemWriter<T>)this.writer).setLineAggregator(lineAggregator);
-				((FlatFileItemWriter<T>)this.writer).afterPropertiesSet();
-			} catch (Exception e) {
-			    //2017.02.15 장동한 시큐어코딩(ES)-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
-				throw new RuntimeException("["+e.getClass()+"]"+this.writerResourceType + " 타입의 File을 write 하기 위한 FlatFileItemWriter 생성에 실패 하였습니다.("+e.getMessage()+")");
-			}
-		} else if(JDBC_DB_TYPE.equalsIgnoreCase(this.writerResourceType)){
-			EgovMethodMapItemPreparedStatementSetter<T> preparedStatementSetter = new EgovMethodMapItemPreparedStatementSetter<T>();
-			this.writer = new EgovJdbcBatchItemWriter<T>();
-			try {
-				((EgovJdbcBatchItemWriter<T>)this.writer).setDataSource(this.dataSource);
-				((EgovJdbcBatchItemWriter<T>)this.writer).setParams(this.params);
-				((EgovJdbcBatchItemWriter<T>)this.writer).setSql(this.sql);
-				((EgovJdbcBatchItemWriter<T>)this.writer).setItemPreparedStatementSetter(preparedStatementSetter);
-				((EgovJdbcBatchItemWriter<T>)this.writer).setAssertUpdates(true);
-				((EgovJdbcBatchItemWriter<T>)this.writer).afterPropertiesSet();
-			} catch (Exception e) {
-			    //2017.02.15 장동한 시큐어코딩(ES)-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
-				throw new RuntimeException("["+e.getClass()+"]"+this.writerResourceType + " 타입의 File을 write 하기 위한 FlatFileItemWriter 생성에 실패 하였습니다.("+e.getMessage()+")");
-			}
-		}
-		printXmlConfig();
-	}
-
-	private void printXmlConfig() {
-		if(printXmlConf) {
-			if(DELIMITED_FILE_TYPE.equalsIgnoreCase(this.writerResourceType)) {
-				System.out.println("======= " + stepName + " WRITER 설정(XML 버전) =========\n"
-					+ "<bean id=\"" + stepName + ".writer\" class=\"org.springframework.batch.item.file.FlatFileItemWriter\" scope=\"step\">\n"
-					+ "  <property name=\"resource\" value=\"" + this.resourceName + "\" />\n"
-					+ "  <property name=\"lineAggregator\">\n"
-					+ "    <bean class=\"org.springframework.batch.item.file.transform.DelimitedLineAggregator\">\n"
-					+ "      <property name=\"delimiter\" value=\"" + this.delimiter + "\" />\n"
-					+ "      <property name=\"fieldExtractor\">\n"
-					+ "        <bean class=\"org.egovframe.rte.bat.core.item.file.transform.EgovFieldExtractor\">\n"
-					+ "          <property name=\"names\" value=\"" + this.names + "\" />\n"
-					+ "        </bean>\n"
-					+ "      </property>\n"
-					+ "    </bean>\n"
-					+ "  </property>\n"
-					+ "</bean>\n"
-					+ "================================================");
-			} else if(FIXED_LENGTH_FILE_TYPE.equalsIgnoreCase(this.writerResourceType)) {
-				System.out.println("======= " + stepName + " Writer 설정(XML 버전) =========\n"
-					+ "<bean id=\"" + stepName + ".writer\" class=\"org.springframework.batch.item.file.FlatFileItemWriter\" scope=\"step\">\n"
-					+ "  <property name=\"resource\" value=\"" + this.resourceName + "\" />\n"
-					+ "  <property name=\"lineAggregator\">\n"
-					+ "    <bean class=\"org.egovframe.rte.bat.core.item.file.transform.EgovFixedLengthLineAggregator\">\n"
-					+ "      <property name=\"fieldRanges\" value=\"" + this.ranges + "\" />\n"
-					+ "      <property name=\"fieldExtractor\">\n"
-					+ "        <bean class=\"org.egovframe.rte.bat.core.item.file.transform.EgovFieldExtractor\">\n"
-					+ "          <property name=\"names\" value=\"" + this.names + "\" />\n"
-					+ "        </bean>\n"
-					+ "      </property>\n"
-					+ "    </bean>\n"
-					+ "  </property>\n"
-					+ "</bean>\n"
-					+ "================================================");
-			} else if(JDBC_DB_TYPE.equalsIgnoreCase(this.writerResourceType)){
-				System.out.println("======= " + stepName + " Writer 설정(XML 버전) =========\n"
-					+ "<bean id=\"" + stepName + ".writer\" class=\"org.egovframe.rte.bat.core.item.database.EgovJdbcBatchItemWriter\">\n"
-					+ "  <property name=\"assertUpdates\" value=\"true\" />\n"
-					+ "  <property name=\"itemPreparedStatementSetter\">\n"
-					+ "    <bean class=\"org.egovframe.rte.bat.core.item.database.support.EgovMethodMapItemPreparedStatementSetter\" />\n"
-					+ "  </property>\n"
-					+ "  <property name=\"sql\" value=\"" + this.sql + "\" />\n"
-					+ "  <property name=\"params\" value=\"" + this.tempParams + "\" />\n"
-					+ "  <property name=\"dataSource\" ref=\"dataSource\" />\n"
-					+ "</bean>\n"
-					+ "================================================");
-			}
-		}
-	}
+    private void printXmlConfig() {
+        if (printXmlConf) {
+            if (DELIMITED_FILE_TYPE.equalsIgnoreCase(this.writerResourceType)) {
+                System.out.println("======= " + stepName + " WRITER 설정(XML 버전) =========\n"
+                        + "<bean id=\"" + stepName + ".writer\" class=\"org.springframework.batch.item.file.FlatFileItemWriter\" scope=\"step\">\n"
+                        + "  <property name=\"resource\" value=\"" + this.resourceName + "\" />\n"
+                        + "  <property name=\"lineAggregator\">\n"
+                        + "    <bean class=\"org.springframework.batch.item.file.transform.DelimitedLineAggregator\">\n"
+                        + "      <property name=\"delimiter\" value=\"" + this.delimiter + "\" />\n"
+                        + "      <property name=\"fieldExtractor\">\n"
+                        + "        <bean class=\"org.egovframe.rte.bat.core.item.file.transform.EgovFieldExtractor\">\n"
+                        + "          <property name=\"names\" value=\"" + this.names + "\" />\n"
+                        + "        </bean>\n"
+                        + "      </property>\n"
+                        + "    </bean>\n"
+                        + "  </property>\n"
+                        + "</bean>\n"
+                        + "================================================");
+            } else if (FIXED_LENGTH_FILE_TYPE.equalsIgnoreCase(this.writerResourceType)) {
+                System.out.println("======= " + stepName + " Writer 설정(XML 버전) =========\n"
+                        + "<bean id=\"" + stepName + ".writer\" class=\"org.springframework.batch.item.file.FlatFileItemWriter\" scope=\"step\">\n"
+                        + "  <property name=\"resource\" value=\"" + this.resourceName + "\" />\n"
+                        + "  <property name=\"lineAggregator\">\n"
+                        + "    <bean class=\"org.egovframe.rte.bat.core.item.file.transform.EgovFixedLengthLineAggregator\">\n"
+                        + "      <property name=\"fieldRanges\" value=\"" + this.ranges + "\" />\n"
+                        + "      <property name=\"fieldExtractor\">\n"
+                        + "        <bean class=\"org.egovframe.rte.bat.core.item.file.transform.EgovFieldExtractor\">\n"
+                        + "          <property name=\"names\" value=\"" + this.names + "\" />\n"
+                        + "        </bean>\n"
+                        + "      </property>\n"
+                        + "    </bean>\n"
+                        + "  </property>\n"
+                        + "</bean>\n"
+                        + "================================================");
+            } else if (JDBC_DB_TYPE.equalsIgnoreCase(this.writerResourceType)) {
+                System.out.println("======= " + stepName + " Writer 설정(XML 버전) =========\n"
+                        + "<bean id=\"" + stepName + ".writer\" class=\"org.egovframe.rte.bat.core.item.database.EgovJdbcBatchItemWriter\">\n"
+                        + "  <property name=\"assertUpdates\" value=\"true\" />\n"
+                        + "  <property name=\"itemPreparedStatementSetter\">\n"
+                        + "    <bean class=\"org.egovframe.rte.bat.core.item.database.support.EgovMethodMapItemPreparedStatementSetter\" />\n"
+                        + "  </property>\n"
+                        + "  <property name=\"sql\" value=\"" + this.sql + "\" />\n"
+                        + "  <property name=\"params\" value=\"" + this.tempParams + "\" />\n"
+                        + "  <property name=\"dataSource\" ref=\"dataSource\" />\n"
+                        + "</bean>\n"
+                        + "================================================");
+            }
+        }
+    }
 
 }

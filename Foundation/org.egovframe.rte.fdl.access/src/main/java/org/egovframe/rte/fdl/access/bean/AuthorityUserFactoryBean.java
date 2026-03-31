@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2019 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,16 +28,16 @@ import org.springframework.util.StringUtils;
  *
  * <p>Desc.: 권한 정보 취득을 위한 query 지정을 처리하는 factory bean 클래스</p>
  *
- * @author ESFC
- * @since 2019.10.01
+ * @author 유지보수
  * @version 3.9
  * <pre>
  * 개정이력(Modification Information)
  *
  * 수정일		수정자				수정내용
  * ----------------------------------------------
- * 2019.10.01   ESFC            최초 생성
+ * 2019.10.01   유지보수            최초 생성
  * </pre>
+ * @since 2019.10.01
  */
 public class AuthorityUserFactoryBean implements FactoryBean<String>, ApplicationContextAware {
 
@@ -51,10 +51,6 @@ public class AuthorityUserFactoryBean implements FactoryBean<String>, Applicatio
     @Override
     public String getObject() throws Exception {
         EgovAccessConfig config = context.getBean(EgovAccessConfig.class);
-        if (config == null) {
-            throw new NoSuchBeanDefinitionException("##### AuthorityUserFactoryBean EgovAccessConfig is not defined");
-        }
-
         if (StringUtils.hasText(config.getSqlAuthorityUser())) {
             return config.getSqlAuthorityUser();
         } else {

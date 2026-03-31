@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2014 MOPAS(Ministry of Public Administration and Security).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,15 +24,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * 엑셀 서비스 제공을 위한 유틸 클래스.
- * 
- * <p><b>NOTE:</b> 엑셀 서비스를 제공하기 위해 유용한 유틸을 포함하는 클래스이다.</p>
- * 
- * @author 실행환경 개발팀 윤성종
- * @since 2009.06.01
- * @version 1.0
- * <pre>
+ * <p>
  * 개정이력(Modification Information)
- *
+ * <p>
  * 수정일		수정자			   수정내용
  * ----------------------------------------------
  * 2009.06.01   윤성종             최초 생성
@@ -40,7 +34,6 @@ import org.slf4j.LoggerFactory;
  * 2014.05.14	이기하             Cell로 통합(HSSFCell, XSSFCell)
  * 2014.09.03	이기하             수식 반환 값이 문자열 아니면 숫자여서 예외처리
  * 2017.02.15 	장동한             시큐어코딩(ES)-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
- * </pre>
  */
 public final class EgovExcelUtil {
 
@@ -50,10 +43,8 @@ public final class EgovExcelUtil {
     }
 
     /**
-    * 엑셀의 셀값을 String 타입으로 변환하여 리턴한다.
-    * @param cell <code>Cell</code>
-    * @return 결과 값
-    */
+     * 엑셀의 셀값을 String 타입으로 변환하여 리턴한다.
+     */
     public static String getValue(Cell cell) {
         String result = "";
         if (null == cell) {
@@ -61,20 +52,20 @@ public final class EgovExcelUtil {
         }
 
         if (cell.getCellType() == CellType.BOOLEAN) {
-            LOGGER.debug("### Cell.CELL_TYPE_BOOLEAN : {}", CellType.BOOLEAN);
-        result = String.valueOf(cell.getBooleanCellValue());
+            LOGGER.debug("### EgovExcelUtil Cell.CELL_TYPE_BOOLEAN : {}", CellType.BOOLEAN);
+            result = String.valueOf(cell.getBooleanCellValue());
         } else if (cell.getCellType() == CellType.ERROR) {
-            LOGGER.debug("### Cell.CELL_TYPE_ERROR : {}", CellType.ERROR);
+            LOGGER.debug("### EgovExcelUtil Cell.CELL_TYPE_ERROR : {}", CellType.ERROR);
         } else if (cell.getCellType() == CellType.FORMULA) {
-            LOGGER.debug("### Cell.CELL_TYPE_FORMULA : {}", CellType.FORMULA);
+            LOGGER.debug("### EgovExcelUtil Cell.CELL_TYPE_FORMULA : {}", CellType.FORMULA);
             String stringValue = null;
             String longValue = null;
             try {
                 stringValue = cell.getRichStringCellValue().getString();
                 longValue = doubleToString(cell.getNumericCellValue());
                 //2017.02.15 장동한 시큐어코딩(ES)-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
-            } catch(IllegalArgumentException e) {
-                LOGGER.error("[IllegalArgumentException] Try/Catch... Runing : "+ e.getMessage());
+            } catch (IllegalArgumentException e) {
+                LOGGER.debug("[{}] EgovExcelUtil getValue() : {}", e.getClass().getName(), e.getMessage());
             }
             if (stringValue != null) {
                 result = stringValue;
@@ -84,23 +75,21 @@ public final class EgovExcelUtil {
                 result = cell.getCellFormula();
             }
         } else if (cell.getCellType() == CellType.NUMERIC) {
-        LOGGER.debug("### Cell.CELL_TYPE_NUMERIC : {}", CellType.NUMERIC);
+            LOGGER.debug("### EgovExcelUtil Cell.CELL_TYPE_NUMERIC : {}", CellType.NUMERIC);
             result = DateUtil.isCellDateFormatted(cell)
                     ? EgovDateUtil.toString(cell.getDateCellValue(), "yyyy/MM/dd", null)
                     : doubleToString(cell.getNumericCellValue());
         } else if (cell.getCellType() == CellType.STRING) {
-            LOGGER.debug("### Cell.CELL_TYPE_STRING : {}", CellType.STRING);
+            LOGGER.debug("### EgovExcelUtil Cell.CELL_TYPE_STRING : {}", CellType.STRING);
             result = cell.getRichStringCellValue().getString();
         } else if (cell.getCellType() == CellType.BLANK) {
-            LOGGER.debug("### Cell.CELL_TYPE_BLANK : {}", CellType.BLANK);
+            LOGGER.debug("### EgovExcelUtil Cell.CELL_TYPE_BLANK : {}", CellType.BLANK);
         }
         return result;
     }
 
     /**
      * double 형의 셀 데이터를 String 형으로 변환하여 리턴한다.
-     * @param d <code>double</code>
-     * @return 결과 값
      */
     public static String doubleToString(double d) {
         long lValue = (long) d;

@@ -1,6 +1,6 @@
 /*
- * Copyright 2012-2014 MOSPA(Ministry of Security and Public Administration).
- *  
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,9 +23,8 @@ import org.springframework.batch.item.ExecutionContext;
 /**
  * EgovOutputFileListener
  * input File 과 같은 이름으로 output File 명 지정
- * 
+ *
  * @author 배치실행개발팀
- * @since 2012. 07.30
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -34,56 +33,56 @@ import org.springframework.batch.item.ExecutionContext;
  * ----------------------------------------------
  * 2012.07.30	배치실행개발팀		최초 생성
  * </pre>
+ * @since 2012. 07.30
  */
 public class EgovOutputFileListener {
 
-	// outputKeyName
-	private String outputKeyName = "outputFile";
+    private String outputKeyName = "outputFile";
+    private String inputKeyName = "fileName";
+    private String path = "file:/target/output/";
 
-	// inputKeyName
-	private String inputKeyName = "fileName";
+    /**
+     * path 셋팅
+     *
+     * @param path
+     */
+    public void setPath(String path) {
+        this.path = path;
+    }
 
-	// path
-	private String path = "file:/target/output/";
+    /**
+     * outputKeyName 셋팅
+     *
+     * @param outputKeyName
+     */
+    public void setOutputKeyName(String outputKeyName) {
+        this.outputKeyName = outputKeyName;
+    }
 
-	/**
-	 * path 셋팅
-	 * @param path
-	 */
-	public void setPath(String path) {
-		this.path = path;
-	}
+    /**
+     * inputKeyName 셋팅
+     *
+     * @param inputKeyName
+     */
+    public void setInputKeyName(String inputKeyName) {
+        this.inputKeyName = inputKeyName;
+    }
 
-	/**
-	 * outputKeyName 셋팅
-	 * @param outputKeyName
-	 */
-	public void setOutputKeyName(String outputKeyName) {
-		this.outputKeyName = outputKeyName;
-	}
-
-	/**
-	 * inputKeyName 셋팅
-	 * @param inputKeyName
-	 */
-	public void setInputKeyName(String inputKeyName) {
-		this.inputKeyName = inputKeyName;
-	}
-
-	/**
-	 * stepExecutionContext에 inputKeyName 을 이용하여 outputKeyName을 put 함
-	 * @param stepExecution
-	 */
-	@BeforeStep
-	public void createOutputNameFromInput(StepExecution stepExecution) {
-		ExecutionContext executionContext = stepExecution.getExecutionContext();
-		String inputName = stepExecution.getStepName().replace(":", "-");
-		if (executionContext.containsKey(inputKeyName)) {
-			inputName = executionContext.getString(inputKeyName);
-		}
-		if (!executionContext.containsKey(outputKeyName)) {
-			executionContext.putString(outputKeyName, path + FilenameUtils.getBaseName(inputName) + ".csv");
-		}
-	}
+    /**
+     * stepExecutionContext에 inputKeyName 을 이용하여 outputKeyName을 put 함
+     *
+     * @param stepExecution
+     */
+    @BeforeStep
+    public void createOutputNameFromInput(StepExecution stepExecution) {
+        ExecutionContext executionContext = stepExecution.getExecutionContext();
+        String inputName = stepExecution.getStepName().replace(":", "-");
+        if (executionContext.containsKey(inputKeyName)) {
+            inputName = executionContext.getString(inputKeyName);
+        }
+        if (!executionContext.containsKey(outputKeyName)) {
+            executionContext.putString(outputKeyName, path + FilenameUtils.getBaseName(inputName) + ".csv");
+        }
+    }
 
 }

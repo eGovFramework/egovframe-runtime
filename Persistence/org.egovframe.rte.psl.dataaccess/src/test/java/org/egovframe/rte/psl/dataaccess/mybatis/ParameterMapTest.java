@@ -1,135 +1,117 @@
 package org.egovframe.rte.psl.dataaccess.mybatis;
 
-import org.egovframe.rte.psl.dataaccess.TestBase;
+import jakarta.annotation.Resource;
+import org.egovframe.rte.psl.dataaccess.config.DataAccessTestConfig;
 import org.egovframe.rte.psl.dataaccess.dao.EmpMapper;
 import org.egovframe.rte.psl.dataaccess.vo.EmpVO;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
+import javax.sql.DataSource;
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- *  == 개정이력(Modification Information) ==
- *   
- *   수정일      수정자           수정내용
- *  -------    --------    ---------------------------
- *   2014.01.22 권윤정  SimpleJdbcTestUtils -> JdbcTestUtils 변경
- *   2014.01.22 권윤정  SimpleJdbcTemplate -> JdbcTemplate 변경
- * 
+ * == 개정이력(Modification Information) ==
+ * <p>
+ * 수정일      수정자           수정내용
+ * -------    --------    ---------------------------
+ * 2014.01.22 권윤정  SimpleJdbcTestUtils -> JdbcTestUtils 변경
+ * 2014.01.22 권윤정  SimpleJdbcTemplate -> JdbcTemplate 변경
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath*:META-INF/spring/context-*.xml" })
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = DataAccessTestConfig.class)
 @Transactional
-public class ParameterMapTest extends TestBase {
+public class ParameterMapTest {
 
-	@Resource(name = "empMapper")
-	EmpMapper empMapper;
+    @Resource(name = "dataSource")
+    private DataSource dataSource;
 
-	@Before
-	public void onSetUp() throws Exception {
-		// 외부에 sql file 로부터 DB 초기화 (기존 테이블 삭제/생성 및 초기데이터 구축)
-		// Spring 의 JdbcTestUtils 사용,
-		// continueOnError 플래그는 true로 설정 - cf.) DDL 이 포함된 경우 rollback 에 유의
-		ScriptUtils.executeSqlScript(dataSource.getConnection(), new ClassPathResource("META-INF/testdata/sample_schema_ddl_" + usingDBMS + ".sql"));
+    @Resource(name = "empMapper")
+    private EmpMapper empMapper;
 
-		// init data
-		ScriptUtils.executeSqlScript(dataSource.getConnection(), new ClassPathResource("META-INF/testdata/sample_schema_initdata_" + usingDBMS + ".sql"));
-	}
+    @BeforeEach
+    public void onSetUp() throws SQLException {
+        try (Connection conn = dataSource.getConnection()) {
+            ScriptUtils.executeSqlScript(conn, new ClassPathResource("/META-INF/testdata/testdb.sql"));
+        }
+    }
 
-	public EmpVO makeVO() throws ParseException {
-		EmpVO vo = new EmpVO();
-		vo.setEmpNo(new BigDecimal(9000));
-		vo.setEmpName("test Emp");
-		vo.setJob("test Job");
-		// 7839,'KING','PRESIDENT'
-		vo.setMgr(new BigDecimal(7839));
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault());
-		vo.setHireDate(sdf.parse("2009-02-09"));
-		// mysql 에서는 소숫점 자릿수 만큼 .00 이 달려 나와 테스트 편의상 소숫점
-		// 자리수가 없도록 칼럼 선언 하였음.
-		if (isMysql || isHsql || isTibero) {
-			vo.setSal(new BigDecimal("12345"));
-			vo.setComm(new BigDecimal(100));
-		} else {
-			vo.setSal(new BigDecimal("12345.00"));
-			vo.setComm(new BigDecimal(100.00));
-		}
-		// 10,'ACCOUNTING','NEW YORK'
-		vo.setDeptNo(new BigDecimal(10));
-		return vo;
-	}
+    public EmpVO makeVO() throws ParseException {
+        EmpVO vo = new EmpVO();
+        vo.setEmpNo(new BigDecimal(9000));
+        vo.setEmpName("test Emp");
+        vo.setJob("test Job");
+        vo.setMgr(new BigDecimal(7839));
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault());
+        vo.setHireDate(sdf.parse("2009-02-09"));
+        vo.setSal(new BigDecimal("12345"));
+        vo.setComm(new BigDecimal(100));
+        vo.setDeptNo(new BigDecimal(10));
+        return vo;
+    }
 
-	public void checkResult(EmpVO vo, EmpVO resultVO) {
-		assertNotNull(resultVO);
-		assertEquals(vo.getEmpNo(), resultVO.getEmpNo());
-		assertEquals(vo.getEmpName(), resultVO.getEmpName());
-		assertEquals(vo.getJob(), resultVO.getJob());
-		assertEquals(vo.getMgr(), resultVO.getMgr());
-		assertEquals(vo.getHireDate(), resultVO.getHireDate());
-		assertEquals(vo.getSal(), resultVO.getSal());
-		assertEquals(vo.getComm(), resultVO.getComm());
-		assertEquals(vo.getDeptNo(), resultVO.getDeptNo());
-	}
+    public void checkResult(EmpVO vo, EmpVO resultVO) {
+        assertNotNull(resultVO);
+        assertEquals(vo.getEmpNo(), resultVO.getEmpNo());
+        assertEquals(vo.getEmpName(), resultVO.getEmpName());
+        assertEquals(vo.getJob(), resultVO.getJob());
+        assertEquals(vo.getMgr(), resultVO.getMgr());
+        assertEquals(vo.getHireDate(), resultVO.getHireDate());
+        assertEquals(vo.getSal(), resultVO.getSal());
+        assertEquals(vo.getComm(), resultVO.getComm());
+        assertEquals(vo.getDeptNo(), resultVO.getDeptNo());
+    }
 
-	@Rollback(false)
-	@Test
-	public void testParameterMapInsert() throws Exception {
-		EmpVO vo = makeVO();
+    @Rollback(false)
+    @Test
+    public void testParameterMapInsert() throws ParseException {
+        EmpVO vo = makeVO();
 
-		// insert
-		empMapper.insertEmp("org.egovframe.rte.psl.dataaccess.EmpMapper.insertEmpUsingParameterMap", vo);
+        // insert
+        empMapper.insertEmp("org.egovframe.rte.psl.dataaccess.EmpMapper.insertEmpUsingParameterMap", vo);
 
-		// select
-		EmpVO resultVO = empMapper.selectEmp("org.egovframe.rte.psl.dataaccess.EmpMapper.selectEmp", vo);
+        // select
+        EmpVO resultVO = empMapper.selectEmp("org.egovframe.rte.psl.dataaccess.EmpMapper.selectEmp", vo);
 
-		// check
-		checkResult(vo, resultVO);
-	}
+        // check
+        checkResult(vo, resultVO);
+    }
 
-	@Rollback(false)
-	@Test
-	public void testParameterMapInsertWithNullValue() throws Exception {
-		EmpVO vo = new EmpVO();
-		// key 설정
-		vo.setEmpNo(new BigDecimal(9000));
+    @Rollback(false)
+    @Test
+    public void testParameterMapInsertWithNullValue() {
+        EmpVO vo = new EmpVO();
+        vo.setEmpNo(new BigDecimal(9000));
+        vo.setEmpName("blank");
+        vo.setJob("");
+        vo.setComm(new BigDecimal("-99999"));
 
-		// parameterMap nullValue test
-		vo.setEmpName("blank");
-		vo.setJob("");
-		// cf.) -99999.99 는 NumberFormatException 임을
-		// 확인하였음!
-		vo.setComm(new BigDecimal("-99999"));
+        // insert
+        empMapper.insertEmp("org.egovframe.rte.psl.dataaccess.EmpMapper.insertEmpUsingParameterMap", vo);
 
-		// insert
-		empMapper.insertEmp("org.egovframe.rte.psl.dataaccess.EmpMapper.insertEmpUsingParameterMap", vo);
+        // select
+        EmpVO resultVO = empMapper.selectEmp("org.egovframe.rte.psl.dataaccess.EmpMapper.selectEmp", vo);
 
-		// select
-		EmpVO resultVO = empMapper.selectEmp("org.egovframe.rte.psl.dataaccess.EmpMapper.selectEmp", vo);
-
-		// check
-		assertNotNull(resultVO);
-		assertEquals(vo.getEmpNo(), resultVO.getEmpNo());
-		// parameterMap 설정에서 nullValue="blank" .. 에 따라
-		// 해당값이 null 로 입력되었을 것임
-		//assertNull(resultVO.getEmpName());
-		if (isOracle || isTibero) {
-			assertNull(resultVO.getJob());
-		} else {
-			assertNotNull(resultVO.getJob());
-		}
-		//assertNull(resultVO.getComm());
-	}
+        // check
+        assertNotNull(resultVO);
+        assertEquals(vo.getEmpNo(), resultVO.getEmpNo());
+        //assertNull(resultVO.getEmpName());
+        assertNotNull(resultVO.getJob());
+        //assertNull(resultVO.getComm());
+    }
 
 }

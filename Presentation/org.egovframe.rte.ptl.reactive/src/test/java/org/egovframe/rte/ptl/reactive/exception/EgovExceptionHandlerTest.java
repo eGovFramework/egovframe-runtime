@@ -1,15 +1,18 @@
 package org.egovframe.rte.ptl.reactive.exception;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+@ExtendWith(SpringExtension.class)
 public class EgovExceptionHandlerTest {
 
     private WebTestClient webTestClient;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.webTestClient = WebTestClient.bindToController(new SampleController())
                 .controllerAdvice(new EgovExceptionHandler())

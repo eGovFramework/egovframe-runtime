@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 MOPAS(Ministry of Public Administration and Security).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,20 +15,20 @@
  */
 package org.egovframe.rte.itl.webservice.data.dao.hibernate;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.egovframe.rte.itl.integration.metadata.ServiceDefinition;
 import org.egovframe.rte.itl.webservice.data.WebServiceClientDefinition;
 import org.egovframe.rte.itl.webservice.data.dao.WebServiceClientDefinitionDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
 /**
  * WebServiceClientDefinitionDao를 hibernate를 이용하여 구현한 DAO 클래스
  * <p>
  * <b>NOTE:</b> WebServiceClientDefinitionDao를 hibernate를 이용하여 구현한 DAO class이다. </p>
- * 
+ *
  * @author 실행환경 개발팀 심상호
- * @since 2009.06.01
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -37,23 +37,21 @@ import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
  * ----------------------------------------------
  * 2009.06.01	심상호				최초 생성
  * </pre>
+ * @since 2009.06.01
  */
-public class HibernateWebServiceClientDefinitionDao extends HibernateDaoSupport implements WebServiceClientDefinitionDao {
+public class HibernateWebServiceClientDefinitionDao implements WebServiceClientDefinitionDao {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(HibernateWebServiceClientDefinitionDao.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HibernateWebServiceClientDefinitionDao.class);
 
-	public WebServiceClientDefinition getWebServiceClientDefinition(ServiceDefinition serviceDefinition) {
-		LOGGER.debug("get WebServiceClientDefinition(serviceDefinition = {})", serviceDefinition);
-		WebServiceClientDefinition webServiceClientDefinition = getWebServiceClientDefinition(serviceDefinition.getKey());
-		LOGGER.debug("get WebServiceClientDefinition(serviceDefinition = {}) = {}", serviceDefinition, webServiceClientDefinition);
-		return webServiceClientDefinition;
-	}
+    @PersistenceContext
+    private EntityManager entityManager;
 
-	public WebServiceClientDefinition getWebServiceClientDefinition(String key) {
-		LOGGER.debug("get WebServiceClientDefinition(key = \"{}\")", key);
-		WebServiceClientDefinition webServiceClientDefinition = (WebServiceClientDefinition) getHibernateTemplate().get(WebServiceClientDefinition.class, key);
-		LOGGER.debug("get WebServiceClientDefinition(key = \"{}\") = {}", key, webServiceClientDefinition);
-		return webServiceClientDefinition;
-	}
+    public WebServiceClientDefinition getWebServiceClientDefinition(ServiceDefinition serviceDefinition) {
+        return entityManager.find(WebServiceClientDefinition.class, serviceDefinition.getKey());
+    }
+
+    public WebServiceClientDefinition getWebServiceClientDefinition(String key) {
+        return entityManager.find(WebServiceClientDefinition.class, key);
+    }
 
 }

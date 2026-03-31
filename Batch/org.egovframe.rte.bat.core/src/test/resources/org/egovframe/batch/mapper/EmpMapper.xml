@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="EmpMapper">
+
+    <select id="selectEmpList" resultType="EmpVO">
+        SELECT EMP_NO    as empNo,
+               EMP_NAME  as empName,
+               JOB       as job,
+               MGR       as mgr,
+               HIRE_DATE as hireDate,
+               SAL       as sal,
+               COMM      as comm,
+               DEPT_NO   as deptNo
+        FROM EMP
+        WHERE EMP_NO = #{empNo}
+          AND EMP_NAME = #{empName}
+    </select>
+
+    <update id="updateEmp1" parameterType="EmpVO">
+        UPDATE EMP
+        SET JOB     = #{job},
+            MGR     = #{mgr},
+            SAL     = #{sal},
+            COMM    = #{comm},
+            DEPT_NO = #{deptNo}
+        WHERE EMP_NO = #{empNo}
+    </update>
+
+</mapper> 

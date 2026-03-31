@@ -10,78 +10,75 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- *  == 개정이력(Modification Information) ==
- *  
- *   수정일      수정자           수정내용
- *  -------    --------    ---------------------------
- *   2014.01.22 권윤정  FileUsingResultHandler테스트를 위한 selectEmpListToOutFileUsingResultHandler() 메서드 추가
- *
+ * == 개정이력(Modification Information) ==
+ * <p>
+ * 수정일      수정자           수정내용
+ * -------    --------    ---------------------------
+ * 2014.01.22 권윤정  FileUsingResultHandler테스트를 위한 selectEmpListToOutFileUsingResultHandler() 메서드 추가
  */
 @Repository("empMapper")
 public class EmpMapper extends EgovAbstractMapper {
 
-	public void insertEmp(String queryId, EmpVO vo) {
-		insert(queryId, vo);
-	}
+    public void insertEmp(String queryId, EmpVO vo) {
+        insert(queryId, vo);
+    }
 
-	public int insertEmpUsingSelectKey(String queryId, EmpVO vo) {
-		return insert(queryId, vo);
-	}
+    public int insertEmpUsingSelectKey(String queryId, EmpVO vo) {
+        return insert(queryId, vo);
+    }
 
-	public Integer batchInsertEmp(String queryId, List<EmpVO> list) {
-		Iterator<EmpVO> itr = list.iterator();
+    public Integer batchInsertEmp(String queryId, List<EmpVO> list) {
+        Iterator<EmpVO> itr = list.iterator();
+        int count = 0;
+        while (itr.hasNext()) {
+            count += insert(queryId, itr.next());
+        }
+        return count;
+    }
 
-		int count = 0;
+    public EmpVO selectEmp(String queryId, EmpVO vo) {
+        return (EmpVO) selectOne(queryId, vo);
+    }
 
-		while (itr.hasNext()) {
-			count += insert(queryId, itr.next());
-		}
+    public List<EmpVO> selectEmpList(String queryId, EmpVO vo) {
+        return selectList(queryId, vo);
+    }
 
-		return count;
-	}
+    public List<?> selectList(String statementName, int skipResults, int maxResults) {
+        RowBounds rowBounds = new RowBounds(skipResults, maxResults);
+        return getSqlSession().selectList(statementName, "EmpVO", rowBounds);
+    }
 
-	public EmpVO selectEmp(String queryId, EmpVO vo) {
-		return (EmpVO) selectOne(queryId, vo);
-	}
+    public EmpExtendsDeptVO selectEmpExtendsDept(String queryId, EmpVO vo) {
+        return (EmpExtendsDeptVO) selectOne(queryId, vo);
+    }
 
-	public List<EmpVO> selectEmpList(String queryId, EmpVO vo) {
-		return selectList(queryId, vo);
-	}
+    public EmpDeptSimpleCompositeVO selectEmpDeptSimpleComposite(String queryId, EmpVO vo) {
+        return (EmpDeptSimpleCompositeVO) selectOne(queryId, vo);
+    }
 
-	public List<?> selectList(String statementName, int skipResults, int maxResults) {
-		RowBounds rowBounds = new RowBounds(skipResults, maxResults);
-		return getSqlSession().selectList(statementName, "EmpVO", rowBounds);
-	}
+    public EmpIncludesDeptVO selectEmpDeptComplexProperties(String queryId, EmpVO vo) {
+        return (EmpIncludesDeptVO) selectList(queryId, vo);
+    }
 
-	public EmpExtendsDeptVO selectEmpExtendsDept(String queryId, EmpVO vo) {
-		return (EmpExtendsDeptVO) selectOne(queryId, vo);
-	}
+    public DeptIncludesEmpListVO selectDeptEmpListComplexProperties(String queryId, DeptVO vo) {
+        return (DeptIncludesEmpListVO) selectList(queryId, vo);
+    }
 
-	public EmpDeptSimpleCompositeVO selectEmpDeptSimpleComposite(String queryId, EmpVO vo) {
-		return (EmpDeptSimpleCompositeVO) selectOne(queryId, vo);
-	}
+    public List<DeptIncludesEmpListVO> selectDeptEmpListComplexPropertiesList(String queryId, DeptVO vo) {
+        return selectList(queryId, vo);
+    }
 
-	public EmpIncludesDeptVO selectEmpDeptComplexProperties(String queryId, EmpVO vo) {
-		return (EmpIncludesDeptVO) selectList(queryId, vo);
-	}
+    public EmpIncludesMgrVO selectEmpMgrHierarchy(String queryId, EmpVO vo) {
+        return (EmpIncludesMgrVO) selectList(queryId, vo);
+    }
 
-	public DeptIncludesEmpListVO selectDeptEmpListComplexProperties(String queryId, DeptVO vo) {
-		return (DeptIncludesEmpListVO) selectList(queryId, vo);
-	}
+    public EmpIncludesEmpListVO selectEmpIncludesEmpList(String queryId, EmpVO vo) {
+        return selectOne(queryId, vo);
+    }
 
-	public List<DeptIncludesEmpListVO> selectDeptEmpListComplexPropertiesList(String queryId, DeptVO vo) {
-		return selectList(queryId, vo);
-	}
+    public void selectEmpListToOutFileUsingResultHandler(String queryId, ResultHandler handler) {
+        listToOutUsingResultHandler(queryId, handler);
+    }
 
-	public EmpIncludesMgrVO selectEmpMgrHierarchy(String queryId, EmpVO vo) {
-		return (EmpIncludesMgrVO) selectList(queryId, vo);
-	}
-
-	public EmpIncludesEmpListVO selectEmpIncludesEmpList(String queryId, EmpVO vo) {
-		return (EmpIncludesEmpListVO) selectList(queryId, vo);
-	}
-
-	public void selectEmpListToOutFileUsingResultHandler(String queryId, ResultHandler handler) {
-		listToOutUsingResultHandler(queryId, handler);
-	}
 }

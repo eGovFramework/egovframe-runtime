@@ -1,23 +1,24 @@
 package org.egovframe.rte.fdl.cmmn.cnamespace;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.egovframe.rte.fdl.cmmn.config.CNamespaceConfig;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:/spring/context-cnamespace.xml" })
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = CNamespaceConfig.class)
 public class CNameSpaceTest {
 
-	@Autowired
-	private Foo foo;
+    @Autowired
+    private Foo foo;
 
-	@Test
-	public void test() {
-		assertTrue(foo.getEmail().equals("foo@bar.com"));
-	}
-	
+    @Test
+    public void test() {
+        assertTrue(foo.getEmail().equals("foo@bar.com"));
+    }
+
 }

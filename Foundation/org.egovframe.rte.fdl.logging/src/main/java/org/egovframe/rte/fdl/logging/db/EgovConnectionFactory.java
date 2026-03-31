@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 MOSPA(Ministry of Security and Public Administration).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,44 +21,45 @@ import java.sql.SQLException;
 
 /**
  * log4j2의 JDBCAppender에서 사용하는 Connection 객체를 생성해주는 클래스
- * 
- * <p>Spring의 dataSource 를 injection받아 싱글톤으로 만들고
- * JDBCAppender가 Connection객체를 호출할 수 있도록 getDatabaseConnection() 메소드를 제공한다.</p>
- * 
- * @author Daniela Kwon
- * @since 2014.04.15
- * @version 3.0
- * <pre>
- * 개정이력(Modification Information)
  *
- * 수정일		수정자				수정내용
- * ----------------------------------------------
- * 2014.04.15	Daniela Kwon		최초생성
- * </pre>
+ * <p>Spring의 DataSource를 주입받아 싱글톤으로 사용되며,
+ * JDBCAppender가 Connection 객체를 사용할 수 있도록 getDatabaseConnection() 메서드를 제공한다.</p>
+ *
+ * @author Daniela Kwon
+ * @version 3.0
+ * @since 2014.04.15
  */
 public class EgovConnectionFactory {
 
-	private static interface Singleton {
-        final EgovConnectionFactory INSTANCE = new EgovConnectionFactory();
+    private DataSource dataSource;
+
+    public EgovConnectionFactory() {
     }
 
-	private DataSource dataSource;
+    /**
+     * 설정된 DataSource를 통해 Connection을 생성하여 반환한다.
+     *
+     * @return Connection 객체
+     * @throws SQLException SQL 예외 발생 시
+     */
+    public static Connection getDatabaseConnection() throws SQLException {
+        if (Holder.INSTANCE.dataSource == null) {
+            throw new IllegalStateException("DataSource is not set. Please call setDataSource() before using this method.");
+        }
+        return Holder.INSTANCE.dataSource.getConnection();
+    }
 
-	/**
-	 * dataSource 지정한다.
-	 * @param dataSource Spring에서 관리하는 dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		Singleton.INSTANCE.dataSource = dataSource;
-	}
+    /**
+     * DataSource를 설정한다.
+     *
+     * @param dataSource Spring에서 관리하는 DataSource
+     */
+    public void setDataSource(DataSource dataSource) {
+        Holder.INSTANCE.dataSource = dataSource;
+    }
 
-	/**
-	 * Spring에서 설정한 dataSource를 통해 Connection을 생성하고 리턴한다. 
-	 * @return Connection
-	 * @exception SQLException
-	 */
-	public static Connection getDatabaseConnection() throws SQLException {
-		return Singleton.INSTANCE.dataSource.getConnection();
+    private static class Holder {
+        private static final EgovConnectionFactory INSTANCE = new EgovConnectionFactory();
     }
 
 }

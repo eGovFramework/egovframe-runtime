@@ -1,29 +1,27 @@
 package org.egovframe.rte.ptl.mvc.handler;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 
-public class TwoInterceptor extends HandlerInterceptorAdapter {
+public class TwoInterceptor implements HandlerInterceptor {
 
-	@SuppressWarnings("unchecked")
-	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    @SuppressWarnings("unchecked")
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        ArrayList<String> array = (ArrayList<String>) request.getAttribute("interceptor");
+        array.add("TwoInterceptor.preHandle");
+        request.setAttribute("interceptor", array);
+        return HandlerInterceptor.super.preHandle(request, response, handler);
+    }
 
-		ArrayList<String> array = (ArrayList<String>) request.getAttribute("interceptor");
-		array.add("TwoInterceptor.preHandle");
-		request.setAttribute("interceptor", array);
-		return super.preHandle(request, response, handler);
-	}
+    @SuppressWarnings("unchecked")
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) {
+        ArrayList<String> array = (ArrayList<String>) request.getAttribute("interceptor");
+        array.add("TwoInterceptor.postHandle");
+        request.setAttribute("interceptor", array);
+    }
 
-	@SuppressWarnings("unchecked")
-	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-
-		ArrayList<String> array = (ArrayList<String>) request.getAttribute("interceptor");
-		array.add("TwoInterceptor.postHandle");
-		request.setAttribute("interceptor", array);
-		super.postHandle(request, response, handler, modelAndView);
-	}
 }

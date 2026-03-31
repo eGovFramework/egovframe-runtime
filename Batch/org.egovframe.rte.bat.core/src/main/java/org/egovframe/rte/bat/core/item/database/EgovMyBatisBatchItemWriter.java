@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2014 MOSPA(Ministry of Security and Public Administration).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import org.egovframe.rte.bat.support.EgovStepVariableListener;
 import org.mybatis.spring.batch.MyBatisBatchItemWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.batch.item.Chunk;
 import org.springframework.util.ReflectionUtils;
 
 import java.beans.BeanInfo;
@@ -40,7 +41,6 @@ import java.util.Map;
  * EgovResourceVariable,EgovJobVariableListener,EgovStepVariableListener 클래스를 이용한 변수 공유 기능 제공
  *
  * @author 장동한
- * @since 2017.09.06
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -50,70 +50,82 @@ import java.util.Map;
  * 2017.09.06	장동한				최초 생성
  * 2018.01.15	장동한				EgovJobVariable, EgovStepVariable 적용
  * </pre>
+ * @since 2017.09.06
  */
 public class EgovMyBatisBatchItemWriter<T> extends MyBatisBatchItemWriter<T> {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(EgovMyBatisBatchItemWriter.class);
-	
-	/** egovframework EgovResourceVariable */
-	private EgovResourceVariable resourceVariable = null;
-	
-	/** egovframework EgovJobVariableListener */
-	private EgovJobVariableListener jobVariable = null;
-	
-	/** egovframework EgovStepVariableListener */
-	private EgovStepVariableListener stepVariable = null;
+    private static final Logger LOGGER = LoggerFactory.getLogger(EgovMyBatisBatchItemWriter.class);
 
-	public EgovResourceVariable getResourceVariable() {
-		return resourceVariable;
-	}
+    /**
+     * egovframework EgovResourceVariable
+     */
+    private EgovResourceVariable resourceVariable = null;
 
-	public void setResourceVariable(EgovResourceVariable resourceVariable) {
-		this.resourceVariable = resourceVariable;
-	}
+    /**
+     * egovframework EgovJobVariableListener
+     */
+    private EgovJobVariableListener jobVariable = null;
 
-	public EgovJobVariableListener getJobVariable() {
-		return jobVariable;
-	}
+    /**
+     * egovframework EgovStepVariableListener
+     */
+    private EgovStepVariableListener stepVariable = null;
 
-	public void setJobVariable(EgovJobVariableListener jobVariable) {
-		this.jobVariable = jobVariable;
-	}
+    public EgovResourceVariable getResourceVariable() {
+        return resourceVariable;
+    }
 
-	public EgovStepVariableListener getStepVariable() {
-		return stepVariable;
-	}
+    public void setResourceVariable(EgovResourceVariable resourceVariable) {
+        this.resourceVariable = resourceVariable;
+    }
 
-	public void setStepVariable(EgovStepVariableListener stepVariable) {
-		this.stepVariable = stepVariable;
-	}
+    public EgovJobVariableListener getJobVariable() {
+        return jobVariable;
+    }
 
-	@Override
-	@SuppressWarnings("unchecked")
-	public void write(final List<? extends T> items) {
-		List<Object> list = new ArrayList<Object>();
-		Map<String, Object> map = null;
-		try {
-			for (T item : items) {
-				map = new HashMap<String, Object>();
-				BeanInfo beanInfo = Introspector.getBeanInfo(item.getClass());
-				if (resourceVariable != null)
-					map.putAll(resourceVariable.getVariableMap());
-				if (jobVariable != null)
-					map.putAll(jobVariable.getVariableMap());
-				if (stepVariable != null)
-					map.putAll(stepVariable.getVariableMap());
-				for (PropertyDescriptor pd : beanInfo.getPropertyDescriptors()) {
-					Method reader = pd.getReadMethod();
-					if (reader != null)
-						map.put(pd.getName(), reader.invoke(item));
-				}
-				list.add(map);
-			}
-		} catch (IntrospectionException | IllegalAccessException | InvocationTargetException e) {
-			ReflectionUtils.handleReflectionException(e);
-		}
-		super.write( (List<? extends T>)list );
-	}
+    public void setJobVariable(EgovJobVariableListener jobVariable) {
+        this.jobVariable = jobVariable;
+    }
+
+    public EgovStepVariableListener getStepVariable() {
+        return stepVariable;
+    }
+
+    public void setStepVariable(EgovStepVariableListener stepVariable) {
+        this.stepVariable = stepVariable;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public void write(Chunk<? extends T> chunk) {
+        List<Object> list = new ArrayList<>();
+        Map<String, Object> map;
+
+        try {
+            for (T item : chunk.getItems()) {
+                map = new HashMap<>();
+                BeanInfo beanInfo = Introspector.getBeanInfo(item.getClass());
+
+                if (resourceVariable != null)
+                    map.putAll(resourceVariable.getVariableMap());
+                if (jobVariable != null)
+                    map.putAll(jobVariable.getVariableMap());
+                if (stepVariable != null)
+                    map.putAll(stepVariable.getVariableMap());
+
+                for (PropertyDescriptor pd : beanInfo.getPropertyDescriptors()) {
+                    Method reader = pd.getReadMethod();
+                    if (reader != null)
+                        map.put(pd.getName(), reader.invoke(item));
+                }
+
+                list.add(map);
+            }
+        } catch (IntrospectionException | IllegalAccessException | InvocationTargetException e) {
+            ReflectionUtils.handleReflectionException(e);
+        }
+
+        super.write((Chunk<? extends T>) chunk);
+    }
 
 }

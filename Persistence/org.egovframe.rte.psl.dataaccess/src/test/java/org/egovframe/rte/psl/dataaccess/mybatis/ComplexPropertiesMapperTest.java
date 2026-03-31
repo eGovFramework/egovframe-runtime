@@ -1,282 +1,184 @@
 package org.egovframe.rte.psl.dataaccess.mybatis;
 
-import org.egovframe.rte.psl.dataaccess.TestBase;
+import jakarta.annotation.Resource;
+import org.egovframe.rte.psl.dataaccess.config.DataAccessTestConfig;
 import org.egovframe.rte.psl.dataaccess.dao.EmpGeneralMapper;
 import org.egovframe.rte.psl.dataaccess.vo.*;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
+import javax.sql.DataSource;
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
- *  == 개정이력(Modification Information) ==
- *   
- *   수정일      수정자           수정내용
- *  -------    --------    ---------------------------
- *   2014.01.22 권윤정  SimpleJdbcTestUtils -> JdbcTestUtils 변경
- *   2014.01.22 권윤정  SimpleJdbcTemplate -> JdbcTemplate 변경
- * 
+ * == 개정이력(Modification Information) ==
+ * <p>
+ * 수정일      수정자           수정내용
+ * -------    --------    ---------------------------
+ * 2014.01.22 권윤정  SimpleJdbcTestUtils -> JdbcTestUtils 변경
+ * 2014.01.22 권윤정  SimpleJdbcTemplate -> JdbcTemplate 변경
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath*:META-INF/spring/context-*.xml" })
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = DataAccessTestConfig.class)
 @Transactional
-public class ComplexPropertiesMapperTest extends TestBase {
+public class ComplexPropertiesMapperTest {
 
-	@Resource(name = "empGeneralMapper")
-	EmpGeneralMapper empGeneralMapper;
+    @Resource(name = "dataSource")
+    private DataSource dataSource;
 
-	@Before
-	public void onSetUp() throws Exception {
-		// 외부에 sql file 로부터 DB 초기화 (기존 테이블 삭제/생성 및
-		// 초기데이터 구축)
-		// Spring 의 JdbcTestUtils 사용,
-		// continueOnError 플래그는 true로 설정 - cf.) DDL 이
-		// 포함된 경우 rollback 에 유의
-		ScriptUtils.executeSqlScript(dataSource.getConnection(), new ClassPathResource("META-INF/testdata/sample_schema_ddl_" + usingDBMS + ".sql"));
+    @Resource(name = "empGeneralMapper")
+    private EmpGeneralMapper empGeneralMapper;
 
-		// init data
-		ScriptUtils.executeSqlScript(dataSource.getConnection(), new ClassPathResource("META-INF/testdata/sample_schema_initdata_" + usingDBMS + ".sql"));
-	}
+    @BeforeEach
+    public void onSetUp() throws SQLException {
+        try (Connection conn = dataSource.getConnection()) {
+            ScriptUtils.executeSqlScript(conn, new ClassPathResource("/META-INF/testdata/testdb.sql"));
+        }
+    }
 
-	@Rollback(false)
-	@Test
-	public void testComplexPropertiesOneToOneResultMapSelect() throws Exception {
-		EmpVO vo = new EmpVO();
-		// 7369,'SMITH','CLERK',7902,'1980-12-17',800,NULL,20
-		vo.setEmpNo(new BigDecimal(7369));
+    @Rollback(false)
+    @Test
+    public void testComplexPropertiesOneToOneResultMapSelect() throws ParseException {
+        EmpVO vo = new EmpVO();
+        vo.setEmpNo(new BigDecimal(7369));
 
-		// select
-		EmpIncludesDeptVO resultVO = empGeneralMapper.selectEmpDeptComplexProperties("selectEmpIncludesDeptResultUsingResultMap", vo);
+        // select
+        EmpIncludesDeptVO resultVO = empGeneralMapper.selectEmpDeptComplexProperties("selectEmpIncludesDeptResultUsingResultMap", vo);
 
-		// check
-		assertNotNull(resultVO);
-		assertEquals(new BigDecimal(7369), resultVO.getEmpNo());
-		assertEquals("SMITH", resultVO.getEmpName());
-		assertEquals("CLERK", resultVO.getJob());
-		assertEquals(new BigDecimal(7902), resultVO.getMgr());
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault());
-		assertEquals(sdf.parse("1980-12-17"), resultVO.getHireDate());
-		assertEquals(new BigDecimal(800), resultVO.getSal());
-		//assertEquals(new BigDecimal(0), resultVO.getComm());  -->NULL을 리턴하여 주석처리함.
-		assertEquals(new BigDecimal(20), resultVO.getDeptNo());
-		// 1:1 relation included DeptVO
-		assertEquals(new BigDecimal(20), resultVO.getDeptVO().getDeptNo());
-		assertEquals("RESEARCH", resultVO.getDeptVO().getDeptName());
-		assertEquals("DALLAS", resultVO.getDeptVO().getLoc());
-	}
+        // check
+        assertNotNull(resultVO);
+        assertEquals(new BigDecimal(7369), resultVO.getEmpNo());
+        assertEquals("SMITH", resultVO.getEmpName());
+        assertEquals("CLERK", resultVO.getJob());
+        assertEquals(new BigDecimal(7902), resultVO.getMgr());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault());
+        assertEquals(sdf.parse("1980-12-17"), resultVO.getHireDate());
+        assertEquals(new BigDecimal(800), resultVO.getSal());
+        //assertEquals(new BigDecimal(0), resultVO.getComm());
+        assertEquals(new BigDecimal(20), resultVO.getDeptNo());
+        assertEquals(new BigDecimal(20), resultVO.getDeptVO().getDeptNo());
+        assertEquals("RESEARCH", resultVO.getDeptVO().getDeptName());
+        assertEquals("DALLAS", resultVO.getDeptVO().getLoc());
+    }
 
-	@Rollback(false)
-	@Test
-	public void testComplexPropertiesOneToManyResultMapSelect() throws Exception {
-		DeptVO vo = new DeptVO();
-		// 20,'RESEARCH','DALLAS'
-		vo.setDeptNo(new BigDecimal(20));
+    @Rollback(false)
+    @Test
+    public void testComplexPropertiesOneToManyResultMapSelect() throws ParseException {
+        DeptVO vo = new DeptVO();
+        vo.setDeptNo(new BigDecimal(20));
 
-		// select
-		DeptIncludesEmpListVO resultVO = empGeneralMapper.selectDeptEmpListComplexProperties("selectDeptIncludesEmpListResultUsingResultMap", vo);
+        // select
+        DeptIncludesEmpListVO resultVO = empGeneralMapper.selectDeptEmpListComplexProperties("selectDeptIncludesEmpListResultUsingResultMap", vo);
 
-		// check
-		assertNotNull(resultVO);
-		assertEquals(new BigDecimal(20), resultVO.getDeptNo());
-		assertEquals("RESEARCH", resultVO.getDeptName());
-		assertEquals("DALLAS", resultVO.getLoc());
+        // check
+        assertNotNull(resultVO);
+        assertEquals(new BigDecimal(20), resultVO.getDeptNo());
+        assertEquals("RESEARCH", resultVO.getDeptName());
+        assertEquals("DALLAS", resultVO.getLoc());
+        assertFalse(resultVO.getEmpVOList().isEmpty());
+        assertEquals(5, resultVO.getEmpVOList().size());
+        assertEquals(new BigDecimal(7369), resultVO.getEmpVOList().get(0).getEmpNo());
+        assertEquals("SMITH", resultVO.getEmpVOList().get(0).getEmpName());
+        assertEquals("CLERK", resultVO.getEmpVOList().get(0).getJob());
+        assertEquals(new BigDecimal(7902), resultVO.getEmpVOList().get(0).getMgr());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault());
+        assertEquals(sdf.parse("1980-12-17"), resultVO.getEmpVOList().get(0).getHireDate());
+        assertEquals(new BigDecimal(800), resultVO.getEmpVOList().get(0).getSal());
+        //assertEquals(new BigDecimal(0), resultVO.getEmpVOList().get(0).getComm());
+        assertEquals(new BigDecimal(20), resultVO.getEmpVOList().get(0).getDeptNo());
+        assertEquals(new BigDecimal(7566), resultVO.getEmpVOList().get(1).getEmpNo());
+        assertEquals(new BigDecimal(7788), resultVO.getEmpVOList().get(2).getEmpNo());
+        assertEquals(new BigDecimal(7876), resultVO.getEmpVOList().get(3).getEmpNo());
+        assertEquals(new BigDecimal(7902), resultVO.getEmpVOList().get(4).getEmpNo());
+    }
 
-		assertTrue(0 < resultVO.getEmpVOList().size());
+    @Rollback(false)
+    @Test
+    public void testComplexPropertiesOneToManyVOListResultMapSelect() {
+        DeptVO vo = new DeptVO();
+        vo.setDeptName("E");
 
-		//* deptNo 20 인 EmpList 는 초기데이터에 따라7369,
-		//* 'SMITH','CLERK',7902,'1980-12-17',800,NULL,20
-		//* 7566,
-		//* 'JONES','MANAGER',7839,'1981-04-02',2975,NULL,20
-		//* 7788,
-		//* 'SCOTT','ANALYST',7566,'1987-04-19',3000,NULL,20
-		//* 7876
-		//* ,'ADAMS','CLERK',7788,'1987-05-23',1100,NULL,20
-		//* 7902
-		//* ,'FORD','ANALYST',7566,'1981-12-03',3000,NULL,20
+        // select
+        List<DeptIncludesEmpListVO> resultList = empGeneralMapper.selectDeptEmpListComplexPropertiesList("selectDeptIncludesEmpListResultListUsingResultMap", vo);
 
-		assertEquals(5, resultVO.getEmpVOList().size());
+        // check
+        assertNotNull(resultList);
+        assertEquals(3, resultList.size());
+        assertEquals(new BigDecimal(20), resultList.get(0).getDeptNo());
+        assertEquals(new BigDecimal(30), resultList.get(1).getDeptNo());
+        assertEquals(new BigDecimal(40), resultList.get(2).getDeptNo());
+        assertEquals(5, resultList.get(0).getEmpVOList().size());
+        assertEquals(6, resultList.get(1).getEmpVOList().size());
+        assertEquals(1, resultList.get(2).getEmpVOList().size());
+        assertNull(resultList.get(2).getEmpVOList().get(0).getEmpNo());
+        assertEquals(new BigDecimal(7566), resultList.get(0).getEmpVOList().get(1).getEmpNo());
+        assertEquals(new BigDecimal(7788), resultList.get(0).getEmpVOList().get(2).getEmpNo());
+        assertEquals(new BigDecimal(7876), resultList.get(0).getEmpVOList().get(3).getEmpNo());
+        assertEquals(new BigDecimal(7902), resultList.get(0).getEmpVOList().get(4).getEmpNo());
+    }
 
-		assertEquals(new BigDecimal(7369), resultVO.getEmpVOList().get(0).getEmpNo());
-		assertEquals("SMITH", resultVO.getEmpVOList().get(0).getEmpName());
-		assertEquals("CLERK", resultVO.getEmpVOList().get(0).getJob());
-		assertEquals(new BigDecimal(7902), resultVO.getEmpVOList().get(0).getMgr());
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault());
-		assertEquals(sdf.parse("1980-12-17"), resultVO.getEmpVOList().get(0).getHireDate());
-		assertEquals(new BigDecimal(800), resultVO.getEmpVOList().get(0).getSal());
-		//assertEquals(new BigDecimal(0), resultVO.getEmpVOList().get(0).getComm());  -->NULL을 리턴하여 주석처리함.
-		assertEquals(new BigDecimal(20), resultVO.getEmpVOList().get(0).getDeptNo());
+    @Rollback(false)
+    @Test
+    public void testComplexPropertiesOneToManyVOListRepetitionSelect() {
+        DeptVO vo = new DeptVO();
+        vo.setDeptName("E");
 
-		assertEquals(new BigDecimal(7566), resultVO.getEmpVOList().get(1).getEmpNo());
-		assertEquals(new BigDecimal(7788), resultVO.getEmpVOList().get(2).getEmpNo());
-		assertEquals(new BigDecimal(7876), resultVO.getEmpVOList().get(3).getEmpNo());
-		assertEquals(new BigDecimal(7902), resultVO.getEmpVOList().get(4).getEmpNo());
-	}
+        // select
+        List<DeptIncludesEmpListVO> resultList = empGeneralMapper.selectDeptEmpListComplexPropertiesList("selectDeptIncludesEmpListResultListUsingRepetitionSelect", vo);
 
-	@Rollback(false)
-	@Test
-	public void testComplexPropertiesOneToManyVOListResultMapSelect() throws Exception {
-		DeptVO vo = new DeptVO();
-		// deptName 에 의한 like 검색 테스트 '%'|| 'E' ||'%'
-		// --> R'E'S'E'ARCH, SAL'E'S, OP'E'RATIONS
-		// 20,'RESEARCH','DALLAS'
-		// 30,'SALES','CHICAGO'
-		// 40,'OPERATIONS','BOSTON'
-		vo.setDeptName("E");
+        // check
+        assertNotNull(resultList);
+        assertEquals(3, resultList.size());
+        assertEquals(new BigDecimal(20), resultList.get(0).getDeptNo());
+        assertEquals(new BigDecimal(30), resultList.get(1).getDeptNo());
+        assertEquals(new BigDecimal(40), resultList.get(2).getDeptNo());
+        assertEquals(5, resultList.get(0).getEmpVOList().size());
+        assertEquals(6, resultList.get(1).getEmpVOList().size());
+        assertEquals(0, resultList.get(2).getEmpVOList().size());
+        assertEquals(new BigDecimal(7566), resultList.get(0).getEmpVOList().get(1).getEmpNo());
+        assertEquals(new BigDecimal(7788), resultList.get(0).getEmpVOList().get(2).getEmpNo());
+        assertEquals(new BigDecimal(7876), resultList.get(0).getEmpVOList().get(3).getEmpNo());
+        assertEquals(new BigDecimal(7902), resultList.get(0).getEmpVOList().get(4).getEmpNo());
+    }
 
-		// select
-		List<DeptIncludesEmpListVO> resultList = empGeneralMapper.selectDeptEmpListComplexPropertiesList(isMysql ? "selectDeptIncludesEmpListResultListUsingResultMapMysql"
-				: "selectDeptIncludesEmpListResultListUsingResultMap", vo);
+    @Rollback(false)
+    @Test
+    public void testComplexPropertiesHierarcyRepetitionSelect() throws ParseException {
+        EmpVO vo = new EmpVO();
+        vo.setEmpNo(new BigDecimal(7369));
 
-		// check
-		assertNotNull(resultList);
-		assertEquals(3, resultList.size());
+        EmpIncludesMgrVO resultVO = empGeneralMapper.selectEmpMgrHierarchy("selectMgrHierarchy", vo);
 
-		assertEquals(new BigDecimal(20), resultList.get(0).getDeptNo());
-		assertEquals(new BigDecimal(30), resultList.get(1).getDeptNo());
-		assertEquals(new BigDecimal(40), resultList.get(2).getDeptNo());
-
-		//* deptNo 20 인 EmpList 는 초기데이터에 따라 5 명, deptNo
-		//* 30 인 EmpList 는 초기데이터에 따라 6 명, deptNo 40 인
-		//* EmpList 는 초기데이터에 따라 0 명 --> cf.)outer join 에
-		//* 따라 deptNo 만 가진 EmpVO 1건 생김
-
-		assertEquals(5, resultList.get(0).getEmpVOList().size());
-		assertEquals(6, resultList.get(1).getEmpVOList().size());
-		// cf.)outer join 에 따라 deptNo 만 가진 EmpVO 1건 생김을
-		// 확인함. 주의할 것!
-		assertEquals(1, resultList.get(2).getEmpVOList().size());
-		assertNull(resultList.get(2).getEmpVOList().get(0).getEmpNo());
-
-		//* deptNo 20 인 EmpList 는 초기데이터에 따라7369,
-		//* 'SMITH','CLERK',7902,'1980-12-17',800,NULL,20
-		//* 7566,
-		//* 'JONES','MANAGER',7839,'1981-04-02',2975,NULL,20
-		//* 7788,
-		//* 'SCOTT','ANALYST',7566,'1987-04-19',3000,NULL,20
-		//* 7876
-		//* ,'ADAMS','CLERK',7788,'1987-05-23',1100,NULL,20
-		//* 7902
-		//* ,'FORD','ANALYST',7566,'1981-12-03',3000,NULL,20
-
-		assertEquals(new BigDecimal(7566), resultList.get(0).getEmpVOList().get(1).getEmpNo());
-		assertEquals(new BigDecimal(7788), resultList.get(0).getEmpVOList().get(2).getEmpNo());
-		assertEquals(new BigDecimal(7876), resultList.get(0).getEmpVOList().get(3).getEmpNo());
-		assertEquals(new BigDecimal(7902), resultList.get(0).getEmpVOList().get(4).getEmpNo());
-	}
-
-	@Rollback(false)
-	@Test
-	public void testComplexPropertiesOneToManyVOListRepetitionSelect() throws Exception {
-		DeptVO vo = new DeptVO();
-		// deptName 에 의한 like 검색 테스트 '%'|| 'E' ||'%'
-		// --> R'E'S'E'ARCH, SAL'E'S, OP'E'RATIONS
-		// 20,'RESEARCH','DALLAS'
-		// 30,'SALES','CHICAGO'
-		// 40,'OPERATIONS','BOSTON'
-		vo.setDeptName("E");
-
-		// select
-		List<DeptIncludesEmpListVO> resultList = empGeneralMapper.selectDeptEmpListComplexPropertiesList(isMysql ? "selectDeptIncludesEmpListResultListUsingRepetitionSelectMysql"
-				: "selectDeptIncludesEmpListResultListUsingRepetitionSelect", vo);
-
-		// check
-		assertNotNull(resultList);
-		assertEquals(3, resultList.size());
-
-		assertEquals(new BigDecimal(20), resultList.get(0).getDeptNo());
-		assertEquals(new BigDecimal(30), resultList.get(1).getDeptNo());
-		assertEquals(new BigDecimal(40), resultList.get(2).getDeptNo());
-
-		//* deptNo 20 인 EmpList 는 초기데이터에 따라 5 명, deptNo
-		//* 30 인 EmpList 는 초기데이터에 따라 6 명 deptNo 40 인
-		//* EmpList 는 초기데이터에 따라 0 명 --> 위 outer join
-		//* 케이스와 달리 EmpList 도 건수 없음 확인
-
-		assertEquals(5, resultList.get(0).getEmpVOList().size());
-		assertEquals(6, resultList.get(1).getEmpVOList().size());
-		assertEquals(0, resultList.get(2).getEmpVOList().size());
-
-		// * deptNo 20 인 EmpList 는 초기데이터에 따라7369,
-		// * 'SMITH','CLERK',7902,'1980-12-17',800,NULL,20
-		// * 7566,
-		// * 'JONES','MANAGER',7839,'1981-04-02',2975,NULL,20
-		// * 7788,
-		// * 'SCOTT','ANALYST',7566,'1987-04-19',3000,NULL,20
-		// * 7876
-		// * ,'ADAMS','CLERK',7788,'1987-05-23',1100,NULL,20
-		// * 7902
-		// * ,'FORD','ANALYST',7566,'1981-12-03',3000,NULL,20
-
-		assertEquals(new BigDecimal(7566), resultList.get(0).getEmpVOList().get(1).getEmpNo());
-		assertEquals(new BigDecimal(7788), resultList.get(0).getEmpVOList().get(2).getEmpNo());
-		assertEquals(new BigDecimal(7876), resultList.get(0).getEmpVOList().get(3).getEmpNo());
-		assertEquals(new BigDecimal(7902), resultList.get(0).getEmpVOList().get(4).getEmpNo());
-	}
-
-	@Rollback(false)
-	@Test
-	public void testComplexPropertiesHierarcyRepetitionSelect() throws Exception {
-		EmpVO vo = new EmpVO();
-		// 7369,'SMITH','CLERK',7902
-		// --> 7902,'FORD','ANALYST',7566
-		// --> 7566,'JONES','MANAGER',7839
-		// --> 7839,'KING','PRESIDENT',NULL
-		vo.setEmpNo(new BigDecimal(7369));
-
-		try {
-
-			// select
-			// EmpIncludesMgrVO resultVO =
-			// empDAO.selectEmpMgrHierarchy("selectEmpWithMgr",
-			// vo);
-			EmpIncludesMgrVO resultVO = empGeneralMapper.selectEmpMgrHierarchy("selectMgrHierarchy", vo);
-
-			// check
-			assertNotNull(resultVO);
-			assertEquals(new BigDecimal(7369), resultVO.getEmpNo());
-			assertEquals("SMITH", resultVO.getEmpName());
-			assertEquals("CLERK", resultVO.getJob());
-			assertEquals(new BigDecimal(7902), resultVO.getMgr());
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault());
-			assertEquals(sdf.parse("1980-12-17"), resultVO.getHireDate());
-			assertEquals(new BigDecimal(800), resultVO.getSal());
-			//assertEquals(new BigDecimal(0), resultVO.getComm());  -->NULL을 리턴하여 주석처리함.
-			assertEquals(new BigDecimal(20), resultVO.getDeptNo());
-
-			assertTrue(resultVO.getMgrVO() instanceof EmpIncludesMgrVO);
-			assertEquals(new BigDecimal(7902), resultVO.getMgrVO().getEmpNo());
-			assertEquals(new BigDecimal(7566), resultVO.getMgrVO().getMgrVO().getEmpNo());
-			assertEquals(new BigDecimal(7839), resultVO.getMgrVO().getMgrVO().getMgrVO().getEmpNo());
-			assertNull(resultVO.getMgrVO().getMgrVO().getMgrVO().getMgrVO());
-
-		} catch (UncategorizedSQLException ue) {
-			ue.printStackTrace();
-			// tibero 인 경우 ibatis 의 재귀 queyr 형태의 sub 객체
-			// 맵핑 시
-			// com.tmax.tibero.jdbc.TbSQLException:
-			// TJDBC-90646:Resultset
-			// is already closed 에러 발생 확인함!
-			//assertTrue(isTibero);
-			System.out.println("=====ue.getCause()======" + ue.getCause());
-			// assertTrue(ue.getCause() instanceof NestedSQLException);
-			//            assertTrue(ue.getCause().getCause().getCause().getCause() instanceof TbSQLException);
-			//            assertTrue(((TbSQLException) ue.getCause().getCause().getCause()
-			//                .getCause()).getMessage().contains(
-			//                "TJDBC-90646:Resultset is already closed"));
-		}
-	}
+        // check
+        assertNotNull(resultVO);
+        assertEquals(new BigDecimal(7369), resultVO.getEmpNo());
+        assertEquals("SMITH", resultVO.getEmpName());
+        assertEquals("CLERK", resultVO.getJob());
+        assertEquals(new BigDecimal(7902), resultVO.getMgr());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault());
+        assertEquals(sdf.parse("1980-12-17"), resultVO.getHireDate());
+        assertEquals(new BigDecimal(800), resultVO.getSal());
+        //assertEquals(new BigDecimal(0), resultVO.getComm());
+        assertEquals(new BigDecimal(20), resultVO.getDeptNo());
+        assertNotNull(resultVO.getMgrVO());
+        assertEquals(new BigDecimal(7902), resultVO.getMgrVO().getEmpNo());
+        assertEquals(new BigDecimal(7566), resultVO.getMgrVO().getMgrVO().getEmpNo());
+        assertEquals(new BigDecimal(7839), resultVO.getMgrVO().getMgrVO().getMgrVO().getEmpNo());
+        assertNull(resultVO.getMgrVO().getMgrVO().getMgrVO().getMgrVO());
+    }
 
 }

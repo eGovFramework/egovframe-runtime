@@ -10,28 +10,28 @@ import java.sql.SQLException;
 
 /**
  * @author sjyoon
- *
  */
 public class EgovUserDetailsMapping extends EgovUsersByUsernameMapping {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(EgovUserDetailsMapping.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EgovUserDetailsMapping.class);
 
-	/**
-	 * EgovUserDetailsMapping 생성자
-	 * @param ds
-	 * @param usersByUsernameQuery
-	 */
-	public EgovUserDetailsMapping(DataSource ds, String usersByUsernameQuery) {
+    /**
+     * EgovUserDetailsMapping 생성자
+     *
+     * @param ds
+     * @param usersByUsernameQuery
+     */
+    public EgovUserDetailsMapping(DataSource ds, String usersByUsernameQuery) {
         super(ds, usersByUsernameQuery);
     }
 
-	/**
-	 * EgovUsersByUsernameMapping 클래스를 상속받아
-	 * jdbc-user-service 에서 지정된 users-by-username-query 의 쿼리문을 조회하여 ResultSet에 매핑된다.
-	 */
-	@Override
+    /**
+     * EgovUsersByUsernameMapping 클래스를 상속받아
+     * jdbc-user-service 에서 지정된 users-by-username-query 의 쿼리문을 조회하여 ResultSet에 매핑된다.
+     */
+    @Override
     protected EgovUserDetails mapRow(ResultSet rs, int rownum) throws SQLException {
-		LOGGER.debug("## EgovUsersByUsernameMapping mapRow ##");
+        LOGGER.debug("### EgovUsersByUsernameMapping mapRow() ");
 
         String userid = rs.getString("user_id");
         String password = rs.getString("password");
@@ -48,7 +48,7 @@ public class EgovUserDetailsMapping extends EgovUsersByUsernameMapping {
         userVO.setBirthDay(birthDay);
         userVO.setSsn(ssn);
 
-        LOGGER.debug("###### userVO is {}", userVO);
+        LOGGER.debug("### EgovUsersByUsernameMapping mapRow() userVO : {}", userVO);
 
         return new EgovUserDetails(userid, password, enabled, userVO);
     }

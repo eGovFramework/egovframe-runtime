@@ -1,19 +1,18 @@
 package org.egovframe.rte.psl.reactive.r2dbc.repository;
 
 import io.r2dbc.spi.ConnectionFactory;
+import jakarta.annotation.Resource;
 import org.springframework.data.relational.core.query.Query;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import javax.annotation.Resource;
-
-import static org.springframework.data.r2dbc.query.Criteria.where;
+import static org.springframework.data.relational.core.query.Criteria.where;
 
 @Repository
 public class SampleRepository extends EgovR2dbcRepository<Sample> {
 
-    @Resource(name="connectionFactory")
+    @Resource(name = "connectionFactory")
     private ConnectionFactory connectionFactory;
 
     public SampleRepository(ConnectionFactory connectionFactory) {

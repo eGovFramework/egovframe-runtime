@@ -1,9 +1,12 @@
 package org.egovframe.rte.ptl.mvc.matrix;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.MethodParameter;
+import org.springframework.core.StandardReflectionParameterNameDiscoverer;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.util.LinkedMultiValueMap;
@@ -21,98 +24,106 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MatrixVariableTest {
 
-	private MatrixVariableMethodArgumentResolver resolver;
-	private MethodParameter paramString;
-	private MethodParameter paramColors;
-	private MethodParameter paramYear;
-	private ModelAndViewContainer mavContainer;
-	private ServletWebRequest webRequest;
-	private MockHttpServletRequest request;
+    private static final Logger LOGGER = LoggerFactory.getLogger(MatrixVariableTest.class);
 
-	@Before
-	public void setUp() throws Exception {
-		this.resolver = new MatrixVariableMethodArgumentResolver();
+    private MatrixVariableMethodArgumentResolver resolver;
+    private MethodParameter paramString;
+    private MethodParameter paramColors;
+    private MethodParameter paramYear;
+    private ModelAndViewContainer mavContainer;
+    private ServletWebRequest webRequest;
+    private MockHttpServletRequest request;
 
-		Method method = getClass().getMethod("handle", String.class, List.class, int.class);
-		this.paramString = new MethodParameter(method, 0);
-		this.paramColors = new MethodParameter(method, 1);
-		this.paramYear = new MethodParameter(method, 2);
+    @BeforeEach
+    public void setUp() throws Exception {
+        this.resolver = new MatrixVariableMethodArgumentResolver();
 
-		this.paramColors.initParameterNameDiscovery(new LocalVariableTableParameterNameDiscoverer());
+        Method method = getClass().getMethod("handle", String.class, List.class, int.class);
+        this.paramString = new MethodParameter(method, 0);
+        this.paramColors = new MethodParameter(method, 1);
+        this.paramYear = new MethodParameter(method, 2);
 
-		this.mavContainer = new ModelAndViewContainer();
-		this.request = new MockHttpServletRequest();
-		this.webRequest = new ServletWebRequest(request, new MockHttpServletResponse());
+        this.paramColors.initParameterNameDiscovery(new StandardReflectionParameterNameDiscoverer());
 
-		Map<String, MultiValueMap<String, String>> params = new LinkedHashMap<>();
-		this.request.setAttribute(HandlerMapping.MATRIX_VARIABLES_ATTRIBUTE, params);
-	}
+        this.mavContainer = new ModelAndViewContainer();
+        this.request = new MockHttpServletRequest();
+        this.webRequest = new ServletWebRequest(request, new MockHttpServletResponse());
 
-	@Test
-	public void supportsParameter() {
-		assertFalse(resolver.supportsParameter(paramString));
-		assertTrue(resolver.supportsParameter(paramColors));
-		assertTrue(resolver.supportsParameter(paramYear));
-	}
+        Map<String, MultiValueMap<String, String>> params = new LinkedHashMap<>();
+        this.request.setAttribute(HandlerMapping.MATRIX_VARIABLES_ATTRIBUTE, params);
+    }
 
-	@Test
-	public void resolveArgument() throws Exception {
-		MultiValueMap<String, String> params = getMatrixVariables("cars");
-		params.add("colors", "red");
-		params.add("colors", "green");
-		params.add("colors", "blue");
+    @Test
+    public void supportsParameter() {
+        assertFalse(resolver.supportsParameter(paramString));
+        assertTrue(resolver.supportsParameter(paramColors));
+        assertTrue(resolver.supportsParameter(paramYear));
+    }
 
-		assertEquals(Arrays.asList("red", "green", "blue"), this.resolver.resolveArgument(this.paramColors, this.mavContainer, this.webRequest, null));
-	}
+    @Test
+    public void resolveArgument() throws Exception {
+        MultiValueMap<String, String> params = getMatrixVariables("cars");
+        params.add("colors", "red");
+        params.add("colors", "green");
+        params.add("colors", "blue");
 
-	@Test
-	public void resolveArgumentPathVariable() throws Exception {
-		getMatrixVariables("cars").add("year", "2021");
+        assertEquals(Arrays.asList("red", "green", "blue"), this.resolver.resolveArgument(this.paramColors, this.mavContainer, this.webRequest, null));
+    }
 
-		assertEquals("2021", this.resolver.resolveArgument(this.paramYear, this.mavContainer, this.webRequest, null));
-	}
+    @Test
+    public void resolveArgumentPathVariable() throws Exception {
+        getMatrixVariables("cars").add("year", "2021");
 
-	@Test
-	public void resolveArgumentDefaultValue() throws Exception {
-		assertEquals("2022", this.resolver.resolveArgument(this.paramYear, this.mavContainer, this.webRequest, null));
-	}
+        assertEquals("2021", this.resolver.resolveArgument(this.paramYear, this.mavContainer, this.webRequest, null));
+    }
 
-	@Test(expected = ServletRequestBindingException.class)
-	public void resolveArgumentMultipleMatches() throws Exception {
-		getMatrixVariables("var1").add("colors", "red");
-		getMatrixVariables("var2").add("colors", "green");
+    @Test
+    public void resolveArgumentDefaultValue() throws Exception {
+        assertEquals("2022", this.resolver.resolveArgument(this.paramYear, this.mavContainer, this.webRequest, null));
+    }
 
-		this.resolver.resolveArgument(this.paramColors, this.mavContainer, this.webRequest, null);
-	}
+    @Test
+    public void resolveArgumentMultipleMatches() {
+        getMatrixVariables("var1").add("colors", "red");
+        getMatrixVariables("var2").add("colors", "green");
 
-	@Test(expected = ServletRequestBindingException.class)
-	public void resolveArgumentRequired() throws Exception {
-		this.resolver.resolveArgument(this.paramColors, this.mavContainer, this.webRequest, null);
-	}
+        Assertions.assertThrows(ServletRequestBindingException.class, () ->
+                assertEquals(Arrays.asList("red", "green"), this.resolver.resolveArgument(this.paramColors, this.mavContainer, this.webRequest, null)));
+    }
 
-	@Test
-	public void resolveArgumentNoMatch() throws Exception {
-		MultiValueMap<String, String> params = getMatrixVariables("cars");
-		params.add("anotherYear", "2022");
+    @Test
+    public void resolveArgumentRequired() {
+        Assertions.assertThrows(ServletRequestBindingException.class, () ->
+                assertEquals(Arrays.asList("red", "green"), this.resolver.resolveArgument(this.paramColors, this.mavContainer, this.webRequest, null)));
+    }
 
-		assertEquals("2022", this.resolver.resolveArgument(this.paramYear, this.mavContainer, this.webRequest, null));
-	}
+    @Test
+    public void resolveArgumentNoMatch() throws Exception {
+        MultiValueMap<String, String> params = getMatrixVariables("cars");
+        params.add("anotherYear", "2022");
 
-	@SuppressWarnings("unchecked")
-	private MultiValueMap<String, String> getMatrixVariables(String pathVarName) {
-		Map<String, MultiValueMap<String, String>> matrixVariables = (Map<String, MultiValueMap<String, String>>) this.request.getAttribute(HandlerMapping.MATRIX_VARIABLES_ATTRIBUTE);
+        assertEquals("2022", this.resolver.resolveArgument(this.paramYear, this.mavContainer, this.webRequest, null));
+    }
 
-		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-		matrixVariables.put(pathVarName, params);
+    @SuppressWarnings("unchecked")
+    private MultiValueMap<String, String> getMatrixVariables(String pathVarName) {
+        Map<String, MultiValueMap<String, String>> matrixVariables = (Map<String, MultiValueMap<String, String>>) this.request.getAttribute(HandlerMapping.MATRIX_VARIABLES_ATTRIBUTE);
 
-		return params;
-	}
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        matrixVariables.put(pathVarName, params);
 
-	public void handle(String stringArg, @MatrixVariable List<String> colors,
-			@MatrixVariable(name = "year", pathVar = "cars", required = false, defaultValue = "2022") int preferredYear) {
-	}
+        return params;
+    }
+
+    public void handle(
+            String stringArg,
+            @MatrixVariable("colors") List<String> colors,
+            @MatrixVariable(name = "year", pathVar = "cars", required = false, defaultValue = "2022") int preferredYear
+    ) {
+    }
+
 }

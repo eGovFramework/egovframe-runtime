@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 MOPAS(Ministry of Public Administration and Security).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,9 +25,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * <p>
  * <b>NOTE:</b> 전자정부 연계 서비스 메타 데이터 중 '레코트 타입 필드'를 나타내는 class이다.
  * </p>
- * 
+ *
  * @author 실행환경 개발팀 심상호
- * @since 2009.06.01
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -36,71 +35,76 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * ----------------------------------------------
  * 2009.06.01	심상호				최초 생성
  * </pre>
+ * @since 2009.06.01
  */
 public class RecordTypeFieldDefinition implements Validatable {
 
-	/** 필드 타입 ID */
-	private String typeId;
+    /**
+     * 필드 타입 ID
+     */
+    private String typeId;
 
-	/** valid */
-	private boolean valid = false;
+    /**
+     * valid
+     */
+    private boolean valid = false;
 
-	/** statucChanged flag */
-	private AtomicBoolean statusChanged = new AtomicBoolean(false);
+    /**
+     * statucChanged flag
+     */
+    private AtomicBoolean statusChanged = new AtomicBoolean(false);
 
-	/**
-	 * Default Constructor
-	 */
-	public RecordTypeFieldDefinition() {
-		super();
-	}
+    /**
+     * Default Constructor
+     */
+    public RecordTypeFieldDefinition() {
+        super();
+    }
 
-	/**
-	 * Constructor
-	 * 
-	 * @param typeId
-	 *            필드 타입 ID
-	 */
-	public RecordTypeFieldDefinition(String typeId) {
-		super();
-		this.typeId = typeId;
-		this.statusChanged.set(true);
-	}
+    /**
+     * Constructor
+     *
+     * @param typeId 필드 타입 ID
+     */
+    public RecordTypeFieldDefinition(String typeId) {
+        super();
+        this.typeId = typeId;
+        this.statusChanged.set(true);
+    }
 
-	/**
-	 * typeId
-	 * 
-	 * @return the typeId
-	 */
-	public String getTypeId() {
-		return typeId;
-	}
+    /**
+     * typeId
+     *
+     * @return the typeId
+     */
+    public String getTypeId() {
+        return typeId;
+    }
 
-	/**
-	 * typeId
-	 * 
-	 * @param typeId
-	 *            the typeId to set
-	 */
-	public void setTypeId(String typeId) {
-		this.typeId = typeId;
-		this.statusChanged.set(true);
-	}
+    /**
+     * typeId
+     *
+     * @param typeId the typeId to set
+     */
+    public void setTypeId(String typeId) {
+        this.typeId = typeId;
+        this.statusChanged.set(true);
+    }
 
-	public boolean isValid() {
-		if (statusChanged.getAndSet(false)) {
-			// valid = (StringUtils.hasText(name) &&
-			// StringUtils.hasText(typeId));
-			valid = StringUtils.hasText(typeId);
-		}
-		return valid;
-	}
+    public boolean isValid() {
+        if (statusChanged.getAndSet(false)) {
+            // valid = (StringUtils.hasText(name) &&
+            // StringUtils.hasText(typeId));
+            valid = StringUtils.hasText(typeId);
+        }
+        return valid;
+    }
 
-	@Override
-	public String toString() {
-		StringBuffer sb = new StringBuffer();
-		sb.append(this.getClass().getName()).append(" {typeId = ").append(StringUtils.quote(typeId)).append("}");
-		return sb.toString();
-	}
+    @Override
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append(this.getClass().getName()).append(" {typeId = ").append(StringUtils.quote(typeId)).append("}");
+        return sb.toString();
+    }
 
 }

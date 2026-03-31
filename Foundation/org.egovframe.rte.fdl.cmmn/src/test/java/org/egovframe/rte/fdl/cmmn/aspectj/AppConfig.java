@@ -7,8 +7,10 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 @Configuration
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class AppConfig {
-	@Bean
-	public SampleService getSampleService() {
-		return new SampleServiceImpl();
-	}
+
+    @Bean
+    public SampleService getSampleService() {
+        return new SampleServiceImpl();
+    }
+
 }

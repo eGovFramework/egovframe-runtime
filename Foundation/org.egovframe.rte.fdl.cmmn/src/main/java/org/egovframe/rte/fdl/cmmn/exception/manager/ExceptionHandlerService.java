@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 MOPAS(Ministry of Public Administration and Security).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ import org.springframework.util.PathMatcher;
 /**
  * ExceptionHandlerService 인터페이스.
  * 구현시 run(Exception exception) 만 구현한다.
+ *
  * @author Judd Cho (horanghi@gmail.com)
- * @since 2009.06.01
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -32,50 +32,58 @@ import org.springframework.util.PathMatcher;
  * 2009.05.30	Judd Cho			최초 생성
  * 2015.01.31	Vincent Han			코드 품질 개선
  * </pre>
+ * @since 2009.06.01
  */
 public interface ExceptionHandlerService {
 
-	/**
-	 * 패키지, 클래스 이름으로 패턴등록(Ant형식의 매칭).
-	 * @param patterns 패턴리스트
-	 */
-	public void setPatterns(String[] patterns);
+    /**
+     * 패키지, 클래스 이름으로 패턴등록(Ant형식의 매칭).
+     *
+     * @param patterns 패턴리스트
+     */
+    void setPatterns(String[] patterns);
 
-	/**
-	 * ExceptionHandler 리스트 등록.
-	 * @param handlers handler리스트
-	 */
-	public void setHandlers(ExceptionHandler[] handlers);
+    /**
+     * ExceptionHandler 리스트 등록.
+     *
+     * @param handlers handler리스트
+     */
+    void setHandlers(ExceptionHandler[] handlers);
 
-	/**
-	 * 비교할 클래스 정보.
-	 * @param canonicalName 비교할 클래스명
-	 */
-	public void setPackageName(String canonicalName);
+    /**
+     * 비교할 클래스 정보.
+     *
+     * @param canonicalName 비교할 클래스명
+     */
+    void setPackageName(String canonicalName);
 
-	/**
-	 * setException 메소드.
-	 * @param be Exception
-	 */
-	public void setException(Exception be);
+    /**
+     * setException 메소드.
+     *
+     * @param be Exception
+     */
+    void setException(Exception be);
 
-	/**
-	 * setReqExpMatcher 메소드.
-	 * @param pm 별도의 PathMatcher
-	 */
-	public void setReqExpMatcher(PathMatcher pm);
+    /**
+     * setReqExpMatcher 메소드.
+     *
+     * @param pm 별도의 PathMatcher
+     */
+    void setReqExpMatcher(PathMatcher pm);
 
-	/**
-	 * run 메소드 .
-	 * @param exception 발생한 Exception
-	 * @return boolean 실행성공여부
-	 */
-	public boolean run(Exception exception) throws Exception;
+    /**
+     * run 메소드 .
+     *
+     * @param exception 발생한 Exception
+     * @return boolean 실행성공여부
+     */
+    boolean run(Exception exception) throws Exception;
 
-	/**
-	 * PathMatcher 가 있는지 여부 반환.
-	 * @return boolean true|false
-	 */
-	public boolean hasReqExpMatcher();
+    /**
+     * PathMatcher 가 있는지 여부 반환.
+     *
+     * @return boolean true|false
+     */
+    boolean hasReqExpMatcher();
 
 }

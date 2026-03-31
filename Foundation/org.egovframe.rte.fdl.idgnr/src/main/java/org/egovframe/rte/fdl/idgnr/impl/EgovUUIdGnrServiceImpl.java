@@ -1,21 +1,5 @@
 /*
- * Copyright 2001-2006 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the ";License&quot;);
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS"; BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-/*
- * Copyright 2008-2009 MOPAS(Ministry of Public Administration and Security).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,11 +38,10 @@ import java.util.UUID;
 
 /**
  * ID Generation 서비스를 위한 UUID 구현 클래스
- * 
+ *
  * <p><b>NOTE</b>: UUID(Universally Unique Identifier) 알고리즘 기반의 유일키를 제공 받을 수 있다.</p>
- * 
+ *
  * @author 실행환경 개발팀 김태호
- * @since 2009.02.01
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -70,13 +53,27 @@ import java.util.UUID;
  * 2017.02.03	장동한				시큐어코딩(ES)-시큐어 코딩 적절하지 않은 난수값 사용[CWE-330]
  * 2017.02.15	장동한				시큐어코딩(ES)-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
  * </pre>
+ * @since 2009.02.01
  */
 public class EgovUUIdGnrServiceImpl implements EgovIdGnrService, ApplicationContextAware {
 
     /**
+     * Class 사용 로거 지정
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(EgovUUIdGnrServiceImpl.class);
+    private static final String ERROR_STRING = "address in the configuration should be a valid IP or MAC Address";
+    /**
      * Message Source
      */
     private MessageSource messageSource;
+    /**
+     * Address Id
+     */
+    private String mAddressId;
+    /**
+     * MAC Address
+     */
+    private long hostId;
 
     /**
      * Message Source Injection
@@ -86,24 +83,8 @@ public class EgovUUIdGnrServiceImpl implements EgovIdGnrService, ApplicationCont
     }
 
     /**
-     * Class 사용 로거 지정
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(EgovUUIdGnrServiceImpl.class);
-
-    private static final String ERROR_STRING = "address in the configuration should be a valid IP or MAC Address";
-
-    /**
-     * Address Id
-     */
-    private String mAddressId;
-
-    /**
-     * MAC Address
-     */
-    private long hostId;
-
-    /**
      * BigDecimal 타입을 아이디 제공
+     *
      * @return BigDecimal 타입 ID
      * @throws FdlException 아이디 생성에 실패한 경우
      */
@@ -118,42 +99,47 @@ public class EgovUUIdGnrServiceImpl implements EgovIdGnrService, ApplicationCont
 
     /**
      * byte 타입을 아이디 제공
+     *
      * @return byte 타입 ID
      * @throws FdlException 아이디 생성에 실패한 경우
      */
     public byte getNextByteId() throws FdlException {
-		throw new FdlException(messageSource, "error.idgnr.not.supported", new String[] { "Byte" }, null);
+        throw new FdlException(messageSource, "error.idgnr.not.supported", new String[]{"Byte"}, null);
     }
 
     /**
      * int 타입을 아이디 제공을 요청하면 불가능한 요청이라는 Exception 발생
+     *
      * @return int 타입 ID
      * @throws FdlException 아이디 생성에 실패한 경우
      */
     public int getNextIntegerId() throws FdlException {
-		throw new FdlException(messageSource, "error.idgnr.not.supported", new String[] { "Integer" }, null);
+        throw new FdlException(messageSource, "error.idgnr.not.supported", new String[]{"Integer"}, null);
     }
 
     /**
      * long 타입을 아이디 제공을 요청하면 불가능한 요청이라는 Exception 발생
+     *
      * @return long 타입 ID
      * @throws FdlException 아이디 생성에 실패한 경우
      */
     public long getNextLongId() throws FdlException {
-		throw new FdlException(messageSource, "error.idgnr.not.supported", new String[] { "Long" }, null);
+        throw new FdlException(messageSource, "error.idgnr.not.supported", new String[]{"Long"}, null);
     }
 
     /**
      * short 타입을 아이디 제공을 요청하면 불가능한 요청이라는 Exception 발생
+     *
      * @return short 타입 ID
      * @throws FdlException 아이디 생성에 실패한 경우
      */
     public short getNextShortId() throws FdlException {
-		throw new FdlException(messageSource, "error.idgnr.not.supported", new String[] { "Short" }, null);
+        throw new FdlException(messageSource, "error.idgnr.not.supported", new String[]{"Short"}, null);
     }
 
     /**
      * String 타입을 아이디 제공
+     *
      * @return String 타입 ID
      * @throws FdlException 아이디 생성에 실패한 경우
      */
@@ -163,41 +149,44 @@ public class EgovUUIdGnrServiceImpl implements EgovIdGnrService, ApplicationCont
 
     /**
      * 정책정보를 입력받아 String 타입을 아이디 제공을 요청하면 불가능한 요청이라는 에러 발생
+     *
      * @param strategy 정책정보 오브젝트
      * @return String 타입 ID
      * @throws FdlException 아이디 생성에 실패한 경우
      */
-	public String getNextStringId(EgovIdGnrStrategy strategy) throws FdlException {
-		throw new FdlException(messageSource, "error.idgnr.not.supported", new String[] { "String" }, null);
+    public String getNextStringId(EgovIdGnrStrategy strategy) throws FdlException {
+        throw new FdlException(messageSource, "error.idgnr.not.supported", new String[]{"String"}, null);
     }
 
     /**
      * 정책정보를 입력받아 String 타입을 아이디 제공을 요청하면 불가능한 요청이라는 에러 발생
+     *
      * @param strategyId 정책 String
      * @return String 타입 ID
      * @throws FdlException 아이디 생성에 실패한 경우
      */
     public String getNextStringId(String strategyId) throws FdlException {
-		throw new FdlException(messageSource, "error.idgnr.not.supported", new String[] { "String" }, null);
+        throw new FdlException(messageSource, "error.idgnr.not.supported", new String[]{"String"}, null);
     }
 
     /**
      * Config 정보에 지정된 Address 세팅
+     *
      * @param address Config 에 지정된 address 정보
      * @throws FdlException IP 정보가 이상한 경우
      */
     public void setAddress(String address) throws FdlException, NoSuchAlgorithmException {
         byte[] addressBytes = new byte[6];
         Random random = new Random();
-		random = SecureRandom.getInstanceStrong();
+        random = SecureRandom.getInstanceStrong();
         random.setSeed(System.currentTimeMillis());
         if (null == address) {
-            LOGGER.warn("IDGeneration Service : Using a random number as the base for id's."
-            		+ "This is not the best method for many purposes, but may be adequate in some circumstances."
-            		+ " Consider using an IP or ethernet (MAC) address if available. ");
+            LOGGER.debug("IDGeneration Service : Using a random number as the base for id's."
+                    + "This is not the best method for many purposes, but may be adequate in some circumstances."
+                    + " Consider using an IP or ethernet (MAC) address if available. ");
             for (int i = 0; i < 6; i++) {
-            	//2017-02-03 장동한 시큐어코딩(ES)-시큐어 코딩 적절하지 않은 난수값 사용[CWE-330]
-            	addressBytes[i] = (byte) (random.nextDouble() * 255 + 0);
+                //2017-02-03 장동한 시큐어코딩(ES)-시큐어 코딩 적절하지 않은 난수값 사용[CWE-330]
+                addressBytes[i] = (byte) (random.nextDouble() * 255 + 0);
             }
         } else {
             if (address.indexOf(".") > 0) {
@@ -209,9 +198,9 @@ public class EgovUUIdGnrServiceImpl implements EgovIdGnrService, ApplicationCont
                 addressBytes[0] = (byte) 255;
                 addressBytes[1] = (byte) 255;
                 int i = 2;
-				while (stok.hasMoreTokens()) {
-					addressBytes[i++] = Integer.valueOf(stok.nextToken(), 16).byteValue();
-				}
+                while (stok.hasMoreTokens()) {
+                    addressBytes[i++] = Integer.valueOf(stok.nextToken(), 16).byteValue();
+                }
             } else if (address.indexOf(":") > 0) {
                 // we should have a MAC
                 StringTokenizer stok = new StringTokenizer(address, ":");
@@ -219,9 +208,9 @@ public class EgovUUIdGnrServiceImpl implements EgovIdGnrService, ApplicationCont
                     throw new FdlException(ERROR_STRING);
                 }
                 int i = 0;
-				while (stok.hasMoreTokens()) {
-					addressBytes[i++] = Integer.valueOf(stok.nextToken(), 16).byteValue();
-				}
+                while (stok.hasMoreTokens()) {
+                    addressBytes[i++] = Integer.valueOf(stok.nextToken(), 16).byteValue();
+                }
             } else {
                 throw new FdlException(ERROR_STRING);
             }
@@ -235,127 +224,128 @@ public class EgovUUIdGnrServiceImpl implements EgovIdGnrService, ApplicationCont
 
     /**
      * UUID 얻기
+     *
      * @return String unique id
      */
     private String getUUId() {
-    	if (mAddressId == null) {
-    		return UUID.randomUUID().toString();
-    	} else {
-    		return TimeBasedUUIDGenerator.generateId(hostId).toString();
-    	}
+        if (mAddressId == null) {
+            return UUID.randomUUID().toString();
+        } else {
+            return TimeBasedUUIDGenerator.generateId(hostId).toString();
+        }
     }
 }
 
 /**
  * Will generate time-based UUID (version 1 UUID).
  * Requires JDK 1.6+
- * 
+ *
  * @author Oleg Zhurakousky
  */
 final class TimeBasedUUIDGenerator {
-	private static final Logger LOGGER = LoggerFactory.getLogger(TimeBasedUUIDGenerator.class);
-	public static final Object LOCK = new Object();
-	private static long lastTime;
-	private static long clockSequence = 0;
-	private static final long HOST_IDENTIFIER = getHostId();
-	
-	private TimeBasedUUIDGenerator() {
-	}
+    public static final Object LOCK = new Object();
+    private static final Logger LOGGER = LoggerFactory.getLogger(TimeBasedUUIDGenerator.class);
+    private static final long HOST_IDENTIFIER = getHostId();
+    private static long lastTime;
+    private static long clockSequence = 0;
 
-	/**
-	 * Will generate unique time based UUID where the next UUID is 
-	 * always greater then the previous.
-	 */
-	public static final UUID generateId() {
-		return generateIdFromTimestamp(System.currentTimeMillis(), 0L);
-	}
-	
-	public static final UUID generateId(long hostId) {
-		return generateIdFromTimestamp(System.currentTimeMillis(), hostId);
-	}
+    private TimeBasedUUIDGenerator() {
+    }
 
-	public static final UUID generateIdFromTimestamp(long currentTimeMillis, long hostId) {
-		long time;
-		synchronized (LOCK) {
-			if (currentTimeMillis > lastTime) {
-				lastTime = currentTimeMillis;
-				clockSequence = 0;
-			} else {
-				++clockSequence;
-			}
-		}
+    /**
+     * Will generate unique time based UUID where the next UUID is
+     * always greater then the previous.
+     */
+    public static final UUID generateId() {
+        return generateIdFromTimestamp(System.currentTimeMillis(), 0L);
+    }
 
-		time = currentTimeMillis;
-		// low Time
-		time = currentTimeMillis << 32;
-		// mid Time
-		time |= ((currentTimeMillis & 0xFFFF00000000L) >> 16);
-		// hi Time
-		time |= 0x1000 | ((currentTimeMillis >> 48) & 0x0FFF);
+    public static final UUID generateId(long hostId) {
+        return generateIdFromTimestamp(System.currentTimeMillis(), hostId);
+    }
 
-		long clockSequenceHi = clockSequence;
-		clockSequenceHi <<= 48;
-		long lsb = (hostId != 0L ? clockSequenceHi | hostId : clockSequenceHi | HOST_IDENTIFIER);
+    public static final UUID generateIdFromTimestamp(long currentTimeMillis, long hostId) {
+        long time;
+        synchronized (LOCK) {
+            if (currentTimeMillis > lastTime) {
+                lastTime = currentTimeMillis;
+                clockSequence = 0;
+            } else {
+                ++clockSequence;
+            }
+        }
 
-		return new UUID(time, lsb);
-	}
+        time = currentTimeMillis;
+        // low Time
+        time = currentTimeMillis << 32;
+        // mid Time
+        time |= ((currentTimeMillis & 0xFFFF00000000L) >> 16);
+        // hi Time
+        time |= 0x1000 | ((currentTimeMillis >> 48) & 0x0FFF);
 
-	private static final long getHostId() {
-		long macAddressAsLong = 0;
-		try {
-			InetAddress address = InetAddress.getLocalHost();
-			NetworkInterface ni = NetworkInterface.getByInetAddress(address);
-			if (ni != null) {
-				byte[] mac = ni.getHardwareAddress();
-				if (mac != null) {
-					for (int i = 0; i < mac.length; i++) {
-						macAddressAsLong <<= 8;
-						macAddressAsLong ^= (long) mac[i] & 0xFF;
-					}
-				}
-			}
-		//2017.02.15 장동한 시큐어코딩(ES)-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
-		} catch(IllegalArgumentException | UnknownHostException | SocketException e) {
-			LOGGER.error("[IllegalArgumentException] getHostId Exception : "+ e.getMessage());
-		}
+        long clockSequenceHi = clockSequence;
+        clockSequenceHi <<= 48;
+        long lsb = (hostId != 0L ? clockSequenceHi | hostId : clockSequenceHi | HOST_IDENTIFIER);
 
-		LOGGER.debug("MAC Address (from Network Interface) : " + getMacAddressAsString(getMacAddress(macAddressAsLong)));
+        return new UUID(time, lsb);
+    }
 
-		return macAddressAsLong;
-	}
+    private static final long getHostId() {
+        long macAddressAsLong = 0;
+        try {
+            InetAddress address = InetAddress.getLocalHost();
+            NetworkInterface ni = NetworkInterface.getByInetAddress(address);
+            if (ni != null) {
+                byte[] mac = ni.getHardwareAddress();
+                if (mac != null) {
+                    for (int i = 0; i < mac.length; i++) {
+                        macAddressAsLong <<= 8;
+                        macAddressAsLong ^= (long) mac[i] & 0xFF;
+                    }
+                }
+            }
+            //2017.02.15 장동한 시큐어코딩(ES)-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
+        } catch (IllegalArgumentException | UnknownHostException | SocketException e) {
+            LOGGER.debug("[IllegalArgumentException] getHostId Exception : " + e.getMessage());
+        }
 
-	public static byte[] getMacAddress(long address) {
-		byte[] addressInBytes = new byte[] {
-			(byte)((address >> 40) & 0xff),
-			(byte)((address >> 32) & 0xff),
-			(byte)((address >> 24) & 0xff),
-			(byte)((address >> 16) & 0xff),
-			(byte)((address >> 8 ) & 0xff),
-			(byte)((address >> 0) & 0xff)
-		};
-		return addressInBytes;
-	}
+        LOGGER.debug("MAC Address (from Network Interface) : " + getMacAddressAsString(getMacAddress(macAddressAsLong)));
 
-	public static String getMacAddressAsString(byte[] address) {
-		StringBuilder builder = new StringBuilder();
-		for (byte b : address) {
-			if (builder.length() > 0) {
-				builder.append(":");
-			}
-			builder.append(String.format("%02X", b & 0xFF));
-		}
-		return builder.toString();
-	}
-	
-	public static long getMacAddressAsLong(byte[] address) {
-		long mac = 0;
-		// CHECKSTYLE:OFF
-		for (int i = 0; i < 6; i++) {
-			long t = (address[i] & 0xffL) << ((5 - i) * 8);
-			mac |= t;
-		}
+        return macAddressAsLong;
+    }
 
-		return mac;
-	}
-	
+    public static byte[] getMacAddress(long address) {
+        byte[] addressInBytes = new byte[]{
+                (byte) ((address >> 40) & 0xff),
+                (byte) ((address >> 32) & 0xff),
+                (byte) ((address >> 24) & 0xff),
+                (byte) ((address >> 16) & 0xff),
+                (byte) ((address >> 8) & 0xff),
+                (byte) ((address >> 0) & 0xff)
+        };
+        return addressInBytes;
+    }
+
+    public static String getMacAddressAsString(byte[] address) {
+        StringBuilder builder = new StringBuilder();
+        for (byte b : address) {
+            if (builder.length() > 0) {
+                builder.append(":");
+            }
+            builder.append(String.format("%02X", b & 0xFF));
+        }
+        return builder.toString();
+    }
+
+    public static long getMacAddressAsLong(byte[] address) {
+        long mac = 0;
+        // CHECKSTYLE:OFF
+        for (int i = 0; i < 6; i++) {
+            long t = (address[i] & 0xffL) << ((5 - i) * 8);
+            mac |= t;
+        }
+
+        return mac;
+    }
+
 }

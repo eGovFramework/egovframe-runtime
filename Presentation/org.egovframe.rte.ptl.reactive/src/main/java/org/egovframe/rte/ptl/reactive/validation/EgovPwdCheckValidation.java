@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 MOPAS(Ministry of Public Administration and Security).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,9 @@
  */
 package org.egovframe.rte.ptl.reactive.validation;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,44 +26,24 @@ import java.util.regex.Pattern;
  *
  * <p>Desc.: 비밀번호 유효성을 검증하기 위한 클래스</p>
  *
- * @author ESFC
- * @since 2023.08.31
+ * @author 유지보수
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
  *
  * 수정일		수정자				수정내용
  * ----------------------------------------------
- * 2023.08.31   ESFC            최초 생성
+ * 2023.08.31   유지보수            최초 생성
  * </pre>
+ * @since 2023.08.31
  */
 public class EgovPwdCheckValidation implements ConstraintValidator<EgovPwdCheck, String> {
 
     private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[~!@#$%^&*?])(?=\\S+$).{8,20}$");
     private static final Pattern REPETITIVE_PATTERN = Pattern.compile(".*(.)\\1{2,}.*");
 
-    @Override
-    public boolean isValid(String value, ConstraintValidatorContext context) {
-        // 비밀번호 패턴 검증
-        if (!passwordCheck(value)) {
-            return false;
-        }
-
-        // 동일한 문자 반복 패턴 검증
-        if (repetitivePasswordCheck(value)) {
-            return false;
-        }
-
-        // 연속된 문자 패턴 검증
-        if (consecutivePasswordCheck(value)) {
-            return false;
-        }
-
-        return true;
-    }
-
     /**
-     * 8자 이상 20자 이하, 공백 없는 영문자, 숫자, 특수 문자(~!@#$%^&*?)의 조합 체크
+     * 8자 이상 20자 이하, 공백 없는 영문자, 숫자, 특수문자의 조합 체크
      */
     public static boolean passwordCheck(String value) {
         Matcher matcher = PASSWORD_PATTERN.matcher(value);
@@ -95,6 +76,26 @@ public class EgovPwdCheckValidation implements ConstraintValidator<EgovPwdCheck,
      */
     private static boolean isConsecutive(char first, char second, char third) {
         return (second - first == 1) && (third - second == 1);
+    }
+
+    @Override
+    public boolean isValid(String value, ConstraintValidatorContext context) {
+        // 비밀번호 패턴 검증
+        if (!passwordCheck(value)) {
+            return false;
+        }
+
+        // 동일한 문자 반복 패턴 검증
+        if (repetitivePasswordCheck(value)) {
+            return false;
+        }
+
+        // 연속된 문자 패턴 검증
+        if (consecutivePasswordCheck(value)) {
+            return false;
+        }
+
+        return true;
     }
 
 }

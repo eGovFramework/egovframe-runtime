@@ -1,10 +1,11 @@
 package org.egovframe.rte.psl.dataaccess.ibatis;
 
-import org.egovframe.rte.psl.dataaccess.TestBase;
+import jakarta.annotation.Resource;
+import org.egovframe.rte.psl.dataaccess.config.DataAccessTestConfig;
 import org.egovframe.rte.psl.dataaccess.dao.MapTypeDAO;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.dao.TransientDataAccessResourceException;
 import org.springframework.jdbc.BadSqlGrammarException;
@@ -12,149 +13,116 @@ import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
- *  == 개정이력(Modification Information) ==
- *   
- *   수정일      수정자           수정내용
- *  -------    --------    ---------------------------
- *   2014.01.22 권윤정  SimpleJdbcTestUtils -> JdbcTestUtils 변경
- *   2014.01.22 권윤정  SimpleJdbcTemplate -> JdbcTemplate 변경
+ * == 개정이력(Modification Information) ==
+ * <p>
+ * 수정일      수정자           수정내용
+ * -------    --------    ---------------------------
+ * 2014.01.22 권윤정  SimpleJdbcTestUtils -> JdbcTestUtils 변경
+ * 2014.01.22 권윤정  SimpleJdbcTemplate -> JdbcTemplate 변경
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath*:META-INF/spring/context-*.xml" })
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = DataAccessTestConfig.class)
 @Transactional
-public class RemapResultsTest extends TestBase {
+public class RemapResultsTest {
 
-	@Resource(name = "mapTypeDAO")
-	MapTypeDAO mapTypeDAO;
+    @Resource(name = "dataSource")
+    private DataSource dataSource;
 
-	@Before
-	public void onSetUp() throws Exception {
-		ScriptUtils.executeSqlScript(dataSource.getConnection(), new ClassPathResource("META-INF/testdata/sample_schema_ddl_" + usingDBMS + ".sql"));
+    @Resource(name = "mapTypeDAO")
+    private MapTypeDAO mapTypeDAO;
 
-		// init data
-		ScriptUtils.executeSqlScript(dataSource.getConnection(), new ClassPathResource("META-INF/testdata/sample_schema_initdata_" + usingDBMS + ".sql"));
-	}
+    @BeforeEach
+    public void onSetUp() throws SQLException {
+        try (Connection conn = dataSource.getConnection()) {
+            ScriptUtils.executeSqlScript(conn, new ClassPathResource("/META-INF/testdata/testdb.sql"));
+        }
+    }
 
-	@SuppressWarnings({ "unchecked", "deprecation" })
-	@Rollback(false)
-	@Test
-	// @ExpectedException(BadSqlGrammarException.class)
-	// tibero 인 경우는 UncategorizedSQLException 이 되돌려지므로
-	// 메서드 내부에서 try ~ catch 로 처리토록 변경
-	public void testReplaceTextAllQueryExpectedException() throws Exception {
+    @Rollback(false)
+    @Test
+    public void testReplaceTextAllQueryExpectedException() {
+        try {
+            Map<String, Object> map = new HashMap<>();
 
-		try {
-			// selectQuery
-			Map<String, Object> map = new HashMap<String, Object>();
-			StringBuilder selectQuery = new StringBuilder();
-			selectQuery.append("select * from DEPT");
+            StringBuilder selectQuery = new StringBuilder();
+            selectQuery.append("select * from DEPT");
+            map.put("selectQuery", selectQuery.toString());
 
-			map.put("selectQuery", selectQuery.toString());
+            // select
+            List<Map<String, Object>> resultList = mapTypeDAO.getSqlMapClientTemplate().queryForList("selectUsingReplacedAllQuery", map);
 
-			// select
-			List<Map<String, Object>> resultList = mapTypeDAO.getSqlMapClientTemplate().queryForList("selectUsingReplacedAllQuery", map);
+            assertNotNull(resultList);
+            assertEquals(4, resultList.size());
+            assertTrue(resultList.get(0).containsKey("deptNo"));
 
-			assertNotNull(resultList);
-			assertEquals(4, resultList.size());
-			assertTrue(resultList.get(0).containsKey("deptNo"));
+            map.clear();
+            selectQuery = new StringBuilder();
+            selectQuery.append("select * from DEPT ");
+            selectQuery.append("where DEPT_NAME like '%ES%' ");
+            selectQuery.append("order by DEPT_NO DESC ");
+            map.put("selectQuery", selectQuery.toString());
 
-			map.clear();
-			selectQuery = new StringBuilder();
-			selectQuery.append("select * from DEPT ");
-			selectQuery.append("where DEPT_NAME like '%ES%' ");
-			selectQuery.append("order by DEPT_NO DESC ");
+            resultList = mapTypeDAO.getSqlMapClientTemplate().queryForList("selectUsingReplacedAllQuery", map);
 
-			map.put("selectQuery", selectQuery.toString());
+            assertNotNull(resultList);
+            assertEquals(2, resultList.size());
+            assertTrue(resultList.get(0).containsKey("deptNo"));
 
-			// select
-			// 위에서 동일한 resultset metadata 가 사용되는
-			// 경우는(table과 select 절이 같은 경우)
-			// replaced text 처리의 쿼리 사용에 문제가 없음.
-			// cf.) resultset metadata 는 caching 되고 있음에
-			// 유의!
-			resultList = mapTypeDAO.getSqlMapClientTemplate().queryForList("selectUsingReplacedAllQuery", map);
+            map.clear();
+            selectQuery = new StringBuilder();
+            selectQuery.append("select * from EMP ");
+            map.put("selectQuery", selectQuery.toString());
 
-			assertNotNull(resultList);
-			// 20,'RESEARCH','DALLAS' -- R'ES'EARCH
-			// 30,'SALES','CHICAGO' -- SAL'ES'
-			assertEquals(2, resultList.size());
-			assertTrue(resultList.get(0).containsKey("deptNo"));
+            resultList = mapTypeDAO.getSqlMapClientTemplate().queryForList("selectUsingReplacedAllQuery", map);
 
-			map.clear();
-			selectQuery = new StringBuilder();
-			selectQuery.append("select * from EMP ");
+            fail("이 라인이 수행될 수 없습니다.");
 
-			map.put("selectQuery", selectQuery.toString());
+        } catch (BadSqlGrammarException | TransientDataAccessResourceException | UncategorizedSQLException e) {
+            assertNotNull(e);
+        } catch (Exception e) {
+            fail("기대한 exception 이 아닙니다.");
+        }
+    }
 
-			// select
-			// 위에서 resultset metadata 가 달라지는 경우
-			// replaced text 처리의 쿼리 사용시 최초에 caching 된
-			// resultset metadata 에 현재 조회하는 정보가 없으므로 에러
-			// 발생함!
-			resultList = mapTypeDAO.getSqlMapClientTemplate().queryForList("selectUsingReplacedAllQuery", map);
+    @Rollback(false)
+    @Test
+    public void testReplaceTextRemapResultsAllQuery() {
+        Map<String, Object> map = new HashMap<>();
 
-			fail("이 라인이 수행될 수 없습니다.");
-		} catch (BadSqlGrammarException be) {
-			assertNotNull(be);
-		} catch (TransientDataAccessResourceException te) {
-			assertNotNull(te);
-		} catch (UncategorizedSQLException ue) {
-			// tibero 인 경우 Spring 에서
-			// UncategorizedSQLException <--
-			// NestedSQLException <-- TbSQLException 으로
-			// 처리됨
-			assertNotNull(ue);
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("기대한 exception 이 아닙니다.");
-		}
-	}
+        StringBuilder selectQuery = new StringBuilder();
+        selectQuery.append("select * from DEPT");
+        map.put("selectQuery", selectQuery.toString());
 
-	@SuppressWarnings({ "unchecked", "deprecation" })
-	@Rollback(false)
-	@Test
-	public void testReplaceTextRemapResultsAllQuery() throws Exception {
+        // select
+        List<Map<String, Object>> resultList = mapTypeDAO.getSqlMapClientTemplate().queryForList("selectUsingReplacedAllQueryUsingRemapResults", map);
 
-		// selectQuery
-		Map<String, Object> map = new HashMap<String, Object>();
-		StringBuilder selectQuery = new StringBuilder();
-		selectQuery.append("select * from DEPT");
+        assertNotNull(resultList);
+        assertEquals(4, resultList.size());
+        assertTrue(resultList.get(0).containsKey("deptNo"));
 
-		map.put("selectQuery", selectQuery.toString());
+        map.clear();
+        selectQuery = new StringBuilder();
+        selectQuery.append("select * from EMP ");
+        map.put("selectQuery", selectQuery.toString());
 
-		// select
-		List<Map<String, Object>> resultList = mapTypeDAO.getSqlMapClientTemplate().queryForList("selectUsingReplacedAllQueryUsingRemapResults", map);
+        resultList = mapTypeDAO.getSqlMapClientTemplate().queryForList("selectUsingReplacedAllQueryUsingRemapResults", map);
 
-		assertNotNull(resultList);
-		assertEquals(4, resultList.size());
-		assertTrue(resultList.get(0).containsKey("deptNo"));
+        assertNotNull(resultList);
+        assertEquals(14, resultList.size());
+        assertTrue(resultList.get(0).containsKey("empNo"));
+    }
 
-		map.clear();
-		selectQuery = new StringBuilder();
-		selectQuery.append("select * from EMP ");
-
-		map.put("selectQuery", selectQuery.toString());
-
-		// select
-		// 위에서 resultset metadata 가 달라지는 경우라도
-		// remapResults="true" 로 설정하여
-		// resultset metadata 를 caching 하지 않으므로 에러 발생
-		// 않음
-		resultList = mapTypeDAO.getSqlMapClientTemplate().queryForList("selectUsingReplacedAllQueryUsingRemapResults", map);
-
-		assertNotNull(resultList);
-		assertEquals(14, resultList.size());
-		assertTrue(resultList.get(0).containsKey("empNo"));
-	}
 }

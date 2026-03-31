@@ -1,63 +1,67 @@
 package org.egovframe.rte.bat.core.item.file;
 
+import org.egovframe.rte.bat.config.jobs.DelimitedToDelimitedJobIndexReaderJob;
 import org.egovframe.rte.bat.core.launch.support.EgovBatchRunner;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Date;
+import java.util.Properties;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * EgovBatchException JUnit Test 클래스
  *
  * @author 신용호
- * @since 2017.11.29
  * @version 1.0
- * @see
- *
- * <pre>
+ * @see <pre>
  * == 개정이력(Modification Information) ==
  *
  *   수정일        수정자           수정내용
  *  -------      -------------  ----------------------
  *   2017.11.29  신용호           최초 생성
  * </pre>
+ * @since 2017.11.29
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "/org/egovframe/batch/batch-runner-context.xml", "/org/egovframe/batch/jobs/delimitedToDelimitedJob-IndexReaderJob.xml" })
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = DelimitedToDelimitedJobIndexReaderJob.class)
 public class EgovIndexFileReaderWriterTest {
-	
-	@Autowired
-	private EgovBatchRunner egovBatchRunner;
-	
-	@Test
-	public void testJobRun() throws Exception {
 
-		String jobName = "delimitedToDelimitedJob-IndexReaderJob";
+    @Autowired
+    private EgovBatchRunner egovBatchRunner;
 
-		JobParametersBuilder jobParametersBuilder = new JobParametersBuilder();
-		jobParametersBuilder.addString("inputFile", "org/egovframe/data/input/delimited.csv");
-		jobParametersBuilder.addLong("timestamp", new Date().getTime());
-		
-		String jobParameters = egovBatchRunner.convertJobParametersToString(jobParametersBuilder.toJobParameters());
-		
-		long executionId = egovBatchRunner.start(jobName, jobParameters);
+    @Test
+    public void testJobRun() throws Exception {
 
-		//Job Name 확인
-		assertEquals(jobName, egovBatchRunner.getJobInstance(executionId).getJobName());
-		
-		//Job Parameters 확인
-		//assertEquals(jobParameters.toString().replaceAll(" ", ""), egovBatchRunner.getJobOperator().getParameters(executionId).toString());
-		
-		//Job 실행 결과 확인
-		assertEquals(BatchStatus.COMPLETED, egovBatchRunner.getJobExecution(executionId).getStatus());
-		
-	}
-	
+        String jobName = "delimitedToDelimitedJob-IndexReaderJob";
+
+        JobParametersBuilder jobParametersBuilder = new JobParametersBuilder();
+        jobParametersBuilder.addString("inputFile", "META-INF/spring/delimited.csv");
+        jobParametersBuilder.addLong("timestamp", new Date().getTime());
+
+        Properties jobParameters = egovBatchRunner.convertJobParametersToString(jobParametersBuilder.toJobParameters());
+
+        long executionId = egovBatchRunner.start(jobName, jobParameters);
+
+        //Job Name 확인
+        assertEquals(jobName, egovBatchRunner.getJobInstance(executionId).getJobName());
+
+        //Job Parameters 확인 (형식 차이 무시하고 포함 여부로 검증)
+        String actualParams = egovBatchRunner.getJobOperator().getParameters(executionId);
+        for (String key : jobParameters.stringPropertyNames()) {
+            assertTrue(actualParams.contains(key + "=" + jobParameters.getProperty(key)),
+                    "Job parameters should contain " + key + "=" + jobParameters.getProperty(key));
+        }
+
+        //Job 실행 결과 확인
+        assertEquals(BatchStatus.COMPLETED, egovBatchRunner.getJobExecution(executionId).getStatus());
+    }
+
 }

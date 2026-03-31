@@ -8,99 +8,80 @@ import org.egovframe.rte.itl.integration.metadata.OrganizationDefinition;
 import org.egovframe.rte.itl.integration.metadata.ServiceDefinition;
 import org.egovframe.rte.itl.integration.metadata.SystemDefinition;
 import org.egovframe.rte.itl.webservice.service.EgovWebServiceClient;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Calendar;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class EgovWebServiceTest
-{
+public class EgovWebServiceTest {
     private final OrganizationDefinition providerOrganization =
-        new OrganizationDefinition("org0", "provider organization");
-    
+            new OrganizationDefinition("org0", "provider organization");
+
     private final SystemDefinition providerSystem =
-        new SystemDefinition("sys0", providerOrganization, "sys0", "provider system", true);
+            new SystemDefinition("sys0", providerOrganization, "sys0", "provider system", true);
 
     private final ServiceDefinition providerService =
-        new ServiceDefinition("srv0", providerSystem, "srv0", "provider service", "req", "res", "providerBean", true, true);
+            new ServiceDefinition("srv0", providerSystem, "srv0", "provider service", "req", "res", "providerBean", true, true);
 
     private final OrganizationDefinition consumerOrganization =
-        new OrganizationDefinition("org1", "consumer organization");
-    
+            new OrganizationDefinition("org1", "consumer organization");
+
     private final SystemDefinition consumerSystem =
-        new SystemDefinition("sys1", consumerOrganization, "sys0", "consumer system", true);
+            new SystemDefinition("sys1", consumerOrganization, "sys0", "consumer system", true);
 
     private final IntegrationDefinition integrationDefinition =
-        new IntegrationDefinition("test", providerService, consumerSystem, 5000, true, null, null);
-    
+            new IntegrationDefinition("test", providerService, consumerSystem, 5000, true, null, null);
+
     private final EgovWebServiceClient echoClient = new EchoEgovWebServiceClient(0, ResultCode.OK);
 
     @Test
-    public void testCreationSucceeds() throws Exception
-    {
-        try
-        {
+    public void testCreationSucceeds() throws Exception {
+        try {
             new EgovWebService("test", 5000, integrationDefinition, echoClient);
-        }
-        catch (Throwable e)
-        {
+        } catch (Throwable e) {
             fail();
         }
     }
-    
+
     @Test
-    public void testCreationFailsWithIllegalArgument() throws Exception
-    {
+    public void testCreationFailsWithIllegalArgument() throws Exception {
         // id
-        try
-        {
+        try {
             new EgovWebService("  ", 5000, integrationDefinition, echoClient);
             fail();
+        } catch (IllegalArgumentException e) {
         }
-        catch (IllegalArgumentException e)
-        {
-        }
-        
+
         // integrationDefinition
-        try
-        {
+        try {
             new EgovWebService("test", 5000, null, echoClient);
             fail();
-        }
-        catch (IllegalArgumentException e)
-        {
+        } catch (IllegalArgumentException e) {
         }
 
         // integrationDefinition.provider
-        try
-        {
+        try {
             new EgovWebService("test", 5000,
                     new IntegrationDefinition("test", null, consumerSystem, 5000, true, null, null),
                     echoClient);
             fail();
+        } catch (IllegalArgumentException e) {
         }
-        catch (IllegalArgumentException e)
-        {
-        }
-        
+
         // integrationDefinition.provider.system
-        try
-        {
+        try {
             new EgovWebService("test", 5000,
                     new IntegrationDefinition("test",
                             new ServiceDefinition("test", null, "test", "test", "req", "rse", null, false, false),
                             consumerSystem, 5000, true, null, null),
                     echoClient);
             fail();
+        } catch (IllegalArgumentException e) {
         }
-        catch (IllegalArgumentException e)
-        {
-        }
-        
+
         // integrationDefinition.provider.system.organization
-        try
-        {
+        try {
             new EgovWebService("test", 5000,
                     new IntegrationDefinition("test",
                             new ServiceDefinition("test",
@@ -109,56 +90,44 @@ public class EgovWebServiceTest
                             consumerSystem, 5000, true, null, null),
                     echoClient);
             fail();
+        } catch (IllegalArgumentException e) {
         }
-        catch (IllegalArgumentException e)
-        {
-        }
-        
+
         // integrationDefinition.consumer
-        try
-        {
+        try {
             new EgovWebService("test", 5000,
                     new IntegrationDefinition("test", providerService, null, 5000, true, null, null),
                     echoClient);
             fail();
-        }
-        catch (IllegalArgumentException e)
-        {
+        } catch (IllegalArgumentException e) {
         }
 
         // integrationDefinition.consumer.organization
-        try
-        {
+        try {
             new EgovWebService("test", 5000,
                     new IntegrationDefinition("test", providerService,
                             new SystemDefinition("test", null, "test", "test", true),
                             5000, true, null, null),
                     echoClient);
             fail();
+        } catch (IllegalArgumentException e) {
         }
-        catch (IllegalArgumentException e)
-        {
-        }
-        
+
         // client
-        try
-        {
+        try {
             new EgovWebService("test", 5000, integrationDefinition, null);
             fail();
-        }
-        catch (IllegalArgumentException e)
-        {
+        } catch (IllegalArgumentException e) {
         }
     }
-    
+
     @Test
-    public void testCreateRequestMessageSucceeds() throws Exception
-    {
+    public void testCreateRequestMessageSucceeds() throws Exception {
         EgovWebService service =
-            new EgovWebService("test", 5000, integrationDefinition, echoClient);
-        
+                new EgovWebService("test", 5000, integrationDefinition, echoClient);
+
         EgovIntegrationMessage requestMessage = service.createRequestMessage();
-        
+
         assertNotNull(requestMessage);
         assertNotNull(requestMessage.getHeader());
         EgovIntegrationMessageHeader header = requestMessage.getHeader();
@@ -171,16 +140,15 @@ public class EgovWebServiceTest
         assertNotNull(requestMessage.getBody());
         assertEquals(0, requestMessage.getBody().size());
     }
-    
+
     @Test
-    public void testDoSendSucceeds() throws Exception
-    {
+    public void testDoSendSucceeds() throws Exception {
         EgovWebService service =
-            new EgovWebService("test", 5000, integrationDefinition, echoClient);
-        
+                new EgovWebService("test", 5000, integrationDefinition, echoClient);
+
         EgovIntegrationMessage requestMessage = service.createRequestMessage();
         EgovIntegrationMessage responseMessage = service.doSend(requestMessage);
-        
+
         assertNotNull(responseMessage);
         assertNotNull(responseMessage.getHeader());
         EgovIntegrationMessageHeader requestHeader = requestMessage.getHeader();
@@ -197,108 +165,100 @@ public class EgovWebServiceTest
         assertNotNull(responseHeader.getResponseReceiveTime());
         assertEquals(ResultCode.OK, responseHeader.getResultCode());
     }
-    
+
     @Test
-    public void testDoSendFailsWithIntegrationIsNotUsable() throws Exception
-    {
+    public void testDoSendFailsWithIntegrationIsNotUsable() throws Exception {
         EgovWebService service =
-            new EgovWebService("test", 5000,
-                    new IntegrationDefinition("test", providerService, consumerSystem, 5000, false, null, null),
-                    echoClient);
-        
+                new EgovWebService("test", 5000,
+                        new IntegrationDefinition("test", providerService, consumerSystem, 5000, false, null, null),
+                        echoClient);
+
         EgovIntegrationMessage requestMessage = service.createRequestMessage();
         EgovIntegrationMessage responseMessage = service.doSend(requestMessage);
-        
+
         assertNotNull(responseMessage);
         assertNotNull(responseMessage.getHeader());
         assertEquals(ResultCode.NOT_USABLE_INTEGRATION, responseMessage.getHeader().getResultCode());
     }
-    
+
     @Test
-    public void testDoSendFailsWithInvalidTime() throws Exception
-    {
+    public void testDoSendFailsWithInvalidTime() throws Exception {
         IntegrationDefinition integrationDefinition = new IntegrationDefinition("test", providerService, consumerSystem, 5000, true, null, null);
-        
+
         EgovWebService service =
-            new EgovWebService("test", 5000, integrationDefinition, echoClient);
-        
+                new EgovWebService("test", 5000, integrationDefinition, echoClient);
+
         Calendar from = Calendar.getInstance();
         from.add(Calendar.YEAR, 1);
         Calendar to = Calendar.getInstance();
         to.add(Calendar.YEAR, -1);
-        
+
         // from
         integrationDefinition.setValidateFrom(from);
         integrationDefinition.setValidateTo(null);
-        
+
         EgovIntegrationMessage requestMessage = service.createRequestMessage();
         EgovIntegrationMessage responseMessage = service.doSend(requestMessage);
-        
+
         assertNotNull(responseMessage);
         assertNotNull(responseMessage.getHeader());
         assertEquals(ResultCode.INVALID_TIME, responseMessage.getHeader().getResultCode());
-        
+
         // to
         integrationDefinition.setValidateFrom(null);
         integrationDefinition.setValidateTo(to);
-        
+
         requestMessage = service.createRequestMessage();
         responseMessage = service.doSend(requestMessage);
-        
+
         assertNotNull(responseMessage);
         assertNotNull(responseMessage.getHeader());
         assertEquals(ResultCode.INVALID_TIME, responseMessage.getHeader().getResultCode());
     }
-    
+
     @Test
-    public void testDoSendFailsWithServiceIsNotUsable() throws Exception
-    {
+    public void testDoSendFailsWithServiceIsNotUsable() throws Exception {
         EgovWebService service =
-            new EgovWebService("test", 5000,
-                    new IntegrationDefinition("test",
-                            new ServiceDefinition("srv", providerSystem, "srv", "srv", "req", "res", null, true, false),
-                            consumerSystem, 5000, true, null, null),
-                    echoClient);
-        
+                new EgovWebService("test", 5000,
+                        new IntegrationDefinition("test",
+                                new ServiceDefinition("srv", providerSystem, "srv", "srv", "req", "res", null, true, false),
+                                consumerSystem, 5000, true, null, null),
+                        echoClient);
+
         EgovIntegrationMessage requestMessage = service.createRequestMessage();
         EgovIntegrationMessage responseMessage = service.doSend(requestMessage);
-        
+
         assertNotNull(responseMessage);
         assertNotNull(responseMessage.getHeader());
         assertEquals(ResultCode.NOT_USABLE_SERVICE, responseMessage.getHeader().getResultCode());
     }
 }
 
-class EchoEgovWebServiceClient implements EgovWebServiceClient
-{
+class EchoEgovWebServiceClient implements EgovWebServiceClient {
     private long waitTime;
-    
+
     private ResultCode resultCode;
-    
-    public EchoEgovWebServiceClient(long waitTime, ResultCode resultCode)
-    {
+
+    public EchoEgovWebServiceClient(long waitTime, ResultCode resultCode) {
         super();
         this.waitTime = waitTime;
         this.resultCode = resultCode;
     }
 
     public EgovIntegrationMessage service(
-            EgovIntegrationMessage requestMessage)
-    {
+            EgovIntegrationMessage requestMessage) {
         EgovWebServiceMessageHeader responseHeader =
-            new EgovWebServiceMessageHeader(requestMessage.getHeader());
+                new EgovWebServiceMessageHeader(requestMessage.getHeader());
         responseHeader.setRequestReceiveTime(Calendar.getInstance());
-        
-        try
-        {
+
+        try {
             Thread.sleep(waitTime);
+        } catch (InterruptedException e) {
         }
-        catch (InterruptedException e)
-        {
-        }
-        
+
         responseHeader.setResponseSendTime(Calendar.getInstance());
         responseHeader.setResultCode(resultCode);
         return new EgovWebServiceMessage(responseHeader);
     }
-};
+}
+

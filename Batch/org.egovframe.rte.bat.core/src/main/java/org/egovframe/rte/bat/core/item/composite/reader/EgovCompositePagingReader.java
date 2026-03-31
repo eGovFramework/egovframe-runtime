@@ -1,6 +1,6 @@
 /*
- * Copyright 2012-2014 MOSPA(Ministry of Security and Public Administration).
- *  
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,16 +16,18 @@
 package org.egovframe.rte.bat.core.item.composite.reader;
 
 import org.egovframe.rte.bat.core.item.composite.EgovItemsMapper;
-import org.springframework.batch.item.*;
+import org.springframework.batch.item.ExecutionContext;
+import org.springframework.batch.item.ItemStream;
+import org.springframework.batch.item.ItemStreamException;
+import org.springframework.batch.item.ItemStreamReader;
 import org.springframework.batch.item.database.AbstractPagingItemReader;
 
 import java.util.List;
 
 /**
- * CompositeReader를 통해 ItemReaderList에 등록된 아이템을 읽어들임 
- * 
+ * CompositeReader를 통해 ItemReaderList에 등록된 아이템을 읽어들임
+ *
  * @author 배치실행개발팀
- * @since 2012.07.30
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -34,93 +36,98 @@ import java.util.List;
  * ----------------------------------------------
  * 2012.10.20	배치실행개발팀		최초 생성
  * </pre>
+ * @since 2012.07.30
  */
 public class EgovCompositePagingReader<T> implements ItemStreamReader<T> {
 
-	private List<AbstractPagingItemReader<?>> itemReaderList;
-	private EgovItemsMapper<T> itemsMapper;
-	private String returnType;
+    private List<AbstractPagingItemReader<?>> itemReaderList;
+    private EgovItemsMapper<T> itemsMapper;
+    private String returnType;
 
-	public T read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
-		Object[] items = new Object[itemReaderList.size()];
-		int count = 0;
-		int flagCount = 0;
+    public T read() throws Exception {
+        Object[] items = new Object[itemReaderList.size()];
+        int count = 0;
+        int flagCount = 0;
 
-		if (returnType.toUpperCase().equals("READER")) {
-			for (AbstractPagingItemReader<?> itemReader : itemReaderList) {
-				items[count] = itemReader;
-				count++;
-			}
-		} else {
-			for (AbstractPagingItemReader<?> itemReader : itemReaderList) {
-				Object o = itemReader.read();
-				if (o == null) {
-					flagCount = flagCount + 1;
-				} else {
-					items[count] = o;
-				}
+        if (returnType.equalsIgnoreCase("READER")) {
+            for (AbstractPagingItemReader<?> itemReader : itemReaderList) {
+                items[count] = itemReader;
+                count++;
+            }
+        } else {
+            for (AbstractPagingItemReader<?> itemReader : itemReaderList) {
+                Object o = itemReader.read();
+                if (o == null) {
+                    flagCount = flagCount + 1;
+                } else {
+                    items[count] = o;
+                }
 
-				count++;
-				
-				if (flagCount == itemReaderList.size()) {
-					return null;
-				}
-			}
-		}
+                count++;
 
-		return itemsMapper.mapItems(items);
-	}
+                if (flagCount == itemReaderList.size()) {
+                    return null;
+                }
+            }
+        }
 
-	/**
-	 * 변경된 사항을 등록된 모든 Reader에 update함 
-	 * @see org.springframework.batch.item.ItemStream#update(ExecutionContext)
-	 */
-	public void update(ExecutionContext executionContext) {
-		for (ItemStream itemStream : itemReaderList) {
-			itemStream.update(executionContext);
-		}
-	}
+        return itemsMapper.mapItems(items);
+    }
 
-	/**
-	 * 모든 Reader에 close를 호출함 
-	 */
-	public void close() throws ItemStreamException {
-		for (ItemStream itemStream : itemReaderList) {
-			itemStream.close();
-		}
-	}
+    /**
+     * 변경된 사항을 등록된 모든 Reader에 update함
+     *
+     * @see org.springframework.batch.item.ItemStream#update(ExecutionContext)
+     */
+    public void update(ExecutionContext executionContext) {
+        for (ItemStream itemStream : itemReaderList) {
+            itemStream.update(executionContext);
+        }
+    }
 
-	/**
-	 * 모든 Reader에 open을 호출함 
-	 */
-	public void open(ExecutionContext executionContext) throws ItemStreamException {
-		for (ItemStream itemStream : itemReaderList) {
-			itemStream.open(executionContext);
-		}
-	}
+    /**
+     * 모든 Reader에 close를 호출함
+     */
+    public void close() throws ItemStreamException {
+        for (ItemStream itemStream : itemReaderList) {
+            itemStream.close();
+        }
+    }
 
-	/**
-	 * 설정파일에 세팅한 값을 ItemMapper에 Setting 
-	 * @param mapper
-	 */
-	public void setItemsMapper(EgovItemsMapper<T> mapper) {
-		this.itemsMapper = mapper;
-	}
+    /**
+     * 모든 Reader에 open을 호출함
+     */
+    public void open(ExecutionContext executionContext) throws ItemStreamException {
+        for (ItemStream itemStream : itemReaderList) {
+            itemStream.open(executionContext);
+        }
+    }
 
-	/**
-	 * 설정파일에서 ItemReaderList에 등록한 값을  Setting
-	 * @param itemReaderList
-	 */
-	public void setItemReaderList(List<AbstractPagingItemReader<?>> itemReaderList) {
-		this.itemReaderList = itemReaderList;
-	}
+    /**
+     * 설정파일에 세팅한 값을 ItemMapper에 Setting
+     *
+     * @param mapper
+     */
+    public void setItemsMapper(EgovItemsMapper<T> mapper) {
+        this.itemsMapper = mapper;
+    }
 
-	/**
-	 * 설정파일에서  등록한 returnType을 Setting 
-	 * @param returnType
-	 */
-	public void setReturnType(String returnType) {
-		this.returnType = returnType;
-	}
+    /**
+     * 설정파일에서 ItemReaderList에 등록한 값을  Setting
+     *
+     * @param itemReaderList
+     */
+    public void setItemReaderList(List<AbstractPagingItemReader<?>> itemReaderList) {
+        this.itemReaderList = itemReaderList;
+    }
+
+    /**
+     * 설정파일에서  등록한 returnType을 Setting
+     *
+     * @param returnType
+     */
+    public void setReturnType(String returnType) {
+        this.returnType = returnType;
+    }
 
 }

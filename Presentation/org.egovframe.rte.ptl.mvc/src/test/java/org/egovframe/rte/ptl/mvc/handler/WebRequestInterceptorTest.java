@@ -1,8 +1,9 @@
 package org.egovframe.rte.ptl.mvc.handler;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import jakarta.servlet.ServletException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -10,19 +11,17 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletConfig;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
-import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- *
  * 시스템명 : 실행환경시스템
  * 서브시스템명 : 화면처리
  * 요구사항ID : REQ-RTE-113
@@ -31,50 +30,45 @@ import static org.junit.Assert.assertEquals;
  *
  * @author Ham Cheol
  */
-
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath*:META-INF/spring/handler/test_servlet.xml")
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = HandlerTestServletConfig.class)
 public class WebRequestInterceptorTest {
 
-	@Autowired
-	private ApplicationContext ctx;
+    @Autowired
+    private ApplicationContext ctx;
 
-	private DispatcherServlet dispatcher;
+    private DispatcherServlet dispatcher;
 
-	/**
-	 * org.springframework.web.servlet.mvc.annotation.ServletAnnotationControllerTests 를 참조했다.
-	 * @throws ServletException
-	 */
-	@Before
-	public void setUp() throws ServletException {
-		this.dispatcher = new DispatcherServlet() {
-			/**
-			 *  serialVersion UID
-			 */
-			private static final long serialVersionUID = -6801286643507797419L;
+    @BeforeEach
+    public void setUp() throws ServletException {
+        this.dispatcher = new DispatcherServlet() {
+            /**
+             *  serialVersion UID
+             */
+            private static final long serialVersionUID = -6801286643507797419L;
 
-			@Override
-			protected WebApplicationContext createWebApplicationContext(WebApplicationContext parent) throws BeansException {
-				GenericWebApplicationContext genericCtx = new GenericWebApplicationContext();
-				genericCtx.setParent(ctx);
-				genericCtx.refresh();
-				return genericCtx;
-			}
-		};
-		dispatcher.init(new MockServletConfig());
-	}
+            @Override
+            protected WebApplicationContext createWebApplicationContext(WebApplicationContext parent) throws BeansException {
+                GenericWebApplicationContext genericCtx = new GenericWebApplicationContext();
+                genericCtx.setParent(ctx);
+                genericCtx.refresh();
+                return genericCtx;
+            }
+        };
+        dispatcher.init(new MockServletConfig());
+    }
 
-	@Test
-	public void testPrePostHandle() throws ServletException, IOException {
+    @Test
+    public void testPrePostHandle() throws ServletException, IOException {
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/test.do");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        dispatcher.service(request, response);
+        ArrayList<?> array = (ArrayList<?>) request.getAttribute("interceptor");
+        assertEquals("OneInterceptor.preHandle", array.get(0));
+        assertEquals("TwoInterceptor.preHandle", array.get(1));
+        assertEquals("InterceptorTestController", array.get(2));
+        assertEquals("TwoInterceptor.postHandle", array.get(3));
+        assertEquals("OneInterceptor.postHandle", array.get(4));
+    }
 
-		MockHttpServletRequest request = new MockHttpServletRequest("GET", "/test.do");
-		MockHttpServletResponse response = new MockHttpServletResponse();
-		dispatcher.service(request, response);
-		ArrayList<?> array = (ArrayList<?>) request.getAttribute("interceptor");
-		assertEquals("OneInterceptor.preHandle", array.get(0));
-		assertEquals("TwoInterceptor.preHandle", array.get(1));
-		assertEquals("InterceptorTestController", array.get(2));
-		assertEquals("TwoInterceptor.postHandle", array.get(3));
-		assertEquals("OneInterceptor.postHandle", array.get(4));
-	}
 }

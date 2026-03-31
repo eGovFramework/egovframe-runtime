@@ -1,5 +1,6 @@
 package org.egovframe.rte.bat.support.tasklet;
 
+import jakarta.annotation.Resource;
 import org.egovframe.rte.bat.support.EgovResourceVariable;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
@@ -7,25 +8,18 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.InitializingBean;
 
-import javax.annotation.Resource;
-
 public class TaskletStepResource2 implements Tasklet, InitializingBean {
 
-		
-	@Resource(name="egovResourceVariable")
-	private EgovResourceVariable egovResourceVariable;
-	
-	  @Override
-	  public void afterPropertiesSet() throws Exception {
-		//Assert.notNull(directory, "directory must be set");
-	  }
+    @Resource(name = "egovResourceVariable")
+    private EgovResourceVariable egovResourceVariable;
 
-	  @Override
-	  public RepeatStatus execute(StepContribution contribution,
-	               ChunkContext chunkContext) throws Exception {
+    @Override
+    public void afterPropertiesSet() throws Exception {
+    }
 
-		return RepeatStatus.FINISHED;
-	  }
+    @Override
+    public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) {
+        return RepeatStatus.FINISHED;
+    }
 
-	  
 }

@@ -12,20 +12,20 @@ import org.springframework.web.reactive.config.EnableWebFlux;
 
 @Configuration
 @EnableWebFlux
-@ComponentScan(basePackages="org.egovframe.rte.psl.reactive.redis.repository")
+@ComponentScan(basePackages = "org.egovframe.rte.psl.reactive.redis.repository")
 public class RedisConfiguration {
 
     private String host = "localhost";
     private int port = 6379;
     private String password = "rhdxhd12";
 
-    @Bean(name="reactiveRedisConnectionFactory")
+    @Bean(name = "reactiveRedisConnectionFactory")
     public ReactiveRedisConnectionFactory reactiveRedisConnectionFactory() {
         EgovRedisConfiguration egovRedisConfiguration = new EgovRedisConfiguration(this.host, this.port, this.password);
         return egovRedisConfiguration.reactiveRedisConnectionFactory();
     }
 
-    @Bean(name="sampleSerializationContext")
+    @Bean(name = "sampleSerializationContext")
     public RedisSerializationContext<String, Sample> sampleSerializationContext() {
         Jackson2JsonRedisSerializer<Sample> serializer = new Jackson2JsonRedisSerializer<>(Sample.class);
         RedisSerializationContext.RedisSerializationContextBuilder<String, Sample> builder =

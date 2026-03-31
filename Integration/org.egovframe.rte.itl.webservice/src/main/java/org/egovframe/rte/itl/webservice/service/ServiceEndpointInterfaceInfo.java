@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 MOPAS(Ministry of Public Administration and Security).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +22,8 @@ import java.util.Collection;
  * <p>
  * <b>NOTE:</b> 웹 서비스 ServiceEndpointInterface 정보를 나타내는 interface이다.
  * </p>
- * 
+ *
  * @author 실행환경 개발팀 심상호
- * @since 2009.06.01
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -33,56 +32,57 @@ import java.util.Collection;
  * ----------------------------------------------
  * 2009.06.01	심상호				최초 생성
  * </pre>
+ * @since 2009.06.01
  */
 public interface ServiceEndpointInterfaceInfo {
 
-	/**
-	 * namespace
-	 * 
-	 * @return the namespace
-	 */
-	public String getNamespace();
+    /**
+     * namespace
+     *
+     * @return the namespace
+     */
+    String getNamespace();
 
-	/**
-	 * wsdlAddress
-	 * 
-	 * @return the wsdlAddress
-	 */
-	public String getWsdlAddress();
+    /**
+     * wsdlAddress
+     *
+     * @return the wsdlAddress
+     */
+    String getWsdlAddress();
 
-	/**
-	 * serviceName
-	 * 
-	 * @return the serviceName
-	 */
-	public String getServiceName();
+    /**
+     * serviceName
+     *
+     * @return the serviceName
+     */
+    String getServiceName();
 
-	/**
-	 * portName
-	 * 
-	 * @return the portName
-	 */
-	public String getPortName();
+    /**
+     * portName
+     *
+     * @return the portName
+     */
+    String getPortName();
 
-	/**
-	 * operationName
-	 * 
-	 * @return the operationName
-	 */
-	public String getOperationName();
+    /**
+     * operationName
+     *
+     * @return the operationName
+     */
+    String getOperationName();
 
-	/**
-	 * returnInfo
-	 * 
-	 * @return the returnInfo
-	 */
-	public ServiceParamInfo getReturnInfo();
+    /**
+     * returnInfo
+     *
+     * @return the returnInfo
+     */
+    ServiceParamInfo getReturnInfo();
 
-	/**
-	 * paramInfos
-	 * 
-	 * @return the paramInfos
-	 */
-	public Collection<ServiceParamInfo> getParamInfos();
+    /**
+     * paramInfos
+     *
+     * @return the paramInfos
+     */
+    Collection<ServiceParamInfo> getParamInfos();
 
 }

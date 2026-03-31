@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 MOSPA(Ministry of Security and Public Administration).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,9 @@ package org.egovframe.rte.fdl.security.userdetails.util;
 /**
  * camel case 방식으로 변환하는 util 클래스
  *
- *<p>Desc.: </p>
+ * <p>Desc.: </p>
  *
  * @author Vincent Han
- * @since 2014.03.12
  * @version 3.0
  * <pre>
  * 개정이력(Modification Information)
@@ -30,40 +29,41 @@ package org.egovframe.rte.fdl.security.userdetails.util;
  * ----------------------------------------------
  * 2014.03.12	한성곤				Spring Security 설정 간소화 기능 추가
  * </pre>
+ * @since 2014.03.12
  */
 public final class CamelCaseUtil {
 
-	private CamelCaseUtil() {
-	}
-	
-	public static String convert2CamelCase(String underScore) {
-		if (isSkipCase(underScore)) {
-			return underScore;
-		}
+    private CamelCaseUtil() {
+    }
 
-		StringBuilder result = new StringBuilder();
-		boolean nextUpper = false;
-		int len = underScore.length();
+    public static String convert2CamelCase(String underScore) {
+        if (isSkipCase(underScore)) {
+            return underScore;
+        }
 
-		for (int i = 0; i < len; i++) {
-			char currentChar = underScore.charAt(i);
-			if (currentChar == '_') {
-				nextUpper = true;
-			} else {
-				if (nextUpper) {
-					result.append(Character.toUpperCase(currentChar));
-					nextUpper = false;
-				} else {
-					result.append(Character.toLowerCase(currentChar));
-				}
-			}
-		}
+        StringBuilder result = new StringBuilder();
+        boolean nextUpper = false;
+        int len = underScore.length();
 
-		return result.toString();
-	}
+        for (int i = 0; i < len; i++) {
+            char currentChar = underScore.charAt(i);
+            if (currentChar == '_') {
+                nextUpper = true;
+            } else {
+                if (nextUpper) {
+                    result.append(Character.toUpperCase(currentChar));
+                    nextUpper = false;
+                } else {
+                    result.append(Character.toLowerCase(currentChar));
+                }
+            }
+        }
 
-	protected static boolean isSkipCase(String underScore) {
-		return underScore.indexOf('_') < 0 && Character.isLowerCase(underScore.charAt(0));
-	}
+        return result.toString();
+    }
+
+    private static boolean isSkipCase(String underScore) {
+        return underScore.indexOf('_') < 0 && Character.isLowerCase(underScore.charAt(0));
+    }
 
 }

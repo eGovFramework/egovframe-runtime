@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2019 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,16 +26,16 @@ import java.util.Map;
  *
  * <p>Desc.: 권한 정보를 처리하는 factory bean 클래스</p>
  *
- * @author ESFC
- * @since 2019.10.01
+ * @author 유지보수
  * @version 3.9
  * <pre>
  * 개정이력(Modification Information)
  *
  * 수정일		수정자				수정내용
  * ----------------------------------------------
- * 2019.10.01   ESFC            최초 생성
+ * 2019.10.01   유지보수            최초 생성
  * </pre>
+ * @since 2019.10.01
  */
 public class AuthorityMapFactoryBean implements FactoryBean<List<Map<String, Object>>> {
 
@@ -59,7 +59,7 @@ public class AuthorityMapFactoryBean implements FactoryBean<List<Map<String, Obj
     }
 
     @Override
-    public Class<List> getObjectType() {
+    public Class<?> getObjectType() {
         return List.class;
     }
 

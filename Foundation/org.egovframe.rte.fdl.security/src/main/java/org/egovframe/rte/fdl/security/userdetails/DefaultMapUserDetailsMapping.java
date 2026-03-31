@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 MOSPA(Ministry of Security and Public Administration).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,10 +28,9 @@ import java.util.Map;
 /**
  * 기본 사용자 정보 mapping 처리 클래스
  *
- *<p>Desc.: map으로 사용자 정보를 저장하여 처리</p>
+ * <p>Desc.: map으로 사용자 정보를 저장하여 처리</p>
  *
  * @author Vincent Han
- * @since 2014.03.12
  * @version 3.0
  * <pre>
  * 개정이력(Modification Information)
@@ -40,29 +39,30 @@ import java.util.Map;
  * ----------------------------------------------
  * 2014.03.12	한성곤				Spring Security 설정 간소화 기능 추가
  * </pre>
+ * @since 2014.03.12
  */
 public class DefaultMapUserDetailsMapping extends EgovUsersByUsernameMapping {
 
-	public DefaultMapUserDetailsMapping(DataSource ds, String usersByUsernameQuery) {
-		super(ds, usersByUsernameQuery);
-	}
+    public DefaultMapUserDetailsMapping(DataSource ds, String usersByUsernameQuery) {
+        super(ds, usersByUsernameQuery);
+    }
 
-	@Override
-	protected EgovUserDetails mapRow(ResultSet rs, int rownum) throws SQLException {
-		String userid = rs.getString("user_id");
-		String password = rs.getString("password");
-		boolean enabled = rs.getBoolean("enabled");
+    @Override
+    protected EgovUserDetails mapRow(ResultSet rs, int rownum) throws SQLException {
+        String userid = rs.getString("user_id");
+        String password = rs.getString("password");
+        boolean enabled = rs.getBoolean("enabled");
 
-		Map<String, String> map = new HashMap<String, String>();
-		ResultSetMetaData md = rs.getMetaData();
-		int cnt = md.getColumnCount();
-		for (int i = 1; i <= cnt; i++) {
-			String column = md.getColumnName(i).toLowerCase();
-			String value = rs.getString(column);
-			map.put(CamelCaseUtil.convert2CamelCase(column), value);
-		}
+        Map<String, String> map = new HashMap<String, String>();
+        ResultSetMetaData md = rs.getMetaData();
+        int cnt = md.getColumnCount();
+        for (int i = 1; i <= cnt; i++) {
+            String column = md.getColumnName(i).toLowerCase();
+            String value = rs.getString(column);
+            map.put(CamelCaseUtil.convert2CamelCase(column), value);
+        }
 
-		return new EgovUserDetails(userid, password, enabled, map);
-	}
+        return new EgovUserDetails(userid, password, enabled, map);
+    }
 
 }

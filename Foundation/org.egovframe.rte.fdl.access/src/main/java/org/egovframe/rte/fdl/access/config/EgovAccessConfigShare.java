@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2019 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,25 +16,35 @@
 package org.egovframe.rte.fdl.access.config;
 
 /**
- * egov-access schema config 공유 변수 클래스
+ * egov-access 모듈의 공유 설정 상수를 관리하는 클래스
  *
- * <p>Desc.: 설정 간소화 처리에 사용되는 config 공유 변수 클래스s</p>
+ * <p>Desc.: 런타임에 설정값을 공유하기 위한 정적 상수 클래스</p>
  *
- * @author ESFC
- * @since 2019.10.01
- * @version 3.9
- * <pre>
- * 개정이력(Modification Information)
- *
- * 수정일		수정자				수정내용
- * ----------------------------------------------
- * 2019.10.01	ESFC            최초 생성
- * </pre>
+ * @author 유지보수
+ * @version 6.0
+ * @since 2025.06.01
  */
 public class EgovAccessConfigShare {
 
+    /**
+     * 기본 로그인 URL
+     */
     public static String DEF_LOGIN_URL = "/uat/uia/egovLoginUsr.do";
+
+    /**
+     * 기본 접근 거부 URL
+     */
     public static String DEF_ACCESS_DENIED_URL = "/uat/uia/egovLoginUsr.do?auth_error=1";
+
+    /**
+     * 기본 요청 매칭 타입
+     */
     public static String DEF_REQUEST_MATCH_TYPE = "regex";
+
+    /**
+     * Private constructor to prevent instantiation
+     */
+    private EgovAccessConfigShare() {
+    }
 
 }

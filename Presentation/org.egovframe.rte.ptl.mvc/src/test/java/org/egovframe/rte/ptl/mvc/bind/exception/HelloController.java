@@ -6,8 +6,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class HelloController {
-	@RequestMapping("/form")
-	public @ResponseBody String form() {
-		throw new RuntimeException("It occurs RuntimeException!");
-	}
+
+    @RequestMapping("/form")
+    public @ResponseBody String form() {
+        throw new RuntimeException("It occurs RuntimeException!");
+    }
+
 }

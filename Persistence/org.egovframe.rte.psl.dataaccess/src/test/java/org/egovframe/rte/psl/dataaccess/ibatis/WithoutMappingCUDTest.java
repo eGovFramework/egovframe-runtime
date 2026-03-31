@@ -1,113 +1,122 @@
 package org.egovframe.rte.psl.dataaccess.ibatis;
 
-import org.egovframe.rte.psl.dataaccess.TestBase;
+import jakarta.annotation.Resource;
+import org.egovframe.rte.psl.dataaccess.config.DataAccessTestConfig;
 import org.egovframe.rte.psl.dataaccess.dao.DeptDAO;
 import org.egovframe.rte.psl.dataaccess.vo.DeptVO;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
+import javax.sql.DataSource;
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.SQLException;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
- *  == 개정이력(Modification Information) ==
- *   
- *   수정일      수정자           수정내용
- *  -------    --------    ---------------------------
- *   2014.01.22 권윤정  SimpleJdbcTestUtils -> JdbcTestUtils 변경
- *   2014.01.22 권윤정  SimpleJdbcTemplate -> JdbcTemplate 변경
+ * == 개정이력(Modification Information) ==
+ * <p>
+ * 수정일      수정자           수정내용
+ * -------    --------    ---------------------------
+ * 2014.01.22 권윤정  SimpleJdbcTestUtils -> JdbcTestUtils 변경
+ * 2014.01.22 권윤정  SimpleJdbcTemplate -> JdbcTemplate 변경
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath*:META-INF/spring/context-*.xml" })
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = DataAccessTestConfig.class)
 @Transactional
-public class WithoutMappingCUDTest extends TestBase {
+public class WithoutMappingCUDTest {
 
-	@Resource(name = "deptDAO")
-	DeptDAO deptDAO;
+    @Resource(name = "dataSource")
+    private DataSource dataSource;
 
-	@Before
-	public void onSetUp() throws Exception {
-		ScriptUtils.executeSqlScript(dataSource.getConnection(), new ClassPathResource("META-INF/testdata/sample_schema_ddl_" + usingDBMS + ".sql"));
-	}
+    @Resource(name = "deptDAO")
+    private DeptDAO deptDAO;
 
-	public DeptVO makeVO() {
-		DeptVO vo = new DeptVO();
-		vo.setDeptNo(new BigDecimal(90));
-		vo.setDeptName("test Dept");
-		vo.setLoc("test Loc");
-		return vo;
-	}
+    @BeforeEach
+    public void onSetUp() throws SQLException {
+        try (Connection conn = dataSource.getConnection()) {
+            ScriptUtils.executeSqlScript(conn, new ClassPathResource("/META-INF/testdata/testdb.sql"));
+        }
+    }
 
-	public void checkResult(DeptVO vo, DeptVO resultVO) {
-		assertNotNull(resultVO);
-		assertEquals(vo.getDeptNo(), resultVO.getDeptNo());
-		assertEquals(vo.getDeptName(), resultVO.getDeptName());
-		assertEquals(vo.getLoc(), resultVO.getLoc());
-	}
+    public DeptVO makeVO() {
+        DeptVO vo = new DeptVO();
+        vo.setDeptNo(new BigDecimal(90));
+        vo.setDeptName("test Dept");
+        vo.setLoc("test Loc");
+        return vo;
+    }
 
-	@Rollback(false)
-	@Test
-	public void testSimpleInsert() throws Exception {
-		DeptVO vo = makeVO();
+    public void checkResult(DeptVO vo, DeptVO resultVO) {
+        assertNotNull(resultVO);
+        assertEquals(vo.getDeptNo(), resultVO.getDeptNo());
+        assertEquals(vo.getDeptName(), resultVO.getDeptName());
+        assertEquals(vo.getLoc(), resultVO.getLoc());
+    }
 
-		// insert
-		deptDAO.insertDept("insertDeptSimple", vo);
+    @Rollback(false)
+    @Test
+    public void testSimpleInsert() {
+        DeptVO vo = makeVO();
 
-		// select
-		DeptVO resultVO = deptDAO.selectDept("selectDeptSimpleUsingResultClass", vo);
+        // insert
+        deptDAO.insertDept("insertDeptSimple", vo);
 
-		// check
-		checkResult(vo, resultVO);
-	}
+        // select
+        DeptVO resultVO = deptDAO.selectDept("selectDeptSimpleUsingResultClass", vo);
 
-	@Rollback(false)
-	@Test
-	public void testSimpleUpdate() throws Exception {
-		DeptVO vo = makeVO();
+        // check
+        checkResult(vo, resultVO);
+    }
 
-		// insert
-		deptDAO.insertDept("insertDeptSimple", vo);
+    @Rollback(false)
+    @Test
+    public void testSimpleUpdate() {
+        DeptVO vo = makeVO();
 
-		// data change
-		vo.setDeptName("upd Dept");
-		vo.setLoc("upd loc");
+        // insert
+        deptDAO.insertDept("insertDeptSimple", vo);
 
-		// update
-		int effectedRows = deptDAO.updateDept("updateDeptSimple", vo);
-		assertEquals(1, effectedRows);
+        // data change
+        vo.setDeptName("upd Dept");
+        vo.setLoc("upd loc");
 
-		// select
-		DeptVO resultVO = deptDAO.selectDept("selectDeptSimpleUsingResultClass", vo);
+        // update
+        int effectedRows = deptDAO.updateDept("updateDeptSimple", vo);
+        assertEquals(1, effectedRows);
 
-		// check
-		checkResult(vo, resultVO);
-	}
+        // select
+        DeptVO resultVO = deptDAO.selectDept("selectDeptSimpleUsingResultClass", vo);
 
-	@Rollback(false)
-	@Test
-	public void testSimpleDelete() throws Exception {
-		DeptVO vo = makeVO();
+        // check
+        checkResult(vo, resultVO);
+    }
 
-		// insert
-		deptDAO.insertDept("insertDeptSimple", vo);
+    @Rollback(false)
+    @Test
+    public void testSimpleDelete() {
+        DeptVO vo = makeVO();
 
-		// delete
-		int effectedRows = deptDAO.deleteDept("deleteDeptSimple", vo);
-		assertEquals(1, effectedRows);
+        // insert
+        deptDAO.insertDept("insertDeptSimple", vo);
 
-		// select
-		DeptVO resultVO = deptDAO.selectDept("selectDeptSimpleUsingResultClass", vo);
+        // delete
+        int effectedRows = deptDAO.deleteDept("deleteDeptSimple", vo);
+        assertEquals(1, effectedRows);
 
-		// null 이어야 함
-		assertNull(resultVO);
-	}
+        // select
+        DeptVO resultVO = deptDAO.selectDept("selectDeptSimpleUsingResultClass", vo);
+
+        // null 이어야 함
+        assertNull(resultVO);
+    }
+
 }

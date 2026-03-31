@@ -1,6 +1,6 @@
 /*
- * Copyright 2012-2014 MOSPA(Ministry of Security and Public Administration).
- *  
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,9 +25,8 @@ import java.util.Map;
 /**
  * EgovItemPreparedStatementSetter
  * EgovJdbcBatchItemWriter가 사용하는 클래스
- * 
+ *
  * @author 배치실행개발팀
- * @since 2012.07.20
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -37,21 +36,22 @@ import java.util.Map;
  * 2012.07.20	배치실행개발팀		최초 생성
  * 2012.07.30	배치실행개발팀		상속구조 수정
  * </pre>
+ * @since 2012.07.20
  */
 public class EgovItemPreparedStatementSetter<T> implements ItemPreparedStatementSetter<T> {
 
-	/**
-	 * Spring에서 지원하는 setValues,
-	 * PreparedStatement에 대한 매개 변수 값을 설정
-	 */
-	public void setValues(T item, PreparedStatement ps) throws SQLException {
-	}
+    /**
+     * Spring에서 지원하는 setValues,
+     * PreparedStatement에 대한 매개 변수 값을 설정
+     */
+    public void setValues(T item, PreparedStatement ps) {
+    }
 
-	/**
-	 * Egov에서 지원하는 setValues,
-	 * PreparedStatement에 대한 매개 변수 값을 설정
-	 */
-	public void setValues(T item, PreparedStatement ps, String[] params, String[] sqlTypes, Map<String, Method> methodMap) throws SQLException {
-	}
+    /**
+     * Egov에서 지원하는 setValues,
+     * PreparedStatement에 대한 매개 변수 값을 설정
+     */
+    public void setValues(T item, PreparedStatement ps, String[] params, String[] sqlTypes, Map<String, Method> methodMap) throws SQLException {
+    }
 
 }

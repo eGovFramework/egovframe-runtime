@@ -1,221 +1,215 @@
 package org.egovframe.rte.psl.dataaccess.mybatis;
 
-import org.egovframe.rte.psl.dataaccess.TestBase;
+import jakarta.annotation.Resource;
+import org.egovframe.rte.psl.dataaccess.config.DataAccessTestConfig;
 import org.egovframe.rte.psl.dataaccess.dao.DeptMapper;
 import org.egovframe.rte.psl.dataaccess.vo.DeptVO;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
+import javax.sql.DataSource;
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
- *  == 개정이력(Modification Information) ==
- *   
- *   수정일      수정자           수정내용
- *  -------    --------    ---------------------------
- *   2014.01.22 권윤정  SimpleJdbcTestUtils -> JdbcTestUtils 변경
- *   2014.01.22 권윤정  SimpleJdbcTemplate -> JdbcTemplate 변경
- * 
+ * == 개정이력(Modification Information) ==
+ * <p>
+ * 수정일      수정자           수정내용
+ * -------    --------    ---------------------------
+ * 2014.01.22 권윤정  SimpleJdbcTestUtils -> JdbcTestUtils 변경
+ * 2014.01.22 권윤정  SimpleJdbcTemplate -> JdbcTemplate 변경
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath*:META-INF/spring/context-*.xml" })
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = DataAccessTestConfig.class)
 @Transactional
-public class BasicDataMapperTest extends TestBase {
+public class BasicDataMapperTest {
 
-	@Resource(name = "deptMapper")
-	DeptMapper deptMapper;
+    @Resource(name = "dataSource")
+    private DataSource dataSource;
 
-	@Before
-	public void onSetUp() throws Exception {
-		// 외부에 sql file 로부터 DB 초기화 (기존 테이블 삭제/생성 및 초기데이터 구축)
-		// Spring 의 JdbcTestUtils 사용,
-		// continueOnError 플래그는 true로 설정 - cf.) DDL 이 포함된 경우 rollback 에 유의
-		ScriptUtils.executeSqlScript(dataSource.getConnection(), new ClassPathResource("META-INF/testdata/sample_schema_ddl_" + usingDBMS + ".sql"));
-	}
+    @Resource(name = "deptMapper")
+    private DeptMapper deptMapper;
 
-	public DeptVO makeVO() {
-		DeptVO vo = new DeptVO();
-		vo.setDeptNo(new BigDecimal(90));
-		vo.setDeptName("test 부서");
-		vo.setLoc("test 위치");
-		return vo;
-	}
+    @BeforeEach
+    public void onSetUp() throws SQLException {
+        try (Connection conn = dataSource.getConnection()) {
+            ScriptUtils.executeSqlScript(conn, new ClassPathResource("/META-INF/testdata/testdb.sql"));
+        }
+    }
 
-	public void checkResult(DeptVO vo, DeptVO resultVO) {
-		assertNotNull(resultVO);
-		assertEquals(vo.getDeptNo(), resultVO.getDeptNo());
-		assertEquals(vo.getDeptName(), resultVO.getDeptName());
-		assertEquals(vo.getLoc(), resultVO.getLoc());
-	}
+    public DeptVO makeVO() {
+        DeptVO vo = new DeptVO();
+        vo.setDeptNo(new BigDecimal(90));
+        vo.setDeptName("test 부서");
+        vo.setLoc("test 위치");
+        return vo;
+    }
 
-	@Rollback(false)
-	@Test
-	public void testBasicInsert() throws Exception {
-		DeptVO vo = makeVO();
+    public void checkResult(DeptVO vo, DeptVO resultVO) {
+        assertNotNull(resultVO);
+        assertEquals(vo.getDeptNo(), resultVO.getDeptNo());
+        assertEquals(vo.getDeptName(), resultVO.getDeptName());
+        assertEquals(vo.getLoc(), resultVO.getLoc());
+    }
 
-		// insert
-		deptMapper.insertDept("org.egovframe.rte.psl.dataaccess.DeptMapper.insertDept", vo);
-		// deptDAO.insertDept("Dept.insertDept", vo);
-		// // cf. useStatementNamespaces="true" 일 때
+    @Rollback(false)
+    @Test
+    public void testBasicInsert() {
+        DeptVO vo = makeVO();
 
-		// select
-		DeptVO resultVO = deptMapper.selectDept("org.egovframe.rte.psl.dataaccess.DeptMapper.selectDept", vo);
+        // insert
+        deptMapper.insertDept("org.egovframe.rte.psl.dataaccess.DeptMapper.insertDept", vo);
 
-		// check
-		checkResult(vo, resultVO);
-	}
+        // select
+        DeptVO resultVO = deptMapper.selectDept("org.egovframe.rte.psl.dataaccess.DeptMapper.selectDept", vo);
 
-	@Rollback(false)
-	@Test
-	public void testBasicUpdate() throws Exception {
-		DeptVO vo = makeVO();
+        // check
+        checkResult(vo, resultVO);
+    }
 
-		// insert
-		deptMapper.insertDept("org.egovframe.rte.psl.dataaccess.DeptMapper.insertDept", vo);
+    @Rollback(false)
+    @Test
+    public void testBasicUpdate() {
+        DeptVO vo = makeVO();
 
-		// data change
-		vo.setDeptName("upd Dept");
-		vo.setLoc("upd loc");
+        // insert
+        deptMapper.insertDept("org.egovframe.rte.psl.dataaccess.DeptMapper.insertDept", vo);
 
-		// update
-		int effectedRows = deptMapper.updateDept("org.egovframe.rte.psl.dataaccess.DeptMapper.updateDept", vo);
-		assertEquals(1, effectedRows);
+        // data change
+        vo.setDeptName("upd Dept");
+        vo.setLoc("upd loc");
 
-		// select
-		DeptVO resultVO = deptMapper.selectDept("org.egovframe.rte.psl.dataaccess.DeptMapper.selectDept", vo);
+        // update
+        int effectedRows = deptMapper.updateDept("org.egovframe.rte.psl.dataaccess.DeptMapper.updateDept", vo);
+        assertEquals(1, effectedRows);
 
-		// check
-		checkResult(vo, resultVO);
-	}
+        // select
+        DeptVO resultVO = deptMapper.selectDept("org.egovframe.rte.psl.dataaccess.DeptMapper.selectDept", vo);
 
-	@Rollback(false)
-	@Test
-	public void testBasicDelete() throws Exception {
-		DeptVO vo = makeVO();
+        // check
+        checkResult(vo, resultVO);
+    }
 
-		// insert
-		deptMapper.insertDept("org.egovframe.rte.psl.dataaccess.DeptMapper.insertDept", vo);
+    @Rollback(false)
+    @Test
+    public void testBasicDelete() {
+        DeptVO vo = makeVO();
 
-		// delete
-		int effectedRows = deptMapper.deleteDept("org.egovframe.rte.psl.dataaccess.DeptMapper.deleteDept", vo);
-		assertEquals(1, effectedRows);
+        // insert
+        deptMapper.insertDept("org.egovframe.rte.psl.dataaccess.DeptMapper.insertDept", vo);
 
-		// select
-		DeptVO resultVO = deptMapper.selectDept("org.egovframe.rte.psl.dataaccess.DeptMapper.selectDept", vo);
+        // delete
+        int effectedRows = deptMapper.deleteDept("org.egovframe.rte.psl.dataaccess.DeptMapper.deleteDept", vo);
+        assertEquals(1, effectedRows);
 
-		// null 이어야 함
-		assertNull(resultVO);
-	}
+        // select
+        DeptVO resultVO = deptMapper.selectDept("org.egovframe.rte.psl.dataaccess.DeptMapper.selectDept", vo);
 
-	@Rollback(false)
-	@Test
-	public void testBasicSelectList() throws Exception {
-		DeptVO vo = makeVO();
+        // null 이어야 함
+        assertNull(resultVO);
+    }
 
-		// insert
-		deptMapper.insertDept("org.egovframe.rte.psl.dataaccess.DeptMapper.insertDept", vo);
+    @Rollback(false)
+    @Test
+    public void testBasicSelectList() {
+        DeptVO vo = makeVO();
 
-		// 검색조건으로 key 설정
-		DeptVO searchVO = new DeptVO();
-		searchVO.setDeptNo(new BigDecimal(90));
-		// searchVO.setDeptName(new String("부서"));
+        // insert
+        deptMapper.insertDept("org.egovframe.rte.psl.dataaccess.DeptMapper.insertDept", vo);
 
-		// selectList
-		List<DeptVO> resultList = deptMapper.selectDeptList(isMysql ? "org.egovframe.rte.psl.dataaccess.DeptMapper.selectDeptListMysql"
-				: "org.egovframe.rte.psl.dataaccess.DeptMapper.selectDeptList", searchVO);
+        // 검색조건으로 key 설정
+        DeptVO searchVO = new DeptVO();
+        searchVO.setDeptNo(new BigDecimal(90));
 
-		// key 조건에 대한 결과는 한건일 것임
-		assertNotNull(resultList);
-		assertTrue(resultList.size() > 0);
-		assertEquals(1, resultList.size());
-		// assertTrue(resultList.get(0) instanceof DeptVO);
-		checkResult(vo, resultList.get(0));
+        // selectList
+        List<DeptVO> resultList = deptMapper.selectDeptList("org.egovframe.rte.psl.dataaccess.DeptMapper.selectDeptList", searchVO);
 
-		// 검색조건으로 name 설정 - '%' || #deptName# || '%'
-		DeptVO searchVO2 = new DeptVO();
-		searchVO2.setDeptName(""); // '%' || '' || '%' --> '%%'
+        // key 조건에 대한 결과는 한건일 것임
+        assertNotNull(resultList);
+        assertFalse(resultList.isEmpty());
+        assertEquals(1, resultList.size());
+        checkResult(vo, resultList.get(0));
 
-		// selectList
-		List<DeptVO> resultList2 = deptMapper.selectDeptList(isMysql ? "org.egovframe.rte.psl.dataaccess.DeptMapper.selectDeptListMysql"
-				: "org.egovframe.rte.psl.dataaccess.DeptMapper.selectDeptList", searchVO2);
+        DeptVO searchVO2 = new DeptVO();
+        searchVO2.setDeptName("");
 
-		// like 조건에 대한 결과는 한건 이상일 것임
-		assertNotNull(resultList2);
-		assertTrue(resultList2.size() > 0);
+        // selectList
+        List<DeptVO> resultList2 = deptMapper.selectDeptList("org.egovframe.rte.psl.dataaccess.DeptMapper.selectDeptList", searchVO2);
 
-	}
+        // like 조건에 대한 결과는 한건 이상일 것임
+        assertNotNull(resultList2);
+        assertFalse(resultList2.isEmpty());
+    }
 
-	@Rollback(false)
-	@Test
-	public void testInsertUsingParameterMap() throws Exception {
-		DeptVO vo = makeVO();
+    @Rollback(false)
+    @Test
+    public void testInsertUsingParameterMap() {
+        DeptVO vo = makeVO();
 
-		// insert
-		deptMapper.insertDept("org.egovframe.rte.psl.dataaccess.DeptMapper.insertDeptUsingParameterMap", vo);
+        // insert
+        deptMapper.insertDept("org.egovframe.rte.psl.dataaccess.DeptMapper.insertDeptUsingParameterMap", vo);
 
-		// select
-		DeptVO resultVO = deptMapper.selectDept("org.egovframe.rte.psl.dataaccess.DeptMapper.selectDept", vo);
+        // select
+        DeptVO resultVO = deptMapper.selectDept("org.egovframe.rte.psl.dataaccess.DeptMapper.selectDept", vo);
 
-		// check
-		checkResult(vo, resultVO);
-	}
+        // check
+        checkResult(vo, resultVO);
+    }
 
-	@Rollback(false)
-	@Test
-	public void testInsertAndSelectUsingParameterClass() throws Exception {
-		DeptVO vo = makeVO();
+    @Rollback(false)
+    @Test
+    public void testInsertAndSelectUsingParameterClass() {
+        DeptVO vo = makeVO();
 
-		// insert
-		deptMapper.insertDept("org.egovframe.rte.psl.dataaccess.DeptMapper.insertDeptUsingParameterClass", vo);
+        // insert
+        deptMapper.insertDept("org.egovframe.rte.psl.dataaccess.DeptMapper.insertDeptUsingParameterClass", vo);
 
-		// select
-		DeptVO resultVO = deptMapper.selectDept("org.egovframe.rte.psl.dataaccess.DeptMapper.selectDept", vo);
+        // select
+        DeptVO resultVO = deptMapper.selectDept("org.egovframe.rte.psl.dataaccess.DeptMapper.selectDept", vo);
 
-		// check
-		checkResult(vo, resultVO);
-	}
+        // check
+        checkResult(vo, resultVO);
+    }
 
-	@Rollback(false)
-	@Test
-	public void testInsertUsingInLineParamWithDBType() throws Exception {
-		DeptVO vo = makeVO();
+    @Rollback(false)
+    @Test
+    public void testInsertUsingInLineParamWithDBType() {
+        DeptVO vo = makeVO();
 
-		// insert
-		deptMapper.insertDept("org.egovframe.rte.psl.dataaccess.DeptMapper.insertDeptUsingInLineParamWithDBType", vo);
+        // insert
+        deptMapper.insertDept("org.egovframe.rte.psl.dataaccess.DeptMapper.insertDeptUsingInLineParamWithDBType", vo);
 
-		// select
-		DeptVO resultVO = deptMapper.selectDept("org.egovframe.rte.psl.dataaccess.DeptMapper.selectDept", vo);
+        // select
+        DeptVO resultVO = deptMapper.selectDept("org.egovframe.rte.psl.dataaccess.DeptMapper.selectDept", vo);
 
-		// check
-		checkResult(vo, resultVO);
-	}
+        // check
+        checkResult(vo, resultVO);
+    }
 
-	@Rollback(false)
-	@Test
-	public void testInsertAndSelectUsingResultClass() throws Exception {
-		DeptVO vo = makeVO();
+    @Rollback(false)
+    @Test
+    public void testInsertAndSelectUsingResultClass() {
+        DeptVO vo = makeVO();
 
-		// insert
-		deptMapper.insertDept("org.egovframe.rte.psl.dataaccess.DeptMapper.insertDeptUsingParameterClass", vo);
+        // insert
+        deptMapper.insertDept("org.egovframe.rte.psl.dataaccess.DeptMapper.insertDeptUsingParameterClass", vo);
 
-		// select
-		// resultClass 를 VO로 직접 명시하는 경우는 VO에 정의된
-		// attribute 변수명으로 select 시 column alias 필요
-		DeptVO resultVO = deptMapper.selectDept("org.egovframe.rte.psl.dataaccess.DeptMapper.selectDeptUsingResultClass", vo);
+        // select
+        DeptVO resultVO = deptMapper.selectDept("org.egovframe.rte.psl.dataaccess.DeptMapper.selectDeptUsingResultClass", vo);
 
-		// check
-		checkResult(vo, resultVO);
-	}
+        // check
+        checkResult(vo, resultVO);
+    }
 
 }

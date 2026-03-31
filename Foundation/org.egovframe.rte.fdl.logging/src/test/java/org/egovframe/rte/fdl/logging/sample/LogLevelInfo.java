@@ -7,9 +7,10 @@ import org.springframework.stereotype.Component;
 @Component("logLevelInfo")
 public class LogLevelInfo {
 
-	private static Logger logger = LogManager.getLogger(LogLevelInfo.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(LogLevelInfo.class.getName());
 
-	public void executeSomeLogic() {
-		logger.info("INFO - LogLevelInfo.executeSomeLogic executed");
-	}
+    public void executeSomeLogic() {
+        LOGGER.info("INFO - LogLevelInfo.executeSomeLogic executed");
+    }
+
 }

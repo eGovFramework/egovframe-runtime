@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 MOPAS(Ministry of Public Administration and Security).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,9 +25,8 @@ import org.springframework.context.ApplicationContextAware;
  * EgovWebServiceCalssLoader의 FactoryBean 클래스
  * <p>
  * <b>NOTE:</b> EgovWebServiceCalssLoader의 FactoryBean class이다. </p>
- * 
+ *
  * @author 실행환경 개발팀 심상호
- * @since 2009.06.01
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -36,38 +35,39 @@ import org.springframework.context.ApplicationContextAware;
  * ----------------------------------------------
  * 2009.06.01	심상호				최초 생성
  * </pre>
+ * @since 2009.06.01
  */
 public class EgovWebServiceClassLoaderFactoryBean implements FactoryBean<Object>, ApplicationContextAware {
 
-	private EgovWebServiceClassLoader bean;
+    private EgovWebServiceClassLoader bean;
 
-	private ApplicationContext applicationContext;
+    private ApplicationContext applicationContext;
 
-	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		this.applicationContext = applicationContext;
-	}
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
 
-	public Object getObject() throws Exception {
-		if (bean == null) {
-			bean = createEgovWebServiceClassLoader();
-		}
-		return bean;
-	}
+    public Object getObject() {
+        if (bean == null) {
+            bean = createEgovWebServiceClassLoader();
+        }
+        return bean;
+    }
 
-	public Class<?> getObjectType() {
-		return EgovWebServiceClassLoader.class;
-	}
+    public Class<?> getObjectType() {
+        return EgovWebServiceClassLoader.class;
+    }
 
-	public boolean isSingleton() {
-		return true;
-	}
+    public boolean isSingleton() {
+        return true;
+    }
 
-	private EgovWebServiceClassLoader createEgovWebServiceClassLoader() {
-		if (applicationContext == null || applicationContext.getClassLoader() == null) {
-			return new EgovWebServiceClassLoaderImpl();
-		} else {
-			return new EgovWebServiceClassLoaderImpl(applicationContext.getClassLoader());
-		}
-	}
+    private EgovWebServiceClassLoader createEgovWebServiceClassLoader() {
+        if (applicationContext == null || applicationContext.getClassLoader() == null) {
+            return new EgovWebServiceClassLoaderImpl();
+        } else {
+            return new EgovWebServiceClassLoaderImpl(applicationContext.getClassLoader());
+        }
+    }
 
 }

@@ -1,20 +1,33 @@
 package org.egovframe.rte.itl.integration.type;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class PrimitiveTypeTest
-{
+@ExtendWith(SpringExtension.class)
+public class PrimitiveTypeTest {
+
+    private static final BigInteger bigIntegerValue = new BigInteger("123456789012345678901234567890");
+    private static final BigDecimal bigDecimalValue = new BigDecimal("123456789012345678901234567890.123456789012345678901234567890");
+
+    private static boolean isUnassignableValue(PrimitiveType type, Object value) throws Exception {
+        try {
+            type.convertToTypedObject(value);
+        } catch (UnassignableValueException e) {
+            return true;
+        }
+        return false;
+    }
 
     @Test
-    public void testIsAssignableFrom() throws Exception
-    {
+    public void testIsAssignableFrom() throws Exception {
         // BOOLEAN
         assertTrue(PrimitiveType.BOOLEAN.isAssignableFrom(boolean.class));
         assertTrue(PrimitiveType.BOOLEAN.isAssignableFrom(Boolean.class));
@@ -279,10 +292,9 @@ public class PrimitiveTypeTest
         assertFalse(PrimitiveType.CALENDAR.isAssignableFrom(char.class));
         assertFalse(PrimitiveType.CALENDAR.isAssignableFrom(Character.class));
     }
-    
+
     @Test
-    public void testIsAssignableValue() throws Exception
-    {
+    public void testIsAssignableValue() throws Exception {
         // BOOLEAN
         assertTrue(PrimitiveType.BOOLEAN.isAssignableValue(null));
         assertTrue(PrimitiveType.BOOLEAN.isAssignableValue(true));
@@ -558,59 +570,41 @@ public class PrimitiveTypeTest
         assertFalse(PrimitiveType.CALENDAR.isAssignableValue(Character.MIN_VALUE));
         assertFalse(PrimitiveType.CALENDAR.isAssignableValue(Character.valueOf(Character.MAX_VALUE)));
     }
-    
-    private static boolean isUnassignableValue(PrimitiveType type, Object value) throws Exception
-    {
-        try
-        {
-            type.convertToTypedObject(value);
-        }
-        catch (UnassignableValueException e)
-        {
-            return true;
-        }
-        return false;
-    }
-    
-    private static final BigInteger bigIntegerValue = new BigInteger("123456789012345678901234567890");
 
-    private static final BigDecimal bigDecimalValue = new BigDecimal("123456789012345678901234567890.123456789012345678901234567890");
-    
     @Test
-    public void testConvertToTypedObject() throws Exception
-    {
+    public void testConvertToTypedObject() throws Exception {
         // BOOLEAN
-        assertTrue(PrimitiveType.BOOLEAN.convertToTypedObject(true) instanceof Boolean);
+        assertInstanceOf(Boolean.class, PrimitiveType.BOOLEAN.convertToTypedObject(true));
         assertEquals(Boolean.valueOf(false), PrimitiveType.BOOLEAN.convertToTypedObject(false));
         assertTrue(isUnassignableValue(PrimitiveType.BOOLEAN, "true"));
         assertTrue(isUnassignableValue(PrimitiveType.BYTE, Integer.MIN_VALUE));
-                
+
         // BYTE
-        assertTrue(PrimitiveType.BYTE.convertToTypedObject(Byte.MIN_VALUE) instanceof Byte);
+        assertInstanceOf(Byte.class, PrimitiveType.BYTE.convertToTypedObject(Byte.MIN_VALUE));
         assertEquals(Byte.MAX_VALUE, PrimitiveType.BYTE.convertToTypedObject(Byte.MAX_VALUE));
         assertTrue(isUnassignableValue(PrimitiveType.BYTE, "0"));
         assertTrue(isUnassignableValue(PrimitiveType.BYTE, Short.MIN_VALUE));
         assertTrue(isUnassignableValue(PrimitiveType.BYTE, Float.MAX_VALUE));
-                
+
         // SHORT
-        assertTrue(PrimitiveType.SHORT.convertToTypedObject(Short.MIN_VALUE) instanceof Short);
+        assertInstanceOf(Short.class, PrimitiveType.SHORT.convertToTypedObject(Short.MIN_VALUE));
         assertEquals(Short.valueOf(Byte.MAX_VALUE), PrimitiveType.SHORT.convertToTypedObject(Byte.MAX_VALUE));
         assertEquals(Short.valueOf(Short.MAX_VALUE), PrimitiveType.SHORT.convertToTypedObject(Short.MAX_VALUE));
         assertTrue(isUnassignableValue(PrimitiveType.SHORT, "0"));
         assertTrue(isUnassignableValue(PrimitiveType.SHORT, Integer.MIN_VALUE));
         assertTrue(isUnassignableValue(PrimitiveType.SHORT, Float.MAX_VALUE));
-        
+
         // INTEGER
-        assertTrue(PrimitiveType.INTEGER.convertToTypedObject(Integer.MIN_VALUE) instanceof Integer);
+        assertInstanceOf(Integer.class, PrimitiveType.INTEGER.convertToTypedObject(Integer.MIN_VALUE));
         assertEquals(Integer.valueOf(Byte.MAX_VALUE), PrimitiveType.INTEGER.convertToTypedObject(Byte.MAX_VALUE));
         assertEquals(Integer.valueOf(Short.MAX_VALUE), PrimitiveType.INTEGER.convertToTypedObject(Short.MAX_VALUE));
         assertEquals(Integer.valueOf(Integer.MAX_VALUE), PrimitiveType.INTEGER.convertToTypedObject(Integer.MAX_VALUE));
         assertTrue(isUnassignableValue(PrimitiveType.INTEGER, "0"));
         assertTrue(isUnassignableValue(PrimitiveType.INTEGER, Long.MIN_VALUE));
         assertTrue(isUnassignableValue(PrimitiveType.INTEGER, Float.MAX_VALUE));
-        
+
         // LONG
-        assertTrue(PrimitiveType.LONG.convertToTypedObject(Long.MIN_VALUE) instanceof Long);
+        assertInstanceOf(Long.class, PrimitiveType.LONG.convertToTypedObject(Long.MIN_VALUE));
         assertEquals(Long.valueOf(Byte.MAX_VALUE), PrimitiveType.LONG.convertToTypedObject(Byte.MAX_VALUE));
         assertEquals(Long.valueOf(Short.MAX_VALUE), PrimitiveType.LONG.convertToTypedObject(Short.MAX_VALUE));
         assertEquals(Long.valueOf(Integer.MAX_VALUE), PrimitiveType.LONG.convertToTypedObject(Integer.MAX_VALUE));
@@ -618,9 +612,9 @@ public class PrimitiveTypeTest
         assertTrue(isUnassignableValue(PrimitiveType.LONG, "0"));
         assertTrue(isUnassignableValue(PrimitiveType.LONG, bigIntegerValue));
         assertTrue(isUnassignableValue(PrimitiveType.LONG, Float.MAX_VALUE));
-        
+
         // BIGINTEGER
-        assertTrue(PrimitiveType.BIGINTEGER.convertToTypedObject(bigIntegerValue) instanceof BigInteger);
+        assertInstanceOf(BigInteger.class, PrimitiveType.BIGINTEGER.convertToTypedObject(bigIntegerValue));
         assertEquals(BigInteger.valueOf(Byte.MAX_VALUE), PrimitiveType.BIGINTEGER.convertToTypedObject(Byte.MAX_VALUE));
         assertEquals(BigInteger.valueOf(Short.MAX_VALUE), PrimitiveType.BIGINTEGER.convertToTypedObject(Short.MAX_VALUE));
         assertEquals(BigInteger.valueOf(Integer.MAX_VALUE), PrimitiveType.BIGINTEGER.convertToTypedObject(Integer.MAX_VALUE));
@@ -629,18 +623,18 @@ public class PrimitiveTypeTest
         assertTrue(isUnassignableValue(PrimitiveType.BIGINTEGER, "0"));
         assertTrue(isUnassignableValue(PrimitiveType.BIGINTEGER, Float.MAX_VALUE));
         assertTrue(isUnassignableValue(PrimitiveType.BIGINTEGER, bigDecimalValue));
-        
+
         // FLOAT
-        assertTrue(PrimitiveType.FLOAT.convertToTypedObject(Float.MIN_VALUE) instanceof Float);
+        assertInstanceOf(Float.class, PrimitiveType.FLOAT.convertToTypedObject(Float.MIN_VALUE));
         assertEquals(Float.valueOf(Byte.MAX_VALUE), PrimitiveType.FLOAT.convertToTypedObject(Byte.MAX_VALUE));
         assertEquals(Float.valueOf(Short.MAX_VALUE), PrimitiveType.FLOAT.convertToTypedObject(Short.MAX_VALUE));
         assertEquals(Float.valueOf(Float.MAX_VALUE), PrimitiveType.FLOAT.convertToTypedObject(Float.MAX_VALUE));
         assertTrue(isUnassignableValue(PrimitiveType.FLOAT, "0"));
         assertTrue(isUnassignableValue(PrimitiveType.FLOAT, Integer.MAX_VALUE));
         assertTrue(isUnassignableValue(PrimitiveType.FLOAT, Double.MAX_VALUE));
-        
+
         // DOUBLE
-        assertTrue(PrimitiveType.DOUBLE.convertToTypedObject(Double.MIN_VALUE) instanceof Double);
+        assertInstanceOf(Double.class, PrimitiveType.DOUBLE.convertToTypedObject(Double.MIN_VALUE));
         assertEquals(Double.valueOf(Byte.MAX_VALUE), PrimitiveType.DOUBLE.convertToTypedObject(Byte.MAX_VALUE));
         assertEquals(Double.valueOf(Short.MAX_VALUE), PrimitiveType.DOUBLE.convertToTypedObject(Short.MAX_VALUE));
         assertEquals(Double.valueOf(Integer.MAX_VALUE), PrimitiveType.DOUBLE.convertToTypedObject(Integer.MAX_VALUE));
@@ -649,9 +643,9 @@ public class PrimitiveTypeTest
         assertTrue(isUnassignableValue(PrimitiveType.DOUBLE, "0"));
         assertTrue(isUnassignableValue(PrimitiveType.DOUBLE, Long.MAX_VALUE));
         assertTrue(isUnassignableValue(PrimitiveType.DOUBLE, bigDecimalValue));
-        
+
         // BIGDECIMAL
-        assertTrue(PrimitiveType.BIGDECIMAL.convertToTypedObject(bigDecimalValue) instanceof BigDecimal);
+        assertInstanceOf(BigDecimal.class, PrimitiveType.BIGDECIMAL.convertToTypedObject(bigDecimalValue));
         assertEquals(BigDecimal.valueOf(Byte.MAX_VALUE), PrimitiveType.BIGDECIMAL.convertToTypedObject(Byte.MAX_VALUE));
         assertEquals(BigDecimal.valueOf(Short.MAX_VALUE), PrimitiveType.BIGDECIMAL.convertToTypedObject(Short.MAX_VALUE));
         assertEquals(BigDecimal.valueOf(Integer.MAX_VALUE), PrimitiveType.BIGDECIMAL.convertToTypedObject(Integer.MAX_VALUE));
@@ -662,7 +656,7 @@ public class PrimitiveTypeTest
         assertTrue(isUnassignableValue(PrimitiveType.BIGDECIMAL, "0"));
 
         // CALENDAR
-        assertTrue(PrimitiveType.CALENDAR.convertToTypedObject(new Date()) instanceof Calendar);
+        assertInstanceOf(Calendar.class, PrimitiveType.CALENDAR.convertToTypedObject(new Date()));
         Calendar calendarValue = Calendar.getInstance();
         assertEquals(calendarValue, PrimitiveType.CALENDAR.convertToTypedObject(new Date(calendarValue.getTimeInMillis())));
     }

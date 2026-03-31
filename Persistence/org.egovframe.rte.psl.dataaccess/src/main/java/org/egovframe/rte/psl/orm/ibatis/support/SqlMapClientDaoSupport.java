@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2008 the original author or authors.
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.egovframe.rte.psl.orm.ibatis.support;
 
 import com.ibatis.sqlmap.client.SqlMapClient;
@@ -34,80 +33,82 @@ import javax.sql.DataSource;
  * a custom SQLExceptionTranslator to use.
  *
  * @author Juergen Hoeller
- * @since 24.02.2004
  * @see #setSqlMapClient
  * @see #setSqlMapClientTemplate
+ * @since 24.02.2004
  * @deprecated as of Spring 3.2, in favor of the native Spring support
  * in the Mybatis follow-up project (http://code.google.com/p/mybatis/)
  */
 @Deprecated
 public abstract class SqlMapClientDaoSupport extends DaoSupport {
 
-	private SqlMapClientTemplate sqlMapClientTemplate = new SqlMapClientTemplate();
+    private SqlMapClientTemplate sqlMapClientTemplate = new SqlMapClientTemplate();
 
-	private boolean externalTemplate = false;
+    private boolean externalTemplate = false;
 
+    /**
+     * Return the JDBC DataSource used by this DAO.
+     */
+    public final DataSource getDataSource() {
+        return this.sqlMapClientTemplate.getDataSource();
+    }
 
-	/**
-	 * Set the JDBC DataSource to be used by this DAO.
-	 * Not required: The SqlMapClient might carry a shared DataSource.
-	 * @see #setSqlMapClient
-	 */
-	public final void setDataSource(DataSource dataSource) {
-		if (!this.externalTemplate) {
-	  	this.sqlMapClientTemplate.setDataSource(dataSource);
-		}
-	}
+    /**
+     * Set the JDBC DataSource to be used by this DAO.
+     * Not required: The SqlMapClient might carry a shared DataSource.
+     *
+     * @see #setSqlMapClient
+     */
+    public final void setDataSource(DataSource dataSource) {
+        if (!this.externalTemplate) {
+            this.sqlMapClientTemplate.setDataSource(dataSource);
+        }
+    }
 
-	/**
-	 * Return the JDBC DataSource used by this DAO.
-	 */
-	public final DataSource getDataSource() {
-		return this.sqlMapClientTemplate.getDataSource();
-	}
+    /**
+     * Return the iBATIS Database Layer SqlMapClient that this template works with.
+     */
+    public final SqlMapClient getSqlMapClient() {
+        return this.sqlMapClientTemplate.getSqlMapClient();
+    }
 
-	/**
-	 * Set the iBATIS Database Layer SqlMapClient to work with.
-	 * Either this or a "sqlMapClientTemplate" is required.
-	 * @see #setSqlMapClientTemplate
-	 */
-	public final void setSqlMapClient(SqlMapClient sqlMapClient) {
-		if (!this.externalTemplate) {
-			this.sqlMapClientTemplate.setSqlMapClient(sqlMapClient);
-		}
-	}
+    /**
+     * Set the iBATIS Database Layer SqlMapClient to work with.
+     * Either this or a "sqlMapClientTemplate" is required.
+     *
+     * @see #setSqlMapClientTemplate
+     */
+    public final void setSqlMapClient(SqlMapClient sqlMapClient) {
+        if (!this.externalTemplate) {
+            this.sqlMapClientTemplate.setSqlMapClient(sqlMapClient);
+        }
+    }
 
-	/**
-	 * Return the iBATIS Database Layer SqlMapClient that this template works with.
-	 */
-	public final SqlMapClient getSqlMapClient() {
-		return this.sqlMapClientTemplate.getSqlMapClient();
-	}
+    /**
+     * Return the SqlMapClientTemplate for this DAO,
+     * pre-initialized with the SqlMapClient or set explicitly.
+     */
+    public final SqlMapClientTemplate getSqlMapClientTemplate() {
+        return this.sqlMapClientTemplate;
+    }
 
-	/**
-	 * Set the SqlMapClientTemplate for this DAO explicitly,
-	 * as an alternative to specifying a SqlMapClient.
-	 * @see #setSqlMapClient
-	 */
-	public final void setSqlMapClientTemplate(SqlMapClientTemplate sqlMapClientTemplate) {
-		Assert.notNull(sqlMapClientTemplate, "SqlMapClientTemplate must not be null");
-		this.sqlMapClientTemplate = sqlMapClientTemplate;
-		this.externalTemplate = true;
-	}
+    /**
+     * Set the SqlMapClientTemplate for this DAO explicitly,
+     * as an alternative to specifying a SqlMapClient.
+     *
+     * @see #setSqlMapClient
+     */
+    public final void setSqlMapClientTemplate(SqlMapClientTemplate sqlMapClientTemplate) {
+        Assert.notNull(sqlMapClientTemplate, "SqlMapClientTemplate must not be null");
+        this.sqlMapClientTemplate = sqlMapClientTemplate;
+        this.externalTemplate = true;
+    }
 
-	/**
-	 * Return the SqlMapClientTemplate for this DAO,
-	 * pre-initialized with the SqlMapClient or set explicitly.
-	 */
-	public final SqlMapClientTemplate getSqlMapClientTemplate() {
-	  return this.sqlMapClientTemplate;
-	}
-
-	@Override
-	protected final void checkDaoConfig() {
-		if (!this.externalTemplate) {
-			this.sqlMapClientTemplate.afterPropertiesSet();
-		}
-	}
+    @Override
+    protected final void checkDaoConfig() {
+        if (!this.externalTemplate) {
+            this.sqlMapClientTemplate.afterPropertiesSet();
+        }
+    }
 
 }

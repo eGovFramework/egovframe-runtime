@@ -1,137 +1,122 @@
 package org.egovframe.rte.psl.dataaccess.ibatis;
 
-import org.egovframe.rte.psl.dataaccess.TestBase;
+import jakarta.annotation.Resource;
+import org.egovframe.rte.psl.dataaccess.config.DataAccessTestConfig;
 import org.egovframe.rte.psl.dataaccess.dao.EmpDAO;
 import org.egovframe.rte.psl.dataaccess.vo.EmpDeptSimpleCompositeVO;
 import org.egovframe.rte.psl.dataaccess.vo.EmpExtendsDeptVO;
 import org.egovframe.rte.psl.dataaccess.vo.EmpVO;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
+import javax.sql.DataSource;
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- *  == 개정이력(Modification Information) ==
- *   
- *   수정일      수정자           수정내용
- *  -------    --------    ---------------------------
- *   2014.01.22 권윤정  SimpleJdbcTestUtils -> JdbcTestUtils 변경
- *   2014.01.22 권윤정  SimpleJdbcTemplate -> JdbcTemplate 변경
+ * == 개정이력(Modification Information) ==
+ * <p>
+ * 수정일      수정자           수정내용
+ * -------    --------    ---------------------------
+ * 2014.01.22 권윤정  SimpleJdbcTestUtils -> JdbcTestUtils 변경
+ * 2014.01.22 권윤정  SimpleJdbcTemplate -> JdbcTemplate 변경
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath*:META-INF/spring/context-*.xml" })
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = DataAccessTestConfig.class)
 @Transactional
-public class ResultMapTest extends TestBase {
+public class ResultMapTest {
 
-	@Resource(name = "empDAO")
-	EmpDAO empDAO;
+    @Resource(name = "dataSource")
+    private DataSource dataSource;
 
-	@Before
-	public void onSetUp() throws Exception {
-		// 외부에 sql file 로부터 DB 초기화 (기존 테이블 삭제/생성 및
-		// 초기데이터 구축)
-		// Spring 의 JdbcTestUtils 사용,
-		// continueOnError 플래그는 true로 설정 - cf.) DDL 이
-		// 포함된 경우 rollback 에 유의
-		ScriptUtils.executeSqlScript(dataSource.getConnection(), new ClassPathResource("META-INF/testdata/sample_schema_ddl_" + usingDBMS + ".sql"));
+    @Resource(name = "empDAO")
+    private EmpDAO empDAO;
 
-		// init data
-		ScriptUtils.executeSqlScript(dataSource.getConnection(), new ClassPathResource("META-INF/testdata/sample_schema_initdata_" + usingDBMS + ".sql"));
-	}
+    @BeforeEach
+    public void onSetUp() throws SQLException {
+        try (Connection conn = dataSource.getConnection()) {
+            ScriptUtils.executeSqlScript(conn, new ClassPathResource("/META-INF/testdata/testdb.sql"));
+        }
+    }
 
-	@Rollback(false)
-	@Test
-	public void testResultMapSelect() throws Exception {
-		EmpVO vo = new EmpVO();
-		// 7369,'SMITH','CLERK',7902,'1980-12-17',800,NULL,20
-		vo.setEmpNo(new BigDecimal(7369));
+    @Rollback(false)
+    @Test
+    public void testResultMapSelect() throws ParseException {
+        EmpVO vo = new EmpVO();
+        vo.setEmpNo(new BigDecimal(7369));
 
-		// select
-		EmpVO resultVO = empDAO.selectEmp("selectEmpUsingResultMap", vo);
+        EmpVO resultVO = empDAO.selectEmp("selectEmpUsingResultMap", vo);
 
-		// check
-		assertNotNull(resultVO);
-		assertEquals(new BigDecimal(7369), resultVO.getEmpNo());
-		assertEquals("SMITH", resultVO.getEmpName());
-		assertEquals("CLERK", resultVO.getJob());
-		assertEquals(new BigDecimal(7902), resultVO.getMgr());
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault());
-		assertEquals(sdf.parse("1980-12-17"), resultVO.getHireDate());
-		assertEquals(new BigDecimal(800), resultVO.getSal());
+        // check
+        assertNotNull(resultVO);
+        assertEquals(new BigDecimal(7369), resultVO.getEmpNo());
+        assertEquals("SMITH", resultVO.getEmpName());
+        assertEquals("CLERK", resultVO.getJob());
+        assertEquals(new BigDecimal(7902), resultVO.getMgr());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault());
+        assertEquals(sdf.parse("1980-12-17"), resultVO.getHireDate());
+        assertEquals(new BigDecimal(800), resultVO.getSal());
+        assertEquals(new BigDecimal(0), resultVO.getComm());
+        assertEquals(new BigDecimal(20), resultVO.getDeptNo());
+    }
 
-		// nullValue test - <result property="comm"
-		// column="COMM" .. nullValue="0" />
-		assertEquals(new BigDecimal(0), resultVO.getComm());
-		assertEquals(new BigDecimal(20), resultVO.getDeptNo());
-	}
+    @Rollback(false)
+    @Test
+    public void testExtendsResultMapSelect() throws ParseException {
+        EmpVO vo = new EmpVO();
+        vo.setEmpNo(new BigDecimal(7369));
 
-	@Rollback(false)
-	@Test
-	public void testExtendsResultMapSelect() throws Exception {
-		EmpVO vo = new EmpVO();
-		// 7369,'SMITH','CLERK',7902,'1980-12-17',800,NULL,20
-		vo.setEmpNo(new BigDecimal(7369));
+        EmpExtendsDeptVO resultVO = empDAO.selectEmpExtendsDept("selectEmpExtendsDeptUsingResultMap", vo);
 
-		// select
-		EmpExtendsDeptVO resultVO = empDAO.selectEmpExtendsDept("selectEmpExtendsDeptUsingResultMap", vo);
+        // check
+        assertNotNull(resultVO);
+        assertEquals(new BigDecimal(7369), resultVO.getEmpNo());
+        assertEquals("SMITH", resultVO.getEmpName());
+        assertEquals("CLERK", resultVO.getJob());
+        assertEquals(new BigDecimal(7902), resultVO.getMgr());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault());
+        assertEquals(sdf.parse("1980-12-17"), resultVO.getHireDate());
+        assertEquals(new BigDecimal(800), resultVO.getSal());
+        assertEquals(new BigDecimal(20), resultVO.getDeptNo());
+        assertEquals("RESEARCH", resultVO.getDeptName());
+        assertEquals("DALLAS", resultVO.getLoc());
+    }
 
-		// check
-		assertNotNull(resultVO);
-		// resultMap extends test (extends empResult)
-		assertEquals(new BigDecimal(7369), resultVO.getEmpNo());
-		assertEquals("SMITH", resultVO.getEmpName());
-		assertEquals("CLERK", resultVO.getJob());
-		assertEquals(new BigDecimal(7902), resultVO.getMgr());
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault());
-		assertEquals(sdf.parse("1980-12-17"), resultVO.getHireDate());
-		assertEquals(new BigDecimal(800), resultVO.getSal());
-		// nullValue test - <result property="comm"
-		// column="COMM" .. nullValue="0" />
-		assertEquals(new BigDecimal(0), resultVO.getComm());
-		assertEquals(new BigDecimal(20), resultVO.getDeptNo());
+    @Rollback(false)
+    @Test
+    public void testSimpleCompositeResultMapSelect() throws ParseException {
+        EmpVO vo = new EmpVO();
+        vo.setEmpNo(new BigDecimal(7369));
 
-		assertEquals("RESEARCH", resultVO.getDeptName());
-		assertEquals("DALLAS", resultVO.getLoc());
+        // select
+        EmpDeptSimpleCompositeVO resultVO = empDAO.selectEmpDeptSimpleComposite("selectEmpDeptSimpleCompositeUsingResultMap", vo);
 
-	}
+        // check
+        assertNotNull(resultVO);
+        assertEquals(new BigDecimal(7369), resultVO.getEmpNo());
+        assertEquals("SMITH", resultVO.getEmpName());
+        assertEquals("CLERK", resultVO.getJob());
+        assertEquals(new BigDecimal(7902), resultVO.getMgr());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault());
+        assertEquals(sdf.parse("1980-12-17"), resultVO.getHireDate());
+        assertEquals(new BigDecimal(800), resultVO.getSal());
+        assertEquals(new BigDecimal(0), resultVO.getComm());
+        assertEquals(new BigDecimal(20), resultVO.getDeptNo());
+        assertEquals("RESEARCH", resultVO.getDeptName());
+        assertEquals("DALLAS", resultVO.getLoc());
+    }
 
-	@Rollback(false)
-	@Test
-	public void testSimpleCompositeResultMapSelect() throws Exception {
-		EmpVO vo = new EmpVO();
-		// 7369,'SMITH','CLERK',7902,'1980-12-17',800,NULL,20
-		vo.setEmpNo(new BigDecimal(7369));
-
-		// select
-		EmpDeptSimpleCompositeVO resultVO = empDAO.selectEmpDeptSimpleComposite("selectEmpDeptSimpleCompositeUsingResultMap", vo);
-
-		// check
-		assertNotNull(resultVO);
-		assertEquals(new BigDecimal(7369), resultVO.getEmpNo());
-		assertEquals("SMITH", resultVO.getEmpName());
-		assertEquals("CLERK", resultVO.getJob());
-		assertEquals(new BigDecimal(7902), resultVO.getMgr());
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault());
-		assertEquals(sdf.parse("1980-12-17"), resultVO.getHireDate());
-		assertEquals(new BigDecimal(800), resultVO.getSal());
-		// nullValue test - <result property="comm"
-		// column="COMM" .. nullValue="0" />
-		assertEquals(new BigDecimal(0), resultVO.getComm());
-		assertEquals(new BigDecimal(20), resultVO.getDeptNo());
-		assertEquals("RESEARCH", resultVO.getDeptName());
-		assertEquals("DALLAS", resultVO.getLoc());
-
-	}
 }

@@ -1,60 +1,58 @@
 package org.egovframe.rte.itl.integration.type.support;
 
+import jakarta.annotation.Resource;
+import org.egovframe.rte.itl.integration.config.TypeSupportContextConfig;
 import org.egovframe.rte.itl.integration.type.PrimitiveType;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.annotation.Resource;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import static org.junit.Assert.assertEquals;
-
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations="/org/egovframe/rte/itl/integration/type/support/context.xml")
-public class PrimitiveTypeFactoryBeanTest
-{
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = TypeSupportContextConfig.class)
+public class PrimitiveTypeFactoryBeanTest {
     @Autowired
     private BeanFactory beanFactory;
-    
-    @Resource(name="boolean")
+
+    @Resource(name = "boolean")
     private PrimitiveType booleanType;
-    
-    @Resource(name="string")
+
+    @Resource(name = "string")
     private PrimitiveType stringType;
 
-    @Resource(name="byte")
+    @Resource(name = "byte")
     private PrimitiveType byteType;
-    
-    @Resource(name="short")
+
+    @Resource(name = "short")
     private PrimitiveType shortType;
-    
-    @Resource(name="integer")
+
+    @Resource(name = "integer")
     private PrimitiveType integerType;
-    
-    @Resource(name="long")
+
+    @Resource(name = "long")
     private PrimitiveType longType;
-    
-    @Resource(name="biginteger")
+
+    @Resource(name = "biginteger")
     private PrimitiveType bigintegerType;
-    
-    @Resource(name="float")
+
+    @Resource(name = "float")
     private PrimitiveType floatType;
-    
-    @Resource(name="double")
+
+    @Resource(name = "double")
     private PrimitiveType doubleType;
-    
-    @Resource(name="bigdecimal")
+
+    @Resource(name = "bigdecimal")
     private PrimitiveType bigdecimalType;
-    
-    @Resource(name="calendar")
+
+    @Resource(name = "calendar")
     private PrimitiveType calendarType;
-    
+
     @Test
-    public void testDependencyInjection() throws Exception
-    {
+    public void testDependencyInjection() throws Exception {
         assertEquals(PrimitiveType.BOOLEAN, booleanType);
         assertEquals(PrimitiveType.STRING, stringType);
         assertEquals(PrimitiveType.BYTE, byteType);
@@ -67,10 +65,9 @@ public class PrimitiveTypeFactoryBeanTest
         assertEquals(PrimitiveType.BIGDECIMAL, bigdecimalType);
         assertEquals(PrimitiveType.CALENDAR, calendarType);
     }
-    
+
     @Test
-    public void testReference() throws Exception
-    {
+    public void testReference() throws Exception {
         assertEquals(PrimitiveType.BOOLEAN, beanFactory.getBean("boolean"));
         assertEquals(PrimitiveType.STRING, beanFactory.getBean("string"));
         assertEquals(PrimitiveType.BYTE, beanFactory.getBean("byte"));

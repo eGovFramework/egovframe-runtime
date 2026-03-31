@@ -5,30 +5,30 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.util.ObjectUtils;
 
 public class ApplicationContextProvider implements ApplicationContextAware {
-	private static ApplicationContext applicationContext;
-	private Logger logger = LoggerFactory
-			.getLogger(ApplicationContextProvider.class);
 
-	public ApplicationContextProvider() {
-		logger.info("init ApplicationContextProvider");
-	}
+    private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationContextProvider.class);
 
-	public void setApplicationContext(ApplicationContext context)
-			throws BeansException {
-		logger.info("set ApplicationContextProvider");
-		if (context == null) logger.info("ApplicationContextProvider fail set context ~!");
-		applicationContext = context;
-	}
+    private static ApplicationContext applicationContext;
 
-	public static Object getBean(String beanName) {
-		return applicationContext.getBean(beanName);
-	}
+    public ApplicationContextProvider() {
+    }
 
-	public static <T> T getBean(String beanName, Class<T> requiredType) {
-		return applicationContext.getBean(beanName, requiredType);
-	}
+    public static Object getBean(String beanName) {
+        return applicationContext.getBean(beanName);
+    }
+
+    public static <T> T getBean(String beanName, Class<T> requiredType) {
+        return applicationContext.getBean(beanName, requiredType);
+    }
+
+    public void setApplicationContext(ApplicationContext context) throws BeansException {
+        if (ObjectUtils.isEmpty(context)) {
+            LOGGER.debug("### ApplicationContextProvider fail set ApplicationContext ");
+        }
+        applicationContext = context;
+    }
+
 }
-
-

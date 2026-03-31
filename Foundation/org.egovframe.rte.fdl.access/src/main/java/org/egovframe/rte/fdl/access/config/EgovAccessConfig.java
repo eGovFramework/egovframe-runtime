@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2019 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,36 +15,65 @@
  */
 package org.egovframe.rte.fdl.access.config;
 
-import javax.sql.DataSource;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * egov-access schema namespace 처리를 담당하는 bean 클래스
  *
  * <p>Desc.: 설정 간소화 처리에 사용되는 bean으로 설정에 대한 정보를 보관</p>
  *
- * @author ESFC
- * @since 2019.10.01
+ * @author 유지보수
  * @version 3.9
  * <pre>
  * 개정이력(Modification Information)
  *
  * 수정일		수정자				수정내용
  * ----------------------------------------------
- * 2019.10.01	ESFC            최초 생성
- * 2019.12.30   신용호            mappingPath 추가
+ * 2019.10.01	유지보수			최초 생성
+ * 2019.12.30   신용호			mappingPath 추가
+ * 2024.12.19   유지보수			properties 설정 지원 및 통합
  * </pre>
+ * @since 2019.10.01
  */
 public class EgovAccessConfig {
 
+    @JsonProperty("id")
+    private String id;
+
+    @JsonProperty("globalAuthen")
     private String globalAuthen;
-    private DataSource dataSource;
+
+    @JsonProperty("mappingPath")
+    private String mappingPath;
+
+    @JsonProperty("dataSource")
+    private String dataSource;
+
+    @JsonProperty("loginUrl")
     private String loginUrl;
+
+    @JsonProperty("accessDeniedUrl")
     private String accessDeniedUrl;
+
+    @JsonProperty("sqlAuthorityUser")
     private String sqlAuthorityUser;
+
+    @JsonProperty("sqlRoleAndUrl")
     private String sqlRoleAndUrl;
+
+    @JsonProperty("requestMatcherType")
     private String requestMatcherType;
+
+    @JsonProperty("excludeList")
     private String excludeList;
-	private String mappingPath;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getGlobalAuthen() {
         return globalAuthen;
@@ -54,11 +83,19 @@ public class EgovAccessConfig {
         this.globalAuthen = globalAuthen;
     }
 
-    public DataSource getDataSource() {
+    public String getMappingPath() {
+        return mappingPath;
+    }
+
+    public void setMappingPath(String mappingPath) {
+        this.mappingPath = mappingPath;
+    }
+
+    public String getDataSource() {
         return dataSource;
     }
 
-    public void setDataSource(DataSource dataSource) {
+    public void setDataSource(String dataSource) {
         this.dataSource = dataSource;
     }
 
@@ -109,13 +146,5 @@ public class EgovAccessConfig {
     public void setExcludeList(String excludeList) {
         this.excludeList = excludeList;
     }
-
-    public String getMappingPath() {
-		return mappingPath;
-	}
-
-	public void setMappingPath(String mappingPath) {
-		this.mappingPath = mappingPath;
-	}
 
 }

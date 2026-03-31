@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 MOPAS(Ministry of Public Administration and Security).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,9 +29,8 @@ import org.springframework.util.StringUtils;
  * <p>
  * <b>NOTE:</b> 전자정부 연계 서비스의 Service interface를 구현한 abstract Service class이다
  * </p>
- * 
+ *
  * @author 실행환경 개발팀 심상호
- * @since 2009.06.01
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -41,139 +40,134 @@ import org.springframework.util.StringUtils;
  * 2009.06.01	심상호				최초 생성
  * 2017.02.13	장동한				시큐어코딩(ES)-검사시점과 사용시점(TOCTOU)[CWE-367]
  * </pre>
+ * @since 2009.06.01
  */
 public abstract class AbstractService implements EgovIntegrationService {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractService.class);
 
-	/** 연계 ID */
-	protected String id;
+    /**
+     * 연계 ID
+     */
+    protected String id;
 
-	/** default timeout */
-	protected long defaultTimeout;
+    /**
+     * default timeout
+     */
+    protected long defaultTimeout;
 
-	/**
-	 * Constructor
-	 * 
-	 * @param id
-	 *            연계 ID
-	 * @param defaultTimeout
-	 *            default timeout
-	 * @throws IllegalArgumentException
-	 *             Argument <code>id</code> 값이 <code>null</code>이거나 공백 문자인 경우
-	 */
-	public AbstractService(String id, long defaultTimeout) {
-		super();
-		if (StringUtils.hasText(id) == false) {
-			throw new IllegalArgumentException();
-		}
-		this.id = id;
-		this.defaultTimeout = defaultTimeout;
-	}
+    /**
+     * Constructor
+     *
+     * @param id             연계 ID
+     * @param defaultTimeout default timeout
+     * @throws IllegalArgumentException Argument <code>id</code> 값이 <code>null</code>이거나 공백 문자인 경우
+     */
+    public AbstractService(String id, long defaultTimeout) {
+        super();
+        if (!StringUtils.hasText(id)) {
+            throw new IllegalArgumentException();
+        }
+        this.id = id;
+        this.defaultTimeout = defaultTimeout;
+    }
 
-	public long getDefaultTimeout() {
-		return defaultTimeout;
-	}
+    public long getDefaultTimeout() {
+        return defaultTimeout;
+    }
 
-	public String getId() {
-		return id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public EgovIntegrationServiceResponse sendAsync(
-			final EgovIntegrationMessage requestMessage) {
-		LOGGER.debug("sendAsync called without Callback");
+    public EgovIntegrationServiceResponse sendAsync(final EgovIntegrationMessage requestMessage) {
+        LOGGER.debug("sendAsync called without Callback");
 
-		if (requestMessage == null) {
-			LOGGER.error("requestMessage is null");
-			throw new IllegalArgumentException();
-		}
+        if (requestMessage == null) {
+            LOGGER.debug("### AbstractService sendAsync() requestMessage is null");
+            throw new IllegalArgumentException();
+        }
 
-		LOGGER.debug("Create MessageSender without Callback");
-		MessageSender sender = new MessageSender(this, requestMessage, null);
+        LOGGER.debug("### AbstractService sendAsync() Create MessageSender without Callback");
+        MessageSender sender = new MessageSender(this, requestMessage, null);
 
-		LOGGER.debug("Start MessageSender");
-		sender.start();
+        LOGGER.debug("### AbstractService sendAsync() Start MessageSender");
+        sender.start();
 
-		return new DefaultResponse(sender, defaultTimeout);
-	}
+        return new DefaultResponse(sender, defaultTimeout);
+    }
 
-	public void sendAsync(final EgovIntegrationMessage requestMessage,
-			EgovIntegrationServiceCallback callback) {
-		LOGGER.debug("sendAsync called with Callback");
+    public void sendAsync(final EgovIntegrationMessage requestMessage, EgovIntegrationServiceCallback callback) {
+        LOGGER.debug("### AbstractService sendAsync() called with Callback");
 
-		if (requestMessage == null) {
-			LOGGER.error("requestMessage is null");
-			throw new IllegalArgumentException();
-		} else if (callback == null) {
-			LOGGER.error("callback is null");
-			throw new IllegalArgumentException();
-		}
+        if (requestMessage == null) {
+            LOGGER.debug("### AbstractService sendAsync() requestMessage is null");
+            throw new IllegalArgumentException();
+        } else if (callback == null) {
+            LOGGER.debug("### AbstractService sendAsync() callback is null");
+            throw new IllegalArgumentException();
+        }
 
-		LOGGER.debug("Create MessageSender with Callback");
-		MessageSender sender = new MessageSender(this, requestMessage, callback);
+        LOGGER.debug("### AbstractService sendAsync() Create MessageSender with Callback");
+        MessageSender sender = new MessageSender(this, requestMessage, callback);
 
-		LOGGER.debug("Start MessageSender");
-		sender.start();
-	}
+        LOGGER.debug("### AbstractService sendAsync() Start MessageSender");
+        sender.start();
+    }
 
-	public EgovIntegrationMessage sendSync(EgovIntegrationMessage requestMessage) {
-		LOGGER.debug("sendSync called without timeout");
+    public EgovIntegrationMessage sendSync(EgovIntegrationMessage requestMessage) {
+        LOGGER.debug("### AbstractService sendAsync() called without timeout");
 
-		if (requestMessage == null) {
-			LOGGER.error("requestMessage is null");
-			throw new IllegalArgumentException();
-		}
+        if (requestMessage == null) {
+            LOGGER.debug("### AbstractService sendAsync() requestMessage is null");
+            throw new IllegalArgumentException();
+        }
 
-		LOGGER.debug("call sendSync with defauleTimeout");
-		return sendSync(requestMessage, defaultTimeout);
-	}
+        LOGGER.debug("### AbstractService sendAsync() call sendSync with defauleTimeout");
+        return sendSync(requestMessage, defaultTimeout);
+    }
 
-	public EgovIntegrationMessage sendSync(
-			EgovIntegrationMessage requestMessage, long timeout) {
-		LOGGER.debug("sendSync called with timeout");
+    public EgovIntegrationMessage sendSync(EgovIntegrationMessage requestMessage, long timeout) {
+        LOGGER.debug("### AbstractService sendAsync() called with timeout");
 
-		if (requestMessage == null) {
-			LOGGER.error("requestMessage is null");
-			throw new IllegalArgumentException();
-		}
+        if (requestMessage == null) {
+            LOGGER.debug("### AbstractService sendAsync() requestMessage is null");
+            throw new IllegalArgumentException();
+        }
 
-		LOGGER.debug("Create MessageSender without Callback");
-		MessageSender sender = new MessageSender(this, requestMessage, null);
+        LOGGER.debug("### AbstractService sendAsync() Create MessageSender without Callback");
+        MessageSender sender = new MessageSender(this, requestMessage, null);
 
-		LOGGER.debug("Start MessageSender");
-		sender.start();
+        LOGGER.debug("### AbstractService sendAsync() Start MessageSender");
+        sender.start();
 
-		LOGGER.debug("Wait for the termination of MessageSender");
-		try {
-			sender.join(timeout);
-		} catch (InterruptedException e) {
-			LOGGER.debug("MessageSender was interrupted", e);
-		}
+        LOGGER.debug("### AbstractService sendAsync() Wait for the termination of MessageSender");
+        try {
+            sender.join(timeout);
+        } catch (InterruptedException e) {
+            LOGGER.debug("### AbstractService sendAsync() MessageSender was interrupted", e);
+        }
 
-		if (sender.isAlive()) {
-			LOGGER.debug("MessageSender is alive over 'timeout'.");
-			sender.interrupt();
-			EgovIntegrationMessageHeader responseHeader = new SimpleMessageHeader(
-					requestMessage.getHeader());
-			responseHeader.setResultCode(ResultCode.TIME_OUT);
+        if (sender.isAlive()) {
+            LOGGER.debug("### AbstractService sendAsync() MessageSender is alive over 'timeout'.");
+            sender.interrupt();
+            EgovIntegrationMessageHeader responseHeader = new SimpleMessageHeader(requestMessage.getHeader());
+            responseHeader.setResultCode(ResultCode.TIME_OUT);
+            return new SimpleMessage(responseHeader);
+        } else {
+            LOGGER.debug("### AbstractService sendAsync() MessageSender finished to send and receive messages.");
+            return sender.getResponseMessage();
+        }
+    }
 
-			return new SimpleMessage(responseHeader);
-		} else {
-			LOGGER.debug("MessageSender finished to send and receive messages.");
-
-			return sender.getResponseMessage();
-		}
-	}
-
-	/**
-	 * 실제 메시지를 주고 받는 method이다. timeout 값과 관계 없이 요청 메시지를 보내고 응답 메시지를 받는다. 반드시 모든
-	 * Exception을 내부에서 처리해야한다.
-	 * 
-	 * @param requestMessage
-	 *            요청 메시지
-	 * @return 응답 메시지
-	 */
-	protected abstract EgovIntegrationMessage doSend(EgovIntegrationMessage requestMessage);
+    /**
+     * 실제 메시지를 주고 받는 method이다. timeout 값과 관계 없이 요청 메시지를 보내고 응답 메시지를 받는다. 반드시 모든
+     * Exception을 내부에서 처리해야한다.
+     *
+     * @param requestMessage 요청 메시지
+     * @return 응답 메시지
+     */
+    protected abstract EgovIntegrationMessage doSend(EgovIntegrationMessage requestMessage);
 
 }
 
@@ -199,73 +193,79 @@ public abstract class AbstractService implements EgovIntegrationService {
  * <p>
  * </p>
  * <b>Copyright (C) 2008 by MOPAS All right reserved.</b>
- * 
+ *
  * @author 실행환경 개발팀 심상호
- * @since 2009. 03. 03
  * @version 1.0
  * @see
+ * @since 2009. 03. 03
  */
 class MessageSender extends Thread {
-	private static final Logger LOGGER = LoggerFactory.getLogger(MessageSender.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MessageSender.class);
 
-	/** Service */
-	protected AbstractService service;
+    /**
+     * Service
+     */
+    protected AbstractService service;
 
-	/** 요청 메시지 */
-	protected EgovIntegrationMessage requestMessage;
+    /**
+     * 요청 메시지
+     */
+    protected EgovIntegrationMessage requestMessage;
 
-	/** 응답 메시지 */
-	protected EgovIntegrationMessage responseMessage = null;
+    /**
+     * 응답 메시지
+     */
+    protected EgovIntegrationMessage responseMessage = null;
 
-	/** Callback */
-	protected EgovIntegrationServiceCallback callback = null;
+    /**
+     * Callback
+     */
+    protected EgovIntegrationServiceCallback callback = null;
 
-	/**
-	 * MessageSender를 생성한다.
-	 * 
-	 * @param service
-	 *            service
-	 * @param requestMessage
-	 *            요청 메시지
-	 */
-	public MessageSender(final AbstractService service,
-			final EgovIntegrationMessage requestMessage,
-			EgovIntegrationServiceCallback callback) {
-		super();
-		this.service = service;
-		this.requestMessage = requestMessage;
-		this.callback = callback;
-	}
+    /**
+     * MessageSender를 생성한다.
+     *
+     * @param service        service
+     * @param requestMessage 요청 메시지
+     */
+    public MessageSender(final AbstractService service,
+                         final EgovIntegrationMessage requestMessage,
+                         EgovIntegrationServiceCallback callback) {
+        super();
+        this.service = service;
+        this.requestMessage = requestMessage;
+        this.callback = callback;
+    }
 
-	/**
-	 * 응답메시지
-	 * 
-	 * @return the responseMessage
-	 */
-	public EgovIntegrationMessage getResponseMessage() {
-		return responseMessage;
-	}
+    /**
+     * 응답메시지
+     *
+     * @return the responseMessage
+     */
+    public EgovIntegrationMessage getResponseMessage() {
+        return responseMessage;
+    }
 
-	@Override
-	public void run() {
-		LOGGER.debug("MessageSender just Start");
-		//2017.02.13 장동한 시큐어코딩(ES)-검사시점과 사용시점(TOCTOU)[CWE-367]
-		synchronized(service){
-			CallbackId callbackId = null;
-			if (callback != null) {
-				callbackId = callback.createId(service, requestMessage);
-				LOGGER.debug("Create CallbackId(" + callbackId + ")");
-			}
-	
-			LOGGER.debug("Send and Receive Messages");
-			responseMessage = service.doSend(requestMessage);
-	
-			if (callback != null) {
-				LOGGER.debug("Notify to callback");
-				callback.onReceive(callbackId, responseMessage);
-			}
-		}
-	}
+    @Override
+    public void run() {
+        LOGGER.debug("### MessageSender run() MessageSender just Start");
+        //2017.02.13 장동한 시큐어코딩(ES)-검사시점과 사용시점(TOCTOU)[CWE-367]
+        synchronized (service) {
+            CallbackId callbackId = null;
+            if (callback != null) {
+                callbackId = callback.createId(service, requestMessage);
+                LOGGER.debug("### MessageSender run() Create CallbackId(" + callbackId + ")");
+            }
+
+            LOGGER.debug("### MessageSender run() Send and Receive Messages");
+            responseMessage = service.doSend(requestMessage);
+
+            if (callback != null) {
+                LOGGER.debug("### MessageSender run() Notify to callback");
+                callback.onReceive(callbackId, responseMessage);
+            }
+        }
+    }
 }
 
 /**
@@ -284,65 +284,62 @@ class MessageSender extends Thread {
  * <td>심상호</td>
  * <td>최초 생성</td>
  * </tr>
- * <p></p> 
+ * <p></p>
  * </table>
  * <b>Copyright (C) 2008 by MOPAS All right reserved.</b>
- * 
+ *
  * @author 실행환경 개발팀 심상호
- * @since 2009. 03. 03
  * @version 1.0
  * @see
+ * @since 2009. 03. 03
  */
 class DefaultResponse implements EgovIntegrationServiceResponse {
-	private static final Logger LOGGER = LoggerFactory.getLogger(DefaultResponse.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultResponse.class);
 
-	/** MessageSender */
-	protected MessageSender sender;
+    /**
+     * MessageSender
+     */
+    protected MessageSender sender;
 
-	/** default timeout(millisecond) */
-	protected long defaultTimeout;
+    /**
+     * default timeout(millisecond)
+     */
+    protected long defaultTimeout;
 
-	/**
-	 * DefaultResponse를 생성한다.
-	 * 
-	 * @param sender
-	 *            MessageSender
-	 * @param defaultTimeout
-	 *            default timeout(millisecond)
-	 */
-	public DefaultResponse(final MessageSender sender, final long defaultTimeout) {
-		super();
-		this.sender = sender;
-		this.defaultTimeout = defaultTimeout;
-	}
+    /**
+     * DefaultResponse를 생성한다.
+     *
+     * @param sender         MessageSender
+     * @param defaultTimeout default timeout(millisecond)
+     */
+    public DefaultResponse(final MessageSender sender, final long defaultTimeout) {
+        super();
+        this.sender = sender;
+        this.defaultTimeout = defaultTimeout;
+    }
 
-	public EgovIntegrationMessage receive() {
-		LOGGER.debug("receive without timeout. Call receive with defaultTimeout");
-		return receive(defaultTimeout);
-	}
+    public EgovIntegrationMessage receive() {
+        LOGGER.debug("### DefaultResponse receive() receive without timeout. Call receive with defaultTimeout");
+        return receive(defaultTimeout);
+    }
 
-	public EgovIntegrationMessage receive(long timeout) {
-		LOGGER.debug("receive with timeout");
+    public EgovIntegrationMessage receive(long timeout) {
+        LOGGER.debug("### DefaultResponse receive() wait for the termination of MessageSender");
+        try {
+            sender.join(timeout);
+        } catch (InterruptedException e) {
+            LOGGER.debug("[{}] DefaultResponse receive() MessageSender was interrupted : {}", e.getClass().getName(), e.getMessage());
+        }
 
-		LOGGER.debug("wait for the termination of MessageSender");
-		try {
-			sender.join(timeout);
-		} catch (InterruptedException e) {
-			LOGGER.debug("MessageSender was interrupted", e);
-		}
-
-		if (sender.isAlive()) {
-			LOGGER.debug("MessageSender is alive over 'timeout'");
-			sender.interrupt();
-			EgovIntegrationMessageHeader responseHeader = new SimpleMessageHeader(
-					sender.requestMessage.getHeader());
-			responseHeader.setResultCode(ResultCode.TIME_OUT);
-
-			return new SimpleMessage(responseHeader);
-		} else {
-			LOGGER.debug("MessageSender finished to send and receive messages.");
-
-			return sender.getResponseMessage();
-		}
-	}
+        if (sender.isAlive()) {
+            LOGGER.debug("### DefaultResponse receive() MessageSender is alive over 'timeout'");
+            sender.interrupt();
+            EgovIntegrationMessageHeader responseHeader = new SimpleMessageHeader(sender.requestMessage.getHeader());
+            responseHeader.setResultCode(ResultCode.TIME_OUT);
+            return new SimpleMessage(responseHeader);
+        } else {
+            LOGGER.debug("### DefaultResponse receive() MessageSender finished to send and receive messages.");
+            return sender.getResponseMessage();
+        }
+    }
 }

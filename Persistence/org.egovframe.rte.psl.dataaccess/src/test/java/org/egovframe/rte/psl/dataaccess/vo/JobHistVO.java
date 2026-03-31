@@ -6,86 +6,86 @@ import java.util.Date;
 
 public class JobHistVO implements Serializable {
 
-	private static final long serialVersionUID = 4566622742186066030L;
+    private static final long serialVersionUID = 4566622742186066030L;
 
-	private BigDecimal empNo;
+    private BigDecimal empNo;
 
-	private Date startDate;
+    private Date startDate;
 
-	private Date endDate;
+    private Date endDate;
 
-	private String job;
+    private String job;
 
-	private BigDecimal sal;
+    private BigDecimal sal;
 
-	private BigDecimal comm;
+    private BigDecimal comm;
 
-	private BigDecimal deptNo;
+    private BigDecimal deptNo;
 
-	private String chgDesc;
+    private String chgDesc;
 
-	public BigDecimal getEmpNo() {
-		return empNo;
-	}
+    public BigDecimal getEmpNo() {
+        return empNo;
+    }
 
-	public void setEmpNo(BigDecimal empNo) {
-		this.empNo = empNo;
-	}
+    public void setEmpNo(BigDecimal empNo) {
+        this.empNo = empNo;
+    }
 
-	public Date getStartDate() {
-		return startDate;
-	}
+    public Date getStartDate() {
+        return startDate;
+    }
 
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
 
-	public Date getEndDate() {
-		return endDate;
-	}
+    public Date getEndDate() {
+        return endDate;
+    }
 
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
 
-	public String getJob() {
-		return job;
-	}
+    public String getJob() {
+        return job;
+    }
 
-	public void setJob(String job) {
-		this.job = job;
-	}
+    public void setJob(String job) {
+        this.job = job;
+    }
 
-	public BigDecimal getSal() {
-		return sal;
-	}
+    public BigDecimal getSal() {
+        return sal;
+    }
 
-	public void setSal(BigDecimal sal) {
-		this.sal = sal;
-	}
+    public void setSal(BigDecimal sal) {
+        this.sal = sal;
+    }
 
-	public BigDecimal getComm() {
-		return comm;
-	}
+    public BigDecimal getComm() {
+        return comm;
+    }
 
-	public void setComm(BigDecimal comm) {
-		this.comm = comm;
-	}
+    public void setComm(BigDecimal comm) {
+        this.comm = comm;
+    }
 
-	public BigDecimal getDeptNo() {
-		return deptNo;
-	}
+    public BigDecimal getDeptNo() {
+        return deptNo;
+    }
 
-	public void setDeptNo(BigDecimal deptNo) {
-		this.deptNo = deptNo;
-	}
+    public void setDeptNo(BigDecimal deptNo) {
+        this.deptNo = deptNo;
+    }
 
-	public String getChgDesc() {
-		return chgDesc;
-	}
+    public String getChgDesc() {
+        return chgDesc;
+    }
 
-	public void setChgDesc(String chgDesc) {
-		this.chgDesc = chgDesc;
-	}
+    public void setChgDesc(String chgDesc) {
+        this.chgDesc = chgDesc;
+    }
 
 }

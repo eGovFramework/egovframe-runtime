@@ -7,9 +7,10 @@ import org.springframework.stereotype.Component;
 @Component("logLevelFatal")
 public class LogLevelFatal {
 
-	private static Logger logger = LogManager.getLogger(LogLevelFatal.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(LogLevelFatal.class.getName());
 
-	public void executeSomeLogic() {
-		logger.fatal("FATAL - LogLevelFatal.executeSomeLogic executed");
-	}
+    public void executeSomeLogic() {
+        LOGGER.fatal("FATAL - LogLevelFatal.executeSomeLogic executed");
+    }
+
 }

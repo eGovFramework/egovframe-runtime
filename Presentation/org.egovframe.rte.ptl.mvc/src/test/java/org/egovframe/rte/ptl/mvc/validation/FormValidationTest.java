@@ -1,10 +1,9 @@
 package org.egovframe.rte.ptl.mvc.validation;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockMultipartHttpServletRequest;
-import org.springframework.validation.BindException;
 import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -12,11 +11,10 @@ import org.springframework.web.bind.ServletRequestDataBinder;
 
 import java.util.Date;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- *
  * 시스템명 : 실행환경시스템
  * 서브시스템명 : 화면처리
  * 요구사항ID : REQ-RTE-112
@@ -25,117 +23,111 @@ import static org.junit.Assert.assertTrue;
  *
  * @author Ham Cheol
  */
-
 public class FormValidationTest {
 
-	@Test
-	public void testValidation() throws BindException {
+    @Test
+    public void testValidation() {
+        Employee employee = new Employee();
+        DataBinder binder = new DataBinder(employee);
+        MutablePropertyValues pvs = new MutablePropertyValues();
+        pvs.addPropertyValue("empId", "AA1000");
+        pvs.addPropertyValue("empName", "Nobody");
+        pvs.addPropertyValue("empAge", 10);
+        binder.bind(pvs);
 
-		Employee employee = new Employee();
-		DataBinder binder = new DataBinder(employee);
-		MutablePropertyValues pvs = new MutablePropertyValues();
-		pvs.addPropertyValue("empId", "AA1000");
-		pvs.addPropertyValue("empName", "Nobody");
-		pvs.addPropertyValue("empAge", 10);
-		binder.bind(pvs);
+        Validator validator = new EmployeeValidator();
+        Errors errors = binder.getBindingResult();
+        validator.validate(employee, errors);
 
-		Validator validator = new EmployeeValidator();
-		Errors errors = binder.getBindingResult();
-		validator.validate(employee, errors);
+        assertFalse(errors.hasFieldErrors("empId"));
+        assertFalse(errors.hasFieldErrors("empName"));
+        assertTrue(errors.hasFieldErrors("empAge"));
+    }
 
-		assertFalse(errors.hasFieldErrors("empId"));
-		assertFalse(errors.hasFieldErrors("empName"));
-		assertTrue(errors.hasFieldErrors("empAge"));
-	}
+    @Test
+    public void testValidationWithServletRequest() {
+        Employee employee = new Employee();
+        MockHttpServletRequest request = new MockMultipartHttpServletRequest();
+        ServletRequestDataBinder binder = new ServletRequestDataBinder(employee, "employee");
 
-	@Test
-	public void testValidationWithServletRequest() {
+        request.addParameter("empId", "AA1001");
+        request.addParameter("empName", "But You");
+        request.addParameter("empAge", "12");
 
-		Employee employee = new Employee();
-		MockHttpServletRequest request = new MockMultipartHttpServletRequest();
-		ServletRequestDataBinder binder = new ServletRequestDataBinder(employee, "employee");
+        binder.bind(request);
+        Validator validator = new EmployeeValidator();
+        Errors errors = binder.getBindingResult();
+        validator.validate(employee, errors);
 
-		request.addParameter("empId", "AA1001");
-		request.addParameter("empName", "But You");
-		request.addParameter("empAge", "12");
+        assertFalse(errors.hasFieldErrors("empId"));
+        assertFalse(errors.hasFieldErrors("empName"));
+        assertTrue(errors.hasFieldErrors("empAge"));
+    }
 
-		binder.bind(request);
-		Validator validator = new EmployeeValidator();
-		Errors errors = binder.getBindingResult();
-		validator.validate(employee, errors);
+    private class Employee {
+        private String empId;
+        private String empName;
+        private int empAge;
+        private Date birthDate;
 
-		assertFalse(errors.hasFieldErrors("empId"));
-		assertFalse(errors.hasFieldErrors("empName"));
-		assertTrue(errors.hasFieldErrors("empAge"));
-	}
+        public String getEmpId() {
+            return empId;
+        }
 
-	private class Employee {
+        @SuppressWarnings("unused")
+        public void setEmpId(String empId) {
+            this.empId = empId;
+        }
 
-		private String empId;
-		private String empName;
-		private int empAge;
-		private Date birthDate;
+        public String getEmpName() {
+            return empName;
+        }
 
-		public String getEmpId() {
-			return empId;
-		}
+        @SuppressWarnings("unused")
+        public void setEmpName(String empName) {
+            this.empName = empName;
+        }
 
-		@SuppressWarnings("unused")
-		public void setEmpId(String empId) {
-			this.empId = empId;
-		}
+        public int getEmpAge() {
+            return empAge;
+        }
 
-		public String getEmpName() {
-			return empName;
-		}
+        @SuppressWarnings("unused")
+        public void setEmpAge(int empAge) {
+            this.empAge = empAge;
+        }
 
-		@SuppressWarnings("unused")
-		public void setEmpName(String empName) {
-			this.empName = empName;
-		}
+        @SuppressWarnings("unused")
+        public Date getBirthDate() {
+            return birthDate;
+        }
 
-		public int getEmpAge() {
-			return empAge;
-		}
+        @SuppressWarnings("unused")
+        public void setBirthDate(Date birthDate) {
+            this.birthDate = birthDate;
+        }
+    }
 
-		@SuppressWarnings("unused")
-		public void setEmpAge(int empAge) {
-			this.empAge = empAge;
-		}
+    private class EmployeeValidator implements Validator {
+        public boolean supports(Class<?> clazz) {
+            return clazz.isAssignableFrom(Employee.class);
+        }
 
-		@SuppressWarnings("unused")
-		public Date getBirthDate() {
-			return birthDate;
-		}
+        public void validate(Object target, Errors errors) {
+            Employee employee = (Employee) target;
 
-		@SuppressWarnings("unused")
-		public void setBirthDate(Date birthDate) {
-			this.birthDate = birthDate;
-		}
-	}
+            if (employee.getEmpId() == null) {
+                errors.rejectValue("empId", "employee's id is required");
+            }
 
-	private class EmployeeValidator implements Validator {
+            if (employee.getEmpName() == null || employee.getEmpName().length() < 2) {
+                errors.rejectValue("empName", "employee's name is required");
+            }
 
-		public boolean supports(Class<?> clazz) {
-			return clazz.isAssignableFrom(Employee.class);
-		}
-
-		public void validate(Object target, Errors errors) {
-
-			Employee employee = (Employee) target;
-
-			if (employee.getEmpId() == null) {
-				errors.rejectValue("empId", "employee's id is required");
-			}
-
-			if (employee.getEmpName() == null || employee.getEmpName().length() < 2) {
-				errors.rejectValue("empName", "employee's name is required");
-			}
-
-			if (!(employee.getEmpAge() > 18 && employee.getEmpAge() < 65)) {
-				errors.rejectValue("empAge", "employee's age must be between 18 and 65.");
-			}
-		}
-	}
+            if (!(employee.getEmpAge() > 18 && employee.getEmpAge() < 65)) {
+                errors.rejectValue("empAge", "employee's age must be between 18 and 65.");
+            }
+        }
+    }
 
 }

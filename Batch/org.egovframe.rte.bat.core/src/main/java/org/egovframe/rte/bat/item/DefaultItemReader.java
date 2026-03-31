@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2014 MOSPA(Ministry of Security and Public Administration).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,10 +35,10 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.util.ReflectionUtils;
 
 import javax.sql.DataSource;
+import java.io.IOException;
 
 /**
  * @author 서경석
- * @since 2014.11.05
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -49,292 +49,332 @@ import javax.sql.DataSource;
  * 2014.11.28	표준프레임워크		공통컴포넌트 추가 적용 (패키지 변경)
  * 2017.02.15	장동한				시큐어코딩(ES)-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
  * </pre>
+ * @since 2014.11.05
  */
 public class DefaultItemReader<T> implements ItemStreamReader<T> {
 
-	// 실행시 사용하는 Logger
-	private static final Logger LOGGER = LoggerFactory.getLogger(DefaultItemReader.class);
-	
-	// Input Resource Type - key
-	private static final String XML_CONF_FLAG_KEY = ".reader.xml.conf.flag";
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultItemReader.class);
 
-	private static final String READER_RESOURCE_TYPE_KEY = ".reader.resource.type";
-	private static final String READER_RESOURCE_NAME_KEY = ".reader.resource.name";
-	private static final String READER_FIELD_NAMES_KEY = ".reader.field.names";
-	private static final String READER_VO_TYPE_KEY = ".reader.vo.type";
-	private static final String READER_DELIMITER_KEY = ".reader.delimiter";
-	private static final String READER_COLUMNS_KEY = ".reader.columns";
-	private static final String READER_SQL_KEY = ".reader.sql";
-	private static final String READER_PARAMS_KEY = ".reader.params";
+    private static final String XML_CONF_FLAG_KEY = ".reader.xml.conf.flag";
+    private static final String READER_RESOURCE_TYPE_KEY = ".reader.resource.type";
+    private static final String READER_RESOURCE_NAME_KEY = ".reader.resource.name";
+    private static final String READER_FIELD_NAMES_KEY = ".reader.field.names";
+    private static final String READER_VO_TYPE_KEY = ".reader.vo.type";
+    private static final String READER_DELIMITER_KEY = ".reader.delimiter";
+    private static final String READER_COLUMNS_KEY = ".reader.columns";
+    private static final String READER_SQL_KEY = ".reader.sql";
+    private static final String READER_PARAMS_KEY = ".reader.params";
+    private static final String DELIMITED_FILE_TYPE = "delimitedFile";
+    private static final String FIXED_LENGTH_FILE_TYPE = "fixedLengthFile";
+    private static final String JDBC_DB_TYPE = "jdbcDb";
 
-	// Input Resource Type - Value
-	private static final String DELIMITED_FILE_TYPE = "delimitedFile";
-	private static final String FIXED_LENGTH_FILE_TYPE = "fixedLengthFile";
-	private static final String JDBC_DB_TYPE = "jdbcDb";
+    /**
+     * XML 설정 내용을 출력하기 위한 설정
+     */
+    boolean printXmlConf = false;
 
-	// XML 설정 내용을 출력하기 위한 설정
-	boolean printXmlConf = false;
+    /**
+     * 실제 동작하는 Reader
+     */
+    ItemReader<T> reader;
 
-	// 실제 동작하는 Reader
-	ItemReader<T> reader;
+    /**
+     * 공통 설정
+     */
+    String stepName;
+    JobParameters jobParameters;
+    String readerResourceType;
 
-	// 공통 설정
-	String stepName;
-	JobParameters jobParameters;
-	String readerResourceType;
+    /**
+     * File 입력인 경우 사용되는 설정
+     */
+    Resource resource;
+    String resourceName;
+    String[] fieldNames;
+    String names;
+    Class voType;
+    String delimiter;
+    Range[] ranges;
+    String columns;
 
-	// File 입력인 경우 사용되는 설정
-	Resource resource;		// 공통
-	String resourceName;
-	String[] fieldNames;	// 공통
-	String names;
-	@SuppressWarnings("rawtypes")
-	Class voType;			// 공통
-	String delimiter;		// delimited 방식인 경우
-	Range[] ranges;			// fixedLength 방식인 경우
-	String columns;			// (fixedLength 방식인 경우)
+    /**
+     * DB 입력인 경우 사용되는 설정
+     */
+    private DataSource dataSource;
+    private String sql;
+    private String[] params;
 
-	// DB 입력인 경우 사용되는 설정
-	// DB 입력인 경우 사용되는 설정
-	private DataSource dataSource;
-	private String sql;
-	@SuppressWarnings("unused")
-	private String[] params;
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
-	}
+    @BeforeStep
+    public void beforeStep(StepExecution stepExecution) {
+        this.stepName = stepExecution.getStepName();
+        this.jobParameters = stepExecution.getJobParameters();
+        String flag = jobParameters.getString(stepName + XML_CONF_FLAG_KEY);
+        if ((flag != null) && "true".equalsIgnoreCase(flag)) {
+            printXmlConf = true;
+        }
+        makeReaderConfigValue();
+    }
 
-	@BeforeStep
-	public void beforeStep(StepExecution stepExecution) {
-	    this.stepName = stepExecution.getStepName();
-	    this.jobParameters = stepExecution.getJobParameters();
-	    String flag = jobParameters.getString(stepName + XML_CONF_FLAG_KEY);
-	    if((flag != null) && "true".equalsIgnoreCase(flag)) {
-	    	printXmlConf = true;
-	    }
-	    makeReaderConfigValue();
-	}
+    @Override
+    public void close() throws ItemStreamException {
+        if (this.reader instanceof ItemStream) {
+            ((ItemStream) this.reader).close();
+        }
+    }
 
-	@Override
-	public void close() throws ItemStreamException {
-		if(this.reader instanceof ItemStream) {
-			((ItemStream) this.reader).close();
-		}
-	}
+    @Override
+    public void open(ExecutionContext executionContext) throws ItemStreamException {
+        makeItemReader();
+        if (this.reader instanceof ItemStream) {
+            ((ItemStream) this.reader).open(executionContext);
+        }
+    }
 
-	@Override
-	public void open(ExecutionContext executionContext) throws ItemStreamException {
-		makeItemReader();
-		if(this.reader instanceof ItemStream) {
-			((ItemStream) this.reader).open(executionContext);
-		}
-	}
+    @Override
+    public void update(ExecutionContext executionContext) throws ItemStreamException {
+        if (this.reader instanceof ItemStream) {
+            ((ItemStream) this.reader).update(executionContext);
+        }
+    }
 
-	@Override
-	public void update(ExecutionContext executionContext) throws ItemStreamException {
-		if(this.reader instanceof ItemStream) {
-			((ItemStream) this.reader).update(executionContext);
-		}
-	}
+    @Override
+    public T read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
+        return reader.read();
+    }
 
-	@Override
-	public T read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
-		return reader.read();
-	}
+    // Input Resource Type 별로 설정 값 세팅
+    private void makeReaderConfigValue() {
+        if (jobParameters.getString(stepName + READER_RESOURCE_TYPE_KEY) != null) {
+            this.readerResourceType = jobParameters.getString(stepName + READER_RESOURCE_TYPE_KEY);
+            if (DELIMITED_FILE_TYPE.equalsIgnoreCase(this.readerResourceType) || FIXED_LENGTH_FILE_TYPE.equalsIgnoreCase(this.readerResourceType)) {
+                // 입력 리소스가 File인 경우 공통 처리 부분
+                this.resourceName = jobParameters.getString(stepName + READER_RESOURCE_NAME_KEY);
+                this.names = jobParameters.getString(stepName + READER_FIELD_NAMES_KEY);
+                String type = jobParameters.getString(stepName + READER_VO_TYPE_KEY);
+                if (DELIMITED_FILE_TYPE.equalsIgnoreCase(this.readerResourceType)) {
+                    this.delimiter = jobParameters.getString(stepName + READER_DELIMITER_KEY);
+                    if (resourceName == null || this.delimiter == null || names == null || type == null) {
+                        throw new RuntimeException(stepName + "스텝의 Reader 설정에서 resourceName, delimiter, names, type 은 필수입니다. 다음 처럼 설정하세요.\n"
+                                + stepName + READER_RESOURCE_NAME_KEY + "=./inputs/csvData.csv "
+                                + stepName + READER_DELIMITER_KEY + "=, "
+                                + stepName + READER_FIELD_NAMES_KEY + "=name,age "
+                                + stepName + READER_VO_TYPE_KEY + "=aa.bb.TestVo");
+                    }
+                } else if (FIXED_LENGTH_FILE_TYPE.equalsIgnoreCase(this.readerResourceType)) {
+                    this.columns = jobParameters.getString(stepName + READER_COLUMNS_KEY);
+                    if (resourceName == null || columns == null || names == null || type == null) {
+                        throw new RuntimeException(stepName + "스텝의 Reader 설정에서 resourceName, columns, names, type 은 필수입니다. 다음 처럼 설정하세요.\n"
+                                + stepName + READER_RESOURCE_NAME_KEY + "=./inputs/csvData.csv "
+                                + stepName + READER_COLUMNS_KEY + "=1-9,10-11 "
+                                + stepName + READER_FIELD_NAMES_KEY + "=name,age "
+                                + stepName + READER_VO_TYPE_KEY + "=aa.bb.TestVo");
+                    }
+                    String[] columnArray = columns.split(",");
+                    ranges = new Range[columnArray.length];
+                    for (int idx = 0; idx < columnArray.length; idx++) {
+                        ranges[idx] = new Range(Integer.parseInt(columnArray[idx].split("-")[0]), Integer.parseInt(columnArray[idx].split("-")[1]));
+                    }
+                }
+                this.resource = new FileSystemResource(resourceName);
+                if (names != null) {
+                    this.fieldNames = names.split(",");
+                }
+                try {
+                    this.voType = Class.forName(type);
+                } catch (ClassNotFoundException e) {
+                    ReflectionUtils.handleReflectionException(e);
+                }
+            } else if (JDBC_DB_TYPE.equalsIgnoreCase(this.readerResourceType)) {
+                this.sql = jobParameters.getString(stepName + READER_SQL_KEY);
+                String tempParams = jobParameters.getString(stepName + READER_PARAMS_KEY);
+                String type = jobParameters.getString(stepName + READER_VO_TYPE_KEY);
+                if (this.sql == null || type == null) {
+                    throw new RuntimeException(stepName + "스텝의 Writer 설정에서 sql, type 는 필수입니다. 다음 처럼 설정하세요.\n"
+                            + stepName + ".writer.sql=select ID, NAME, CREDIT from CUSTOMER "
+                            + stepName + ".writer.params=credit,name "
+                            + stepName + READER_VO_TYPE_KEY + "=aa.bb.TestVo");
+                }
+                if (tempParams != null) {
+                    this.params = tempParams.split(",");
+                }
+                try {
+                    this.voType = Class.forName(type);
+                } catch (ClassNotFoundException e) {
+                    ReflectionUtils.handleReflectionException(e);
+                }
+            }
+        } else {
+            throw new RuntimeException(stepName
+                    + READER_RESOURCE_TYPE_KEY + "=delimitedFile'처럼, 입력 리소스 타입을 Job 파라미터로 입력하세요.\n"
+                    + "리소스 타입 종류) delimitedFile, fixedLengthFile, jdbcDb");
+        }
+    }
 
-	// Input Resource Type 별로 설정 값 세팅
-	private void makeReaderConfigValue() {
-		if(jobParameters.getString(stepName + READER_RESOURCE_TYPE_KEY) != null) {
-			this.readerResourceType = jobParameters.getString(stepName + READER_RESOURCE_TYPE_KEY);
-		    if(DELIMITED_FILE_TYPE.equalsIgnoreCase(this.readerResourceType) || FIXED_LENGTH_FILE_TYPE.equalsIgnoreCase(this.readerResourceType)) {
-		    	// 입력 리소스가 File인 경우 공통 처리 부분
-		    	this.resourceName = jobParameters.getString(stepName + READER_RESOURCE_NAME_KEY);
-		    	this.names = jobParameters.getString(stepName + READER_FIELD_NAMES_KEY);
-		    	String type = jobParameters.getString(stepName + READER_VO_TYPE_KEY);
-		    	if(DELIMITED_FILE_TYPE.equalsIgnoreCase(this.readerResourceType)){
-		    		this.delimiter = jobParameters.getString(stepName + READER_DELIMITER_KEY);
-				    if(resourceName == null || this.delimiter == null || names == null || type == null) {
-				    	throw new RuntimeException(stepName + "스텝의 Reader 설정에서 resourceName, delimiter, names, type 은 필수입니다. 다음 처럼 설정하세요.\n"
-				    			+ stepName + READER_RESOURCE_NAME_KEY + "=./inputs/csvData.csv "
-				    			+ stepName + READER_DELIMITER_KEY + "=, "
-				    			+ stepName + READER_FIELD_NAMES_KEY + "=name,age "
-				    			+ stepName + READER_VO_TYPE_KEY + "=aa.bb.TestVo" );
-				    }
-			    } else if(FIXED_LENGTH_FILE_TYPE.equalsIgnoreCase(this.readerResourceType)) {
-			    	this.columns = jobParameters.getString(stepName + READER_COLUMNS_KEY);
-			    	if(resourceName == null || columns == null || names == null || type == null) {
-				    	throw new RuntimeException(stepName + "스텝의 Reader 설정에서 resourceName, columns, names, type 은 필수입니다. 다음 처럼 설정하세요.\n"
-				    			+ stepName + READER_RESOURCE_NAME_KEY + "=./inputs/csvData.csv "
-				    			+ stepName + READER_COLUMNS_KEY + "=1-9,10-11 "
-				    			+ stepName + READER_FIELD_NAMES_KEY + "=name,age "
-				    			+ stepName + READER_VO_TYPE_KEY + "=aa.bb.TestVo"  );
-				    }
-				    String[] columnArray = columns.split(",");
-				    ranges = new Range[columnArray.length];
-				    for(int idx=0; idx<columnArray.length; idx++) {
-				    	ranges[idx] = new Range(Integer.parseInt(columnArray[idx].split("-")[0]), Integer.parseInt(columnArray[idx].split("-")[1]));
-				    }
-			    }
-		    	this.resource = new FileSystemResource(resourceName);
-			    if (names != null) {
-					this.fieldNames = names.split(",");
-				}
-			    try {
-					this.voType = Class.forName(type);
-				} catch (ClassNotFoundException e) {
-					ReflectionUtils.handleReflectionException(e);
-				}
-		    } else if(JDBC_DB_TYPE.equalsIgnoreCase(this.readerResourceType)){
-				this.sql = jobParameters.getString(stepName + READER_SQL_KEY);
-				String tempParams = jobParameters.getString(stepName + READER_PARAMS_KEY);
-				String type = jobParameters.getString(stepName + READER_VO_TYPE_KEY);
-				if(this.sql == null || type == null) {
-			    	throw new RuntimeException(stepName + "스텝의 Writer 설정에서 sql, type 는 필수입니다. 다음 처럼 설정하세요.\n"
-			    			+ stepName + ".writer.sql=select ID, NAME, CREDIT from CUSTOMER "
-							+ stepName + ".writer.params=credit,name "
-							+ stepName + READER_VO_TYPE_KEY + "=aa.bb.TestVo");
-			    }
-				if (tempParams != null) {
-					this.params = tempParams.split(",");
-				}
-			    try {
-					this.voType = Class.forName(type);
-				} catch (ClassNotFoundException e) {
-					ReflectionUtils.handleReflectionException(e);
-				}
-		    }
-		} else {
-		    throw new RuntimeException(stepName
-					+ READER_RESOURCE_TYPE_KEY + "=delimitedFile'처럼, 입력 리소스 타입을 Job 파라미터로 입력하세요.\n"
-					+ "리소스 타입 종류) delimitedFile, fixedLengthFile, jdbcDb");
-		}
-	}
+    private EgovDelimitedLineTokenizer makeEgovDelimitedLineTokenizer() {
+        EgovDelimitedLineTokenizer tokenizer = new EgovDelimitedLineTokenizer();
+        tokenizer.setDelimiter(this.delimiter);
+        return tokenizer;
+    }
 
-	private EgovDelimitedLineTokenizer makeEgovDelimitedLineTokenizer() {
-		EgovDelimitedLineTokenizer tokenizer = new EgovDelimitedLineTokenizer();
-		tokenizer.setDelimiter(this.delimiter);
-		return tokenizer;
-	}
+    private EgovFixedLengthTokenizer makeEgovFixedLengthTokenizer() {
+        EgovFixedLengthTokenizer tokenizer = new EgovFixedLengthTokenizer();
+        tokenizer.setColumns(this.ranges);
+        return tokenizer;
+    }
 
-	private EgovFixedLengthTokenizer makeEgovFixedLengthTokenizer() {
-		EgovFixedLengthTokenizer tokenizer = new EgovFixedLengthTokenizer();
-		tokenizer.setColumns(this.ranges);
-		return tokenizer;
-	}
+    @SuppressWarnings("unchecked")
+    private EgovObjectMapper<T> makeEgovObjectMapper() {
+        EgovObjectMapper<T> objectMapper = new EgovObjectMapper<T>();
+        objectMapper.setNames(fieldNames);
+        objectMapper.setType(voType);
+        objectMapper.afterPropertiesSet();
+        return objectMapper;
+    }
 
-	@SuppressWarnings("unchecked")
-	private EgovObjectMapper<T> makeEgovObjectMapper() {
-		EgovObjectMapper<T> objectMapper = new EgovObjectMapper<T>();
-		objectMapper.setNames(fieldNames);
-		objectMapper.setType(voType);
-		objectMapper.afterPropertiesSet();
-		return objectMapper;
-	}
+    private EgovDefaultLineMapper<T> makeEgovDefaultLineMapper(EgovLineTokenizer<T> tokenizer, EgovObjectMapper<T> objectMapper) {
+        EgovDefaultLineMapper<T> lineMapper = new EgovDefaultLineMapper<T>();
+        lineMapper.setLineTokenizer(tokenizer);
+        lineMapper.setObjectMapper(objectMapper);
+        lineMapper.afterPropertiesSet();
+        return lineMapper;
+    }
 
-	private EgovDefaultLineMapper<T> makeEgovDefaultLineMapper(EgovLineTokenizer<T> tokenizer, EgovObjectMapper<T> objectMapper) {
-		EgovDefaultLineMapper<T> lineMapper = new EgovDefaultLineMapper<T>();
-		lineMapper.setLineTokenizer(tokenizer);
-		lineMapper.setObjectMapper(objectMapper);
-		lineMapper.afterPropertiesSet();
-		return lineMapper;
-	}
+    // 2026.02.28 KISA 보안취약점 조치
+    // Job 파라미터에 따른 다중 타입 Reader 생성 - Job 파라미터 값 검증 및 Reader 생성 실패 시 자원 해제
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private void makeItemReader() {
+        if (DELIMITED_FILE_TYPE.equalsIgnoreCase(this.readerResourceType) || FIXED_LENGTH_FILE_TYPE.equalsIgnoreCase(this.readerResourceType)) {
+            EgovLineTokenizer tokenizer;
+            if (DELIMITED_FILE_TYPE.equalsIgnoreCase(this.readerResourceType)) {
+                tokenizer = makeEgovDelimitedLineTokenizer();
+            } else {
+                tokenizer = makeEgovFixedLengthTokenizer();
+            }
+            EgovObjectMapper<T> objectMapper = makeEgovObjectMapper();
+            EgovDefaultLineMapper<T> lineMapper = makeEgovDefaultLineMapper(tokenizer, objectMapper);
+            this.reader = new FlatFileItemReader<T>();
+            // 2026.02.28 KISA 보안취약점 조치
+            try {
+                ((FlatFileItemReader<T>) this.reader).setLineMapper(lineMapper);
+                ((FlatFileItemReader<T>) this.reader).setResource(resource);
+                ((FlatFileItemReader<T>) this.reader).afterPropertiesSet();
+            } catch (IllegalArgumentException e) {
+                closeReaderOnFailure();
+                throw new RuntimeException("[" + e.getClass().getSimpleName() + "] " + this.readerResourceType + " 타입의 File을 read 하기 위한 FlatFileItemReader 생성에 실패 하였습니다. : " + e.getMessage(), e);
+            } catch (IllegalStateException e) {
+                closeReaderOnFailure();
+                throw new RuntimeException("[" + e.getClass().getSimpleName() + "] " + this.readerResourceType + " 타입의 File을 read 하기 위한 FlatFileItemReader 생성에 실패 하였습니다. : " + e.getMessage(), e);
+            } catch (IOException e) {
+                closeReaderOnFailure();
+                throw new RuntimeException("[" + e.getClass().getSimpleName() + "] " + this.readerResourceType + " 타입의 File을 read 하기 위한 FlatFileItemReader 생성에 실패 하였습니다. : " + e.getMessage(), e);
+            } catch (Exception e) {
+                closeReaderOnFailure();
+                throw new RuntimeException("[" + e.getClass().getSimpleName() + "] " + this.readerResourceType + " 타입의 File을 read 하기 위한 FlatFileItemReader 생성에 실패 하였습니다. : " + e.getMessage(), e);
+            }
+        } else if (JDBC_DB_TYPE.equalsIgnoreCase(this.readerResourceType)) {
+            BeanPropertyRowMapper rowMapper = new BeanPropertyRowMapper();
+            rowMapper.setMappedClass(this.voType);
+            this.reader = new JdbcCursorItemReader();
+            // 2026.02.28 KISA 보안취약점 조치
+            try {
+                ((JdbcCursorItemReader) this.reader).setDataSource(this.dataSource);
+                ((JdbcCursorItemReader) this.reader).setRowMapper(rowMapper);
+                ((JdbcCursorItemReader) this.reader).setSql(this.sql);
+                ((JdbcCursorItemReader) this.reader).afterPropertiesSet();
+            } catch (IllegalArgumentException e) {
+                closeReaderOnFailure();
+                throw new RuntimeException("[" + e.getClass().getSimpleName() + "] " + this.readerResourceType + " 타입의 DB을 read 하기 위한 JdbcCursorItemReader 생성에 실패 하였습니다. : " + e.getMessage(), e);
+            } catch (IllegalStateException e) {
+                closeReaderOnFailure();
+                throw new RuntimeException("[" + e.getClass().getSimpleName() + "] " + this.readerResourceType + " 타입의 DB을 read 하기 위한 JdbcCursorItemReader 생성에 실패 하였습니다. : " + e.getMessage(), e);
+            } catch (Exception e) {
+                closeReaderOnFailure();
+                throw new RuntimeException("[" + e.getClass().getSimpleName() + "] " + this.readerResourceType + " 타입의 DB을 read 하기 위한 JdbcCursorItemReader 생성에 실패 하였습니다. : " + e.getMessage(), e);
+            }
+        }
+        printXmlConfig();
+    }
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private void makeItemReader() {
-		if (DELIMITED_FILE_TYPE.equalsIgnoreCase(this.readerResourceType) || FIXED_LENGTH_FILE_TYPE.equalsIgnoreCase(this.readerResourceType)) {
-			EgovLineTokenizer tokenizer;
-			if (DELIMITED_FILE_TYPE.equalsIgnoreCase(this.readerResourceType)) {
-				tokenizer = makeEgovDelimitedLineTokenizer();
-			} else {
-				tokenizer = makeEgovFixedLengthTokenizer();
-			}
-			EgovObjectMapper<T> objectMapper = makeEgovObjectMapper();
-			EgovDefaultLineMapper<T> lineMapper = makeEgovDefaultLineMapper(tokenizer, objectMapper);
-			this.reader = new FlatFileItemReader<T>();
-			try {
-				((FlatFileItemReader<T>)this.reader).setLineMapper(lineMapper);
-				((FlatFileItemReader<T>)this.reader).setResource(resource);
-				((FlatFileItemReader<T>)this.reader).afterPropertiesSet();
-			} catch (Exception e) {
-				//2017.02.15 장동한 시큐어코딩(ES)-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
-				throw new RuntimeException("["+e.getClass()+"]"+this.readerResourceType + " 타입의 File을 read 하기 위한 FlatFileItemReader 생성에 실패 하였습니다.("+e.getMessage()+")");
-			}
-		} else if(JDBC_DB_TYPE.equalsIgnoreCase(this.readerResourceType)) {
-			BeanPropertyRowMapper rowMapper = new BeanPropertyRowMapper();
-			rowMapper.setMappedClass(this.voType);
-			this.reader = new JdbcCursorItemReader();
-			try {
-				((JdbcCursorItemReader)this.reader).setDataSource(this.dataSource);
-				((JdbcCursorItemReader)this.reader).setRowMapper(rowMapper);
-				((JdbcCursorItemReader)this.reader).setSql(this.sql);
-				((JdbcCursorItemReader)this.reader).afterPropertiesSet();
-			} catch (Exception e) {
-				//2017.02.15 장동한 시큐어코딩(ES)-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
-				throw new RuntimeException("["+e.getClass()+"]"+this.readerResourceType + " 타입의 DB을 read 하기 위한 JdbcCursorItemReader 생성에 실패 하였습니다.("+e.getMessage()+")");
-			}
-		}
-		printXmlConfig();
-	}
+    // 2026.03.24 KISA 보안취약점 조치
+    // makeItemReader 초기화 실패 시 생성된 reader의 자원을 해제한다.
+    private void closeReaderOnFailure() {
+        if (this.reader != null) {
+            try {
+                if (this.reader instanceof ItemStream) {
+                    ((ItemStream) this.reader).close();
+                }
+            } catch (ItemStreamException e) {
+                LOGGER.debug("[" + e.getClass().getSimpleName() + "] " + "Reader close failed during cleanup after init failure: {}", e.getMessage());
+            } catch (Exception e) {
+                LOGGER.debug("[" + e.getClass().getSimpleName() + "] " + "Reader close failed during cleanup after init failure: {}", e.getMessage());
+            } finally {
+                this.reader = null;
+            }
+        }
+    }
 
-	private void printXmlConfig() {
-		if(printXmlConf) {
-			if(DELIMITED_FILE_TYPE.equalsIgnoreCase(this.readerResourceType)) {
-				System.out.println("======= " + stepName + " READER 설정(XML 버전) =========\n"
-					+ "<bean id=\"" + stepName + ".reader\" class=\"org.springframework.batch.item.file.FlatFileItemReader\" scope=\"step\">\n"
-					+ "  <property name=\"resource\" value=\"" + this.resourceName + "\" />\n"
-					+ "  <property name=\"lineMapper\">\n"
-					+ "    <bean class=\"org.egovframe.rte.bat.core.item.file.mapping.EgovDefaultLineMapper\">\n"
-					+ "      <property name=\"lineTokenizer\">\n"
-					+ "        <bean class=\"org.egovframe.rte.bat.core.item.file.transform.EgovDelimitedLineTokenizer\">\n"
-					+ "          <property name=\"delimiter\" value=\"" + this.delimiter + "\" />\n"
-					+ "        </bean>\n"
-					+ "      </property>\n"
-					+ "      <property name=\"objectMapper\">\n"
-					+ "        <bean class=\"org.egovframe.rte.bat.core.item.file.mapping.EgovObjectMapper\">\n"
-					+ "          <property name=\"type\" value=\"" + voType.getName() + "\" />\n"
-					+ "          <property name=\"names\" value=\"" + this.names + "\" />\n"
-					+ "        </bean>\n"
-					+ "      </property>\n"
-					+ "    </bean>\n"
-					+ "  </property>\n"
-					+ "</bean>\n"
-					+ "================================================");
-			} else if(FIXED_LENGTH_FILE_TYPE.equalsIgnoreCase(this.readerResourceType)) {
-				System.out.println("======= " + stepName + " READER 설정(XML 버전) =========\n"
-						+ "<bean id=\"" + stepName + ".reader\" class=\"org.springframework.batch.item.file.FlatFileItemReader\" scope=\"step\">\n"
-						+ "  <property name=\"resource\" value=\"" + this.resourceName + "\" />\n"
-						+ "  <property name=\"lineMapper\">\n"
-						+ "    <bean class=\"org.egovframe.rte.bat.core.item.file.mapping.EgovDefaultLineMapper\">\n"
-						+ "      <property name=\"lineTokenizer\">\n"
-						+ "        <bean class=\"org.egovframe.rte.bat.core.item.file.transform.EgovFixedLengthTokenizer\">\n"
-						+ "          <property name=\"columns\" value=\"" + this.columns + "\" />\n"
-						+ "        </bean>\n"
-						+ "      </property>\n"
-						+ "      <property name=\"objectMapper\">\n"
-						+ "        <bean class=\"org.egovframe.rte.bat.core.item.file.mapping.EgovObjectMapper\">\n"
-						+ "          <property name=\"type\" value=\"" + voType.getName() + "\" />\n"
-						+ "          <property name=\"names\" value=\"" + this.names + "\" />\n"
-						+ "        </bean>\n"
-						+ "      </property>\n"
-						+ "    </bean>\n"
-						+ "  </property>\n"
-						+ "</bean>\n"
-						+ "================================================");
-			} else if(JDBC_DB_TYPE.equalsIgnoreCase(this.readerResourceType)){
-				System.out.println("======= " + stepName + " READER 설정(XML 버전) =========\n"
-						+ "<bean id=\"" + stepName + ".reader\" class=\"org.springframework.batch.item.database.JdbcCursorItemReader\" scope=\"step\">\n"
-						+ "  <property name=\"dataSource\" ref=\"dataSource\" />\n"
-						+ "  <property name=\"sql\" value=\"" + this.sql + "\" />\n"
-						+ "  <property name=\"rowMapper\">\n"
-						+ "    <bean class=\"org.springframework.jdbc.core.BeanPropertyRowMapper\" />\n"
-						+ "      <property name=\"mappedClass\" value=\"" + voType.getName() + "\">\n"
-						+ "  </bean>\n"
-						+ "</property>\n"
-						+ "</bean>\n"
-						+ "================================================");
-			}
-		}
-	}
+    private void printXmlConfig() {
+        if (printXmlConf) {
+            if (DELIMITED_FILE_TYPE.equalsIgnoreCase(this.readerResourceType)) {
+                System.out.println("======= " + stepName + " READER 설정(XML 버전) =========\n"
+                        + "<bean id=\"" + stepName + ".reader\" class=\"org.springframework.batch.item.file.FlatFileItemReader\" scope=\"step\">\n"
+                        + "  <property name=\"resource\" value=\"" + this.resourceName + "\" />\n"
+                        + "  <property name=\"lineMapper\">\n"
+                        + "    <bean class=\"org.egovframe.rte.bat.core.item.file.mapping.EgovDefaultLineMapper\">\n"
+                        + "      <property name=\"lineTokenizer\">\n"
+                        + "        <bean class=\"org.egovframe.rte.bat.core.item.file.transform.EgovDelimitedLineTokenizer\">\n"
+                        + "          <property name=\"delimiter\" value=\"" + this.delimiter + "\" />\n"
+                        + "        </bean>\n"
+                        + "      </property>\n"
+                        + "      <property name=\"objectMapper\">\n"
+                        + "        <bean class=\"org.egovframe.rte.bat.core.item.file.mapping.EgovObjectMapper\">\n"
+                        + "          <property name=\"type\" value=\"" + voType.getName() + "\" />\n"
+                        + "          <property name=\"names\" value=\"" + this.names + "\" />\n"
+                        + "        </bean>\n"
+                        + "      </property>\n"
+                        + "    </bean>\n"
+                        + "  </property>\n"
+                        + "</bean>\n"
+                        + "================================================");
+            } else if (FIXED_LENGTH_FILE_TYPE.equalsIgnoreCase(this.readerResourceType)) {
+                System.out.println("======= " + stepName + " READER 설정(XML 버전) =========\n"
+                        + "<bean id=\"" + stepName + ".reader\" class=\"org.springframework.batch.item.file.FlatFileItemReader\" scope=\"step\">\n"
+                        + "  <property name=\"resource\" value=\"" + this.resourceName + "\" />\n"
+                        + "  <property name=\"lineMapper\">\n"
+                        + "    <bean class=\"org.egovframe.rte.bat.core.item.file.mapping.EgovDefaultLineMapper\">\n"
+                        + "      <property name=\"lineTokenizer\">\n"
+                        + "        <bean class=\"org.egovframe.rte.bat.core.item.file.transform.EgovFixedLengthTokenizer\">\n"
+                        + "          <property name=\"columns\" value=\"" + this.columns + "\" />\n"
+                        + "        </bean>\n"
+                        + "      </property>\n"
+                        + "      <property name=\"objectMapper\">\n"
+                        + "        <bean class=\"org.egovframe.rte.bat.core.item.file.mapping.EgovObjectMapper\">\n"
+                        + "          <property name=\"type\" value=\"" + voType.getName() + "\" />\n"
+                        + "          <property name=\"names\" value=\"" + this.names + "\" />\n"
+                        + "        </bean>\n"
+                        + "      </property>\n"
+                        + "    </bean>\n"
+                        + "  </property>\n"
+                        + "</bean>\n"
+                        + "================================================");
+            } else if (JDBC_DB_TYPE.equalsIgnoreCase(this.readerResourceType)) {
+                System.out.println("======= " + stepName + " READER 설정(XML 버전) =========\n"
+                        + "<bean id=\"" + stepName + ".reader\" class=\"org.springframework.batch.item.database.JdbcCursorItemReader\" scope=\"step\">\n"
+                        + "  <property name=\"dataSource\" ref=\"dataSource\" />\n"
+                        + "  <property name=\"sql\" value=\"" + this.sql + "\" />\n"
+                        + "  <property name=\"rowMapper\">\n"
+                        + "    <bean class=\"org.springframework.jdbc.core.BeanPropertyRowMapper\" />\n"
+                        + "      <property name=\"mappedClass\" value=\"" + voType.getName() + "\">\n"
+                        + "  </bean>\n"
+                        + "</property>\n"
+                        + "</bean>\n"
+                        + "================================================");
+            }
+        }
+    }
 
 }

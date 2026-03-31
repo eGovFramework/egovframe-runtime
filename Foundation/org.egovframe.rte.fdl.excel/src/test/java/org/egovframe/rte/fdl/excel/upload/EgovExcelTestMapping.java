@@ -10,30 +10,23 @@ import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 
-/**
- * @author sjyoon
- *
- */
 public class EgovExcelTestMapping extends EgovExcelMapping {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(EgovExcelTestMapping.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EgovExcelTestMapping.class);
 
-	@Override
-	public EmpVO mappingColumn(Row row) {
-		Cell cell0 = row.getCell(0);
-    	Cell cell1 = row.getCell(1);
-    	Cell cell2 = row.getCell(2);
+    @Override
+    public EmpVO mappingColumn(Row row) {
+        Cell cell0 = row.getCell(0);
+        Cell cell1 = row.getCell(1);
+        Cell cell2 = row.getCell(2);
 
-		EmpVO vo = new EmpVO();
+        EmpVO vo = new EmpVO();
 
-		vo.setEmpNo(new BigDecimal(cell0.getNumericCellValue()));
-		vo.setEmpName(EgovExcelUtil.getValue(cell1));
-		vo.setJob(EgovExcelUtil.getValue(cell2));
+        vo.setEmpNo(BigDecimal.valueOf(cell0.getNumericCellValue()));
+        vo.setEmpName(EgovExcelUtil.getValue(cell1));
+        vo.setJob(EgovExcelUtil.getValue(cell2));
 
-		LOGGER.debug("########### vo is {}", vo.getEmpNo());
-		LOGGER.debug("########### vo is {}", vo.getEmpName());
-		LOGGER.debug("########### vo is {}", vo.getJob());
+        return vo;
+    }
 
-		return vo;
-	}
 }

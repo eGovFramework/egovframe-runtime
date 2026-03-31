@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 MOPAS(Ministry of Public Administration and Security).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,9 +23,8 @@ import org.egovframe.rte.itl.integration.metadata.OrganizationDefinition;
  * <b>NOTE:</b> 전자정부 연계 서비스 메타 데이터의 OrganizationDefinition 을 읽어오기 위한 Data Access
  * </p>
  * Object interface이다.
- * 
+ *
  * @author 실행환경 개발팀 심상호
- * @since 2009.06.01
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -34,16 +33,16 @@ import org.egovframe.rte.itl.integration.metadata.OrganizationDefinition;
  * ----------------------------------------------
  * 2009.06.01	심상호				최초 생성
  * </pre>
+ * @since 2009.06.01
  */
 public interface OrganizationDefinitionDao {
 
-	/**
-	 * 기관 primary key (<code>id</code>)로 등록되어 잇는 OrganizationDefinition을 읽어온다.
-	 * 
-	 * @param id
-	 *            기관 ID
-	 * @return OrganizationDefinitino, 해당하는 값이 없을 경우 <code>null</code>
-	 */
-	public OrganizationDefinition getOrganizationDefinition(final String id);
+    /**
+     * 기관 primary key (<code>id</code>)로 등록되어 잇는 OrganizationDefinition을 읽어온다.
+     *
+     * @param id 기관 ID
+     * @return OrganizationDefinitino, 해당하는 값이 없을 경우 <code>null</code>
+     */
+    OrganizationDefinition getOrganizationDefinition(final String id);
 
 }

@@ -7,30 +7,30 @@ import org.springframework.stereotype.Component;
 @Component("flowTracingTestSample")
 public class FlowTracingTestSample {
 
-	// logger: level=TRACE, appender=Console, File
-	private static Logger logger = LogManager.getLogger("flowTracingLogger");
+    private static final Logger LOGGER = LogManager.getLogger("flowTracingLogger");
 
-	private String[] messages = new String[] { "Hello", "eGov", "Framework" };
-	int num = 0;
-	
-	public String retrieveMessage() {
-		logger.entry();
-		String testMsg = "";
-		try {
-			testMsg = getMessage(num);
-			num++;
-		} catch (Exception ex) {
-			logger.error("An exception have been thrown");
-			logger.catching(ex);
-		}
+    String[] messages = new String[]{"Hello", "eGov", "Framework"};
+    int num = 0;
 
-		return logger.exit(testMsg);
-	}
+    public void retrieveMessage() {
+        LOGGER.traceEntry();
+        String testMessage = "";
+        try {
+            testMessage = getMessage(num);
+            num++;
+        } catch (Exception e) {
+            LOGGER.debug("[{}] FlowTracingTestSample retrieveMessage() An exception have been thrown : {}",
+                    e.getClass().getName(), e.getMessage());
+            LOGGER.catching(e);
+        }
 
-	public String getMessage(int key) {
-		logger.entry(key);
-		String value = messages[key];
-		return logger.exit(value);
-	}
+        LOGGER.traceExit(testMessage);
+    }
+
+    public String getMessage(int key) {
+        LOGGER.traceEntry(String.valueOf(key));
+        String testMessage = messages[key];
+        return LOGGER.traceExit(testMessage);
+    }
 
 }

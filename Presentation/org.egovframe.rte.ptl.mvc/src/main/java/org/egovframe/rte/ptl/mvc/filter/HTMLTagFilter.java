@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 MOPAS(Ministry of Public Administration and Security).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,15 +15,15 @@
  */
 package org.egovframe.rte.ptl.mvc.filter;
 
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.*;
+import jakarta.servlet.http.HttpServletRequest;
+
 import java.io.IOException;
 
 /**
  * HTMLTagFilter.java
- * 
+ *
  * @author 실행환경 개발팀 함철
- * @since 2009.06.01
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -32,21 +32,22 @@ import java.io.IOException;
  * ----------------------------------------------
  * 2009.05.30	함철				최초 생성
  * </pre>
+ * @since 2009.06.01
  */
 public class HTMLTagFilter implements Filter {
 
-	@SuppressWarnings("unused")
-	private FilterConfig config;
+    @SuppressWarnings("unused")
+    private FilterConfig config;
 
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		chain.doFilter(new HTMLTagFilterRequestWrapper((HttpServletRequest) request), response);
-	}
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        chain.doFilter(new HTMLTagFilterRequestWrapper((HttpServletRequest) request), response);
+    }
 
-	public void init(FilterConfig config) throws ServletException {
-		this.config = config;
-	}
+    public void init(FilterConfig config) {
+        this.config = config;
+    }
 
-	public void destroy() {
-	}
+    public void destroy() {
+    }
 
 }

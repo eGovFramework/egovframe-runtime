@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 MOPAS(Ministry of Public Administration and Security).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +22,8 @@ import org.egovframe.rte.itl.integration.EgovIntegrationException;
  * <p>
  * <b>NOTE:</b> 전자정부 연계 서비스 NoSuchTypeException
  * </p>
- * 
+ *
  * @author 실행환경 개발팀 심상호
- * @since 2009.06.01
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -33,28 +32,29 @@ import org.egovframe.rte.itl.integration.EgovIntegrationException;
  * ----------------------------------------------
  * 2009.06.01	심상호				최초 생성
  * </pre>
+ * @since 2009.06.01
  */
 public class NoSuchTypeException extends EgovIntegrationException {
 
-	/**
-	 * serialVersion UID
-	 */
-	private static final long serialVersionUID = 5886226464251013717L;
+    /**
+     * serialVersion UID
+     */
+    private static final long serialVersionUID = 5886226464251013717L;
 
-	public NoSuchTypeException() {
-		super();
-	}
+    public NoSuchTypeException() {
+        super();
+    }
 
-	public NoSuchTypeException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    public NoSuchTypeException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-	public NoSuchTypeException(String message) {
-		super(message);
-	}
+    public NoSuchTypeException(String message) {
+        super(message);
+    }
 
-	public NoSuchTypeException(Throwable cause) {
-		super(cause);
-	}
+    public NoSuchTypeException(Throwable cause) {
+        super(cause);
+    }
 
 }

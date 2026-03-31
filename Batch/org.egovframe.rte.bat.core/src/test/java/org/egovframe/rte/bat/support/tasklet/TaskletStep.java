@@ -10,70 +10,61 @@ import org.springframework.core.io.Resource;
 
 public class TaskletStep implements Tasklet, InitializingBean {
 
-		private Resource directory;
-	 
-		private String jobVariable;
-		
-		private String stepVariable;
-		
-		private String resourceVariable;
-		
-		private String vJobVariable;
-		
-		@Value("#{stepExecutionContext[StepVariableKey2]}")		
-		private String vStepVariable;
-		
-		private String vResourceVariable;
-		
+    private Resource directory;
 
-		public String getJobVariable() {
-			return jobVariable;
-		}
+    private String jobVariable;
 
-		public void setJobVariable(String jobVariable) {
-			
+    private String stepVariable;
 
-			this.jobVariable = jobVariable;
-		}
+    private String resourceVariable;
 
-		public String getStepVariable() {
-			return stepVariable;
-		}
+    private String vJobVariable;
 
-		public void setStepVariable(String stepVariable) {
-			this.stepVariable = stepVariable;
-		}
+    @Value("#{stepExecutionContext[StepVariableKey2]}")
+    private String vStepVariable;
 
-		public String getResourceVariable() {
-			return resourceVariable;
-		}
+    private String vResourceVariable;
 
-		public void setResourceVariable(String resourceVariable) {
-			this.resourceVariable = resourceVariable;
-		}
+    public String getJobVariable() {
+        return jobVariable;
+    }
 
+    public void setJobVariable(String jobVariable) {
+        this.jobVariable = jobVariable;
+    }
 
-	  @Override
-	  public void afterPropertiesSet() throws Exception {
-		//Assert.notNull(directory, "directory must be set");
-	  }
+    public String getStepVariable() {
+        return stepVariable;
+    }
 
-	  @Override
-	  public RepeatStatus execute(StepContribution contribution,
-	               ChunkContext chunkContext) throws Exception {
-		  
-		   System.setProperty("system.stepVariable1", String.valueOf(chunkContext.getStepContext().getStepExecutionContext().get("StepVariableKey1")) );
+    public void setStepVariable(String stepVariable) {
+        this.stepVariable = stepVariable;
+    }
 
+    public String getResourceVariable() {
+        return resourceVariable;
+    }
 
-		return RepeatStatus.FINISHED;
-	  }
+    public void setResourceVariable(String resourceVariable) {
+        this.resourceVariable = resourceVariable;
+    }
 
-	  public Resource getDirectory() {
-		return directory;
-	  }
+    @Override
+    public void afterPropertiesSet() throws Exception {
+    }
 
-	  public void setDirectory(Resource directory) {
-		this.directory = directory;
-	  }
-	  
+    @Override
+    public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) {
+        System.setProperty("system.stepVariable1", String.valueOf(chunkContext.getStepContext().getStepExecutionContext().get("StepVariableKey1")));
+        return RepeatStatus.FINISHED;
+    }
+
+    public Resource getDirectory() {
+        return directory;
+    }
+
+    public void setDirectory(Resource directory) {
+        this.directory = directory;
+    }
+
 }

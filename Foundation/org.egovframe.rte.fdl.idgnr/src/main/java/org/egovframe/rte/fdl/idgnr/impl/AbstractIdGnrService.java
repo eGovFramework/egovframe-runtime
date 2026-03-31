@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 MOPAS(Ministry of Public Administration and Security).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,9 +32,8 @@ import java.util.Locale;
 
 /**
  * ID Generation 서비스를 위한 Abstract Service
- * 
+ *
  * @author 실행환경 개발팀 김태호
- * @since 2009.02.01
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -43,229 +42,241 @@ import java.util.Locale;
  * ----------------------------------------------
  * 2009.02.01   김태호             최초 생성
  * </pre>
+ * @since 2009.02.01
  */
 public abstract class AbstractIdGnrService implements EgovIdGnrService, ApplicationContextAware, BeanFactoryAware {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractIdGnrService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractIdGnrService.class);
+    /**
+     * BIG_DECIMAL_MAX_LONG 정의
+     */
+    private static final BigDecimal BIG_DECIMAL_MAX_LONG = new BigDecimal(Long.MAX_VALUE);
+    /**
+     * 내부 synchronization을 위한 정보
+     */
+    private final Object mSemaphore = new Object();
+    /**
+     * BigDecimal 사용 여부
+     */
+    protected boolean useBigDecimals = false;
+    /**
+     * MessageSource
+     */
+    protected MessageSource messageSource;
+    /**
+     * BeanFactory
+     */
+    private BeanFactory beanFactory;
+    /**
+     * 정책정보 생성
+     */
+    private EgovIdGnrStrategy strategy = new EgovIdGnrStrategy() {
+        public String makeId(String originalId) {
+            return originalId;
+        }
+    };
 
-	/**
-	 * BeanFactory
-	 */
-	private BeanFactory beanFactory;
+    /**
+     * 기본 생성자
+     */
+    public AbstractIdGnrService() {
+    }
 
-	/**
-	 * BIG_DECIMAL_MAX_LONG 정의
-	 */
-	private static final BigDecimal BIG_DECIMAL_MAX_LONG = new BigDecimal(Long.MAX_VALUE);
+    /**
+     * BigDecimal 타입의 유일 아이디 제공
+     *
+     * @return BigDecimal 타입의 다음 ID
+     * @throws FdlException if an Id could not be allocated for any reason.
+     */
+    protected abstract BigDecimal getNextBigDecimalIdInner() throws FdlException;
 
-	/**
-	 * 내부 synchronization을 위한 정보
-	 */
-	private final Object mSemaphore = new Object();
+    /**
+     * long 타입의 유일 아이디 제공
+     *
+     * @return long 타입의 다음 ID
+     * @throws FdlException 여타이유에 의해 아이디 생성이 불가능 할때
+     */
+    protected abstract long getNextLongIdInner() throws FdlException;
 
-	/**
-	 * 정책정보 생성
-	 */
-	private EgovIdGnrStrategy strategy = new EgovIdGnrStrategy() {
-		public String makeId(String originalId) {
-			return originalId;
-		}
-	};
+    /**
+     * BigDecimal 사용여부 세팅
+     *
+     * @param useBigDecimals BigDecimal 사용여부
+     */
+    public final void setUseBigDecimals(boolean useBigDecimals) {
+        this.useBigDecimals = useBigDecimals;
+    }
 
-	/**
-	 * BigDecimal 사용 여부
-	 */
-	protected boolean useBigDecimals = false;
+    /**
+     * BigDecimal 사용여부 정보 리턴
+     *
+     * @return boolean check using BigDecimal
+     */
+    protected final boolean isUsingBigDecimals() {
+        return useBigDecimals;
+    }
 
-	/**
-	 * MessageSource
-	 */
-	protected MessageSource messageSource;
+    /**
+     * 특별한 최대 값보다 작은 Long 타입의 다음 ID
+     *
+     * @param maxId 최대값
+     * @return long value to be less than the specified maxId
+     * @throws FdlException 다음 ID가 입력받은 MaxId보다 클때
+     */
+    protected final long getNextLongIdChecked(long maxId) throws FdlException {
+        long nextId;
+        if (useBigDecimals) {
+            BigDecimal bd;
+            synchronized (mSemaphore) {
+                bd = getNextBigDecimalIdInner();
+            }
 
-	/**
-	 * 기본 생성자
-	 */
-	public AbstractIdGnrService() {
-	}
+            if (bd.compareTo(BIG_DECIMAL_MAX_LONG) > 0) {
+                LOGGER.debug(messageSource.getMessage("error.idgnr.greater.maxid", new String[]{"Long"}, Locale.getDefault()));
+                throw new FdlException(messageSource, "error.idgnr.greater.maxid");
+            }
 
-	/**
-	 * BigDecimal 타입의 유일 아이디 제공
-	 * @return BigDecimal 타입의 다음 ID
-	 * @throws FdlException if an Id could not be allocated for any reason.
-	 */
-	protected abstract BigDecimal getNextBigDecimalIdInner() throws FdlException;
+            nextId = bd.longValue();
+        } else {
+            synchronized (mSemaphore) {
+                nextId = getNextLongIdInner();
+            }
+        }
 
-	/**
-	 * long 타입의 유일 아이디 제공
-	 * @return long 타입의 다음 ID
-	 * @throws FdlException 여타이유에 의해 아이디 생성이 불가능 할때
-	 */
-	protected abstract long getNextLongIdInner() throws FdlException;
+        if (nextId > maxId) {
+            LOGGER.debug(messageSource.getMessage("error.idgnr.greater.maxid", new String[]{"Long"}, Locale.getDefault()));
+            throw new FdlException(messageSource, "error.idgnr.greater.maxid");
+        }
 
-	/**
-	 * BigDecimal 사용여부 세팅
-	 * @param useBigDecimals BigDecimal 사용여부
-	 */
-	public final void setUseBigDecimals(boolean useBigDecimals) {
-		this.useBigDecimals = useBigDecimals;
-	}
+        return nextId;
+    }
 
-	/**
-	 * BigDecimal 사용여부 정보 리턴
-	 * @return boolean check using BigDecimal
-	 */
-	protected final boolean isUsingBigDecimals() {
-		return useBigDecimals;
-	}
+    /**
+     * Returns BigDecimal 타입의 다음 ID 제공
+     *
+     * @return BigDecimal the next Id.
+     * @throws FdlException 다음 아이디가 유효한 BigDecimal의 범위를 벗어날때
+     */
+    public final BigDecimal getNextBigDecimalId() throws FdlException {
+        BigDecimal bd;
+        if (useBigDecimals) {
+            synchronized (mSemaphore) {
+                bd = getNextBigDecimalIdInner();
+            }
+        } else {
+            synchronized (mSemaphore) {
+                bd = new BigDecimal(getNextLongIdInner());
+            }
+        }
+        return bd;
+    }
 
-	/**
-	 * 특별한 최대 값보다 작은 Long 타입의 다음 ID
-	 * @param maxId 최대값
-	 * @return long value to be less than the specified maxId
-	 * @throws FdlException 다음 ID가 입력받은 MaxId보다 클때
-	 */
-	protected final long getNextLongIdChecked(long maxId) throws FdlException {
-		long nextId;
-		if (useBigDecimals) {
-			BigDecimal bd;
-			synchronized (mSemaphore) {
-				bd = getNextBigDecimalIdInner();
-			}
+    /**
+     * Returns long 타입의 다음 ID 제공
+     *
+     * @return the next Id.
+     * @throws FdlException 다음 아이디가 유효한 long의 범위를 벗어날때
+     */
+    public final long getNextLongId() throws FdlException {
+        return getNextLongIdChecked(Long.MAX_VALUE);
+    }
 
-			if (bd.compareTo(BIG_DECIMAL_MAX_LONG) > 0) {
-				LOGGER.error(messageSource.getMessage("error.idgnr.greater.maxid", new String[] { "Long" }, Locale.getDefault()));
-				throw new FdlException(messageSource, "error.idgnr.greater.maxid");
-			}
-			nextId = bd.longValue();
-		} else {
-			synchronized (mSemaphore) {
-				nextId = getNextLongIdInner();
-			}
-		}
+    /**
+     * Returns int 타입의 다음 ID 제공
+     *
+     * @return the next Id.
+     * @throws FdlException 다음 아이디가 유효한 integer의 범위를 벗어날때
+     */
+    public final int getNextIntegerId() throws FdlException {
+        return (int) getNextLongIdChecked(Integer.MAX_VALUE);
+    }
 
-		if (nextId > maxId) {
-			LOGGER.error(messageSource.getMessage("error.idgnr.greater.maxid", new String[] { "Long" }, Locale.getDefault()));
-			throw new FdlException(messageSource, "error.idgnr.greater.maxid");
-		}
+    /**
+     * Returns Short 타입의 다음 ID 제공
+     *
+     * @return the next Id.
+     * @throws FdlException 다음 아이디가 유효한 Short의 범위를 벗어날때
+     */
+    public final short getNextShortId() throws FdlException {
+        return (short) getNextLongIdChecked(Short.MAX_VALUE);
+    }
 
-		return nextId;
-	}
+    /**
+     * Returns Byte 타입의 다음 ID 제공
+     *
+     * @return the next Id.
+     * @throws FdlException 다음 아이디가 유효한 Byte 범위를 벗어날때
+     */
+    public final byte getNextByteId() throws FdlException {
+        return (byte) getNextLongIdChecked(Byte.MAX_VALUE);
+    }
 
-	/**
-	 * Returns BigDecimal 타입의 다음 ID 제공
-	 * @return BigDecimal the next Id.
-	 * @throws FdlException 다음 아이디가 유효한 BigDecimal의 범위를 벗어날때
-	 */
-	public final BigDecimal getNextBigDecimalId() throws FdlException {
-		BigDecimal bd;
-		if (useBigDecimals) {
-			synchronized (mSemaphore) {
-				bd = getNextBigDecimalIdInner();
-			}
-		} else {
-			synchronized (mSemaphore) {
-				bd = new BigDecimal(getNextLongIdInner());
-			}
-		}
-		return bd;
-	}
+    /**
+     * String 타입의 Id 제공하는데 정책의 아이디 생성 호출함
+     *
+     * @return the next Id.
+     * @throws FdlException 다음 아이디가 유효한 byte의 범위를 벗어날때
+     */
+    public final String getNextStringId() throws FdlException {
+        return strategy.makeId(getNextBigDecimalId().toString());
+    }
 
-	/**
-	 * Returns long 타입의 다음 ID 제공
-	 * @return the next Id.
-	 * @throws FdlException 다음 아이디가 유효한 long의 범위를 벗어날때
-	 */
-	public final long getNextLongId() throws FdlException {
-		return getNextLongIdChecked(Long.MAX_VALUE);
-	}
+    /**
+     * 정책 클래스를 입력받아서 String 타입의 Id 제공
+     *
+     * @param strategy 생성된 정책 오브젝트
+     * @return the next Id.
+     * @throws FdlException 다음 아이디가 유효한 byte의 범위를 벗어날때
+     */
+    public String getNextStringId(EgovIdGnrStrategy strategy) throws FdlException {
+        this.strategy = strategy;
+        return getNextStringId();
+    }
 
-	/**
-	 * Returns int 타입의 다음 ID 제공
-	 * @return the next Id.
-	 * @throws FdlException 다음 아이디가 유효한 integer의 범위를 벗어날때
-	 */
-	public final int getNextIntegerId() throws FdlException {
-		return (int) getNextLongIdChecked(Integer.MAX_VALUE);
-	}
+    /**
+     * 정책정보를 String으로 입력받아서 String 타입의 Id 제공
+     *
+     * @param strategyId 정책 스트링
+     * @return the next Id.
+     * @throws FdlException 다음 아이디가 유효한 byte의 범위를 벗어날때
+     */
+    public String getNextStringId(String strategyId) throws FdlException {
+        this.strategy = (EgovIdGnrStrategy) this.beanFactory.getBean(strategyId);
+        return getNextStringId();
+    }
 
-	/**
-	 * Returns Short 타입의 다음 ID 제공
-	 * @return the next Id.
-	 * @throws FdlException 다음 아이디가 유효한 Short의 범위를 벗어날때
-	 */
-	public final short getNextShortId() throws FdlException {
-		return (short) getNextLongIdChecked(Short.MAX_VALUE);
-	}
+    /**
+     * 정책 얻기
+     *
+     * @return IdGenerationStrategy
+     */
+    public EgovIdGnrStrategy getStrategy() {
+        return strategy;
+    }
 
-	/**
-	 * Returns Byte 타입의 다음 ID 제공
-	 * @return the next Id.
-	 * @throws FdlException 다음 아이디가 유효한 Byte 범위를 벗어날때
-	 */
-	public final byte getNextByteId() throws FdlException {
-		return (byte) getNextLongIdChecked(Byte.MAX_VALUE);
-	}
+    /**
+     * 정책 세팅
+     *
+     * @param strategy to be set by Spring Framework
+     */
+    public void setStrategy(EgovIdGnrStrategy strategy) {
+        this.strategy = strategy;
+    }
 
-	/**
-	 * String 타입의 Id 제공하는데 정책의 아이디 생성 호출함
-	 * @return the next Id.
-	 * @throws FdlException 다음 아이디가 유효한 byte의 범위를 벗어날때
-	 */
-	public final String getNextStringId() throws FdlException {
-		return strategy.makeId(getNextBigDecimalId().toString());
-	}
+    /**
+     * set BeanFactory
+     *
+     * @param beanFactory to be set by Spring Framework
+     */
+    public void setBeanFactory(BeanFactory beanFactory) {
+        this.beanFactory = beanFactory;
+    }
 
-	/**
-	 * 정책 클래스를 입력받아서 String 타입의 Id 제공
-	 * @param strategy 생성된 정책 오브젝트
-	 * @return the next Id.
-	 * @throws FdlException 다음 아이디가 유효한 byte의 범위를 벗어날때
-	 */
-	public String getNextStringId(EgovIdGnrStrategy strategy) throws FdlException {
-		this.strategy = strategy;
-		return getNextStringId();
-	}
-
-	/**
-	 * 정책정보를 String으로 입력받아서 String 타입의 Id 제공
-	 * @param strategyId 정책 스트링
-	 * @return the next Id.
-	 * @throws FdlException 다음 아이디가 유효한 byte의 범위를 벗어날때
-	 */
-	public String getNextStringId(String strategyId) throws FdlException {
-		this.strategy = (EgovIdGnrStrategy) this.beanFactory.getBean(strategyId);
-		return getNextStringId();
-	}
-
-	/**
-	 * 정책 얻기
-	 * @return IdGenerationStrategy
-	 */
-	public EgovIdGnrStrategy getStrategy() {
-		return strategy;
-	}
-
-	/**
-	 * 정책 세팅
-	 * @param strategy to be set by Spring Framework
-	 */
-	public void setStrategy(EgovIdGnrStrategy strategy) {
-		this.strategy = strategy;
-	}
-
-	/**
-	 * set BeanFactory
-	 * @param beanFactory to be set by Spring Framework
-	 */
-	public void setBeanFactory(BeanFactory beanFactory) {
-		this.beanFactory = beanFactory;
-	}
-
-	/**
-	 * Message Source Injection
-	 */
-	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		this.messageSource = (MessageSource) applicationContext.getBean("messageSource");
-	}
+    /**
+     * Message Source Injection
+     */
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.messageSource = (MessageSource) applicationContext.getBean("messageSource");
+    }
 
 }

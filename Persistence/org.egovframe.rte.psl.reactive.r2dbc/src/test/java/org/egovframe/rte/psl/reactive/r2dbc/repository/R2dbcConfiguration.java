@@ -15,13 +15,13 @@ import org.springframework.web.reactive.config.EnableWebFlux;
 
 @Configuration
 @EnableWebFlux
-@ComponentScan(basePackages="org.egovframe.rte.psl.reactive.r2dbc.repository")
+@ComponentScan(basePackages = "org.egovframe.rte.psl.reactive.r2dbc.repository")
 @EnableR2dbcRepositories
 public class R2dbcConfiguration {
 
     private String r2dbcUrl = "r2dbc:h2:mem:///sampledb?options=DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE";
 
-    @Bean(name="connectionFactory")
+    @Bean(name = "connectionFactory")
     public ConnectionFactory connectionFactory() {
         EgovR2dbcConnectionFactory egovR2dbcConnectionFactory = new EgovR2dbcConnectionFactory(this.r2dbcUrl);
         return egovR2dbcConnectionFactory.connectionFactory();
@@ -31,7 +31,7 @@ public class R2dbcConfiguration {
     public ConnectionFactoryInitializer initializer(ConnectionFactory connectionFactory) {
         ConnectionFactoryInitializer initializer = new ConnectionFactoryInitializer();
         initializer.setConnectionFactory(connectionFactory);
-        initializer.setDatabasePopulator(new ResourceDatabasePopulator(new ClassPathResource("script/r2dbc-h2.sql")));
+        initializer.setDatabasePopulator(new ResourceDatabasePopulator(new ClassPathResource("META-INF/script/r2dbc-h2.sql")));
         return initializer;
     }
 

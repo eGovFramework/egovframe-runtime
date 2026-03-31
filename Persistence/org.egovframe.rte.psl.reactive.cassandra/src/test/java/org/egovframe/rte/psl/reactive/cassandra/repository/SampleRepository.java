@@ -1,5 +1,6 @@
 package org.egovframe.rte.psl.reactive.cassandra.repository;
 
+import jakarta.annotation.Resource;
 import org.springframework.data.cassandra.ReactiveSession;
 import org.springframework.data.cassandra.core.query.Criteria;
 import org.springframework.data.cassandra.core.query.Query;
@@ -7,20 +8,17 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import javax.annotation.Resource;
-
 @Repository
 public class SampleRepository extends EgovCassandraRepository<Sample> {
 
-    @Resource(name="reactiveSession")
+    private final String PARTITION_KEY_NAME = "part01";
+    @Resource(name = "reactiveSession")
     private ReactiveSession reactiveSession;
 
     public SampleRepository(ReactiveSession reactiveSession) {
         super(reactiveSession);
         this.reactiveSession = reactiveSession;
     }
-
-    private final String PARTITION_KEY_NAME = "part01";
 
     public Flux<Sample> selectAllSample() {
         Query query = Query.empty();

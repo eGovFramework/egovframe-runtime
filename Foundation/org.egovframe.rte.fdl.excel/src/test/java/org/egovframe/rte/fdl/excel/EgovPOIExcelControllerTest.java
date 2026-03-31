@@ -1,101 +1,75 @@
 package org.egovframe.rte.fdl.excel;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.mock.web.MockHttpServletRequest;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.egovframe.rte.fdl.excel.config.ExcelTestConfig;
+import org.egovframe.rte.fdl.excel.download.CategoryPOIExcelController;
+import org.egovframe.rte.fdl.excel.download.CategoryPOIExcelView;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletConfig;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.GenericWebApplicationContext;
-import org.springframework.web.servlet.DispatcherServlet;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.servlet.view.BeanNameViewResolver;
 
-import javax.servlet.ServletException;
-import java.io.IOException;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-/**
- * FileServiceTest is TestCase of File Handling Service
- * @author Seongjong Yoon
- */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:/META-INF/spring/*.xml"})
-public class EgovPOIExcelControllerTest extends AbstractJUnit4SpringContextTests {
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = ExcelTestConfig.class)
+public class EgovPOIExcelControllerTest {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(EgovPOIExcelControllerTest.class);
+    private MockMvc mockMvc;
 
-    @Autowired
-    ApplicationContext applicationContext;
-
-    DispatcherServlet dispatcher;
-
-	@Before
-    public void init() {
-        this.dispatcher = new DispatcherServlet() {
-            /**
-			 *  serialVersion UID
-			 */
-			private static final long serialVersionUID = -1645563296360811037L;
-
-			protected WebApplicationContext createWebApplicationContext(WebApplicationContext parent) {
-                GenericWebApplicationContext wac = new GenericWebApplicationContext();
-                wac.setParent(applicationContext);
-                wac.refresh();
-                return wac;
-            }
-        };
-        try {
-            this.dispatcher.init(new MockServletConfig());
-        } catch (ServletException e) {
-            e.printStackTrace();
-        }
-
-        LOGGER.debug("######  EgovExcelServiceControllerTest  ######");
+    @BeforeEach
+    public void setup() {
+        ViewResolver viewResolver = new BeanNameViewResolver();
+        this.mockMvc = MockMvcBuilders.standaloneSetup(new CategoryPOIExcelController())
+                .setViewResolvers(viewResolver)
+                .setSingleView(new CategoryPOIExcelView())
+                .build();
     }
 
     /**
      * [Flow #-6] 엑셀 파일 생성 : 멥으로 데이터를 전송하여 엑셀로 다운로드
      */
-	@Test
-	public void testExcelDownloadMap() throws ServletException, IOException {
-		LOGGER.debug("################################################");
+    @Test
+    public void testExcelDownloadMap() throws Exception {
+        MockHttpServletResponse response = mockMvc.perform(get("/sale/listPOIExcelCategory.do"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse();
 
-		MockHttpServletRequest request = new MockHttpServletRequest("GET","/sale/listPOIExcelCategory.do");
-		MockHttpServletResponse response = new MockHttpServletResponse();
-
-		dispatcher.service(request, response);
-
-		LOGGER.debug("## status : {}", response.getStatus());
-		assertEquals(200, response.getStatus());
-
-		LOGGER.debug("response.getContentType() : {}", response.getContentType());
-		assertEquals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", response.getContentType());
-	}
+        // 엑셀 내용을 파싱하여 검증
+        InputStream is = new ByteArrayInputStream(response.getContentAsByteArray());
+        XSSFWorkbook workbook = new XSSFWorkbook(is);
+        XSSFSheet sheet = workbook.getSheetAt(0);
+        assertEquals("User List", sheet.getRow(0).getCell(0).getStringCellValue());
+    }
 
     /**
      * [Flow #-7] 엑셀 파일 생성 :  VO로 데이터를 전송하여 엑셀로 다운로드
      */
-	@Test
-	public void testExcelDownloadVO() throws ServletException, IOException {
-		LOGGER.debug("################################################");
+    @Test
+    public void testExcelDownloadVO() throws Exception {
+        MockHttpServletResponse response = mockMvc.perform(get("/sale/listPOIExcelVOCategory.do"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse();
 
-		MockHttpServletRequest request = new MockHttpServletRequest("GET","/sale/listPOIExcelVOCategory.do");
-		MockHttpServletResponse response = new MockHttpServletResponse();
+        // 엑셀 내용을 파싱하여 검증
+        InputStream is = new ByteArrayInputStream(response.getContentAsByteArray());
+        XSSFWorkbook workbook = new XSSFWorkbook(is);
+        XSSFSheet sheet = workbook.getSheetAt(0);
+        assertEquals("User List", sheet.getRow(0).getCell(0).getStringCellValue());
+    }
 
-		dispatcher.service(request, response);
-
-		LOGGER.debug("## status : {}", response.getStatus());
-		assertEquals(200, response.getStatus());
-
-		LOGGER.debug("response.getContentType() : {}", response.getContentType());
-		assertEquals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", response.getContentType());
-	}
 }

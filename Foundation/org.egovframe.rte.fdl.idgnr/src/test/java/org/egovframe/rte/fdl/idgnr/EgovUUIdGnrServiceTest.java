@@ -1,40 +1,32 @@
 package org.egovframe.rte.fdl.idgnr;
 
+import jakarta.annotation.Resource;
 import org.egovframe.rte.fdl.cmmn.exception.FdlException;
+import org.egovframe.rte.fdl.idgnr.config.IdgnrTestConfig;
+import org.egovframe.rte.fdl.idgnr.config.UUIdGenerationConfig;
 import org.egovframe.rte.fdl.idgnr.impl.strategy.EgovIdGnrStrategyImpl;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.UUID;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * UUId Generation Service Test 클래스
- * @author 실행환경 개발팀 김태호
- * @since 2009.02.01
- * @version 1.0
- * @see <pre>
- *  == 개정이력(Modification Information) ==
- *   
- *   수정일      수정자           수정내용
- *  -------    --------    ---------------------------
- *   2009.02.01  김태호          최초 생성
- * 
- * </pre>
+ * <p>
+ * == 개정이력(Modification Information) ==
+ * <p>
+ * 수정일      수정자           수정내용
+ * -------    --------    ---------------------------
+ * 2009.02.01  김태호          최초 생성
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:/spring/context-uuid.xml" })
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = {IdgnrTestConfig.class, UUIdGenerationConfig.class})
 public class EgovUUIdGnrServiceTest {
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(EgovUUIdGnrServiceTest.class);
 
     @Resource(name = "UUIdGenerationService")
     private EgovIdGnrService uUidGenerationService;
@@ -47,104 +39,89 @@ public class EgovUUIdGnrServiceTest {
 
     /**
      * Mac Address 세팅 테스트
-     * @throws Exception
-     *         fail to test
      */
     @Test
-    public void testUUIdGeneration() throws Exception {
-
+    public void testUUIdGeneration() throws FdlException {
         // 1. get next String id
-    	String uuid = null;
+        String uuid = null;
         for (int i = 0; i < 10; i++) {
             assertNotNull(uuid = uUidGenerationService.getNextStringId());
-            LOGGER.info("UUID : {} (version = {})", uuid, UUID.fromString(uuid).version());
         }
+
         // 2. get next BigDecimal id
         BigDecimal decimal;
         for (int i = 0; i < 10; i++) {
             assertNotNull(decimal = uUidGenerationService.getNextBigDecimalId());
-            LOGGER.info("UUID (BigDecimal) : {}", decimal);
         }
     }
 
     /**
      * Mac Address 세팅없이 테스트
-     * @throws Exception
-     *         fail to test
      */
     @Test
-    public void testUUIdGenerationNoAddress() throws Exception {
-
+    public void testUUIdGenerationNoAddress() throws FdlException {
         // 1. get next String id
-    	String uuid = null;
+        String uuid = null;
         for (int i = 0; i < 10; i++) {
             assertNotNull(uuid = uUIdGenerationServiceWithoutAddress.getNextStringId());
-            LOGGER.info("UUID : {} (version = {})", uuid, UUID.fromString(uuid).version());
         }
+
         // 2. get next BigDecimal id
         BigDecimal decimal;
         for (int i = 0; i < 10; i++) {
             assertNotNull(decimal = uUIdGenerationServiceWithoutAddress.getNextBigDecimalId());
-            LOGGER.info("UUID (BigDecimal) : {}", decimal);
         }
     }
 
     /**
      * IP 세팅 테스트
-     * @throws Exception
-     *         fail to test
      */
     @Test
-    public void testUUIdGenerationIP() throws Exception {
-
+    public void testUUIdGenerationIP() throws FdlException {
         // 1. get next String id
-    	String uuid = null;
+        String uuid = null;
         for (int i = 0; i < 10; i++) {
             assertNotNull(uuid = uUIdGenerationServiceWithIP.getNextStringId());
-            LOGGER.info("UUID : {} (version = {})", uuid, UUID.fromString(uuid).version());
         }
+
         // 2. get next BigDecimal id
         BigDecimal decimal;
         for (int i = 0; i < 10; i++) {
             assertNotNull(decimal = uUIdGenerationServiceWithIP.getNextBigDecimalId());
-            LOGGER.info("UUID (BigDecimal) : {}", decimal);
         }
     }
 
     /**
-     * UUID Generation Service는
-     * getNextStringId,getNextBigDecimalId 만 제공.
-     * @throws Exception fail to test
+     * UUID Generation Service 는 getNextStringId, getNextBigDecimalId 만 제공.
      */
     @Test
     public void testNotSupported() throws Exception {
-
         // 1. get next byte id
         try {
             uUidGenerationService.getNextByteId();
         } catch (Exception e) {
-            assertTrue(e instanceof FdlException);
+            assertInstanceOf(FdlException.class, e);
         }
 
         // 2. get next integer id
         try {
             uUidGenerationService.getNextIntegerId();
         } catch (Exception e) {
-            assertTrue(e instanceof FdlException);
+            assertInstanceOf(FdlException.class, e);
         }
 
         // 3. get next long id
         try {
             uUidGenerationService.getNextLongId();
         } catch (Exception e) {
-            assertTrue(e instanceof FdlException);
+            assertInstanceOf(FdlException.class, e);
         }
 
         // 4. get next short id
         try {
             uUidGenerationService.getNextShortId();
         } catch (Exception e) {
-            assertTrue(e instanceof FdlException);
+            assertInstanceOf(FdlException.class, e);
         }
 
         // 5. get next string id with a specific
@@ -152,7 +129,7 @@ public class EgovUUIdGnrServiceTest {
         try {
             uUidGenerationService.getNextStringId("mixPrefix");
         } catch (Exception e) {
-            assertTrue(e instanceof FdlException);
+            assertInstanceOf(FdlException.class, e);
         }
 
         // 6. get next string id with a specific
@@ -160,7 +137,8 @@ public class EgovUUIdGnrServiceTest {
         try {
             uUidGenerationService.getNextStringId(new EgovIdGnrStrategyImpl());
         } catch (Exception e) {
-            assertTrue(e instanceof FdlException);
+            assertInstanceOf(FdlException.class, e);
         }
     }
+
 }

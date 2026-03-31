@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 MOPAS(Ministry of Public Administration and Security).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,8 @@ package org.egovframe.rte.itl.integration;
  * 전자정부 연계 서비스 중 비동기 연계 서비스의 응답 메시지를 받기 위한 인터페이스
  * <p>
  * <b>NOTE:</b> 전자정부 연계 서비스 중 비동기 연계 서비스의 응답 메시지를 받기 위한 Class이다. </p>
- * 
+ *
  * @author 실행환경 개발팀 심상호
- * @since 2009.06.01
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -30,23 +29,23 @@ package org.egovframe.rte.itl.integration;
  * ----------------------------------------------
  * 2009.06.01	심상호				최초 생성
  * </pre>
+ * @since 2009.06.01
  */
 public interface EgovIntegrationServiceResponse {
 
-	/**
-	 * 비동기 연계의 응답 메시지를 읽어온다. timeout 값은 default 값을 사용한다.
-	 * 
-	 * @return 연계 응답 메시지
-	 */
-	public EgovIntegrationMessage receive();
+    /**
+     * 비동기 연계의 응답 메시지를 읽어온다. timeout 값은 default 값을 사용한다.
+     *
+     * @return 연계 응답 메시지
+     */
+    EgovIntegrationMessage receive();
 
-	/**
-	 * 비동기 연계의 응답 메시지를 읽어온다.
-	 * 
-	 * @param timeout
-	 *            비동기 연계 수행을 기다릴 시간(millisecond)
-	 * @return 연계 응답 메시지
-	 */
-	public EgovIntegrationMessage receive(long timeout);
+    /**
+     * 비동기 연계의 응답 메시지를 읽어온다.
+     *
+     * @param timeout 비동기 연계 수행을 기다릴 시간(millisecond)
+     * @return 연계 응답 메시지
+     */
+    EgovIntegrationMessage receive(long timeout);
 
 }

@@ -3,8 +3,8 @@
 
 <sqlMap namespace="DeptMapType">
 
-	<insert id="insertDeptUsingMap">
-		<![CDATA[
+    <insert id="insertDeptUsingMap">
+        <![CDATA[
 			insert into DEPT
 			           (DEPT_NO,
 			            DEPT_NAME,
@@ -13,46 +13,46 @@
 			            #deptName#,
 			            #loc#)
 		]]>
-	</insert>
+    </insert>
 
-	<select id="selectDeptUsingMap" resultClass="hashmap">
-		<![CDATA[
+    <select id="selectDeptUsingMap" resultClass="hashmap">
+        <![CDATA[
 			select DEPT_NO   as deptNo,
 			       DEPT_NAME as deptName,
 			       LOC       as loc
 			from   DEPT
 			where  DEPT_NO = #deptNo#
 		]]>
-	</select>
+    </select>
 
-	<!--
-		EgovMap 은 ListOrderedMap 을 extends 하고 있으며 key 를 camel case 변환(ex.
-		DEPT_NO -> deptNo, LOC -> loc) 하여 처리함
-	-->
-	<select id="selectDeptUsingEgovMap" resultClass="org.egovframe.rte.psl.dataaccess.util.EgovMap">
-		<![CDATA[
+    <!--
+        EgovMap 은 ListOrderedMap 을 extends 하고 있으며 key 를 camel case 변환(ex.
+        DEPT_NO -> deptNo, LOC -> loc) 하여 처리함
+    -->
+    <select id="selectDeptUsingEgovMap" resultClass="org.egovframe.rte.psl.dataaccess.util.EgovMap">
+        <![CDATA[
 			select DEPT_NO,
 			       DEPT_NAME,
 			       LOC
 			from   DEPT
 			where  DEPT_NO = #deptNo#
 		]]>
-	</select>
+    </select>
 
-	<update id="updateDeptUsingMap">
-		<![CDATA[
+    <update id="updateDeptUsingMap">
+        <![CDATA[
 			update DEPT
 			set    DEPT_NAME = #deptName#,
 			       LOC = #loc#
 			where  DEPT_NO = #deptNo#
 		]]>
-	</update>
+    </update>
 
-	<delete id="deleteDeptUsingMap">
-		<![CDATA[
+    <delete id="deleteDeptUsingMap">
+        <![CDATA[
 			delete from DEPT
 			where       DEPT_NO = #deptNo#
 		]]>
-	</delete>
+    </delete>
 
 </sqlMap>

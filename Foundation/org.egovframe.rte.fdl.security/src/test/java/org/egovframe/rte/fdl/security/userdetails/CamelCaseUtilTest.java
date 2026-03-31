@@ -1,10 +1,23 @@
 package org.egovframe.rte.fdl.security.userdetails;
 
+import org.egovframe.rte.fdl.security.config.EgovSecurityConfiguration;
+import org.egovframe.rte.fdl.security.config.EgovSecurityTestConfig;
+import org.egovframe.rte.fdl.security.config.EgovSecurityTestDatasource;
 import org.egovframe.rte.fdl.security.userdetails.util.CamelCaseUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * CamelCase 유틸리티 테스트 (JUnit 5)
+ *
+ * @author EgovFramework Team
+ */
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = { EgovSecurityTestDatasource.class, EgovSecurityConfiguration.class, EgovSecurityTestConfig.class })
 public class CamelCaseUtilTest {
 
     @Test

@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 MOPAS(Ministry of Public Administration and Security).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,9 +27,8 @@ import java.util.Collection;
  * <b>NOTE:</b> 전자정부 연계 서비스의 표준 메시지를 정의하기 위한 Class이다. Colleciton Type 중 List
  * Type을 정의하기 위한 Class이다. List Type은 한 종류의 Type만을 담을 수 있다.
  * </p>
- * 
+ *
  * @author 실행환경 개발팀 심상호
- * @since 2009.06.01
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -38,127 +37,123 @@ import java.util.Collection;
  * ----------------------------------------------
  * 2009.06.01	심상호				최초 생성
  * </pre>
+ * @since 2009.06.01
  */
 public class ListType extends AbstractType {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ListType.class);
+    /**
+     * ListType에 Assign할 수 있는 Java 객체 Classes
+     */
+    protected static final Class<?>[] listTypeAssignableClasses = new Class<?>[]{TypedList.class, Collection.class};
+    private static final Logger LOGGER = LoggerFactory.getLogger(ListType.class);
+    /**
+     * 담을 수 있는 Element의 Type
+     */
+    protected Type elementType = null;
 
-	/** ListType에 Assign할 수 있는 Java 객체 Classes */
-	protected static final Class<?>[] listTypeAssignableClasses = new Class<?>[] {TypedList.class, Collection.class };
+    /**
+     * Default Constructor
+     */
+    public ListType() {
+        super();
+    }
 
-	/** 담을 수 있는 Element의 Type */
-	protected Type elementType = null;
+    /**
+     * <code>id</code>와 <code>elementType</code>를 가진 ListType을 생성한다.
+     *
+     * @param id          Type Id
+     * @param name        Type Name
+     * @param elementType elementType
+     * @throws IllegalArgumentException 1. Argument <code>id</code> 값이 <code>null</code>이거나, 공백 문자로만
+     *                                  이루어진 경우 2. Argument <code>name</code> 값이 <code>null</code>
+     *                                  이거나, 공백 문자로만 이루어진 경우 3. <code>elementType</code> 값이
+     *                                  <code>null</code>인 경우
+     */
+    public ListType(final String id, final String name, final Type elementType) {
+        super(id, name, listTypeAssignableClasses);
+        if (elementType == null) {
+            LOGGER.debug("### ListType Argument 'elementType' is null");
+            throw new IllegalArgumentException();
+        }
+        this.elementType = elementType;
+    }
 
-	/**
-	 * Default Constructor
-	 */
-	public ListType() {
-		super();
-	}
+    /**
+     * elementType
+     *
+     * @return the elementType
+     */
+    public Type getElementType() {
+        return elementType;
+    }
 
-	/**
-	 * <code>id</code>와 <code>elementType</code>를 가진 ListType을 생성한다.
-	 * 
-	 * @param id
-	 *            Type Id
-	 * @param name
-	 *            Type Name
-	 * @param elementType
-	 *            elementType
-	 * @throws IllegalArgumentException
-	 *             1. Argument <code>id</code> 값이 <code>null</code>이거나, 공백 문자로만
-	 *             이루어진 경우 2. Argument <code>name</code> 값이 <code>null</code>
-	 *             이거나, 공백 문자로만 이루어진 경우 3. <code>elementType</code> 값이
-	 *             <code>null</code>인 경우
-	 */
-	public ListType(final String id, final String name, final Type elementType) {
-		super(id, name, listTypeAssignableClasses);
-		if (elementType == null) {
-			LOGGER.error("Argument 'elementType' is null");
-			throw new IllegalArgumentException();
-		}
-		this.elementType = elementType;
-	}
+    /**
+     * TypeLoader에서만 사용된다.
+     *
+     * @param elementType the elementType to set
+     */
+    public void setElementType(Type elementType) {
+        if (elementType == null) {
+            LOGGER.debug("### ListType setElementType() Argument 'elementType' is null");
+            throw new IllegalArgumentException();
+        }
+        this.elementType = elementType;
+    }
 
-	/**
-	 * elementType
-	 * 
-	 * @return the elementType
-	 */
-	public Type getElementType() {
-		return elementType;
-	}
+    @Override
+    public boolean isAssignableFrom(Class<?> clazz) {
+        if (super.isAssignableFrom(clazz)) {
+            return true;
+        }
+        if (clazz.isArray()) {
+            return elementType.isAssignableFrom(clazz.getComponentType());
+        }
+        return false;
+    }
 
-	/**
-	 * TypeLoader에서만 사용된다.
-	 * 
-	 * @param elementType
-	 *            the elementType to set
-	 * @throws
-	 *             <code>elementType</code> 값이 null인 경우
-	 */
-	public void setElementType(Type elementType) {
-		if (elementType == null) {
-			LOGGER.error("Argument 'elementType' is null");
-			throw new IllegalArgumentException();
-		}
-		this.elementType = elementType;
-	}
+    public Object convertToTypedObject(final Object source) {
+        if (source == null) {
+            return null;
+        }
+        if (source instanceof TypedList) {
+            if (!this.equals(((TypedList) source).getType())) {
+                throw new UnassignableValueException();
+            }
+            return source;
+        }
+        if (source instanceof Collection) {
+            return new TypedList(this, (Collection<?>) source);
+        }
+        if (source.getClass().isArray()) {
+            return new TypedList(this, source);
+        }
+        throw new UnassignableValueException();
+    }
 
-	@Override
-	public boolean isAssignableFrom(Class<?> clazz) {
-		if (super.isAssignableFrom(clazz)) {
-			return true;
-		}
-		if (clazz.isArray()) {
-			return elementType.isAssignableFrom(clazz.getComponentType());
-		}
-		return false;
-	}
+    public boolean isAssignableValue(Object source) {
+        if (source == null) {
+            return true;
+        }
+        if (source instanceof TypedList) {
+            return this.equals(((TypedList) source).getType());
+        }
+        if (source instanceof Collection) {
+            for (Object sourceElement : (Iterable<?>) source) {
+                if (!elementType.isAssignableValue(sourceElement)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        if (source.getClass().isArray()) {
+            return elementType.isAssignableFrom(source.getClass().getComponentType());
+        }
+        return false;
+    }
 
-	public Object convertToTypedObject(final Object source) {
-		if (source == null) {
-			return null;
-		}
-		if (source instanceof TypedList) {
-			if (this.equals(((TypedList) source).getType()) == false) {
-				throw new UnassignableValueException();
-			}
-			return source;
-		}
-		if (source instanceof Collection) {
-			return new TypedList(this, (Collection<?>) source);
-		}
-		if (source.getClass().isArray()) {
-			return new TypedList(this, source);
-		}
-		throw new UnassignableValueException();
-	}
-
-	public boolean isAssignableValue(Object source) {
-		if (source == null) {
-			return true;
-		}
-		if (source instanceof TypedList) {
-			return this.equals(((TypedList) source).getType());
-		}
-		if (source instanceof Collection) {
-			for (Object sourceElement : (Iterable<?>) source) {
-				if (elementType.isAssignableValue(sourceElement) == false) {
-					return false;
-				}
-			}
-			return true;
-		}
-		if (source.getClass().isArray()) {
-			return elementType.isAssignableFrom(source.getClass().getComponentType());
-		}
-		return false;
-	}
-
-	@Override
-	public boolean isValid() {
-		return (super.isValid() && elementType != null && elementType.isValid());
-	}
+    @Override
+    public boolean isValid() {
+        return (super.isValid() && elementType != null && elementType.isValid());
+    }
 
 }

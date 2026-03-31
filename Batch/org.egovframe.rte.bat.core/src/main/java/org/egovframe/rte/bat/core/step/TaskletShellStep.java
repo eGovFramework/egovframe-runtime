@@ -1,7 +1,20 @@
+/*
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.egovframe.rte.bat.core.step;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.UnexpectedJobExecutionException;
 import org.springframework.batch.core.scope.context.ChunkContext;
@@ -11,67 +24,53 @@ import org.springframework.beans.factory.InitializingBean;
 
 public class TaskletShellStep implements Tasklet, InitializingBean {
 
-	// 실행시 사용하는 Logger
-	private static final Logger LOGGER = LoggerFactory.getLogger(TaskletShellStep.class);
-	
-	private String shellScript;
-	private String encoding;
-	
-	@Override
-	public void afterPropertiesSet() throws Exception {
-	}
+    private String shellScript;
+    private String encoding;
 
-	@Override
-	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-		LOGGER.debug("TaskletDeleteStep execute START ===");
-		LOGGER.debug(">>>>> get Shell Script Description() = "+shellScript);
-		LOGGER.debug(">>>>> get Shell Script Result Encoding = "+encoding);
+    @Override
+    public void afterPropertiesSet() throws Exception {
+    }
 
-		if ( shellScript == null || shellScript.trim().equals("")) {
-			throw new UnexpectedJobExecutionException("Shell Script is Empty!");
-		}
+    @Override
+    public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
+        if (shellScript == null || shellScript.trim().equals("")) {
+            throw new UnexpectedJobExecutionException("Shell Script is Empty!");
+        }
 
-		String[] arrCmdLine = shellScript.split("[\\r?\\n]+");
-		LOGGER.debug("isMac() = "+ShellScriptSupport.isMac());
-		LOGGER.debug("isWindows() = "+ShellScriptSupport.isWindows());
-		LOGGER.debug("isUnix() = "+ShellScriptSupport.isUnix());
-		LOGGER.debug("isSolaris() = "+ShellScriptSupport.isSolaris());
-		LOGGER.debug("getOSEncoding() = "+ShellScriptSupport.getOSEncoding());
-		LOGGER.debug("arrCmdLine.length = "+arrCmdLine.length);
+        String[] arrCmdLine = shellScript.split("[\\r?\\n]+");
 
-		int resultShellScript = 0;
-		if ( arrCmdLine.length == 0 ) { // single line
-			LOGGER.debug(">>> Single Line");
-			resultShellScript = ShellScriptSupport.shellCmd(shellScript,encoding);
-			if ( resultShellScript > 0 ) throw new UnexpectedJobExecutionException("Error Executing shell script!");
-		} else { // multiline
-			LOGGER.debug(">>> Multi Line");
-			for(int i=0; i<arrCmdLine.length; i++) {
-				LOGGER.debug(">>> shell = "+arrCmdLine[i]);
-				resultShellScript = ShellScriptSupport.shellCmd(arrCmdLine[i],encoding);
-				if ( resultShellScript > 0 ) throw new UnexpectedJobExecutionException("Error Executing shell script!");
-			}
-		}
+        int resultShellScript = 0;
+        if (arrCmdLine.length == 0) { // single line
+            resultShellScript = ShellScriptSupport.shellCmd(shellScript, encoding);
+            if (resultShellScript > 0) {
+                throw new UnexpectedJobExecutionException("Error Executing shell script!");
+            }
+        } else { // multiline
+            for (String s : arrCmdLine) {
+                resultShellScript = ShellScriptSupport.shellCmd(s, encoding);
+                if (resultShellScript > 0) {
+                    throw new UnexpectedJobExecutionException("Error Executing shell script!");
+                }
+            }
+        }
 
-		return RepeatStatus.FINISHED;
-	}
+        return RepeatStatus.FINISHED;
+    }
 
-	public String getShellScript() {
-		LOGGER.debug("shellScript = " + shellScript);
-		return shellScript;
-	}
+    public String getShellScript() {
+        return shellScript;
+    }
 
-	public void setShellScript(String shellScript) {
-		LOGGER.debug(">>>>> shellScript = " + shellScript);
-		this.shellScript = shellScript;
-	}
+    public void setShellScript(String shellScript) {
+        this.shellScript = shellScript;
+    }
 
-	public String getEncoding() {
-		return encoding;
-	}
+    public String getEncoding() {
+        return encoding;
+    }
 
-	public void setEncoding(String encoding) {
-		this.encoding = encoding;
-	}
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
+    }
 
 }

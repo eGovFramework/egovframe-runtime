@@ -1,57 +1,63 @@
 package org.egovframe.rte.itl.integration.metadata.dao.hibernate;
 
+import jakarta.annotation.Resource;
 import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ReplacementDataSet;
-import org.dbunit.dataset.xml.FlatXmlDataSet;
+import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.operation.DatabaseOperation;
+import org.egovframe.rte.itl.integration.config.HibernateContextConfig;
 import org.egovframe.rte.itl.integration.metadata.ServiceDefinition;
 import org.egovframe.rte.itl.integration.metadata.SystemDefinition;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ResourceUtils;
 
 import javax.sql.DataSource;
+import java.io.InputStream;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "/org/egovframe/rte/itl/integration/metadata/dao/hibernate/context.xml")
-@Transactional(readOnly=false)
-public class HibernateSystemDefinitionDaoTest
-{
-    @Autowired
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = HibernateContextConfig.class)
+@Transactional
+public class HibernateSystemDefinitionDaoTest {
+
+    @Resource(name = "hibernateSystemDefinitionDao")
     private HibernateSystemDefinitionDao dao;
 
-    @Autowired
+    @Resource(name = "dataSource")
     private DataSource dataSource;
-    
-    @SuppressWarnings("deprecation")
-	@Before
-    public void before() throws Exception
-    {
-        ReplacementDataSet dataSet = new ReplacementDataSet(new FlatXmlDataSet(
-                ResourceUtils.getFile("classpath:org/egovframe/rte/itl/integration/metadata/dao/hibernate/dataset.xml")));
+
+    @BeforeEach
+    public void onSetUp() throws Exception {
+        // 리소스 파일 로드
+        InputStream inputStream = new ClassPathResource("META-INF/spring/dataset.xml").getInputStream();
+
+        // Flat XML → ReplacementDataSet 변환
+        IDataSet baseDataSet = new FlatXmlDataSetBuilder().build(inputStream);
+        ReplacementDataSet dataSet = new ReplacementDataSet(baseDataSet);
         dataSet.addReplacementObject("[null]", null);
-        
-        IDatabaseConnection connection = new SpringDatabaseDataSourceConnection(dataSource);
-        
+
+        // DBUnit 연결 생성
+        IDatabaseConnection connection = new org.dbunit.database.DatabaseDataSourceConnection(dataSource);
+
+        // 데이터 삽입
         DatabaseOperation.CLEAN_INSERT.execute(connection, dataSet);
     }
-    
+
     @Test
-    public void testReadSucceeds() throws Exception
-    {
+    public void testReadSucceeds() {
         SystemDefinition systemA0 = dao.getSystemDefinition("00000000", "00000000");
         assertNotNull(systemA0);
         assertTrue(systemA0.isValid());
         assertEquals("00000000", systemA0.getId());
         assertEquals("System A0", systemA0.getName());
-        assertEquals(true, systemA0.isStandard());
+        assertTrue(systemA0.isStandard());
         assertEquals(1, systemA0.getServices().size());
         assertEquals("00000000", systemA0.getOrganization().getId());
 
@@ -67,10 +73,9 @@ public class HibernateSystemDefinitionDaoTest
     }
 
     @Test
-    public void testReadFails() throws Exception
-    {
+    public void testReadFails() {
         SystemDefinition system = dao.getSystemDefinition("00000000", "00000003");
-        
         assertNull(system);
     }
+
 }

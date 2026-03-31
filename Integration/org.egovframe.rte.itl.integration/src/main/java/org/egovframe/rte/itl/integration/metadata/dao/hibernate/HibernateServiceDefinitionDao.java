@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 MOPAS(Ministry of Public Administration and Security).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,13 @@
  */
 package org.egovframe.rte.itl.integration.metadata.dao.hibernate;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.egovframe.rte.itl.integration.metadata.ServiceDefinition;
 import org.egovframe.rte.itl.integration.metadata.dao.ServiceDefinitionDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
+import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 
@@ -29,73 +31,66 @@ import java.util.List;
  * <b>NOTE:</b> 전자정부 연계 서비스 ServiceDefinitionDao interface 를 Hibernate를 이용하여 구현한
  * DAO class이다.
  * </p>
- * 
+ *
  * @author 실행환경 개발팀 심상호
- * @since 2009.06.01
  * @version 1.0
  * @see <pre>
  *  == 개정이력(Modification Information) ==
- * 
+ *
  *   수정일      수정자           수정내용
  *  -------    --------    ---------------------------
  *   2009.06.01  심상호           최초 생성
  *
  * </pre>
+ * @since 2009.06.01
  */
-public class HibernateServiceDefinitionDao extends HibernateDaoSupport implements ServiceDefinitionDao {
-	private static final Logger LOGGER = LoggerFactory.getLogger(HibernateServiceDefinitionDao.class);
+public class HibernateServiceDefinitionDao implements ServiceDefinitionDao {
 
-	public ServiceDefinition getServiceDefinition(String key) {
-		LOGGER.debug("get ServiceDefinition(key = \"{}\")", key);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HibernateServiceDefinitionDao.class);
 
-		ServiceDefinition serviceDefinition = (ServiceDefinition) getHibernateTemplate().get(ServiceDefinition.class, key);
+    @PersistenceContext
+    private EntityManager entityManager;
 
-		LOGGER.debug("get ServiceDefinition(key = \"{}\") = {}", key, serviceDefinition);
+    @Override
+    public ServiceDefinition getServiceDefinition(String key) {
+        return entityManager.find(ServiceDefinition.class, key);
+    }
 
-		return serviceDefinition;
-	}
+    @Override
+    public ServiceDefinition getServiceDefinition(String systemKey, String serviceId) {
+        List<ServiceDefinition> result = entityManager.createQuery("""
+                        SELECT s FROM ServiceDefinition s WHERE s.system.key = :systemKey AND s.id = :serviceId
+                        """, ServiceDefinition.class)
+                .setParameter("systemKey", systemKey)
+                .setParameter("serviceId", serviceId)
+                .getResultList();
 
+        return handleSingleResult(result, systemKey + "/" + serviceId);
+    }
 
-	@SuppressWarnings("unchecked")
-	public ServiceDefinition getServiceDefinition(String systemKey, String serviceId) {
-		LOGGER.debug("get ServiceDefinition(systemKey = \"{}\", serviceId = \"{}\")", systemKey, serviceId);
+    @Override
+    public ServiceDefinition getServiceDefinition(String organizationId, String systemId, String serviceId) {
+        List<ServiceDefinition> result = entityManager.createQuery("""
+                        SELECT s FROM ServiceDefinition s WHERE s.system.organization.id = :orgId AND s.system.id = :systemId AND s.id = :serviceId
+                        """, ServiceDefinition.class)
+                .setParameter("orgId", organizationId)
+                .setParameter("systemId", systemId)
+                .setParameter("serviceId", serviceId)
+                .getResultList();
 
-		ServiceDefinition serviceDefinition = null;
+        return handleSingleResult(result, organizationId + "/" + systemId + "/" + serviceId);
+    }
 
-		List<ServiceDefinition> result = (List<ServiceDefinition>)getHibernateTemplate().find(
-				"from ServiceDefinition as service " + "where service.system.key = ?0 "
-						+ "and service.id = ?1", new Object[] { systemKey, serviceId });
-		if (result != null && result.size() > 0) {
-			serviceDefinition = result.get(0);
-			if (result.size() != 1) {
-				LOGGER.info("get ServiceDefinition(systemKey = \"{}\", serviceId = \"{}\")'s size is not 1 ({})", systemKey, serviceId, result.size());
-			}
-		}
+    private ServiceDefinition handleSingleResult(List<ServiceDefinition> result, String context) {
+        if (ObjectUtils.isEmpty(result)) {
+            return null;
+        }
 
-		LOGGER.debug("get ServiceDefinition(systemKey = \"{}\", serviceId = \"{}\") = {}", systemKey, serviceId, serviceDefinition);
+        if (result.size() > 1) {
+            LOGGER.debug("Warning: Multiple results found for {}", context);
+        }
 
-		return serviceDefinition;
-	}
-
-	@SuppressWarnings("unchecked")
-	public ServiceDefinition getServiceDefinition(String organizationId, String systemId, String serviceId) {
-		LOGGER.debug("get ServiceDefinition(organizationId = \"{}\", systemId = \"{}\", serviceId = \"{}\")", organizationId, systemId, serviceId);
-
-		ServiceDefinition serviceDefinition = null;
-
-		List<ServiceDefinition> result = (List<ServiceDefinition>)getHibernateTemplate().find(
-				"from ServiceDefinition as service " + "where service.system.organization.id = ?0 "
-						+ "and service.system.id = ?1 " + "and service.id = ?2 ", new Object[] { organizationId, systemId, serviceId });
-		if (result != null && result.size() > 0) {
-			serviceDefinition = result.get(0);
-			if (result.size() != 1) {
-				LOGGER.debug("get ServiceDefinition(organizationId = \"{}\", systemId = \"{}\", serviceId = \"{}\")'size is not 1 ({})", organizationId, systemId, serviceId, result.size());
-			}
-		}
-
-		LOGGER.debug("get ServiceDefinition(organizationId = \"{}\", systemId = \"{}\", serviceId = \"{}\") = {}", organizationId, systemId, serviceId, serviceDefinition);
-
-		return serviceDefinition;
-	}
+        return result.get(0);
+    }
 
 }

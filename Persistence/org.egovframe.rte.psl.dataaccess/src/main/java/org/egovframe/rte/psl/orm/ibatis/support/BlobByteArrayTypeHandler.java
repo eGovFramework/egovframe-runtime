@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.egovframe.rte.psl.orm.ibatis.support;
 
 import org.springframework.jdbc.support.lob.LobCreator;
@@ -33,45 +32,46 @@ import java.sql.SQLException;
  * large enough binary type will work.
  *
  * @author Juergen Hoeller
- * @since 1.1.5
  * @see org.egovframe.rte.psl.orm.ibatis.SqlMapClientFactoryBean#setLobHandler
+ * @since 1.1.5
  * @deprecated as of Spring 3.2, in favor of the native Spring support
  * in the Mybatis follow-up project (http://code.google.com/p/mybatis/)
  */
 @Deprecated
 public class BlobByteArrayTypeHandler extends AbstractLobTypeHandler {
 
-	/**
-	 * Constructor used by iBATIS: fetches config-time LobHandler from
-	 * SqlMapClientFactoryBean.
-	 * @see org.egovframe.rte.psl.orm.ibatis.SqlMapClientFactoryBean#getConfigTimeLobHandler
-	 */
-	public BlobByteArrayTypeHandler() {
-		super();
-	}
+    /**
+     * Constructor used by iBATIS: fetches config-time LobHandler from
+     * SqlMapClientFactoryBean.
+     *
+     * @see org.egovframe.rte.psl.orm.ibatis.SqlMapClientFactoryBean#getConfigTimeLobHandler
+     */
+    public BlobByteArrayTypeHandler() {
+        super();
+    }
 
-	/**
-	 * Constructor used for testing: takes an explicit LobHandler.
-	 */
-	protected BlobByteArrayTypeHandler(LobHandler lobHandler) {
-		super(lobHandler);
-	}
+    /**
+     * Constructor used for testing: takes an explicit LobHandler.
+     */
+    protected BlobByteArrayTypeHandler(LobHandler lobHandler) {
+        super(lobHandler);
+    }
 
-	@Override
-	protected void setParameterInternal(
-			PreparedStatement ps, int index, Object value, String jdbcType, LobCreator lobCreator)
-			throws SQLException {
-		lobCreator.setBlobAsBytes(ps, index, (byte[]) value);
-	}
+    @Override
+    protected void setParameterInternal(
+            PreparedStatement ps, int index, Object value, String jdbcType, LobCreator lobCreator)
+            throws SQLException {
+        lobCreator.setBlobAsBytes(ps, index, (byte[]) value);
+    }
 
-	@Override
-	protected Object getResultInternal(ResultSet rs, int index, LobHandler lobHandler)
-			throws SQLException {
-		return lobHandler.getBlobAsBytes(rs, index);
-	}
+    @Override
+    protected Object getResultInternal(ResultSet rs, int index, LobHandler lobHandler)
+            throws SQLException {
+        return lobHandler.getBlobAsBytes(rs, index);
+    }
 
-	public Object valueOf(String s) {
-		return s.getBytes();
-	}
+    public Object valueOf(String s) {
+        return s.getBytes();
+    }
 
 }

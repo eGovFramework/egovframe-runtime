@@ -3,7 +3,7 @@ package org.egovframe.rte.ptl.reactive.validation;
 public class SampleDto {
 
     private Integer id;
-    @EgovNullCheck(message="Please enter required values")
+    @EgovNullCheck
     private String sampleId;
     private String name;
     private String description;

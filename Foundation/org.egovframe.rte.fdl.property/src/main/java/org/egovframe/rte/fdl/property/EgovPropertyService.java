@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 MOPAS(Ministry of Public Administration and Security).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ import java.util.Iterator;
  * <p><b>NOTE</b>: 이 서비스를 통해 어플리케이션에서 유일한 키값으로 키/값쌍을 가지고 오도록 서비스 한다.</p>
  *
  * @author 실행환경 개발팀 김태호
- * @since 2009.02.01
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -35,11 +34,13 @@ import java.util.Iterator;
  * ----------------------------------------------
  * 2009.02.01   김태호             최초 생성
  * </pre>
+ * @since 2009.02.01
  */
 public interface EgovPropertyService {
 
     /**
      * boolean 타입의 프로퍼티 값 얻기
+     *
      * @param name 프로퍼티키
      * @return boolean 타입의 값
      */
@@ -47,14 +48,16 @@ public interface EgovPropertyService {
 
     /**
      * boolean 타입의 프로퍼티 값 얻기(디폴트값을 입력받음)
+     *
      * @param name 프로퍼티키
-     * @param def 디폴트 값
+     * @param def  디폴트 값
      * @return boolean 타입의 값
      */
     boolean getBoolean(String name, boolean def);
 
     /**
      * double 타입의 프로퍼티 값 얻기
+     *
      * @param name 프로퍼티키
      * @return double 타입의 값
      */
@@ -62,14 +65,16 @@ public interface EgovPropertyService {
 
     /**
      * double 타입의 프로퍼티 값 얻기
+     *
      * @param name 프로퍼티키
-     * @param def 디폴트 값
+     * @param def  디폴트 값
      * @return double 타입의 값
      */
     double getDouble(String name, double def);
 
     /**
      * float 타입의 프로퍼티 값 얻기
+     *
      * @param name 프로퍼티키
      * @return Float 타입의 값
      */
@@ -77,14 +82,16 @@ public interface EgovPropertyService {
 
     /**
      * float 타입의 프로퍼티 값 얻기
+     *
      * @param name 프로퍼티키
-     * @param def 디폴트 값
+     * @param def  디폴트 값
      * @return float 타입의 값
      */
     float getFloat(String name, float def);
 
     /**
      * int 타입의 프로퍼티 값 얻기
+     *
      * @param name 프로퍼티키
      * @return int 타입의 값
      */
@@ -92,20 +99,23 @@ public interface EgovPropertyService {
 
     /**
      * int 타입의 프로퍼티 값 얻기
+     *
      * @param name 프로퍼티키
-     * @param def 디폴트 값
+     * @param def  디폴트 값
      * @return int 타입의 값
      */
     int getInt(String name, int def);
 
     /**
      * 프로퍼티 키 목록 읽기
+     *
      * @return Key를 위한 Iterator
      */
     Iterator<?> getKeys();
 
     /**
      * prefix를 이용한 키 목록 읽기
+     *
      * @param prefix prefix
      * @return prefix에 매칭되는 키목록
      */
@@ -113,6 +123,7 @@ public interface EgovPropertyService {
 
     /**
      * long 타입의 프로퍼티 값 얻기
+     *
      * @param name 프로퍼티키
      * @return long 타입의 값
      */
@@ -120,14 +131,16 @@ public interface EgovPropertyService {
 
     /**
      * long 타입의 프로퍼티 값 얻기
+     *
      * @param name 프로퍼티키
-     * @param def 디폴트 값
+     * @param def  디폴트 값
      * @return long 타입의 값
      */
     long getLong(String name, long def);
 
     /**
      * String 타입의 프로퍼티 값 얻기
+     *
      * @param name 프로퍼티키
      * @return String 타입의 값
      */
@@ -135,14 +148,16 @@ public interface EgovPropertyService {
 
     /**
      * String 타입의 프로퍼티 값 얻기
+     *
      * @param name 프로퍼티키
-     * @param def 디폴트 값
+     * @param def  디폴트 값
      * @return String 타입의 값
      */
     String getString(String name, String def);
 
     /**
      * String[] 타입의 프로퍼티 값 얻기
+     *
      * @param name 프로퍼티키
      * @return String[] 타입의 값
      */

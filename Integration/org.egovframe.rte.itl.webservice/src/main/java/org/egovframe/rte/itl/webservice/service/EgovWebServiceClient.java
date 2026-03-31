@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 MOPAS(Ministry of Public Administration and Security).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,8 @@ import org.egovframe.rte.itl.integration.EgovIntegrationMessage;
  * 웹서비스 Client로 실제 웹서비스를 호출하는 인터페이스
  * <p>
  * <b>NOTE:</b> 웹서비스 Client로 실제 웹서비스를 호출하는 interface이다. </p>
- * 
+ *
  * @author 실행환경 개발팀 심상호
- * @since 2009.06.01
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -32,16 +31,16 @@ import org.egovframe.rte.itl.integration.EgovIntegrationMessage;
  * ----------------------------------------------
  * 2009.06.01	심상호				최초 생성
  * </pre>
+ * @since 2009.06.01
  */
 public interface EgovWebServiceClient {
 
-	/**
-	 * 웹서비스를 호출한다.
-	 * 
-	 * @param requestMessage
-	 *            요청 메시지
-	 * @return 응답 메시지
-	 */
-	public EgovIntegrationMessage service(EgovIntegrationMessage requestMessage);
+    /**
+     * 웹서비스를 호출한다.
+     *
+     * @param requestMessage 요청 메시지
+     * @return 응답 메시지
+     */
+    EgovIntegrationMessage service(EgovIntegrationMessage requestMessage);
 
 }

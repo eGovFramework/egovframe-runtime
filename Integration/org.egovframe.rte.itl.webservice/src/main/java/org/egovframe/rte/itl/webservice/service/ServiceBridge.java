@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 MOPAS(Ministry of Public Administration and Security).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,9 +23,8 @@ import java.util.Map;
  * <b>NOTE:</b> 자동 생성된 웹 서비스 ServiceEndpoint와 EgovIntegrationServiceProvider를
  * 연결해주는 ServiceBridge interface이다.
  * </p>
- * 
+ *
  * @author 실행환경 개발팀 심상호
- * @since 2009.06.01
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -34,9 +33,10 @@ import java.util.Map;
  * ----------------------------------------------
  * 2009.06.01	심상호				최초 생성
  * </pre>
+ * @since 2009.06.01
  */
 public interface ServiceBridge {
 
-	public Object doService(Map<String, Object> params);
+    Object doService(Map<String, Object> params);
 
 }

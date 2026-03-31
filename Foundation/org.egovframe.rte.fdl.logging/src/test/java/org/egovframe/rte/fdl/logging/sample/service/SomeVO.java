@@ -6,20 +6,20 @@ import java.io.Serializable;
 
 public class SomeVO implements Serializable {
 
-	private static final long serialVersionUID = -1717767349866238571L;
+    private static final long serialVersionUID = -5139781208516050820L;
 
-	private String someAttr;
+    private String someAttr;
 
-	public String getSomeAttr() {
-		return someAttr;
-	}
+    public String getSomeAttr() {
+        return someAttr;
+    }
 
-	public void setSomeAttr(String someAttr) {
-		this.someAttr = someAttr;
-	}
+    public void setSomeAttr(String someAttr) {
+        this.someAttr = someAttr;
+    }
 
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
-	}
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
 
 }

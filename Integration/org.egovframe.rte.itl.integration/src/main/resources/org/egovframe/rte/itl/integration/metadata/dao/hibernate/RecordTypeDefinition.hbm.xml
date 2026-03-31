@@ -1,25 +1,25 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC
-      "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping package="org.egovframe.rte.itl.integration.metadata">
 
     <class name="RecordTypeDefinition" table="RECORD_TYPE">
-     
+
         <id name="id" type="string" column="RECORD_TYPE_ID"/>
 
         <property name="name"
                   type="string"
                   column="RECORD_TYPE_NAME"
                   not-null="true"/>
-        
+
         <many-to-one name="parent"
-            column="PARENT_RECORD_TYPE_ID"
-            class="RecordTypeDefinition"
-            not-null="false"
-            lazy="false"/>
-        
+                     column="PARENT_RECORD_TYPE_ID"
+                     class="RecordTypeDefinition"
+                     not-null="false"
+                     lazy="false"/>
+
         <map name="fields" table="RECORD_TYPE_FIELD" lazy="false">
             <key column="RECORD_TYPE_ID" not-null="true"/>
             <map-key column="RECORD_FIELD_NAME" type="string"/>
@@ -30,7 +30,7 @@
                           not-null="true"/>
             </composite-element>
         </map>
-        
+
     </class>
 
 </hibernate-mapping>

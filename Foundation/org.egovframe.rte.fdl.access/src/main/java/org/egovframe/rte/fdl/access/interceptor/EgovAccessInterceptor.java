@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2019 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,71 +15,67 @@
  */
 package org.egovframe.rte.fdl.access.interceptor;
 
-import org.egovframe.rte.fdl.access.config.EgovAccessConfigShare;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.egovframe.rte.fdl.access.config.EgovAccessConfig;
 import org.egovframe.rte.fdl.access.service.EgovUserDetailsHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * 인증 및 접근제한 인터셉터
  *
  * <p>Desc.: 인증 및 접근제한 인터셉터</p>
  *
- * @author ESFC
- * @since 2019.10.01
+ * @author 유지보수
  * @version 3.9
  * <pre>
  * 개정이력(Modification Information)
  *
  * 수정일		수정자				수정내용
  * ----------------------------------------------
- * 2019.10.01	ESFC            최초 생성
- * 2024.03.29   ESFC            권한별 접근 제한 수정
+ * 2019.10.01	유지보수            최초 생성
+ * 2024.03.29   유지보수            권한별 접근 제한 수정
  * </pre>
+ * @since 2019.10.01
  */
-public class EgovAccessInterceptor implements HandlerInterceptor, ApplicationContextAware {
+public class EgovAccessInterceptor implements HandlerInterceptor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EgovAccessInterceptor.class);
-    private ApplicationContext context;
 
-    @Override
-    public void setApplicationContext(ApplicationContext context) throws BeansException {
-        this.context = context;
+    private final EgovAccessConfig config;
+
+    public EgovAccessInterceptor(EgovAccessConfig config) {
+        this.config = config;
     }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
-        String requestUrl = request.getRequestURI().replace(request.getContextPath(),"");
+        String requestUrl = request.getRequestURI().replace(request.getContextPath(), "");
 
         // 인증 체크
         if (!EgovUserDetailsHelper.isAuthenticated()) {
-            LOGGER.debug("##### EgovAccessInterceptor Authentication not authorized... ");
-            response.sendRedirect(request.getContextPath() + EgovAccessConfigShare.DEF_LOGIN_URL);
+            LOGGER.debug("### EgovAccessInterceptor Authentication not authorized... ");
+            response.sendRedirect(request.getContextPath().concat(config.getLoginUrl()));
             return false;
         }
 
         // 권한별 접근 제한
         if (authCheck(requestUrl)) {
-            LOGGER.debug("##### EgovAccessInterceptor URL pattern matched... ");
+            LOGGER.debug("### EgovAccessInterceptor URL pattern matched... ");
             return true;
         }
 
         // 허가되지 않은 경우 접근 제한
-        response.sendRedirect(request.getContextPath() + EgovAccessConfigShare.DEF_ACCESS_DENIED_URL);
+        response.sendRedirect(request.getContextPath().concat(config.getAccessDeniedUrl()));
         return false;
     }
 
@@ -89,7 +85,6 @@ public class EgovAccessInterceptor implements HandlerInterceptor, ApplicationCon
         List<Map<String, Object>> rolesList = EgovUserDetailsHelper.getRoles();
 
         if (!ObjectUtils.isEmpty(authList) && !ObjectUtils.isEmpty(rolesList)) {
-            List<String> urlList = new ArrayList<>();
             List<String> roleList = new ArrayList<>();
             for (String auth : authList) {
                 Iterator<Map<String, Object>> iterator = rolesList.iterator();
@@ -102,10 +97,9 @@ public class EgovAccessInterceptor implements HandlerInterceptor, ApplicationCon
                 }
             }
 
-            urlList = roleList.stream().distinct().collect(Collectors.toList());
-
+            List<String> urlList = roleList.stream().distinct().toList();
             for (String authUrl : urlList) {
-                if ("ant".equals(EgovAccessConfigShare.DEF_REQUEST_MATCH_TYPE)) {
+                if ("ant".equals(config.getRequestMatcherType())) {
                     authCheck = EgovAccessUtil.antMatcher(authUrl, requestUrl);
                 } else {
                     authCheck = EgovAccessUtil.regexMatcher(authUrl, requestUrl);

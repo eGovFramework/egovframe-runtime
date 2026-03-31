@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 MOSPA(Ministry of Security and Public Administration).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,49 +23,54 @@ import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Added since egovframework .
- * @author 이영지
  *
+ * @author 이영지
  */
 public abstract class AbstractAnnotationExceptionHandler {
 
-	/** 
-	 * Default Exeption handler.
-	 * @param e Exception class type
-	 * @return ModelAndView object
-	 */
-	@ExceptionHandler(Exception.class)
-	public abstract ModelAndView handleException(Exception e);
+    /**
+     * Default Exeption handler.
+     *
+     * @param e Exception class type
+     * @return ModelAndView object
+     */
+    @ExceptionHandler(Exception.class)
+    public abstract ModelAndView handleException(Exception e);
 
-	/**
-	 * Default RuntimeException handler.
-	 * @param e RuntimeException class type
-	 * @return ModelAndView object
-	 */
-	@ExceptionHandler(RuntimeException.class)
-	public abstract ModelAndView handleRuntimeException(RuntimeException e);
+    /**
+     * Default RuntimeException handler.
+     *
+     * @param e RuntimeException class type
+     * @return ModelAndView object
+     */
+    @ExceptionHandler(RuntimeException.class)
+    public abstract ModelAndView handleRuntimeException(RuntimeException e);
 
-	/**
-	 * BaseException handler.
-	 * @param e BaseException class type
-	 * @return ModelAndView object
-	 */
-	@ExceptionHandler(BaseException.class)
-	public abstract ModelAndView handleBaseException(BaseException e);
+    /**
+     * BaseException handler.
+     *
+     * @param e BaseException class type
+     * @return ModelAndView object
+     */
+    @ExceptionHandler(BaseException.class)
+    public abstract ModelAndView handleBaseException(BaseException e);
 
-	/**
-	 * EgovBizException handler.
-	 * @param e EgovBizException class type
-	 * @return ModelAndView object
-	 */
-	@ExceptionHandler(EgovBizException.class)
-	public abstract ModelAndView handleEgovBizException(EgovBizException e);
+    /**
+     * EgovBizException handler.
+     *
+     * @param e EgovBizException class type
+     * @return ModelAndView object
+     */
+    @ExceptionHandler(EgovBizException.class)
+    public abstract ModelAndView handleEgovBizException(EgovBizException e);
 
-	/**
-	 * FdlException handler.
-	 * @param e FdlException class type
-	 * @return ModelAndView object
-	 */
-	@ExceptionHandler(FdlException.class)
-	public abstract ModelAndView handleFdlException(FdlException e);
+    /**
+     * FdlException handler.
+     *
+     * @param e FdlException class type
+     * @return ModelAndView object
+     */
+    @ExceptionHandler(FdlException.class)
+    public abstract ModelAndView handleFdlException(FdlException e);
 
 }

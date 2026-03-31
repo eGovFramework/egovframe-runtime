@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2012 the original author or authors.
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.egovframe.rte.psl.orm.ibatis;
 
 import com.ibatis.common.xml.NodeletException;
@@ -28,7 +27,6 @@ import com.ibatis.sqlmap.engine.transaction.TransactionManager;
 import com.ibatis.sqlmap.engine.transaction.external.ExternalTransactionConfig;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.core.NestedIOException;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 import org.springframework.jdbc.support.lob.LobHandler;
@@ -60,367 +58,355 @@ import java.util.Properties;
  * or higher. The new "mappingLocations" feature requires iBATIS 2.3.2.
  *
  * @author Juergen Hoeller
- * @since 24.02.2004
  * @see #setConfigLocation
  * @see #setDataSource
  * @see SqlMapClientTemplate#setSqlMapClient
  * @see SqlMapClientTemplate#setDataSource
+ * @since 24.02.2004
  * @deprecated as of Spring 3.2, in favor of the native Spring support
  */
 @Deprecated
 public class SqlMapClientFactoryBean implements FactoryBean<SqlMapClient>, InitializingBean {
 
-	private static final ThreadLocal<LobHandler> configTimeLobHandlerHolder = new ThreadLocal<LobHandler>();
+    private static final ThreadLocal<LobHandler> configTimeLobHandlerHolder = new ThreadLocal<LobHandler>();
+    private Resource[] configLocations;
+    private Resource[] mappingLocations;
+    private Properties sqlMapClientProperties;
+    private DataSource dataSource;
+    private boolean useTransactionAwareDataSource = true;
+    private Class transactionConfigClass = ExternalTransactionConfig.class;
+    private Properties transactionConfigProperties;
+    private LobHandler lobHandler;
+    private SqlMapClient sqlMapClient;
 
-	/**
-	 * Return the LobHandler for the currently configured iBATIS SqlMapClient,
-	 * to be used by TypeHandler implementations like ClobStringTypeHandler.
-	 * <p>This instance will be set before initialization of the corresponding
-	 * SqlMapClient, and reset immediately afterwards. It is thus only available
-	 * during configuration.
-	 * @see #setLobHandler
-	 * @see org.egovframe.rte.psl.orm.ibatis.support.ClobStringTypeHandler
-	 * @see org.egovframe.rte.psl.orm.ibatis.support.BlobByteArrayTypeHandler
-	 * @see org.egovframe.rte.psl.orm.ibatis.support.BlobSerializableTypeHandler
-	 */
-	public static LobHandler getConfigTimeLobHandler() {
-		return configTimeLobHandlerHolder.get();
-	}
+    public SqlMapClientFactoryBean() {
+        this.transactionConfigProperties = new Properties();
+        this.transactionConfigProperties.setProperty("SetAutoCommitAllowed", "false");
+    }
 
+    /**
+     * Return the LobHandler for the currently configured iBATIS SqlMapClient,
+     * to be used by TypeHandler implementations like ClobStringTypeHandler.
+     * <p>This instance will be set before initialization of the corresponding
+     * SqlMapClient, and reset immediately afterwards. It is thus only available
+     * during configuration.
+     *
+     * @see #setLobHandler
+     * @see org.egovframe.rte.psl.orm.ibatis.support.ClobStringTypeHandler
+     * @see org.egovframe.rte.psl.orm.ibatis.support.BlobByteArrayTypeHandler
+     * @see org.egovframe.rte.psl.orm.ibatis.support.BlobSerializableTypeHandler
+     */
+    public static LobHandler getConfigTimeLobHandler() {
+        return configTimeLobHandlerHolder.get();
+    }
 
-	private Resource[] configLocations;
+    /**
+     * Set the location of the iBATIS SqlMapClient config file.
+     * A typical value is "WEB-INF/sql-map-config.xml".
+     *
+     * @see #setConfigLocations
+     */
+    public void setConfigLocation(Resource configLocation) {
+        this.configLocations = (configLocation != null ? new Resource[]{configLocation} : null);
+    }
 
-	private Resource[] mappingLocations;
+    /**
+     * Set multiple locations of iBATIS SqlMapClient config files that
+     * are going to be merged into one unified configuration at runtime.
+     */
+    public void setConfigLocations(Resource[] configLocations) {
+        // 2020.08.31 유지보수 시큐어코딩(ES)-Private 배열에 Public 데이터 할당[CWE-496]
+        this.configLocations = new Resource[configLocations.length];
+        for (int i = 0; i < configLocations.length; i++) {
+            this.configLocations[i] = configLocations[i];
+        }
+    }
 
-	private Properties sqlMapClientProperties;
+    /**
+     * Set locations of iBATIS sql-map mapping files that are going to be
+     * merged into the SqlMapClient configuration at runtime.
+     * <p>This is an alternative to specifying "&lt;sqlMap&gt;" entries
+     * in a sql-map-client config file. This property being based on Spring's
+     * resource abstraction also allows for specifying resource patterns here:
+     * e.g. "/myApp/*-map.xml".
+     * <p>Note that this feature requires iBATIS 2.3.2; it will not work
+     * with any previous iBATIS version.
+     */
+    public void setMappingLocations(Resource[] mappingLocations) {
+        // 2020.08.31 유지보수 시큐어코딩(ES)-Private 배열에 Public 데이터 할당[CWE-496]
+        this.mappingLocations = new Resource[mappingLocations.length];
+        for (int i = 0; i < mappingLocations.length; i++) {
+            this.mappingLocations[i] = mappingLocations[i];
+        }
+    }
 
-	private DataSource dataSource;
+    /**
+     * Set optional properties to be passed into the SqlMapClientBuilder, as
+     * alternative to a {@code &lt;properties&gt;} tag in the sql-map-config.xml
+     * file. Will be used to resolve placeholders in the config file.
+     *
+     * @see #setConfigLocation
+     * @see com.ibatis.sqlmap.client.SqlMapClientBuilder#buildSqlMapClient(java.io.InputStream, java.util.Properties)
+     */
+    public void setSqlMapClientProperties(Properties sqlMapClientProperties) {
+        this.sqlMapClientProperties = sqlMapClientProperties;
+    }
 
-	private boolean useTransactionAwareDataSource = true;
+    /**
+     * Set the DataSource to be used by iBATIS SQL Maps. This will be passed to the
+     * SqlMapClient as part of a TransactionConfig instance.
+     * <p>If specified, this will override corresponding settings in the SqlMapClient
+     * properties. Usually, you will specify DataSource and transaction configuration
+     * <i>either</i> here <i>or</i> in SqlMapClient properties.
+     * <p>Specifying a DataSource for the SqlMapClient rather than for each individual
+     * DAO allows for lazy loading, for example when using PaginatedList results.
+     * <p>With a DataSource passed in here, you don't need to specify one for each DAO.
+     * Passing the SqlMapClient to the DAOs is enough, as it already carries a DataSource.
+     * Thus, it's recommended to specify the DataSource at this central location only.
+     * <p>Thanks to Brandon Goodin from the iBATIS team for the hint on how to make
+     * this work with Spring's integration strategy!
+     *
+     * @see #setTransactionConfigClass
+     * @see #setTransactionConfigProperties
+     * @see com.ibatis.sqlmap.client.SqlMapClient#getDataSource
+     * @see SqlMapClientTemplate#setDataSource
+     */
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
-	private Class transactionConfigClass = ExternalTransactionConfig.class;
+    /**
+     * Set whether to use a transaction-aware DataSource for the SqlMapClient,
+     * i.e. whether to automatically wrap the passed-in DataSource with Spring's
+     * TransactionAwareDataSourceProxy.
+     * <p>Default is "true": When the SqlMapClient performs direct database operations
+     * outside of Spring's SqlMapClientTemplate (for example, lazy loading or direct
+     * SqlMapClient access), it will still participate in active Spring-managed
+     * transactions.
+     * <p>As a further effect, using a transaction-aware DataSource will apply
+     * remaining transaction timeouts to all created JDBC Statements. This means
+     * that all operations performed by the SqlMapClient will automatically
+     * participate in Spring-managed transaction timeouts.
+     * <p>Turn this flag off to get raw DataSource handling, without Spring transaction
+     * checks. Operations on Spring's SqlMapClientTemplate will still detect
+     * Spring-managed transactions, but lazy loading or direct SqlMapClient access won't.
+     *
+     * @see #setDataSource
+     * @see org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy
+     * @see org.springframework.jdbc.datasource.DataSourceTransactionManager
+     * @see SqlMapClientTemplate
+     * @see com.ibatis.sqlmap.client.SqlMapClient
+     */
+    public void setUseTransactionAwareDataSource(boolean useTransactionAwareDataSource) {
+        this.useTransactionAwareDataSource = useTransactionAwareDataSource;
+    }
 
-	private Properties transactionConfigProperties;
+    /**
+     * Set the iBATIS TransactionConfig class to use. Default is
+     * {@code com.ibatis.sqlmap.engine.transaction.external.ExternalTransactionConfig}.
+     * <p>Will only get applied when using a Spring-managed DataSource.
+     * An instance of this class will get populated with the given DataSource
+     * and initialized with the given properties.
+     * <p>The default ExternalTransactionConfig is appropriate if there is
+     * external transaction management that the SqlMapClient should participate
+     * in: be it Spring transaction management, EJB CMT or plain JTA. This
+     * should be the typical scenario. If there is no active transaction,
+     * SqlMapClient operations will execute SQL statements non-transactionally.
+     * <p>JdbcTransactionConfig or JtaTransactionConfig is only necessary
+     * when using the iBATIS SqlMapTransactionManager API instead of external
+     * transactions. If there is no explicit transaction, SqlMapClient operations
+     * will automatically start a transaction for their own scope (in contrast
+     * to the external transaction mode, see above).
+     * <p><b>It is strongly recommended to use iBATIS SQL Maps with Spring
+     * transaction management (or EJB CMT).</b> In this case, the default
+     * ExternalTransactionConfig is fine. Lazy loading and SQL Maps operations
+     * without explicit transaction demarcation will execute non-transactionally.
+     * <p>Even with Spring transaction management, it might be desirable to
+     * specify JdbcTransactionConfig: This will still participate in existing
+     * Spring-managed transactions, but lazy loading and operations without
+     * explicit transaction demaration will execute in their own auto-started
+     * transactions. However, this is usually not necessary.
+     *
+     * @see #setDataSource
+     * @see #setTransactionConfigProperties
+     * @see com.ibatis.sqlmap.engine.transaction.TransactionConfig
+     * @see com.ibatis.sqlmap.engine.transaction.external.ExternalTransactionConfig
+     * @see com.ibatis.sqlmap.engine.transaction.jdbc.JdbcTransactionConfig
+     * @see com.ibatis.sqlmap.engine.transaction.jta.JtaTransactionConfig
+     * @see com.ibatis.sqlmap.client.SqlMapTransactionManager
+     */
+    public void setTransactionConfigClass(Class transactionConfigClass) {
+        if (transactionConfigClass == null || !TransactionConfig.class.isAssignableFrom(transactionConfigClass)) {
+            throw new IllegalArgumentException("Invalid transactionConfigClass: does not implement " +
+                    "com.ibatis.sqlmap.engine.transaction.TransactionConfig");
+        }
+        this.transactionConfigClass = transactionConfigClass;
+    }
 
-	private LobHandler lobHandler;
+    /**
+     * Set properties to be passed to the TransactionConfig instance used
+     * by this SqlMapClient. Supported properties depend on the concrete
+     * TransactionConfig implementation used:
+     * <p><ul>
+     * <li><b>ExternalTransactionConfig</b> supports "DefaultAutoCommit"
+     * (default: false) and "SetAutoCommitAllowed" (default: true).
+     * Note that Spring uses SetAutoCommitAllowed = false as default,
+     * in contrast to the iBATIS default, to always keep the original
+     * autoCommit value as provided by the connection pool.
+     * <li><b>JdbcTransactionConfig</b> does not supported any properties.
+     * <li><b>JtaTransactionConfig</b> supports "UserTransaction"
+     * (no default), specifying the JNDI location of the JTA UserTransaction
+     * (usually "java:comp/UserTransaction").
+     * </ul>
+     *
+     * @see com.ibatis.sqlmap.engine.transaction.TransactionConfig#initialize
+     * @see com.ibatis.sqlmap.engine.transaction.external.ExternalTransactionConfig
+     * @see com.ibatis.sqlmap.engine.transaction.jdbc.JdbcTransactionConfig
+     * @see com.ibatis.sqlmap.engine.transaction.jta.JtaTransactionConfig
+     */
+    public void setTransactionConfigProperties(Properties transactionConfigProperties) {
+        this.transactionConfigProperties = transactionConfigProperties;
+    }
 
-	private SqlMapClient sqlMapClient;
-
-
-	public SqlMapClientFactoryBean() {
-		this.transactionConfigProperties = new Properties();
-		this.transactionConfigProperties.setProperty("SetAutoCommitAllowed", "false");
-	}
-
-	/**
-	 * Set the location of the iBATIS SqlMapClient config file.
-	 * A typical value is "WEB-INF/sql-map-config.xml".
-	 * @see #setConfigLocations
-	 */
-	public void setConfigLocation(Resource configLocation) {
-		this.configLocations = (configLocation != null ? new Resource[] {configLocation} : null);
-	}
-
-	/**
-	 * Set multiple locations of iBATIS SqlMapClient config files that
-	 * are going to be merged into one unified configuration at runtime.
-	 */
-	public void setConfigLocations(Resource[] configLocations) {
-		// 2020.08.31 ESFC 시큐어코딩(ES)-Private 배열에 Public 데이터 할당[CWE-496]
-		this.configLocations = new Resource[configLocations.length];
-		for (int i = 0; i < configLocations.length; i++) {
-			this.configLocations[i] = configLocations[i];
-		}
-	}
-
-	/**
-	 * Set locations of iBATIS sql-map mapping files that are going to be
-	 * merged into the SqlMapClient configuration at runtime.
-	 * <p>This is an alternative to specifying "&lt;sqlMap&gt;" entries
-	 * in a sql-map-client config file. This property being based on Spring's
-	 * resource abstraction also allows for specifying resource patterns here:
-	 * e.g. "/myApp/*-map.xml".
-	 * <p>Note that this feature requires iBATIS 2.3.2; it will not work
-	 * with any previous iBATIS version.
-	 */
-	public void setMappingLocations(Resource[] mappingLocations) {
-		// 2020.08.31 ESFC 시큐어코딩(ES)-Private 배열에 Public 데이터 할당[CWE-496]
-		this.mappingLocations = new Resource[mappingLocations.length];
-		for (int i = 0; i < mappingLocations.length; i++) {
-			this.mappingLocations[i] = mappingLocations[i];
-		}
-	}
-
-	/**
-	 * Set optional properties to be passed into the SqlMapClientBuilder, as
-	 * alternative to a {@code &lt;properties&gt;} tag in the sql-map-config.xml
-	 * file. Will be used to resolve placeholders in the config file.
-	 * @see #setConfigLocation
-	 * @see com.ibatis.sqlmap.client.SqlMapClientBuilder#buildSqlMapClient(java.io.InputStream, java.util.Properties)
-	 */
-	public void setSqlMapClientProperties(Properties sqlMapClientProperties) {
-		this.sqlMapClientProperties = sqlMapClientProperties;
-	}
-
-	/**
-	 * Set the DataSource to be used by iBATIS SQL Maps. This will be passed to the
-	 * SqlMapClient as part of a TransactionConfig instance.
-	 * <p>If specified, this will override corresponding settings in the SqlMapClient
-	 * properties. Usually, you will specify DataSource and transaction configuration
-	 * <i>either</i> here <i>or</i> in SqlMapClient properties.
-	 * <p>Specifying a DataSource for the SqlMapClient rather than for each individual
-	 * DAO allows for lazy loading, for example when using PaginatedList results.
-	 * <p>With a DataSource passed in here, you don't need to specify one for each DAO.
-	 * Passing the SqlMapClient to the DAOs is enough, as it already carries a DataSource.
-	 * Thus, it's recommended to specify the DataSource at this central location only.
-	 * <p>Thanks to Brandon Goodin from the iBATIS team for the hint on how to make
-	 * this work with Spring's integration strategy!
-	 * @see #setTransactionConfigClass
-	 * @see #setTransactionConfigProperties
-	 * @see com.ibatis.sqlmap.client.SqlMapClient#getDataSource
-	 * @see SqlMapClientTemplate#setDataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
-	}
-
-	/**
-	 * Set whether to use a transaction-aware DataSource for the SqlMapClient,
-	 * i.e. whether to automatically wrap the passed-in DataSource with Spring's
-	 * TransactionAwareDataSourceProxy.
-	 * <p>Default is "true": When the SqlMapClient performs direct database operations
-	 * outside of Spring's SqlMapClientTemplate (for example, lazy loading or direct
-	 * SqlMapClient access), it will still participate in active Spring-managed
-	 * transactions.
-	 * <p>As a further effect, using a transaction-aware DataSource will apply
-	 * remaining transaction timeouts to all created JDBC Statements. This means
-	 * that all operations performed by the SqlMapClient will automatically
-	 * participate in Spring-managed transaction timeouts.
-	 * <p>Turn this flag off to get raw DataSource handling, without Spring transaction
-	 * checks. Operations on Spring's SqlMapClientTemplate will still detect
-	 * Spring-managed transactions, but lazy loading or direct SqlMapClient access won't.
-	 * @see #setDataSource
-	 * @see org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy
-	 * @see org.springframework.jdbc.datasource.DataSourceTransactionManager
-	 * @see SqlMapClientTemplate
-	 * @see com.ibatis.sqlmap.client.SqlMapClient
-	 */
-	public void setUseTransactionAwareDataSource(boolean useTransactionAwareDataSource) {
-		this.useTransactionAwareDataSource = useTransactionAwareDataSource;
-	}
-
-	/**
-	 * Set the iBATIS TransactionConfig class to use. Default is
-	 * {@code com.ibatis.sqlmap.engine.transaction.external.ExternalTransactionConfig}.
-	 * <p>Will only get applied when using a Spring-managed DataSource.
-	 * An instance of this class will get populated with the given DataSource
-	 * and initialized with the given properties.
-	 * <p>The default ExternalTransactionConfig is appropriate if there is
-	 * external transaction management that the SqlMapClient should participate
-	 * in: be it Spring transaction management, EJB CMT or plain JTA. This
-	 * should be the typical scenario. If there is no active transaction,
-	 * SqlMapClient operations will execute SQL statements non-transactionally.
-	 * <p>JdbcTransactionConfig or JtaTransactionConfig is only necessary
-	 * when using the iBATIS SqlMapTransactionManager API instead of external
-	 * transactions. If there is no explicit transaction, SqlMapClient operations
-	 * will automatically start a transaction for their own scope (in contrast
-	 * to the external transaction mode, see above).
-	 * <p><b>It is strongly recommended to use iBATIS SQL Maps with Spring
-	 * transaction management (or EJB CMT).</b> In this case, the default
-	 * ExternalTransactionConfig is fine. Lazy loading and SQL Maps operations
-	 * without explicit transaction demarcation will execute non-transactionally.
-	 * <p>Even with Spring transaction management, it might be desirable to
-	 * specify JdbcTransactionConfig: This will still participate in existing
-	 * Spring-managed transactions, but lazy loading and operations without
-	 * explicit transaction demaration will execute in their own auto-started
-	 * transactions. However, this is usually not necessary.
-	 * @see #setDataSource
-	 * @see #setTransactionConfigProperties
-	 * @see com.ibatis.sqlmap.engine.transaction.TransactionConfig
-	 * @see com.ibatis.sqlmap.engine.transaction.external.ExternalTransactionConfig
-	 * @see com.ibatis.sqlmap.engine.transaction.jdbc.JdbcTransactionConfig
-	 * @see com.ibatis.sqlmap.engine.transaction.jta.JtaTransactionConfig
-	 * @see com.ibatis.sqlmap.client.SqlMapTransactionManager
-	 */
-	public void setTransactionConfigClass(Class transactionConfigClass) {
-		if (transactionConfigClass == null || !TransactionConfig.class.isAssignableFrom(transactionConfigClass)) {
-			throw new IllegalArgumentException("Invalid transactionConfigClass: does not implement " +
-					"com.ibatis.sqlmap.engine.transaction.TransactionConfig");
-		}
-		this.transactionConfigClass = transactionConfigClass;
-	}
-
-	/**
-	 * Set properties to be passed to the TransactionConfig instance used
-	 * by this SqlMapClient. Supported properties depend on the concrete
-	 * TransactionConfig implementation used:
-	 * <p><ul>
-	 * <li><b>ExternalTransactionConfig</b> supports "DefaultAutoCommit"
-	 * (default: false) and "SetAutoCommitAllowed" (default: true).
-	 * Note that Spring uses SetAutoCommitAllowed = false as default,
-	 * in contrast to the iBATIS default, to always keep the original
-	 * autoCommit value as provided by the connection pool.
-	 * <li><b>JdbcTransactionConfig</b> does not supported any properties.
-	 * <li><b>JtaTransactionConfig</b> supports "UserTransaction"
-	 * (no default), specifying the JNDI location of the JTA UserTransaction
-	 * (usually "java:comp/UserTransaction").
-	 * </ul>
-	 * @see com.ibatis.sqlmap.engine.transaction.TransactionConfig#initialize
-	 * @see com.ibatis.sqlmap.engine.transaction.external.ExternalTransactionConfig
-	 * @see com.ibatis.sqlmap.engine.transaction.jdbc.JdbcTransactionConfig
-	 * @see com.ibatis.sqlmap.engine.transaction.jta.JtaTransactionConfig
-	 */
-	public void setTransactionConfigProperties(Properties transactionConfigProperties) {
-		this.transactionConfigProperties = transactionConfigProperties;
-	}
-
-	/**
-	 * Set the LobHandler to be used by the SqlMapClient.
-	 * Will be exposed at config time for TypeHandler implementations.
-	 * @see #getConfigTimeLobHandler
-	 * @see com.ibatis.sqlmap.engine.type.TypeHandler
-	 * @see org.egovframe.rte.psl.orm.ibatis.support.ClobStringTypeHandler
-	 * @see org.egovframe.rte.psl.orm.ibatis.support.BlobByteArrayTypeHandler
-	 * @see org.egovframe.rte.psl.orm.ibatis.support.BlobSerializableTypeHandler
-	 */
-	public void setLobHandler(LobHandler lobHandler) {
-		this.lobHandler = lobHandler;
-	}
+    /**
+     * Set the LobHandler to be used by the SqlMapClient.
+     * Will be exposed at config time for TypeHandler implementations.
+     *
+     * @see #getConfigTimeLobHandler
+     * @see com.ibatis.sqlmap.engine.type.TypeHandler
+     * @see org.egovframe.rte.psl.orm.ibatis.support.ClobStringTypeHandler
+     * @see org.egovframe.rte.psl.orm.ibatis.support.BlobByteArrayTypeHandler
+     * @see org.egovframe.rte.psl.orm.ibatis.support.BlobSerializableTypeHandler
+     */
+    public void setLobHandler(LobHandler lobHandler) {
+        this.lobHandler = lobHandler;
+    }
 
 
-	public void afterPropertiesSet() throws Exception {
-		if (this.lobHandler != null) {
-			// Make given LobHandler available for SqlMapClient configuration.
-			// Do early because because mapping resource might refer to custom types.
-			configTimeLobHandlerHolder.set(this.lobHandler);
-		}
+    public void afterPropertiesSet() throws Exception {
+        if (this.lobHandler != null) {
+            // Make given LobHandler available for SqlMapClient configuration.
+            // Do early because because mapping resource might refer to custom types.
+            configTimeLobHandlerHolder.set(this.lobHandler);
+        }
 
-		try {
-			this.sqlMapClient = buildSqlMapClient(this.configLocations, this.mappingLocations, this.sqlMapClientProperties);
+        try {
+            this.sqlMapClient = buildSqlMapClient(this.configLocations, this.mappingLocations, this.sqlMapClientProperties);
 
-			// Tell the SqlMapClient to use the given DataSource, if any.
-			if (this.dataSource != null) {
-				TransactionConfig transactionConfig = (TransactionConfig) this.transactionConfigClass.newInstance();
-				DataSource dataSourceToUse = this.dataSource;
-				if (this.useTransactionAwareDataSource && !(this.dataSource instanceof TransactionAwareDataSourceProxy)) {
-					dataSourceToUse = new TransactionAwareDataSourceProxy(this.dataSource);
-				}
-				transactionConfig.setDataSource(dataSourceToUse);
-				transactionConfig.initialize(this.transactionConfigProperties);
-				applyTransactionConfig(this.sqlMapClient, transactionConfig);
-			}
-		}
+            // Tell the SqlMapClient to use the given DataSource, if any.
+            if (this.dataSource != null) {
+                TransactionConfig transactionConfig = (TransactionConfig) this.transactionConfigClass.newInstance();
+                DataSource dataSourceToUse = this.dataSource;
+                if (this.useTransactionAwareDataSource && !(this.dataSource instanceof TransactionAwareDataSourceProxy)) {
+                    dataSourceToUse = new TransactionAwareDataSourceProxy(this.dataSource);
+                }
+                transactionConfig.setDataSource(dataSourceToUse);
+                transactionConfig.initialize(this.transactionConfigProperties);
+                applyTransactionConfig(this.sqlMapClient, transactionConfig);
+            }
+        } finally {
+            if (this.lobHandler != null) {
+                // Reset LobHandler holder.
+                configTimeLobHandlerHolder.remove();
+            }
+        }
+    }
 
-		finally {
-			if (this.lobHandler != null) {
-				// Reset LobHandler holder.
-				configTimeLobHandlerHolder.remove();
-			}
-		}
-	}
+    /**
+     * Build a SqlMapClient instance based on the given standard configuration.
+     * <p>The default implementation uses the standard iBATIS {@link SqlMapClientBuilder}
+     * API to build a SqlMapClient instance based on an InputStream (if possible,
+     * on iBATIS 2.3 and higher) or on a Reader (on iBATIS up to version 2.2).
+     *
+     * @param configLocations the config files to load from
+     * @param properties      the SqlMapClient properties (if any)
+     * @return the SqlMapClient instance (never {@code null})
+     * @throws IOException if loading the config file failed
+     * @see com.ibatis.sqlmap.client.SqlMapClientBuilder#buildSqlMapClient
+     */
+    protected SqlMapClient buildSqlMapClient(Resource[] configLocations, Resource[] mappingLocations, Properties properties) throws IOException {
+        if (ObjectUtils.isEmpty(configLocations)) {
+            throw new IllegalArgumentException("At least 1 'configLocation' entry is required");
+        }
 
-	/**
-	 * Build a SqlMapClient instance based on the given standard configuration.
-	 * <p>The default implementation uses the standard iBATIS {@link SqlMapClientBuilder}
-	 * API to build a SqlMapClient instance based on an InputStream (if possible,
-	 * on iBATIS 2.3 and higher) or on a Reader (on iBATIS up to version 2.2).
-	 * @param configLocations the config files to load from
-	 * @param properties the SqlMapClient properties (if any)
-	 * @return the SqlMapClient instance (never {@code null})
-	 * @throws IOException if loading the config file failed
-	 * @see com.ibatis.sqlmap.client.SqlMapClientBuilder#buildSqlMapClient
-	 */
-	protected SqlMapClient buildSqlMapClient(
-			Resource[] configLocations, Resource[] mappingLocations, Properties properties)
-			throws IOException {
+        SqlMapClient client = null;
+        SqlMapConfigParser configParser = new SqlMapConfigParser();
+        for (Resource configLocation : configLocations) {
+            InputStream is = configLocation.getInputStream();
+            try {
+                client = configParser.parse(is, properties);
+            } catch (RuntimeException ex) {
+                throw new IOException("Failed to parse config resource: " + configLocation, ex.getCause());
+            }
+        }
 
-		if (ObjectUtils.isEmpty(configLocations)) {
-			throw new IllegalArgumentException("At least 1 'configLocation' entry is required");
-		}
+        if (mappingLocations != null) {
+            SqlMapParser mapParser = SqlMapParserFactory.createSqlMapParser(configParser);
+            for (Resource mappingLocation : mappingLocations) {
+                try {
+                    mapParser.parse(mappingLocation.getInputStream());
+                } catch (NodeletException ex) {
+                    throw new IOException("Failed to parse mapping resource: " + mappingLocation, ex);
+                }
+            }
+        }
 
-		SqlMapClient client = null;
-		SqlMapConfigParser configParser = new SqlMapConfigParser();
-		for (Resource configLocation : configLocations) {
-			InputStream is = configLocation.getInputStream();
-			try {
-				client = configParser.parse(is, properties);
-			}
-			catch (RuntimeException ex) {
-				throw new NestedIOException("Failed to parse config resource: " + configLocation, ex.getCause());
-			}
-		}
+        return client;
+    }
 
-		if (mappingLocations != null) {
-			SqlMapParser mapParser = SqlMapParserFactory.createSqlMapParser(configParser);
-			for (Resource mappingLocation : mappingLocations) {
-				try {
-					mapParser.parse(mappingLocation.getInputStream());
-				}
-				catch (NodeletException ex) {
-					throw new NestedIOException("Failed to parse mapping resource: " + mappingLocation, ex);
-				}
-			}
-		}
+    /**
+     * Apply the given iBATIS TransactionConfig to the SqlMapClient.
+     * <p>The default implementation casts to ExtendedSqlMapClient, retrieves the maximum
+     * number of concurrent transactions from the SqlMapExecutorDelegate, and sets
+     * an iBATIS TransactionManager with the given TransactionConfig.
+     *
+     * @param sqlMapClient      the SqlMapClient to apply the TransactionConfig to
+     * @param transactionConfig the iBATIS TransactionConfig to apply
+     * @see com.ibatis.sqlmap.engine.impl.ExtendedSqlMapClient
+     * @see com.ibatis.sqlmap.engine.impl.SqlMapExecutorDelegate#getMaxTransactions
+     * @see com.ibatis.sqlmap.engine.impl.SqlMapExecutorDelegate#setTxManager
+     */
+    protected void applyTransactionConfig(SqlMapClient sqlMapClient, TransactionConfig transactionConfig) {
+        if (!(sqlMapClient instanceof ExtendedSqlMapClient)) {
+            throw new IllegalArgumentException(
+                    "Cannot set TransactionConfig with DataSource for SqlMapClient if not of type " +
+                            "ExtendedSqlMapClient: " + sqlMapClient);
+        }
+        ExtendedSqlMapClient extendedClient = (ExtendedSqlMapClient) sqlMapClient;
+        transactionConfig.setMaximumConcurrentTransactions(extendedClient.getDelegate().getMaxTransactions());
+        extendedClient.getDelegate().setTxManager(new TransactionManager(transactionConfig));
+    }
 
-		return client;
-	}
+    public SqlMapClient getObject() {
+        return this.sqlMapClient;
+    }
 
-	/**
-	 * Apply the given iBATIS TransactionConfig to the SqlMapClient.
-	 * <p>The default implementation casts to ExtendedSqlMapClient, retrieves the maximum
-	 * number of concurrent transactions from the SqlMapExecutorDelegate, and sets
-	 * an iBATIS TransactionManager with the given TransactionConfig.
-	 * @param sqlMapClient the SqlMapClient to apply the TransactionConfig to
-	 * @param transactionConfig the iBATIS TransactionConfig to apply
-	 * @see com.ibatis.sqlmap.engine.impl.ExtendedSqlMapClient
-	 * @see com.ibatis.sqlmap.engine.impl.SqlMapExecutorDelegate#getMaxTransactions
-	 * @see com.ibatis.sqlmap.engine.impl.SqlMapExecutorDelegate#setTxManager
-	 */
-	protected void applyTransactionConfig(SqlMapClient sqlMapClient, TransactionConfig transactionConfig) {
-		if (!(sqlMapClient instanceof ExtendedSqlMapClient)) {
-			throw new IllegalArgumentException(
-					"Cannot set TransactionConfig with DataSource for SqlMapClient if not of type " +
-					"ExtendedSqlMapClient: " + sqlMapClient);
-		}
-		ExtendedSqlMapClient extendedClient = (ExtendedSqlMapClient) sqlMapClient;
-		transactionConfig.setMaximumConcurrentTransactions(extendedClient.getDelegate().getMaxTransactions());
-		extendedClient.getDelegate().setTxManager(new TransactionManager(transactionConfig));
-	}
+    public Class<? extends SqlMapClient> getObjectType() {
+        return (this.sqlMapClient != null ? this.sqlMapClient.getClass() : SqlMapClient.class);
+    }
 
+    public boolean isSingleton() {
+        return true;
+    }
 
-	public SqlMapClient getObject() {
-		return this.sqlMapClient;
-	}
-
-	public Class<? extends SqlMapClient> getObjectType() {
-		return (this.sqlMapClient != null ? this.sqlMapClient.getClass() : SqlMapClient.class);
-	}
-
-	public boolean isSingleton() {
-		return true;
-	}
-
-
-	/**
-	 * Inner class to avoid hard-coded iBATIS 2.3.2 dependency (XmlParserState class).
-	 */
-	private static class SqlMapParserFactory {
-
-		public static SqlMapParser createSqlMapParser(SqlMapConfigParser configParser) {
-			// Ideally: XmlParserState state = configParser.getState();
-			// Should raise an enhancement request with iBATIS...
-			XmlParserState state = null;
-			try {
-				Field stateField = SqlMapConfigParser.class.getDeclaredField("state");
-				stateField.setAccessible(true);
-				state = (XmlParserState) stateField.get(configParser);
-			}
-			catch (IllegalAccessException | NoSuchFieldException ex) {
-				throw new IllegalStateException("iBATIS 2.3.2 'state' field not found in SqlMapConfigParser class - " +
-						"please upgrade to IBATIS 2.3.2 or higher in order to use the new 'mappingLocations' feature. " + ex);
-			}
-			return new SqlMapParser(state);
-		}
-	}
+    /**
+     * Inner class to avoid hard-coded iBATIS 2.3.2 dependency (XmlParserState class).
+     */
+    private static class SqlMapParserFactory {
+        public static SqlMapParser createSqlMapParser(SqlMapConfigParser configParser) {
+            // Ideally: XmlParserState state = configParser.getState();
+            // Should raise an enhancement request with iBATIS...
+            XmlParserState state = null;
+            try {
+                Field stateField = SqlMapConfigParser.class.getDeclaredField("state");
+                stateField.setAccessible(true);
+                state = (XmlParserState) stateField.get(configParser);
+            } catch (IllegalAccessException | NoSuchFieldException ex) {
+                throw new IllegalStateException("iBATIS 2.3.2 'state' field not found in SqlMapConfigParser class - " +
+                        "please upgrade to IBATIS 2.3.2 or higher in order to use the new 'mappingLocations' feature. " + ex);
+            }
+            return new SqlMapParser(state);
+        }
+    }
 
 }

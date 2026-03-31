@@ -5,9 +5,9 @@ import java.math.BigDecimal;
 
 public class ZipVO implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private BigDecimal zipNo;
+    private BigDecimal zipNo;
 
     private BigDecimal serNo;
 
@@ -23,69 +23,68 @@ public class ZipVO implements Serializable {
 
     private String regId;
 
-	public BigDecimal getZipNo() {
-		return zipNo;
-	}
+    public BigDecimal getZipNo() {
+        return zipNo;
+    }
 
-	public void setZipNo(BigDecimal zipNo) {
-		this.zipNo = zipNo;
-	}
+    public void setZipNo(BigDecimal zipNo) {
+        this.zipNo = zipNo;
+    }
 
-	public BigDecimal getSerNo() {
-		return serNo;
-	}
+    public BigDecimal getSerNo() {
+        return serNo;
+    }
 
-	public void setSerNo(BigDecimal serNo) {
-		this.serNo = serNo;
-	}
+    public void setSerNo(BigDecimal serNo) {
+        this.serNo = serNo;
+    }
 
-	public String getSidoNm() {
-		return sidoNm;
-	}
+    public String getSidoNm() {
+        return sidoNm;
+    }
 
-	public void setSidoNm(String sidoNm) {
-		this.sidoNm = sidoNm;
-	}
+    public void setSidoNm(String sidoNm) {
+        this.sidoNm = sidoNm;
+    }
 
-	public String getCggNm() {
-		return cggNm;
-	}
+    public String getCggNm() {
+        return cggNm;
+    }
 
-	public void setCggNm(String cggNm) {
-		this.cggNm = cggNm;
-	}
+    public void setCggNm(String cggNm) {
+        this.cggNm = cggNm;
+    }
 
-	public String getUmdNm() {
-		return umdNm;
-	}
+    public String getUmdNm() {
+        return umdNm;
+    }
 
-	public void setUmdNm(String umdNm) {
-		this.umdNm = umdNm;
-	}
+    public void setUmdNm(String umdNm) {
+        this.umdNm = umdNm;
+    }
 
-	public String getBdNm() {
-		return bdNm;
-	}
+    public String getBdNm() {
+        return bdNm;
+    }
 
-	public void setBdNm(String bdNm) {
-		this.bdNm = bdNm;
-	}
+    public void setBdNm(String bdNm) {
+        this.bdNm = bdNm;
+    }
 
-	public String getJibun() {
-		return jibun;
-	}
+    public String getJibun() {
+        return jibun;
+    }
 
-	public void setJibun(String jibun) {
-		this.jibun = jibun;
-	}
+    public void setJibun(String jibun) {
+        this.jibun = jibun;
+    }
 
-	public String getRegId() {
-		return regId;
-	}
+    public String getRegId() {
+        return regId;
+    }
 
-	public void setRegId(String regId) {
-		this.regId = regId;
-	}
-
+    public void setRegId(String regId) {
+        this.regId = regId;
+    }
 
 }

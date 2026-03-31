@@ -3,11 +3,11 @@
 
 <sqlMap namespace="EmpBatchInsert">
 
-	<typeAlias alias="empVO" type="org.egovframe.rte.fdl.excel.vo.EmpVO" />
-	<typeAlias alias="zipVO" type="org.egovframe.rte.fdl.excel.vo.ZipVO" />
+    <typeAlias alias="empVO" type="org.egovframe.rte.fdl.excel.vo.EmpVO"/>
+    <typeAlias alias="zipVO" type="org.egovframe.rte.fdl.excel.vo.ZipVO"/>
 
-	<insert id="insertEmpUsingBatch" parameterClass="empVO">
-		<![CDATA[
+    <insert id="insertEmpUsingBatch" parameterClass="empVO">
+        <![CDATA[
 			insert into emp
 					   (emp_no,
 						emp_name,
@@ -26,10 +26,10 @@
 						#comm#,
 						#deptNo#)
 		]]>
-	</insert>
+    </insert>
 
-	<insert id="insertZipUsingBatch" parameterClass="zipVO">
-		<![CDATA[
+    <insert id="insertZipUsingBatch" parameterClass="zipVO">
+        <![CDATA[
 			insert into zip
 					   (zip_no,
 						ser_no,
@@ -48,5 +48,5 @@
 						#jibun#,
 						#regId#)
 		]]>
-	</insert>
+    </insert>
 </sqlMap>

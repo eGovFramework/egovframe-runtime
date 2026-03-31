@@ -1,18 +1,17 @@
 package org.egovframe.rte.ptl.mvc.exception;
 
-import org.junit.Test;
+import jakarta.servlet.http.HttpServletResponse;
+import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.Properties;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- *
  * 시스템명 : 실행환경시스템
  * 서브시스템명 : 화면처리
  * 요구사항ID : REQ-RTE-114
@@ -24,41 +23,35 @@ import static org.junit.Assert.assertEquals;
 
 public class ExceptionResolverTest {
 
-	/**
-	 *
-	 *
-	 * @throws Exception
-	 */
-	@Test
-	public void testExceptionViewNameMapping() throws Exception {
+    @Test
+    public void testExceptionViewNameMapping() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        SimpleMappingExceptionResolver exceptionResolver = new SimpleMappingExceptionResolver();
+        Object handler = new Object();
 
-		MockHttpServletRequest request = new MockHttpServletRequest();
-		MockHttpServletResponse response = new MockHttpServletResponse();
-		SimpleMappingExceptionResolver exceptionResolver = new SimpleMappingExceptionResolver();
-		Object handler = new Object();
+        Properties props = new Properties();
+        props.setProperty("java.lang.Exception", "genericErrorView");
+        props.setProperty("java.lang.NumberFormatException", "numberFormatErrorView");
+        exceptionResolver.setExceptionMappings(props);
+        ModelAndView mav = exceptionResolver.resolveException(request, response, handler, new Exception());
+        assertEquals("genericErrorView", mav.getViewName());
+        ModelAndView mav2 = exceptionResolver.resolveException(request, response, handler, new NumberFormatException());
+        assertEquals("numberFormatErrorView", mav2.getViewName());
+    }
 
-		Properties props = new Properties();
-		props.setProperty("java.lang.Exception", "genericErrorView");
-		props.setProperty("java.lang.NumberFormatException", "numberFormatErrorView");
-		exceptionResolver.setExceptionMappings(props);
-		ModelAndView mav = exceptionResolver.resolveException(request, response, handler, new Exception());
-		assertEquals("genericErrorView", mav.getViewName());
-		ModelAndView mav2 = exceptionResolver.resolveException(request, response, handler, new NumberFormatException());
-		assertEquals("numberFormatErrorView", mav2.getViewName());
-	}
+    @SuppressWarnings("unused")
+    @Test
+    public void testErrorStatusViewNameMapping() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        SimpleMappingExceptionResolver exceptionResolver = new SimpleMappingExceptionResolver();
+        Object handler = new Object();
 
-	@SuppressWarnings("unused")
-	@Test
-	public void testErrorStatusViewNameMapping() {
+        exceptionResolver.setDefaultErrorView("genericErrorView");
+        exceptionResolver.setDefaultStatusCode(HttpServletResponse.SC_BAD_REQUEST);
+        ModelAndView mav = exceptionResolver.resolveException(request, response, handler, new Exception());
+        assertEquals(HttpServletResponse.SC_BAD_REQUEST, response.getStatus());
+    }
 
-		MockHttpServletRequest request = new MockHttpServletRequest();
-		MockHttpServletResponse response = new MockHttpServletResponse();
-		SimpleMappingExceptionResolver exceptionResolver = new SimpleMappingExceptionResolver();
-		Object handler = new Object();
-
-		exceptionResolver.setDefaultErrorView("genericErrorView");
-		exceptionResolver.setDefaultStatusCode(HttpServletResponse.SC_BAD_REQUEST);
-		ModelAndView mav = exceptionResolver.resolveException(request, response, handler, new Exception());
-		assertEquals(HttpServletResponse.SC_BAD_REQUEST, response.getStatus());
-	}
 }

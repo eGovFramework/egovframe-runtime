@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2014 MOPAS(Ministry of Public Administration and Security).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,31 +19,22 @@ import com.ibatis.sqlmap.client.SqlMapClient;
 import org.egovframe.rte.psl.orm.ibatis.SqlMapClientCallback;
 import org.egovframe.rte.psl.orm.ibatis.support.SqlMapClientDaoSupport;
 
-import java.util.Iterator;
 import java.util.List;
 
 /**
  * 엑셀서비스을 처리하는 DAO 클래스.
- * 
- * <p><b>NOTE:</b> 엑셀 서비스를 제공하기 위해 구현한 DAO클래스이다.</p>
- * 
- * @author 실행환경 개발팀 윤성종
- * @since 2009.06.01
- * @version 1.0
-
- * <pre>
+ * <p>
  * 개정이력(Modification Information)
- *
+ * <p>
  * 수정일		수정자				수정내용
  * ----------------------------------------------
  * 2009.06.01   윤성종             최초 생성
- * </pre>
  */
 @SuppressWarnings("deprecation")
 public class EgovExcelServiceDAO extends SqlMapClientDaoSupport {
 
-	@SuppressWarnings("unused")
-	private SqlMapClient sqlMapClient = null;
+    @SuppressWarnings("unused")
+    private SqlMapClient sqlMapClient;
 
     public EgovExcelServiceDAO(SqlMapClient sqlMapClient) {
         this.sqlMapClient = sqlMapClient;
@@ -52,16 +43,13 @@ public class EgovExcelServiceDAO extends SqlMapClientDaoSupport {
 
     /**
      * 엑셀서비스의 배치업로드를 실행한다.
-     * @param queryId <code>String</code>
-     * @param list <code>List&lt;Object&gt;</code>
-     * @return
      */
-	public Integer batchInsert(final String queryId, final List<Object> list) {
+    public Integer batchInsert(final String queryId, final List<Object> list) {
         return (Integer) getSqlMapClientTemplate().execute(
                 (SqlMapClientCallback<Object>) executor -> {
                     executor.startBatch();
-                    for (Iterator<Object> itr = list.iterator(); itr.hasNext();) {
-                        executor.insert(queryId, itr.next());
+                    for (Object o : list) {
+                        executor.insert(queryId, o);
                     }
                     return executor.executeBatch();
                 });
@@ -70,12 +58,8 @@ public class EgovExcelServiceDAO extends SqlMapClientDaoSupport {
     /**
      * 엑셀서비스의 배치업로드를 실행한다.
      * 업로드할 엑셀의 시작 위치를 정하여 지정한 셀부터 업로드한다.
-     * @param queryId <code>String</code>
-     * @param list <code>List&lt;Object&gt;</code>
-     * @param start <code>int</code>
-     * @return
      */
-	public Integer batchInsert(final String queryId, final List<Object> list, final int start) {
+    public Integer batchInsert(final String queryId, final List<Object> list, final int start) {
         return (Integer) getSqlMapClientTemplate().execute(
                 (SqlMapClientCallback<Object>) executor -> {
                     executor.startBatch();

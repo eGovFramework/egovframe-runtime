@@ -3,33 +3,33 @@
 
 <sqlMap namespace="TypeTest">
 
-	<typeAlias alias="typeTestVO"
-		type="org.egovframe.rte.psl.dataaccess.vo.TypeTestVO" />
+    <typeAlias alias="typeTestVO"
+               type="org.egovframe.rte.psl.dataaccess.vo.TypeTestVO"/>
 
-	<!-- CalendarTypeHandler 는 sql-map-config.xml 에 등록하였음 -->
-	<typeAlias alias="calendarTypeHandler" type="org.egovframe.rte.psl.dataaccess.typehandler.CalendarTypeHandler"/>
+    <!-- CalendarTypeHandler 는 sql-map-config.xml 에 등록하였음 -->
+    <typeAlias alias="calendarTypeHandler" type="org.egovframe.rte.psl.dataaccess.typehandler.CalendarTypeHandler"/>
 
-	<resultMap id="typeTestResult" class="typeTestVO">
-		<result property="id" column="ID" />
-		<result property="bigdecimalType" column="BIGDECIMAL_TYPE" />
-		<result property="booleanType" column="BOOLEAN_TYPE" />
-		<result property="byteType" column="BYTE_TYPE" />
-		<result property="charType" column="CHAR_TYPE" />
-		<result property="doubleType" column="DOUBLE_TYPE" />
-		<result property="floatType" column="FLOAT_TYPE" />
-		<result property="intType" column="INT_TYPE" />
-		<result property="longType" column="LONG_TYPE" />
-		<result property="shortType" column="SHORT_TYPE" />
-		<result property="stringType" column="STRING_TYPE" />
-		<result property="dateType" column="DATE_TYPE" />
-		<result property="sqlDateType" column="SQL_DATE_TYPE" />
-		<result property="sqlTimeType" column="SQL_TIME_TYPE" />
-		<result property="sqlTimestampType" column="SQL_TIMESTAMP_TYPE" />
-		<result property="calendarType" column="CALENDAR_TYPE" typeHandler="calendarTypeHandler" />
-	</resultMap>
+    <resultMap id="typeTestResult" class="typeTestVO">
+        <result property="id" column="ID"/>
+        <result property="bigdecimalType" column="BIGDECIMAL_TYPE"/>
+        <result property="booleanType" column="BOOLEAN_TYPE"/>
+        <result property="byteType" column="BYTE_TYPE"/>
+        <result property="charType" column="CHAR_TYPE"/>
+        <result property="doubleType" column="DOUBLE_TYPE"/>
+        <result property="floatType" column="FLOAT_TYPE"/>
+        <result property="intType" column="INT_TYPE"/>
+        <result property="longType" column="LONG_TYPE"/>
+        <result property="shortType" column="SHORT_TYPE"/>
+        <result property="stringType" column="STRING_TYPE"/>
+        <result property="dateType" column="DATE_TYPE"/>
+        <result property="sqlDateType" column="SQL_DATE_TYPE"/>
+        <result property="sqlTimeType" column="SQL_TIME_TYPE"/>
+        <result property="sqlTimestampType" column="SQL_TIMESTAMP_TYPE"/>
+        <result property="calendarType" column="CALENDAR_TYPE" typeHandler="calendarTypeHandler"/>
+    </resultMap>
 
-	<insert id="insertTypeTest" parameterClass="typeTestVO">
-		<![CDATA[
+    <insert id="insertTypeTest" parameterClass="typeTestVO">
+        <![CDATA[
 			insert into TYPETEST
 			           (ID,
 			            BIGDECIMAL_TYPE,
@@ -64,11 +64,11 @@
 			            #sqlTimestampType#,
 			            #calendarType,handler=calendarTypeHandler#)
 		]]>
-	</insert>
+    </insert>
 
-	<select id="selectTypeTest" parameterClass="typeTestVO"
-		resultMap="typeTestResult">
-		<![CDATA[
+    <select id="selectTypeTest" parameterClass="typeTestVO"
+            resultMap="typeTestResult">
+        <![CDATA[
 			select ID,
 			       BIGDECIMAL_TYPE,
 			       BOOLEAN_TYPE,
@@ -88,6 +88,6 @@
 			from   TYPETEST
 			where  ID = #id#
 		]]>
-	</select>
+    </select>
 
 </sqlMap>

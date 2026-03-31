@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 MOPAS(Ministry of Public Administration and Security).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,12 @@
  */
 package org.egovframe.rte.itl.integration.metadata.dao.hibernate;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.egovframe.rte.itl.integration.metadata.IntegrationDefinition;
 import org.egovframe.rte.itl.integration.metadata.dao.IntegrationDefinitionDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
 import java.util.List;
 
@@ -29,73 +30,49 @@ import java.util.List;
  * <b>NOTE:</b> 전자정부 연계 서비스 IntegrationDefinitionDao interface 를 Hibernate를 이용하여
  * 구현한 DAO class이다.
  * </p>
- * 
+ *
  * @author 실행환경 개발팀 심상호
- * @since 2009.06.01
  * @version 1.0
  * @see <pre>
  *  == 개정이력(Modification Information) ==
- * 
+ *
  *   수정일      수정자           수정내용
  *  -------    --------    ---------------------------
  *   2009.06.01  심상호           최초 생성
  *
  * </pre>
+ * @since 2009.06.01
  */
-public class HibernateIntegrationDefinitionDao extends HibernateDaoSupport implements IntegrationDefinitionDao {
-	// CHECKSTYLE:OFF
-	private static final Logger LOGGER = LoggerFactory.getLogger(HibernateIntegrationDefinitionDao.class);
+public class HibernateIntegrationDefinitionDao implements IntegrationDefinitionDao {
 
-	public IntegrationDefinition getIntegrationDefinition(String id) {
-		LOGGER.debug("get IntegrationDefinition (id = \"{}\")", id);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HibernateIntegrationDefinitionDao.class);
 
-		IntegrationDefinition integrationDefinition = (IntegrationDefinition) getHibernateTemplate().get(IntegrationDefinition.class, id);
-		// CHECKSTYLE:ON
-		LOGGER.debug("get IntegrationDefinition (id = \"{}\") = {}", id, integrationDefinition);
+    @PersistenceContext
+    private EntityManager entityManager;
 
-		return integrationDefinition;
-	}
+    @Override
+    public IntegrationDefinition getIntegrationDefinition(String id) {
+        return entityManager.find(IntegrationDefinition.class, id);
+    }
 
-	@SuppressWarnings("unchecked")
-	public List<IntegrationDefinition> getIntegrationDefinitionOfConsumer(String consumerOrganizationId, String consumerSystemId) {
-		LOGGER.debug("get IntegrationDefinition of Consumer(organizationId = \"{}\", systemId = \"{}\")", consumerOrganizationId, consumerSystemId);
-		// CHECKSTYLE:OFF
-		List<IntegrationDefinition> list = (List<IntegrationDefinition>) getHibernateTemplate().find(
-				"from IntegrationDefinition as integrationDefinition " + "where integrationDefinition.consumer.organization.id = ?0 "
-						+ "and integrationDefinition.consumer.id = ?1 ", new Object[] { consumerOrganizationId, consumerSystemId });
-		//	CHECKSTYLE:ON
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("get IntegrationDefinition of Consumer(organizationId = \"{}\", systemId = \"{}\")'s size = {}", consumerOrganizationId, consumerSystemId, list.size());
+    @Override
+    public List<IntegrationDefinition> getIntegrationDefinitionOfConsumer(String consumerOrgId, String consumerSystemId) {
+        return entityManager.createQuery("""
+                        SELECT i FROM IntegrationDefinition i WHERE i.consumer.organization.id = :orgId AND i.consumer.id = :systemId
+                        """, IntegrationDefinition.class)
+                .setParameter("orgId", consumerOrgId)
+                .setParameter("systemId", consumerSystemId)
+                .getResultList();
+    }
 
-			int i = 0;
-			for (IntegrationDefinition integrationDefinition : list) {
-				LOGGER.debug("[{}] : {}", i, integrationDefinition);
-				i++;
-			}
-		}
+    @Override
+    public List<IntegrationDefinition> getIntegrationDefinitionOfProvider(String providerOrgId, String providerSystemId) {
+        return entityManager.createQuery("""
+                        SELECT i FROM IntegrationDefinition i WHERE i.provider.system.organization.id = :orgId AND i.provider.system.id = :systemId
+                        """, IntegrationDefinition.class)
+                .setParameter("orgId", providerOrgId)
+                .setParameter("systemId", providerSystemId)
+                .getResultList();
+    }
 
-		return list;
-	}
-
-	@SuppressWarnings("unchecked")
-	public List<IntegrationDefinition> getIntegrationDefinitionOfProvider(String providerOrganizationId, String providerSystemId) {
-		LOGGER.debug("get IntegrationDefinition of Provider(organizationId = \"{}\", systemId = \"{}\")", providerOrganizationId, providerSystemId);
-		//		CHECKSTYLE:OFF
-		List<IntegrationDefinition> list = (List<IntegrationDefinition>)getHibernateTemplate().find(
-				"from IntegrationDefinition as integrationDefinition " + "where integrationDefinition.provider.system.organization.id = ?0 "
-						+ "and integrationDefinition.provider.system.id = ?1 ", new Object[] { providerOrganizationId, providerSystemId });
-		//		CHECKSTYLE:ON
-
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("get IntegrationDefinition of Provider(organizationId = \"{}\", systemId = \"{}\")'s size = {}", providerOrganizationId, providerSystemId, list.size());
-
-			int i = 0;
-			for (IntegrationDefinition integrationDefinition : list) {
-				LOGGER.debug("[{}] : {}", i, integrationDefinition);
-				i++;
-			}
-		}
-
-		return list;
-	}
 }

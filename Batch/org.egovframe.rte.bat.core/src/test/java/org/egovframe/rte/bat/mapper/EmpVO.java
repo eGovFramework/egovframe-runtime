@@ -4,85 +4,87 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 public class EmpVO {
-	private static final long serialVersionUID = -8049578957221741495L;
 
-	private BigDecimal empNo;
+    private static final long serialVersionUID = -8049578957221741495L;
 
-	private String empName;
+    private BigDecimal empNo;
 
-	private String job;
+    private String empName;
 
-	private BigDecimal mgr;
+    private String job;
 
-	private Date hireDate;
+    private BigDecimal mgr;
 
-	private BigDecimal sal;
+    private Date hireDate;
 
-	private BigDecimal comm;
+    private BigDecimal sal;
 
-	private BigDecimal deptNo;
+    private BigDecimal comm;
 
-	public BigDecimal getEmpNo() {
-		return empNo;
-	}
+    private BigDecimal deptNo;
 
-	public void setEmpNo(BigDecimal empNo) {
-		this.empNo = empNo;
-	}
+    public BigDecimal getEmpNo() {
+        return empNo;
+    }
 
-	public String getEmpName() {
-		return empName;
-	}
+    public void setEmpNo(BigDecimal empNo) {
+        this.empNo = empNo;
+    }
 
-	public void setEmpName(String empName) {
-		this.empName = empName;
-	}
+    public String getEmpName() {
+        return empName;
+    }
 
-	public String getJob() {
-		return job;
-	}
+    public void setEmpName(String empName) {
+        this.empName = empName;
+    }
 
-	public void setJob(String job) {
-		this.job = job;
-	}
+    public String getJob() {
+        return job;
+    }
 
-	public BigDecimal getMgr() {
-		return mgr;
-	}
+    public void setJob(String job) {
+        this.job = job;
+    }
 
-	public void setMgr(BigDecimal mgr) {
-		this.mgr = mgr;
-	}
+    public BigDecimal getMgr() {
+        return mgr;
+    }
 
-	public Date getHireDate() {
-		return hireDate;
-	}
+    public void setMgr(BigDecimal mgr) {
+        this.mgr = mgr;
+    }
 
-	public void setHireDate(Date hireDate) {
-		this.hireDate = hireDate;
-	}
+    public Date getHireDate() {
+        return hireDate;
+    }
 
-	public BigDecimal getSal() {
-		return sal;
-	}
+    public void setHireDate(Date hireDate) {
+        this.hireDate = hireDate;
+    }
 
-	public void setSal(BigDecimal sal) {
-		this.sal = sal;
-	}
+    public BigDecimal getSal() {
+        return sal;
+    }
 
-	public BigDecimal getComm() {
-		return comm;
-	}
+    public void setSal(BigDecimal sal) {
+        this.sal = sal;
+    }
 
-	public void setComm(BigDecimal comm) {
-		this.comm = comm;
-	}
+    public BigDecimal getComm() {
+        return comm;
+    }
 
-	public BigDecimal getDeptNo() {
-		return deptNo;
-	}
+    public void setComm(BigDecimal comm) {
+        this.comm = comm;
+    }
 
-	public void setDeptNo(BigDecimal deptNo) {
-		this.deptNo = deptNo;
-	}
+    public BigDecimal getDeptNo() {
+        return deptNo;
+    }
+
+    public void setDeptNo(BigDecimal deptNo) {
+        this.deptNo = deptNo;
+    }
+
 }

@@ -1,6 +1,5 @@
 /*
- * Copyright 2014 MOSPA(Ministry of Security and Public Administration).
-
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +20,7 @@ import org.mybatis.spring.mapper.MapperScannerConfigurer;
 /**
  * Mapper를 등록하기 위한 configurer로 Mapper annotation을 대상으로 scan한다.
  * <p>
- * 추가적으로 sqlSessionFactoryBeanName에 대하여 "sqlSession"을 사용한다. 
+ * 추가적으로 sqlSessionFactoryBeanName에 대하여 "sqlSession"을 사용한다.
  * </p><p>
  * 설정 예:
  * </p>
@@ -30,7 +29,7 @@ import org.mybatis.spring.mapper.MapperScannerConfigurer;
  * {@code
  *   <bean class="org.egovframe.rte.psl.dataaccess.mapper.MapperConfigurer">
  *       <property name="basePackage" value="org.egovframe.rte.**.mapper" />
- *   
+ *
  * }
  * </pre>
  *
@@ -41,11 +40,11 @@ import org.mybatis.spring.mapper.MapperScannerConfigurer;
  */
 public class MapperConfigurer extends MapperScannerConfigurer {
 
-	/**
-	 * 기본 정보(anntationClass, sqlSessionFactoryBeanName)으로 설정한다.
-	 */
-	public MapperConfigurer() {
-		super.setAnnotationClass(EgovMapper.class);
-		super.setSqlSessionFactoryBeanName("sqlSession");
-	}
+    /**
+     * 기본 정보(anntationClass, sqlSessionFactoryBeanName)으로 설정한다.
+     */
+    public MapperConfigurer() {
+        super.setAnnotationClass(EgovMapper.class);
+        super.setSqlSessionFactoryBeanName("sqlSession");
+    }
 }

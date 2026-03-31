@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 MOPAS(Ministry of Public Administration and Security).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,8 @@ package org.egovframe.rte.ptl.mvc.tags.ui.pagination;
 
 /**
  * PaginationRenderer.java
- * 
+ *
  * @author 실행환경 개발팀 함철
- * @since 2009.06.01
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -28,9 +27,10 @@ package org.egovframe.rte.ptl.mvc.tags.ui.pagination;
  * ----------------------------------------------
  * 2009.05.30	함철				최초 생성
  * </pre>
+ * @since 2009.06.01
  */
 public interface PaginationRenderer {
 
-	public String renderPagination(PaginationInfo paginationInfo, String jsFunction);
+    String renderPagination(PaginationInfo paginationInfo, String jsFunction);
 
 }

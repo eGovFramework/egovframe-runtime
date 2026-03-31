@@ -1,6 +1,6 @@
 package org.egovframe.rte.ptl.mvc.bind;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.bind.ServletRequestDataBinder;
@@ -9,11 +9,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- *
  * 시스템명 : 실행환경시스템
  * 서브시스템명 : 화면처리
  * 요구사항ID : REQ-RTE-111
@@ -22,80 +21,75 @@ import static org.junit.Assert.assertNotNull;
  *
  * @author Ham Cheol
  */
-
 public class RequestDataBindingTest {
 
-	@Test
-	public void testDataBinding() throws ParseException {
+    @Test
+    public void testDataBinding() throws ParseException {
+        Employee employee = new Employee();
+        ServletRequestDataBinder binder = new ServletRequestDataBinder(employee, "employee");
+        MockHttpServletRequest request = new MockHttpServletRequest();
 
-		Employee employee = new Employee();
-		ServletRequestDataBinder binder = new ServletRequestDataBinder(employee, "employee");
-		MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter("empId", "AA1001");
+        request.addParameter("empName", "Hong Kil Dong");
+        request.addParameter("empAge", "8");
+        request.addParameter("birthDate", "2000/10/31");
 
-		request.addParameter("empId", "AA1001");
-		request.addParameter("empName", "Hong Kil Dong");
-		request.addParameter("empAge", "8");
-		request.addParameter("birthDate", "2000/10/31");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
+        CustomDateEditor dateEditor = new CustomDateEditor(format, true);
+        Date expected = format.parse("2000/10/31");
 
-		SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
-		CustomDateEditor dateEditor = new CustomDateEditor(format, true);
-		Date expected = format.parse("2000/10/31");
+        binder.registerCustomEditor(Date.class, dateEditor);
+        binder.bind(request);
 
-		binder.registerCustomEditor(Date.class, dateEditor);
+        assertNotNull(employee);
 
-		binder.bind(request);
+        assertEquals("AA1001", employee.getEmpId());
+        assertEquals("Hong Kil Dong", employee.getEmpName());
+        assertEquals(8, employee.getEmpAge());
+        assertEquals(expected, employee.getBirthDate());
+    }
 
-		assertNotNull(employee);
+    private class Employee {
+        private String empId;
+        private String empName;
+        private int empAge;
+        private Date birthDate;
 
-		assertEquals("AA1001", employee.getEmpId());
-		assertEquals("Hong Kil Dong", employee.getEmpName());
-		assertEquals(8, employee.getEmpAge());
-		assertEquals(expected, employee.getBirthDate());
+        public String getEmpId() {
+            return empId;
+        }
 
-	}
+        @SuppressWarnings("unused")
+        public void setEmpId(String empId) {
+            this.empId = empId;
+        }
 
-	private class Employee {
+        public String getEmpName() {
+            return empName;
+        }
 
-		private String empId;
-		private String empName;
-		private int empAge;
-		private Date birthDate;
+        @SuppressWarnings("unused")
+        public void setEmpName(String empName) {
+            this.empName = empName;
+        }
 
-		public String getEmpId() {
-			return empId;
-		}
+        public int getEmpAge() {
+            return empAge;
+        }
 
-		@SuppressWarnings("unused")
-		public void setEmpId(String empId) {
-			this.empId = empId;
-		}
+        @SuppressWarnings("unused")
+        public void setEmpAge(int empAge) {
+            this.empAge = empAge;
+        }
 
-		public String getEmpName() {
-			return empName;
-		}
+        public Date getBirthDate() {
+            return birthDate;
+        }
 
-		@SuppressWarnings("unused")
-		public void setEmpName(String empName) {
-			this.empName = empName;
-		}
-
-		public int getEmpAge() {
-			return empAge;
-		}
-
-		@SuppressWarnings("unused")
-		public void setEmpAge(int empAge) {
-			this.empAge = empAge;
-		}
-
-		public Date getBirthDate() {
-			return birthDate;
-		}
-
-		@SuppressWarnings("unused")
-		public void setBirthDate(Date birthDate) {
-			this.birthDate = birthDate;
-		}
-	}
+        @SuppressWarnings("unused")
+        public void setBirthDate(Date birthDate) {
+            this.birthDate = birthDate;
+        }
+    }
 
 }

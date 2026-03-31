@@ -1,90 +1,91 @@
 package org.egovframe.rte.bat.mapper;
 
 public class EmpVO2 {
-	private static final long serialVersionUID = -8049578957221741496L;
 
-	private String empNo;
+    private static final long serialVersionUID = -8049578957221741496L;
 
-	private String empName;
+    private String empNo;
 
-	private String job;
+    private String empName;
 
-	private String mgr;
+    private String job;
 
-	private String hireDate;
+    private String mgr;
 
-	private String sal;
+    private String hireDate;
 
-	private String comm;
+    private String sal;
 
-	private String deptNo;
+    private String comm;
 
-	public String getEmpNo() {
-		return empNo;
-	}
+    private String deptNo;
 
-	public void setEmpNo(String empNo) {
-		this.empNo = empNo;
-	}
+    public static long getSerialversionuid() {
+        return serialVersionUID;
+    }
 
-	public String getEmpName() {
-		return empName;
-	}
+    public String getEmpNo() {
+        return empNo;
+    }
 
-	public void setEmpName(String empName) {
-		this.empName = empName;
-	}
+    public void setEmpNo(String empNo) {
+        this.empNo = empNo;
+    }
 
-	public String getJob() {
-		return job;
-	}
+    public String getEmpName() {
+        return empName;
+    }
 
-	public void setJob(String job) {
-		this.job = job;
-	}
+    public void setEmpName(String empName) {
+        this.empName = empName;
+    }
 
-	public String getMgr() {
-		return mgr;
-	}
+    public String getJob() {
+        return job;
+    }
 
-	public void setMgr(String mgr) {
-		this.mgr = mgr;
-	}
+    public void setJob(String job) {
+        this.job = job;
+    }
 
-	public String getHireDate() {
-		return hireDate;
-	}
+    public String getMgr() {
+        return mgr;
+    }
 
-	public void setHireDate(String hireDate) {
-		this.hireDate = hireDate;
-	}
+    public void setMgr(String mgr) {
+        this.mgr = mgr;
+    }
 
-	public String getSal() {
-		return sal;
-	}
+    public String getHireDate() {
+        return hireDate;
+    }
 
-	public void setSal(String sal) {
-		this.sal = sal;
-	}
+    public void setHireDate(String hireDate) {
+        this.hireDate = hireDate;
+    }
 
-	public String getComm() {
-		return comm;
-	}
+    public String getSal() {
+        return sal;
+    }
 
-	public void setComm(String comm) {
-		this.comm = comm;
-	}
+    public void setSal(String sal) {
+        this.sal = sal;
+    }
 
-	public String getDeptNo() {
-		return deptNo;
-	}
+    public String getComm() {
+        return comm;
+    }
 
-	public void setDeptNo(String deptNo) {
-		this.deptNo = deptNo;
-	}
+    public void setComm(String comm) {
+        this.comm = comm;
+    }
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
+    public String getDeptNo() {
+        return deptNo;
+    }
+
+    public void setDeptNo(String deptNo) {
+        this.deptNo = deptNo;
+    }
 
 }

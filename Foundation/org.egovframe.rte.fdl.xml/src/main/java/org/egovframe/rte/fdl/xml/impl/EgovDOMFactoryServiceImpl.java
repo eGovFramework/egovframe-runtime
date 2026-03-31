@@ -1,6 +1,5 @@
 /*
- * Copyright 2009-2014 MOSPA(Ministry of Security and Public Administration).
-
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,7 +69,7 @@ public class EgovDOMFactoryServiceImpl extends EgovAbstractXMLFactoryService {
             throw new UnsupportedException("Unsupported type");
         } catch (UnsupportedException e) {
             //2017.02.28 장동한 시큐어코딩(ES)-오류 메시지를 통한 정보노출[CWE-209]
-            LOGGER.error("[" + e.getClass() + "] Try/Catch...createSAXValidator() Runing : " + e.getMessage());
+            LOGGER.debug("[{}] EgovDOMFactoryServiceImpl createSAXValidator() : {}", e.getClass().getName(), e.getMessage());
         }
         return null;
     }

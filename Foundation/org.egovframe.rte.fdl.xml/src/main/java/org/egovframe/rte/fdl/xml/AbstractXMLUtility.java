@@ -1,6 +1,5 @@
 /*
- * Copyright 2009-2014 MOSPA(Ministry of Security and Public Administration).
-
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +16,8 @@
 package org.egovframe.rte.fdl.xml;
 
 import org.egovframe.rte.fdl.xml.exception.ValidatorException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.w3c.dom.Document;
@@ -26,10 +27,13 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import javax.xml.XMLConstants;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.URIResolver;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
@@ -63,18 +67,8 @@ import java.util.Set;
  */
 public abstract class AbstractXMLUtility {
 
-    /**
-     * 파일명
-     **/
-    private String fileName = null;
-    /**
-     * 스키마 파일명
-     **/
-    private String schmafileName = null;
-    /**
-     * xmlValue
-     **/
-    private String xmlValue = null;
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractXMLUtility.class);
+
     /**
      * ApplicationContext
      */
@@ -90,7 +84,19 @@ public abstract class AbstractXMLUtility {
     /**
      * xml 설정 파일 경로
      */
-    private final String configPath = "classpath*:spring/egovxmlCfg.xml";
+    private final String configPath = "classpath:META-INF/spring/egovxmlCfg.xml";
+    /**
+     * 파일명
+     **/
+    private String fileName = null;
+    /**
+     * 스키마 파일명
+     **/
+    private String schmafileName = null;
+    /**
+     * xmlValue
+     **/
+    private String xmlValue = null;
 
     /**
      * AbstractXMLUtility 생성자
@@ -321,9 +327,30 @@ public abstract class AbstractXMLUtility {
         }
     }
 
+    // 2026.02.28 KISA 보안취약점 조치
     private void saveDocument(Document doc, String path) throws TransformerException, IOException {
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        // 2026.02.28 KISA 보안취약점 조치
+        try {
+            transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+        } catch (IllegalArgumentException e) {
+            LOGGER.debug("TransformerFactory does not support external access restriction attributes, using default: {}", e.getMessage());
+        }
+        try {
+            transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        } catch (TransformerConfigurationException e) {
+            LOGGER.debug("TransformerFactory does not support secure processing feature: {}", e.getMessage());
+        }
+
         Transformer transformer = transformerFactory.newTransformer();
+        // 2026.02.28 KISA 보안취약점 조치 - Transformer 외부 URI 해석 차단
+        transformer.setURIResolver((href, base) -> {
+            if (href != null && !href.trim().isEmpty()) {
+                throw new TransformerException("External URI resolution is disabled for security (XXE prevention)");
+            }
+            return null;
+        });
         transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 

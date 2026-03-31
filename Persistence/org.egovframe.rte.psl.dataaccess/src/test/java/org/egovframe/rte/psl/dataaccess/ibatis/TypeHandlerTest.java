@@ -1,102 +1,93 @@
 package org.egovframe.rte.psl.dataaccess.ibatis;
 
-import org.egovframe.rte.psl.dataaccess.TestBase;
+import jakarta.annotation.Resource;
+import org.egovframe.rte.psl.dataaccess.config.DataAccessTestConfig;
 import org.egovframe.rte.psl.dataaccess.dao.TypeTestDAO;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- *  == 개정이력(Modification Information) ==
- *   
- *   수정일      수정자           수정내용
- *  -------    --------    ---------------------------
- *   2014.01.22 권윤정  SimpleJdbcTestUtils -> JdbcTestUtils 변경
- *   2014.01.22 권윤정  SimpleJdbcTemplate -> JdbcTemplate 변경
- *   2014.01.22 권윤정  SLF4J로 로깅방식 변경
+ * == 개정이력(Modification Information) ==
+ * <p>
+ * 수정일      수정자           수정내용
+ * -------    --------    ---------------------------
+ * 2014.01.22 권윤정  SimpleJdbcTestUtils -> JdbcTestUtils 변경
+ * 2014.01.22 권윤정  SimpleJdbcTemplate -> JdbcTemplate 변경
+ * 2014.01.22 권윤정  SLF4J로 로깅방식 변경
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath*:META-INF/spring/context-*.xml" })
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = DataAccessTestConfig.class)
 @Transactional
-public class TypeHandlerTest extends TestBase {
+public class TypeHandlerTest {
 
-	@Resource(name = "typeTestDAO")
-	TypeTestDAO typeTestDAO;
+    @Resource(name = "dataSource")
+    private DataSource dataSource;
 
-	@Before
-	public void onSetUp() throws Exception {
+    @Resource(name = "typeTestDAO")
+    private TypeTestDAO typeTestDAO;
 
-		// 외부에 sql file 로부터 DB 초기화 (TypeTest 기존 테이블
-		// 삭제/생성)
-		ScriptUtils.executeSqlScript(dataSource.getConnection(), new ClassPathResource("META-INF/testdata/sample_schema_ddl_typetest_" + usingDBMS + ".sql"));
-	}
+    @BeforeEach
+    public void onSetUp() throws SQLException {
+        try (Connection conn = dataSource.getConnection()) {
+            ScriptUtils.executeSqlScript(conn, new ClassPathResource("/META-INF/testdata/testdb.sql"));
+        }
+    }
 
-	public Map<String, Object> makeMap() throws Exception {
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("id", 1);
+    public Map<String, Object> makeMap() throws Exception {
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", 1);
 
-		Calendar cal = Calendar.getInstance();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss", java.util.Locale.getDefault());
-		// ex.) 20090221171025
-		String strDate = sdf.format(cal.getTime());
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss", java.util.Locale.getDefault());
+        String strDate = sdf.format(cal.getTime());
 
-		map.put("calendarType", cal);
-		map.put("strDate", strDate);
+        map.put("calendarType", cal);
+        map.put("strDate", strDate);
 
-		LoggerFactory.getLogger(this.getClass()).debug("== input map : {} ==", map);
+        LoggerFactory.getLogger(this.getClass()).debug("== input map : {} ==", map);
 
-		return map;
-	}
+        return map;
+    }
 
-	public void checkResult(Map<String, Object> map, Map<String, Object> resultMap) {
-		assertNotNull(resultMap);
-		assertEquals(map.get("id"), resultMap.get("id"));
+    public void checkResult(Map<String, Object> map, Map<String, Object> resultMap) {
+        assertNotNull(resultMap);
+        assertEquals(map.get("id"), resultMap.get("id"));
+        assertEquals(map.get("calendarType"), resultMap.get("calendarType"));
+        assertEquals(((String) map.get("strDate")).substring(0, 8) + "000000", ((String) resultMap.get("strDate")).substring(0, 8) + "000000");
+    }
 
-		// mysql 의 경우 timestamp 정밀도가 3자리 낮음
-		if (isMysql || isTibero) {
+    @Rollback(false)
+    @Test
+    public void testTypeHandlerTest() throws Exception {
+        Map<String, Object> map = makeMap();
 
-			Calendar cal = (Calendar) map.get("calendarType");
-			Calendar resultCal = (Calendar) resultMap.get("calendarType");
-			String orgMiliSecs = Long.toString(cal.getTimeInMillis());
-			String resultMiliSecs = Long.toString(resultCal.getTimeInMillis());
-			assertEquals(orgMiliSecs.substring(0, orgMiliSecs.length() - 3), resultMiliSecs.substring(0, resultMiliSecs.length() - 3));
-		} else {
-			assertEquals(map.get("calendarType"), resultMap.get("calendarType"));
-		}
-		assertEquals(isHsql || isMysql ? ((String) map.get("strDate")).substring(0, 8) + "000000" : map.get("strDate"), resultMap.get("strDate"));
-	}
+        // insert
+        typeTestDAO.getSqlMapClientTemplate().insert("insertTypeHandlerTest", map);
 
-	@SuppressWarnings({ "unchecked", "deprecation" })
-	@Rollback(false)
-	@Test
-	public void testTypeHandlerTest() throws Exception {
+        // select
+        Map<String, Object> resultMap = (Map<String, Object>) typeTestDAO.getSqlMapClientTemplate().queryForObject("selectTypeHandlerTest", map);
 
-		Map<String, Object> map = makeMap();
-
-		// insert
-		typeTestDAO.getSqlMapClientTemplate().insert("insertTypeHandlerTest", map);
-
-		// select
-		Map<String, Object> resultMap = (Map<String, Object>) typeTestDAO.getSqlMapClientTemplate().queryForObject("selectTypeHandlerTest", map);
-
-		// check
-		checkResult(map, resultMap);
-	}
+        // check
+        checkResult(map, resultMap);
+    }
 
 }

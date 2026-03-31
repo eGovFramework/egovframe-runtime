@@ -1,79 +1,79 @@
 package org.egovframe.rte.psl.dataaccess.ibatis;
 
-import org.egovframe.rte.psl.dataaccess.TestBase;
+import jakarta.annotation.Resource;
+import org.egovframe.rte.psl.dataaccess.config.DataAccessTestConfig;
 import org.egovframe.rte.psl.dataaccess.dao.EmpDAO;
 import org.egovframe.rte.psl.dataaccess.rowhandler.FileWritingRowHandler;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
+import javax.sql.DataSource;
 import java.io.File;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Properties;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
- *  == 개정이력(Modification Information) ==
- *   
- *   수정일      수정자           수정내용
- *  -------    --------    ---------------------------
- *   2014.01.22 권윤정  SimpleJdbcTestUtils -> JdbcTestUtils 변경
- *   2014.01.22 권윤정  SimpleJdbcTemplate -> JdbcTemplate 변경
+ * == 개정이력(Modification Information) ==
+ * <p>
+ * 수정일      수정자           수정내용
+ * -------    --------    ---------------------------
+ * 2014.01.22 권윤정  SimpleJdbcTestUtils -> JdbcTestUtils 변경
+ * 2014.01.22 권윤정  SimpleJdbcTemplate -> JdbcTemplate 변경
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath*:META-INF/spring/context-*.xml" })
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = DataAccessTestConfig.class)
 @Transactional
-public class RowHandlerTest extends TestBase {
+public class RowHandlerTest {
 
-	@Resource(name = "schemaProperties")
-	Properties schemaProperties;
+    @Resource(name = "dataSource")
+    private DataSource dataSource;
 
-	@Resource(name = "empDAO")
-	EmpDAO empDAO;
+    @Resource(name = "schemaProperties")
+    private Properties schemaProperties;
 
-	// fileWritingRowHandler 는 prototype 으로 선언했음
-	@Resource(name = "fileWritingRowHandler")
-	FileWritingRowHandler rowHandler;
+    @Resource(name = "empDAO")
+    private EmpDAO empDAO;
 
-	boolean isHsql = true;
+    @Resource(name = "fileWritingRowHandler")
+    private FileWritingRowHandler rowHandler;
 
-	@Before
-	public void onSetUp() throws Exception {
-		ScriptUtils.executeSqlScript(dataSource.getConnection(), new ClassPathResource("META-INF/testdata/sample_schema_ddl_" + usingDBMS + ".sql"));
+    @BeforeEach
+    public void onSetUp() throws SQLException {
+        try (Connection conn = dataSource.getConnection()) {
+            ScriptUtils.executeSqlScript(conn, new ClassPathResource("/META-INF/testdata/testdb.sql"));
+        }
+    }
 
-		// init data
-		ScriptUtils.executeSqlScript(dataSource.getConnection(), new ClassPathResource("META-INF/testdata/sample_schema_initdata_" + usingDBMS + ".sql"));
-	}
+    @Rollback(false)
+    @Test
+    public void testRowHandlerForOutFileWriting() throws IOException {
 
-	@SuppressWarnings("deprecation")
-	@Rollback(false)
-	@Test
-	public void testRowHandlerForOutFileWriting() throws Exception {
+        // select to outFile using rowHandler
+        empDAO.getSqlMapClientTemplate().queryWithRowHandler("selectEmpListToOutFileUsingRowHandler", null, rowHandler);
 
-		// select to outFile using rowHandler
-		empDAO.getSqlMapClientTemplate().queryWithRowHandler("selectEmpListToOutFileUsingRowHandler", null, rowHandler);
+        // check
+        ResourceLoader resourceLoader = new DefaultResourceLoader();
+        org.springframework.core.io.Resource resource = resourceLoader.getResource("file:./src/test/resources/META-INF/spring/" + schemaProperties.getProperty("outResultFile"));
+        rowHandler.releaseResource();
 
-		// check
-		ResourceLoader resourceLoader = new DefaultResourceLoader();
-		org.springframework.core.io.Resource resource = resourceLoader.getResource("file:./src/test/resources/META-INF/testdata/" + schemaProperties.getProperty("outResultFile"));
-		// BufferedOutputStream flush 및 close
-		rowHandler.releaseResource();
+        assertEquals(38416, rowHandler.getTotalCount());
 
-		assertEquals(38416, rowHandler.getTotalCount());
-
-		File file = resource.getFile();
-		assertNotNull(file);
-		// 대용량 out file size 체크
-		assertTrue(1000000 < file.length());
-	}
+        File file = resource.getFile();
+        assertNotNull(file);
+        assertTrue(1000000 < file.length());
+    }
 
 }

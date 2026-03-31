@@ -1,21 +1,37 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Configuration status="error">
     <Appenders>
-        <Console name="console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d %5p [%c] %m%n" />
+        <Console name="console">
+            <PatternLayout pattern="%d %5p [%c] %m%n"/>
         </Console>
     </Appenders>
     <Loggers>
-		<Logger name="org.egovframe" level="DEBUG" additivity="false">
-			<AppenderRef ref="console"/>
-		</Logger>
-		
-		<Logger name="org.springframework.data" level="DEBUG" additivity="false">
-			<AppenderRef ref="console"/>
-		</Logger>
-				
-		<Root level="DEBUG">
-			<AppenderRef ref="console"/>
-		</Root>
-	</Loggers>
+        <Logger name="org.egovframe" level="debug" additivity="false">
+            <AppenderRef ref="console"/>
+        </Logger>
+        <Logger name="java.sql.Connection" level="debug" additivity="false">
+            <AppenderRef ref="console"/>
+        </Logger>
+        <Logger name="java.sql.Statement" level="debug" additivity="false">
+            <AppenderRef ref="console"/>
+        </Logger>
+        <Logger name="java.sql.PreparedStatement" level="debug" additivity="false">
+            <AppenderRef ref="console"/>
+        </Logger>
+        <Logger name="java.sql.ResultSet" level="debug" additivity="false">
+            <AppenderRef ref="console"/>
+        </Logger>
+        <Logger name="org.springframework.jdbc" level="debug" additivity="false">
+            <AppenderRef ref="console"/>
+        </Logger>
+        <Logger name="org.springframework" level="off" additivity="false">
+            <AppenderRef ref="console"/>
+        </Logger>
+        <Logger name="org.springframework.jdbc" level="debug" additivity="false">
+            <AppenderRef ref="console"/>
+        </Logger>
+        <Root level="error">
+            <AppenderRef ref="console"/>
+        </Root>
+    </Loggers>
 </Configuration>
