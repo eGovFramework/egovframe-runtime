@@ -377,8 +377,7 @@ limitations under the License.
 ## 참고 자료
 
 - [전자정부 표준프레임워크 공식 사이트](https://www.egovframe.go.kr)
-- [전자정부 표준프레임워크 개발자 센터](https://www.egovframe.go.kr/home/developer.do)
-- [Maven 저장소](https://maven.egovframe.go.kr/maven/)
+- [전자정부 표준프레임워크 가이드](https://www.egovframe.go.kr/docs)
 - [Spring Framework 공식 문서](https://spring.io/projects/spring-framework)
 - [Spring Boot 공식 문서](https://spring.io/projects/spring-boot)
 
