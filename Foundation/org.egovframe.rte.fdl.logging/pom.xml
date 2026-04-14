@@ -26,7 +26,7 @@
         <jakarta.persistence.version>3.2.0</jakarta.persistence.version>
         <jakarta.servlet.version>6.0.0</jakarta.servlet.version>
         <jakarta.servlet.jsp.jstl.version>3.0.2</jakarta.servlet.jsp.jstl.version>
-        <log4j2.version>2.25.3</log4j2.version>
+        <log4j2.version>2.25.4</log4j2.version>
         <slf4j.version>2.0.17</slf4j.version>
         <commons.dbcp2.version>2.13.0</commons.dbcp2.version>
         <commons.lang3.version>3.18.0</commons.lang3.version>
