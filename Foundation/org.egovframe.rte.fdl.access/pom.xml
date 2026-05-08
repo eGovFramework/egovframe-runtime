@@ -22,7 +22,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <org.egovframe.rte.version>5.0.0</org.egovframe.rte.version>
-        <spring.framework.version>6.2.11</spring.framework.version>
+        <spring.framework.version>6.2.18</spring.framework.version>
         <jakarta.annotation.version>3.0.0</jakarta.annotation.version>
         <jakarta.persistence.version>3.2.0</jakarta.persistence.version>
         <jakarta.servlet.version>6.0.0</jakarta.servlet.version>
