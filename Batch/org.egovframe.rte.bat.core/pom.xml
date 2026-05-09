@@ -179,7 +179,7 @@
                     <groupId>org.springframework</groupId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>sring-context</artifactId>
+                    <artifactId>spring-context</artifactId>
                     <groupId>org.springframework</groupId>
                 </exclusion>
                 <exclusion>
