@@ -65,7 +65,7 @@ public class EgovPropertyServiceImpl implements EgovPropertyService, Application
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EgovPropertyServiceImpl.class);
 
-    private PropertiesConfiguration egovProperties;
+    private volatile PropertiesConfiguration egovProperties;
     private ResourceLoader resourceLoader;
     private MessageSource messageSource;
     private Set<?> extFileName;
@@ -339,6 +339,7 @@ public class EgovPropertyServiceImpl implements EgovPropertyService, Application
     /**
      * 파일위치정보를 가지고 resources 정보 추출
      *
+     * @param propertiesConfiguration 프로퍼티를 적재할 대상 설정
      * @param location 파일위치
      * @param encoding Encoding 정보
      */
@@ -355,6 +356,7 @@ public class EgovPropertyServiceImpl implements EgovPropertyService, Application
     /**
      * 멀티로 지정된 경우 처리를 위해 LOOP 처리
      *
+     * @param propertiesConfiguration 프로퍼티를 적재할 대상 설정
      * @param resources 리소스정보
      * @param encoding  인코딩정보
      */
@@ -368,6 +370,7 @@ public class EgovPropertyServiceImpl implements EgovPropertyService, Application
     /**
      * 파일 정보를 읽어서 egovProperties에 저장
      *
+     * @param propertiesConfiguration 프로퍼티를 적재할 대상 설정
      * @param resource 리소스정보
      * @param encoding 인코딩정보
      */
