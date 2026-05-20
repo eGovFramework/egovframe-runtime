@@ -25,7 +25,7 @@
         <spring.framework.version>6.2.11</spring.framework.version>
         <jakarta.annotation.version>3.0.0</jakarta.annotation.version>
         <jakarta.servlet.version>6.0.0</jakarta.servlet.version>
-        <commons.configuration2.version>2.11.0</commons.configuration2.version>
+        <commons.configuration2.version>2.15.0</commons.configuration2.version>
         <commons.lang3.version>3.18.0</commons.lang3.version>
         <easymock.version>5.3.0</easymock.version>
         <hsqldb.version>2.7.4</hsqldb.version>
