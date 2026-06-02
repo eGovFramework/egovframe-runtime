@@ -225,7 +225,7 @@
                             <report>dependency-management</report>
                             <report>plugins</report>
                             <report>summary</report>
-                            <report>project-team</report>
+                            <report>team</report>
                             <report>scm</report>
                         </reports>
                     </reportSet>

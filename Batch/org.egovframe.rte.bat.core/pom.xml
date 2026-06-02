@@ -179,7 +179,7 @@
                     <groupId>org.springframework</groupId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>sring-context</artifactId>
+                    <artifactId>spring-context</artifactId>
                     <groupId>org.springframework</groupId>
                 </exclusion>
                 <exclusion>
@@ -494,7 +494,7 @@
                             <report>dependency-management</report>
                             <report>plugins</report>
                             <report>summary</report>
-                            <report>project-team</report>
+                            <report>team</report>
                             <report>scm</report>
                         </reports>
                     </reportSet>
