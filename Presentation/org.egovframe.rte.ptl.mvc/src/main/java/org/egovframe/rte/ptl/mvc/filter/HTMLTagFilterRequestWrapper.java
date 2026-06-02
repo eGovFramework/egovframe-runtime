@@ -18,6 +18,7 @@ package org.egovframe.rte.ptl.mvc.filter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -66,18 +67,20 @@ public class HTMLTagFilterRequestWrapper extends HttpServletRequestWrapper {
 
     public Map<String, String[]> getParameterMap() {
         Map<String, String[]> valueMap = super.getParameterMap();
-        String[] values;
+        Map<String, String[]> safeValueMap = new LinkedHashMap<String, String[]>();
         for (String key : valueMap.keySet()) {
-            values = valueMap.get(key);
+            String[] values = valueMap.get(key);
+            String[] safeValues = new String[values.length];
             for (int i = 0; i < values.length; i++) {
                 if (values[i] != null) {
-                    values[i] = getSafeParamData(values[i]);
+                    safeValues[i] = getSafeParamData(values[i]);
                 } else {
-                    values[i] = null;
+                    safeValues[i] = null;
                 }
             }
+            safeValueMap.put(key, safeValues);
         }
-        return valueMap;
+        return safeValueMap;
     }
 
     /**
