@@ -19,21 +19,6 @@ import org.egovframe.rte.bat.support.EgovJobVariableListener;
 import org.egovframe.rte.bat.support.EgovResourceVariable;
 import org.egovframe.rte.bat.support.EgovStepVariableListener;
 import org.mybatis.spring.batch.MyBatisBatchItemWriter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.batch.item.Chunk;
-import org.springframework.util.ReflectionUtils;
-
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * EgovMyBatisBatchItemWriter 클래스
@@ -53,8 +38,6 @@ import java.util.Map;
  * @since 2017.09.06
  */
 public class EgovMyBatisBatchItemWriter<T> extends MyBatisBatchItemWriter<T> {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(EgovMyBatisBatchItemWriter.class);
 
     /**
      * egovframework EgovResourceVariable
@@ -93,39 +76,6 @@ public class EgovMyBatisBatchItemWriter<T> extends MyBatisBatchItemWriter<T> {
 
     public void setStepVariable(EgovStepVariableListener stepVariable) {
         this.stepVariable = stepVariable;
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public void write(Chunk<? extends T> chunk) {
-        List<Object> list = new ArrayList<>();
-        Map<String, Object> map;
-
-        try {
-            for (T item : chunk.getItems()) {
-                map = new HashMap<>();
-                BeanInfo beanInfo = Introspector.getBeanInfo(item.getClass());
-
-                if (resourceVariable != null)
-                    map.putAll(resourceVariable.getVariableMap());
-                if (jobVariable != null)
-                    map.putAll(jobVariable.getVariableMap());
-                if (stepVariable != null)
-                    map.putAll(stepVariable.getVariableMap());
-
-                for (PropertyDescriptor pd : beanInfo.getPropertyDescriptors()) {
-                    Method reader = pd.getReadMethod();
-                    if (reader != null)
-                        map.put(pd.getName(), reader.invoke(item));
-                }
-
-                list.add(map);
-            }
-        } catch (IntrospectionException | IllegalAccessException | InvocationTargetException e) {
-            ReflectionUtils.handleReflectionException(e);
-        }
-
-        super.write((Chunk<? extends T>) chunk);
     }
 
 }
