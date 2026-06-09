@@ -66,7 +66,7 @@ public class EgovPropertyServiceImpl implements EgovPropertyService, Application
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EgovPropertyServiceImpl.class);
 
-    private PropertiesConfiguration egovProperties;
+    private volatile PropertiesConfiguration egovProperties;
     private ResourceLoader resourceLoader;
     private MessageSource messageSource;
     private Set<?> extFileName;
@@ -243,12 +243,19 @@ public class EgovPropertyServiceImpl implements EgovPropertyService, Application
         if (egovProperties == null) {
             return;
         }
-        egovProperties.clear();
-        loadExternalPropertyFiles();
-        applyProgrammaticProperties();
+        PropertiesConfiguration refreshedProperties = createPropertiesConfiguration();
+        loadExternalPropertyFiles(refreshedProperties);
+        applyProgrammaticProperties(refreshedProperties);
+        egovProperties = refreshedProperties;
     }
 
-    private void loadExternalPropertyFiles() throws IOException {
+    private PropertiesConfiguration createPropertiesConfiguration() {
+        PropertiesConfiguration propertiesConfiguration = new PropertiesConfiguration();
+        propertiesConfiguration.setListDelimiterHandler(new DefaultListDelimiterHandler(','));
+        return propertiesConfiguration;
+    }
+
+    private void loadExternalPropertyFiles(PropertiesConfiguration propertiesConfiguration) throws IOException {
         if (extFileName == null) {
             return;
         }
@@ -264,12 +271,12 @@ public class EgovPropertyServiceImpl implements EgovPropertyService, Application
             } else {
                 fileName = (String) element;
             }
-            loadPropertyResources(fileName, enc);
+            loadPropertyResources(propertiesConfiguration, fileName, enc);
         }
     }
 
     @SuppressWarnings("rawtypes")
-    private void applyProgrammaticProperties() throws FdlException {
+    private void applyProgrammaticProperties(PropertiesConfiguration propertiesConfiguration) throws FdlException {
         if (properties == null) {
             return;
         }
@@ -281,7 +288,7 @@ public class EgovPropertyServiceImpl implements EgovPropertyService, Application
             if (key == null || key.isEmpty()) {
                 throw new FdlException(messageSource, "error.properties.check.essential", null);
             }
-            egovProperties.addProperty(key, value);
+            propertiesConfiguration.addProperty(key, value);
         }
     }
 
@@ -289,8 +296,7 @@ public class EgovPropertyServiceImpl implements EgovPropertyService, Application
      * Bean 초기화 함수로 최초 생성시 필요한 Property 세티처리
      */
     public void afterPropertiesSet() throws IOException, FdlException {
-        egovProperties = new PropertiesConfiguration();
-        egovProperties.setListDelimiterHandler(new DefaultListDelimiterHandler(','));
+        egovProperties = createPropertiesConfiguration();
         refreshPropertyFiles();
     }
 
@@ -334,35 +340,38 @@ public class EgovPropertyServiceImpl implements EgovPropertyService, Application
     /**
      * 파일위치정보를 가지고 resources 정보 추출
      *
+     * @param propertiesConfiguration 프로퍼티를 적재할 대상 설정
      * @param location 파일위치
      * @param encoding Encoding 정보
      */
-    private void loadPropertyResources(String location, String encoding) throws IOException {
+    private void loadPropertyResources(PropertiesConfiguration propertiesConfiguration, String location, String encoding) throws IOException {
         if (resourceLoader instanceof ResourcePatternResolver) {
             Resource[] resources = ((ResourcePatternResolver) resourceLoader).getResources(location);
-            loadPropertyLoop(resources, encoding);
+            loadPropertyLoop(propertiesConfiguration, resources, encoding);
         } else {
             Resource resource = resourceLoader.getResource(location);
-            loadPropertyRes(resource, encoding);
+            loadPropertyRes(propertiesConfiguration, resource, encoding);
         }
     }
 
     /**
      * 멀티로 지정된 경우 처리를 위해 LOOP 처리
      *
+     * @param propertiesConfiguration 프로퍼티를 적재할 대상 설정
      * @param resources 리소스정보
      * @param encoding  인코딩정보
      */
-    private void loadPropertyLoop(Resource[] resources, String encoding) {
+    private void loadPropertyLoop(PropertiesConfiguration propertiesConfiguration, Resource[] resources, String encoding) {
         Assert.notNull(resources, "Resource array must not be null");
         for (int i = 0; i < resources.length; i++) {
-            loadPropertyRes(resources[i], encoding);
+            loadPropertyRes(propertiesConfiguration, resources[i], encoding);
         }
     }
 
     /**
      * 파일 정보를 읽어서 egovProperties에 저장
      *
+     * @param propertiesConfiguration 프로퍼티를 적재할 대상 설정
      * @param resource 리소스정보
      * @param encoding 인코딩정보
      */
