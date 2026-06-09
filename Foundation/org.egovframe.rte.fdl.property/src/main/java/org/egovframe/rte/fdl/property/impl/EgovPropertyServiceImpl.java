@@ -19,6 +19,7 @@ import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.lang3.StringUtils;
+import org.egovframe.rte.fdl.cmmn.exception.BaseRuntimeException;
 import org.egovframe.rte.fdl.cmmn.exception.FdlException;
 import org.egovframe.rte.fdl.property.EgovPropertyService;
 import org.slf4j.Logger;
@@ -366,30 +367,15 @@ public class EgovPropertyServiceImpl implements EgovPropertyService, Application
      * @param encoding 인코딩정보
      */
     private void loadPropertyRes(Resource resource, String encoding) {
-        InputStream inputStream = null;
-        InputStreamReader inputStreamReader = null;
+
         // 2026.02.28 KISA 보안취약점 조치
-        try {
-            inputStream = resource.getInputStream();
-            inputStreamReader = new InputStreamReader(inputStream, StringUtils.isEmpty(encoding) ? DEFAULT_ENCODING : encoding);
+        try (
+            InputStream inputStream = resource.getInputStream();
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StringUtils.isEmpty(encoding) ? DEFAULT_ENCODING : encoding)
+        ) {
             egovProperties.read(inputStreamReader);
         } catch (ConfigurationException | IOException e) {
-            throw new RuntimeException(e);
-        } finally {
-            if (inputStreamReader != null) {
-                try {
-                    inputStreamReader.close();
-                } catch (IOException e) {
-                    LOGGER.debug("Failed to close loadPropertyRes : {}", e.getMessage());
-                }
-            } else if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    LOGGER.debug("Failed to close loadPropertyRes : {}", e.getMessage());
-                }
-            }
+            throw new BaseRuntimeException(e);
         }
     }
-
 }

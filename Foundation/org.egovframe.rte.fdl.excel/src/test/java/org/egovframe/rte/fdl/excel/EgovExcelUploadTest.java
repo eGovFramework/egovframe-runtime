@@ -50,11 +50,10 @@ public class EgovExcelUploadTest {
     @Test
     public void testUploadExcelFile() {
         LOGGER.debug("### EgovExcelUploadTest testUploadExcelFile() Start ");
-        try {
-            FileInputStream fileIn = new FileInputStream(new File("testdata/testBatch.xls"));
+        try (FileInputStream fileIn = new FileInputStream(new File("testdata/testBatch.xls"))) {
             excelService.uploadExcel("insertEmpUsingBatch", fileIn);
         } catch (Exception e) {
-            LOGGER.debug("[{}] EgovExcelUploadTest testUploadExcelFile() : {}", e.getMessage());
+            LOGGER.debug("[{}] EgovExcelUploadTest testUploadExcelFile() : {}", e.getClass().getName(), e.getMessage());
         } finally {
             LOGGER.debug("### EgovExcelUploadTest testUploadExcelFile() End ");
         }
@@ -67,8 +66,7 @@ public class EgovExcelUploadTest {
     @Test
     public void testBigUploadExcelFile() {
         LOGGER.debug("### EgovExcelUploadTest testBigUploadExcelFile() Start ");
-        try {
-            FileInputStream fileIn = new FileInputStream(new File("testdata/zipExcel.xls"));
+        try (FileInputStream fileIn = new FileInputStream(new File("testdata/zipExcel.xls"))) {
             excelBigService.uploadExcel("insertZipUsingBatch", fileIn, 2, (long) 5000);
         } catch (Exception e) {
             LOGGER.debug("### EgovExcelUploadTest testBigUploadExcelFile() Exception : {}", e.getMessage());

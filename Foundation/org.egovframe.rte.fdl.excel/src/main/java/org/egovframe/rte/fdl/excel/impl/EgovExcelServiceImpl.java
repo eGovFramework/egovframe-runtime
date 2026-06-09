@@ -117,23 +117,20 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
      */
     @Override
     public Workbook createWorkbook(Workbook wb, String filepath) {
+        String fullPath = FilenameUtils.getFullPath(filepath);
         try {
-            LOGGER.debug("EgovExcelServiceImpl.createWorkbook 1 : templatePath is {}", FilenameUtils.getFullPath(filepath));
-            if (!EgovFileUtil.isExistsFile(FilenameUtils.getFullPath(filepath))) {
-                LOGGER.debug("make dir {}", FilenameUtils.getFullPath(filepath));
-                FileUtils.forceMkdir(new File(FilenameUtils.getFullPath(filepath)));
+            LOGGER.debug("EgovExcelServiceImpl.createWorkbook 1 : templatePath is {}", fullPath);
+            if (!EgovFileUtil.isExistsFile(fullPath)) {
+                LOGGER.debug("make dir {}", fullPath);
+                FileUtils.forceMkdir(new File(fullPath));
             }
-            FileOutputStream fileOut = null;
+
             LOGGER.debug("EgovExcelServiceImpl.createWorkbook 2 : templatePath is {}", filepath);
-            try {
+            try (FileOutputStream fileOut = new FileOutputStream(filepath);) {
                 LOGGER.debug("ExcelServiceImpl filepath ...");
-                fileOut = new FileOutputStream(filepath);
                 wb.write(fileOut);
-            } finally {
-                LOGGER.debug("ExcelServiceImpl loadExcelObject End ");
-                if (wb != null) wb.close();
-                if (fileOut != null) fileOut.close();
             }
+
             return wb;
         } catch (IOException e) {
             throw new BaseRuntimeException("IOException: createWorkbook", e);
@@ -145,19 +142,13 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
      */
     @Override
     public Workbook loadExcelTemplate(String templateName) {
-        try {
-            FileInputStream fileIn = null;
-            Workbook wb = null;
-            LOGGER.debug("EgovExcelServiceImpl.loadExcelTemplate : templatePath is {}", templateName);
-            try {
-                LOGGER.debug("ExcelServiceImpl loadExcelTemplate ...");
-                fileIn = new FileInputStream(templateName);
-                wb = new HSSFWorkbook(fileIn);
-            } finally {
-                LOGGER.debug("ExcelServiceImpl loadExcelTemplate End ");
-                if (wb != null) wb.close();
-                if (fileIn != null) fileIn.close();
-            }
+        LOGGER.debug("EgovExcelServiceImpl.loadExcelTemplate : templatePath is {}", templateName);
+
+        try (
+            FileInputStream fileIn = new FileInputStream(templateName);
+            Workbook wb = new HSSFWorkbook(fileIn)
+        ) {
+            LOGGER.debug("ExcelServiceImpl loadExcelTemplate ...");
             return wb;
         } catch (IOException e) {
             throw new BaseRuntimeException("IOException: loadExcelTemplate(String templateName)", e);
@@ -169,22 +160,21 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
      */
     @Override
     public XSSFWorkbook loadExcelTemplate(String templateName, XSSFWorkbook wb) {
+        LOGGER.debug("EgovExcelServiceImpl.loadExcelTemplate(XSSF) : templatePath is {}", templateName);
+
         try {
-            FileInputStream fileIn = null;
-            LOGGER.debug("EgovExcelServiceImpl.loadExcelTemplate(XSSF) : templatePath is {}", templateName);
-            try {
+            try (FileInputStream fileIn = new FileInputStream(templateName)) {
                 LOGGER.debug("ExcelServiceImpl loadExcelTemplate(XSSF) ...");
-                fileIn = new FileInputStream(templateName);
                 wb = new XSSFWorkbook(fileIn);
             } finally {
                 LOGGER.debug("ExcelServiceImpl loadExcelTemplate(XSSF) End ");
                 if (wb != null) wb.close();
-                if (fileIn != null) fileIn.close();
             }
-            return wb;
         } catch (IOException e) {
             throw new BaseRuntimeException("IOException: loadExcelTemplate(String templateName, XSSFWorkbook wb)", e);
         }
+
+        return wb;
     }
 
     /**
@@ -192,16 +182,10 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
      */
     @Override
     public Workbook loadWorkbook(String filepath) {
-        try {
-            FileInputStream fileIn = null;
-            Workbook wb = null;
-            try {
-                fileIn = new FileInputStream(filepath);
-                wb = loadWorkbook(fileIn);
-            } finally {
-                if (wb != null) wb.close();
-                if (fileIn != null) fileIn.close();
-            }
+        try (
+            FileInputStream fileIn = new FileInputStream(filepath);
+            Workbook wb = loadWorkbook(fileIn)
+        ) {
             return wb;
         } catch (IOException e) {
             throw new BaseRuntimeException("IOException: loadWorkbook(String filepath)", e);
@@ -213,18 +197,19 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
      */
     @Override
     public XSSFWorkbook loadWorkbook(String filepath, XSSFWorkbook wb) {
-        try {
-            FileInputStream fileIn = null;
-            try {
-                fileIn = new FileInputStream(filepath);
-                wb = loadWorkbook(fileIn, wb);
-            } finally {
-                if (wb != null) wb.close();
-                if (fileIn != null) fileIn.close();
-            }
+        try (FileInputStream fileIn = new FileInputStream(filepath)) {
+            wb = loadWorkbook(fileIn, wb);
             return wb;
         } catch (IOException e) {
             throw new BaseRuntimeException("IOException: loadWorkbook(String filepath, XSSFWorkbook wb)", e);
+        } finally {
+            if (wb != null) {
+                try {
+                    wb.close();
+                } catch (IOException e) {
+                    LOGGER.error("IOException: loadWorkbook(String filepath, XSSFWorkbook wb)", e);
+                }
+            }
         }
     }
 
@@ -234,18 +219,15 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
     @Override
     public Workbook loadWorkbook(InputStream fileIn) {
         try {
-            POIFSFileSystem fs = null;
-            Workbook wb = null;
-            try {
+            try (
+                POIFSFileSystem fs = new POIFSFileSystem(fileIn);
+                Workbook wb = new HSSFWorkbook(fs)
+            ) {
                 LOGGER.debug("ExcelServiceImpl loadWorkbook ...");
-                fs = new POIFSFileSystem(fileIn);
-                wb = new HSSFWorkbook(fs);
+                return wb;
             } finally {
-                if (wb != null) wb.close();
-                if (fs != null) fs.close();
                 if (fileIn != null) fileIn.close();
             }
-            return wb;
         } catch (IOException e) {
             throw new BaseRuntimeException("Workbook loadWorkbook(InputStream fileIn)", e);
         }
@@ -256,23 +238,18 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
      * POI XSSFWorkbook(InputStream)은 mark/reset 지원이 필요하므로, 미지원 시 BufferedInputStream으로 감싼다.
      */
     public XSSFWorkbook loadWorkbook(InputStream fileIn, XSSFWorkbook wb) {
-        InputStream streamToUse = null;
+        if (fileIn == null) {
+            throw new BaseRuntimeException("FileInputStream is null");
+        }
+
         // 2026.02.28 KISA 보안취약점 조치
-        try {
+        try (InputStream streamToUse = fileIn.markSupported() ? fileIn : new BufferedInputStream(fileIn)) {
             LOGGER.debug("ExcelServiceImpl loadWorkbook(XSSF) ...");
-            streamToUse = (fileIn != null && fileIn.markSupported()) ? fileIn : new BufferedInputStream(fileIn);
             wb = new XSSFWorkbook(streamToUse);
+
             return wb;
         } catch (IOException e) {
             throw new BaseRuntimeException("XSSFWorkbook loadWorkbook(InputStream fileIn, XSSFWorkbook wb)", e);
-        } finally {
-            if (streamToUse != null && streamToUse != fileIn) {
-                try {
-                    streamToUse.close();
-                } catch (IOException e) {
-                    LOGGER.debug("Failed to close stream in loadWorkbook(XSSF): {}", e.getMessage());
-                }
-            }
         }
     }
 

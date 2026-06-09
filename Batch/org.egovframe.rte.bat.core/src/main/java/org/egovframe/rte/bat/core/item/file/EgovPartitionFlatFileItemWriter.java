@@ -546,19 +546,14 @@ public class EgovPartitionFlatFileItemWriter<T> extends ExecutionContextUserSupp
          */
         private void initializeBufferedWriter() throws IOException {
             File file = resource.getFile();
-
             FileUtils.setUpOutputFile(file, restarted, append, shouldDeleteIfExists);
-            FileOutputStream stream = null;
-            try {
-                stream = new FileOutputStream(file.getAbsolutePath(), true);
+            try (FileOutputStream stream = new FileOutputStream(file.getAbsolutePath(), true)) {
                 fileChannel = stream.getChannel();
                 outputBufferedWriter = getBufferedWriter(fileChannel, encoding);
                 outputBufferedWriter.flush();
 
-                if (append) {
-                    if (file.length() > 0) {
-                        appending = true;
-                    }
+                if (append && file.length() > 0) {
+                    appending = true;
                 }
 
                 Assert.state(outputBufferedWriter != null, "");
@@ -571,16 +566,6 @@ public class EgovPartitionFlatFileItemWriter<T> extends ExecutionContextUserSupp
                 initialized = true;
                 linesWritten = 0;
                 os = stream;
-                stream = null;
-            // 2026.02.28 KISA 보안취약점 조치
-            } finally {
-                if (stream != null) {
-                    try {
-                        stream.close();
-                    } catch (IOException e) {
-                        LOGGER.debug("EgovPartitionFlatFileItemWriter initializeBufferedWriter() : {}", e.getClass().getName(), e.getMessage());
-                    }
-                }
             }
         }
 

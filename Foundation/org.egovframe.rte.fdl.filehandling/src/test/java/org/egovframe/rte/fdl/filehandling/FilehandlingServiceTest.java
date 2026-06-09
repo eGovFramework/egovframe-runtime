@@ -103,16 +103,16 @@ public class FilehandlingServiceTest {
         StringBuilder sb = new StringBuilder();
         FileObject writtenFile = manager.resolveFile(baseDir, "testfolder/file1.txt");
         FileContent writtenContents = writtenFile.getContent();
-        InputStream is = writtenContents.getInputStream();
-        try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+        try (
+            InputStream is = writtenContents.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))
+        ) {
             String line;
             while ((line = reader.readLine()) != null) {
                 sb.append(line);
             }
-        } finally {
-            EgovResourceReleaser.close(is);
         }
+
         assertEquals(string, sb.toString());
     }
 

@@ -79,10 +79,6 @@ public class EgovGeneralCryptoServiceImpl implements EgovGeneralCryptoService {
     }
 
     public void encrypt(File srcFile, String password, File trgtFile) {
-        FileInputStream fis = null;
-        FileWriter fw = null;
-        BufferedInputStream bis = null;
-        BufferedWriter bw = null;
         byte[] buffer = null;
         if (passwordEncoder.checkPassword(password)) {
             StandardPBEByteEncryptor cipher = new StandardPBEByteEncryptor();
@@ -90,11 +86,12 @@ public class EgovGeneralCryptoServiceImpl implements EgovGeneralCryptoService {
             cipher.setPassword(password);
             buffer = new byte[blockSize];
             LOGGER.debug("blockSize = {}", blockSize);
-            try {
-                fis = new FileInputStream(srcFile);
-                bis = new BufferedInputStream(fis);
-                fw = new FileWriter(trgtFile);
-                bw = new BufferedWriter(fw);
+            try (
+                FileInputStream fis = new FileInputStream(srcFile);
+                FileWriter fw = new FileWriter(trgtFile);
+                BufferedInputStream bis = new BufferedInputStream(fis);
+                BufferedWriter bw = new BufferedWriter(fw)
+            ) {
                 byte[] encrypted = null;
                 int length = 0;
                 long size = 0L;
@@ -115,8 +112,6 @@ public class EgovGeneralCryptoServiceImpl implements EgovGeneralCryptoService {
                 LOGGER.debug("processed bytes = {}", size);
             } catch (IOException e) {
                 ReflectionUtils.handleReflectionException(e);
-            } finally {
-                EgovResourceReleaser.close(fw, bw, fis, bis);
             }
         } else {
             throw new IllegalArgumentException("password not matched!!!");
@@ -146,19 +141,16 @@ public class EgovGeneralCryptoServiceImpl implements EgovGeneralCryptoService {
     }
 
     public void decrypt(File encryptedFile, String password, File trgtFile) {
-        FileReader fr = null;
-        FileOutputStream fos = null;
-        BufferedReader br = null;
-        BufferedOutputStream bos = null;
         if (passwordEncoder.checkPassword(password)) {
             StandardPBEByteEncryptor cipher = new StandardPBEByteEncryptor();
             cipher.setAlgorithm(algorithm);
             cipher.setPassword(password);
-            try {
-                fr = new FileReader(encryptedFile);
-                br = new BufferedReader(fr);
-                fos = new FileOutputStream(trgtFile);
-                bos = new BufferedOutputStream(fos);
+            try (
+                FileReader fr = new FileReader(encryptedFile);
+                FileOutputStream fos = new FileOutputStream(trgtFile);
+                BufferedReader br = new BufferedReader(fr);
+                BufferedOutputStream bos = new BufferedOutputStream(fos)
+            ) {
                 byte[] encrypted = null;
                 byte[] decrypted = null;
                 String line = null;
@@ -170,8 +162,6 @@ public class EgovGeneralCryptoServiceImpl implements EgovGeneralCryptoService {
                 bos.flush();
             } catch (IOException e) {
                 ReflectionUtils.handleReflectionException(e);
-            } finally {
-                EgovResourceReleaser.close(fos, bos, fr, br);
             }
         } else {
             throw new IllegalArgumentException("password not matched!!!");

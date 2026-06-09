@@ -36,12 +36,11 @@ public class EgovGeneralCryptoServiceTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         DigestOutputStream dout = new DigestOutputStream(baos, sha);
         byte[] data = new byte[1024];
-        FileInputStream fis = null;
-        BufferedInputStream is = null;
 
-        try {
-            fis = new FileInputStream(file);
-            is = new BufferedInputStream(fis);
+        try (
+            FileInputStream fis = new FileInputStream(file);
+            BufferedInputStream is = new BufferedInputStream(fis)
+        ) {
             while (true) {
                 int bytesRead = is.read(data);
                 if (bytesRead < 0)
@@ -51,21 +50,6 @@ public class EgovGeneralCryptoServiceTest {
             dout.flush();
             byte[] result = dout.getMessageDigest().digest();
             return result;
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (Exception e) {
-                    fail(e.getMessage());
-                }
-            }
-            if (fis != null) {
-                try {
-                    fis.close();
-                } catch (Exception e) {
-                    fail(e.getMessage());
-                }
-            }
         }
     }
 

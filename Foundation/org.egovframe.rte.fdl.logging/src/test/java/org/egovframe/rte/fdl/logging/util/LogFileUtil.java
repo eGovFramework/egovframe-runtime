@@ -63,23 +63,16 @@ public class LogFileUtil {
 
     // 파일의 라인수 리턴
     public static int countLines(String fileName) {
-        BufferedReader in = null;
         int numLines = 0;
-        try {
+        try (
             FileReader fileReader = new FileReader(fileName);
-            in = new BufferedReader(fileReader);
+            BufferedReader in = new BufferedReader(fileReader)
+        ) {
             numLines = countLines(in);
         } catch (IOException e) {
             e.getMessage();
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    e.getMessage();
-                }
-            }
         }
+
         return numLines;
     }
 
@@ -99,23 +92,16 @@ public class LogFileUtil {
 
     // 단어 포함여부 확인
     public static Boolean contains(String fileName, String str) {
-        BufferedReader in = null;
         Boolean bool = false;
-        try {
+        try (
             FileReader fileReader = new FileReader(fileName);
-            in = new BufferedReader(fileReader);
+            BufferedReader in = new BufferedReader(fileReader)
+        ) {
             bool = contains(str, in);
         } catch (IOException e) {
             e.getMessage();
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    e.getMessage();
-                }
-            }
         }
+
         return bool;
     }
 
@@ -136,23 +122,16 @@ public class LogFileUtil {
 
     // 단어수 리턴
     public static int countWords(String fileName, String str) {
-        BufferedReader in = null;
         int numWords = 0;
-        try {
+        try (
             FileReader fileReader = new FileReader(fileName);
-            in = new BufferedReader(fileReader);
+            BufferedReader in = new BufferedReader(fileReader)
+        ) {
             numWords = countWords(str, in);
         } catch (IOException e) {
             e.getMessage();
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    e.getMessage();
-                }
-            }
         }
+
         return numWords;
     }
 }
