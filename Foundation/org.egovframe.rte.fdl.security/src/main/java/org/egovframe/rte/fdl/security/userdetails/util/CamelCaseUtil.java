@@ -37,6 +37,12 @@ public final class CamelCaseUtil {
     }
 
     public static String convert2CamelCase(String underScore) {
+        // null 또는 빈 문자열은 변환할 대상이 없으므로 그대로 반환한다.
+        // (빈 문자열일 때 isSkipCase의 charAt(0)에서 StringIndexOutOfBoundsException이,
+        //  null일 때 NullPointerException이 발생하던 문제를 방지한다.)
+        if (underScore == null || underScore.isEmpty()) {
+            return underScore;
+        }
         if (isSkipCase(underScore)) {
             return underScore;
         }
