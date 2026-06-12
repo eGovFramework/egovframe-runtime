@@ -282,6 +282,13 @@ public final class EgovStringUtil {
      * search
      */
     public static int search(String source, String target) {
+        // source 또는 target이 null/빈 문자열이면 셀 대상이 없으므로 0을 반환한다.
+        // 특히 target이 빈 문자열이면 indexOf("")가 항상 0을 반환해
+        // i가 0에 고정되어 무한 루프에 빠지므로 반드시 먼저 걸러낸다.
+        if (source == null || source.isEmpty() || target == null || target.isEmpty()) {
+            return 0;
+        }
+
         int result = 0;
         String strCheck = source;
         for (int i = 0; i < source.length(); ) {
