@@ -181,13 +181,8 @@ public class EgovFileUtil {
         StringBuffer sb = new StringBuffer();
         List<String> lines = readTextLines(file, encoding);
 
-        for (Iterator<String> it = lines.iterator(); ; ) {
+        for (Iterator<String> it = lines.iterator(); it.hasNext(); ) {
             sb.append(it.next());
-            if (it.hasNext()) {
-                sb.append("");
-            } else {
-                break;
-            }
         }
 
         return sb.toString();
