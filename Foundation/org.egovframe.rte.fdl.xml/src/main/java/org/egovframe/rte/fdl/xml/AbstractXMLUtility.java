@@ -42,6 +42,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.CharArrayReader;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -355,8 +356,13 @@ public abstract class AbstractXMLUtility {
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 
         DOMSource source = new DOMSource(doc);
-        StreamResult result = new StreamResult(Files.newOutputStream(Paths.get(path)));
-        transformer.transform(source, result);
+        // OutputStream을 try-with-resources로 관리해 transform 성공·예외와 무관하게 닫는다.
+        // 기존 코드는 스트림을 닫지 않아 반복 저장 시 파일 디스크립터가 누적되고,
+        // Windows에서는 파일 잠금이 지속될 수 있었다.
+        try (OutputStream outputStream = Files.newOutputStream(Paths.get(path))) {
+            StreamResult result = new StreamResult(outputStream);
+            transformer.transform(source, result);
+        }
     }
 
 }
