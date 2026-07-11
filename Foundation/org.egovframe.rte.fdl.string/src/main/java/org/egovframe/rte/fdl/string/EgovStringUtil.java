@@ -903,7 +903,7 @@ public final class EgovStringUtil {
         if (str == null) {
             return null;
         }
-        return new StringBuffer(str).reverse().toString();
+        return new StringBuilder(str).reverse().toString();
     }
 
     /**
