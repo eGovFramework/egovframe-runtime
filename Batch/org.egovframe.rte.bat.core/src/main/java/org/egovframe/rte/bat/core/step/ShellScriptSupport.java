@@ -15,6 +15,8 @@
  */
 package org.egovframe.rte.bat.core.step;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.ReflectionUtils;
 
 import java.io.BufferedReader;
@@ -23,6 +25,8 @@ import java.io.InputStreamReader;
 import java.util.regex.Pattern;
 
 public class ShellScriptSupport {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ShellScriptSupport.class);
 
     private static String OS = System.getProperty("os.name").toLowerCase();
     private static String OSEncoding = System.getProperty("file.encoding");
@@ -54,7 +58,7 @@ public class ShellScriptSupport {
             BufferedReader br = new BufferedReader(isr)) {
             String line;
             while ((line = br.readLine()) != null) {
-                System.out.println(line);
+                LOGGER.info("{}", line);
             }
         }
 
