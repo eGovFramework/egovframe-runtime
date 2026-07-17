@@ -304,8 +304,8 @@ public class EgovWebServiceClassLoaderImpl extends ClassLoader implements EgovWe
         ServiceParamInfo returnInfo = serviceEndpointInterfaceInfo.getReturnInfo();
         Collection<ServiceParamInfo> paramInfos = serviceEndpointInterfaceInfo.getParamInfos();
 
-        StringBuffer desc = new StringBuffer("(");
-        StringBuffer signature = new StringBuffer("(");
+        StringBuilder desc = new StringBuilder("(");
+        StringBuilder signature = new StringBuilder("(");
 
         for (ServiceParamInfo info : paramInfos) {
             Class<?> paramClass = loadClass(info.getType());
@@ -400,8 +400,8 @@ public class EgovWebServiceClassLoaderImpl extends ClassLoader implements EgovWe
         ServiceParamInfo returnInfo = serviceEndpointInfo.getReturnInfo();
         Collection<ServiceParamInfo> paramInfos = serviceEndpointInfo.getParamInfos();
 
-        StringBuffer desc = new StringBuffer("(");
-        StringBuffer signature = new StringBuffer("(");
+        StringBuilder desc = new StringBuilder("(");
+        StringBuilder signature = new StringBuilder("(");
 
         for (ServiceParamInfo info : paramInfos) {
             Class<?> paramClass = loadClass(info.getType());
