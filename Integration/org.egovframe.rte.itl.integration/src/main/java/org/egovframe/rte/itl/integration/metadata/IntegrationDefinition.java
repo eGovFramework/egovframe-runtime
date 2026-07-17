@@ -266,7 +266,7 @@ public class IntegrationDefinition implements Validatable {
     // CHECKSTYLE:OFF
     @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append(this.getClass().getName()).append(" {").append("\n\tid = ")
                 .append(StringUtils.quote(id)).append("\n\tprovider.key = ")
                 .append(provider == null ? "null" : StringUtils.quote(provider.getKey()))
