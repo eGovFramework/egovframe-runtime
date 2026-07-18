@@ -80,6 +80,9 @@ public class EgovPwdCheckValidation implements ConstraintValidator<EgovPwdCheck,
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
+        if (value == null) {
+            return false;
+        }
         // 비밀번호 패턴 검증
         if (!passwordCheck(value)) {
             return false;
