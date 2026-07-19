@@ -53,6 +53,15 @@ public final class RteGenericValidator implements Serializable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RteGenericValidator.class);
 
+    // 성능: 상수 정규식은 매 호출마다 컴파일하지 않고 클래스 로딩 시 1회만 컴파일한다.
+    // (특수문자 집합 ~!@#$%^&*? 은 고정이므로 조합 검증 패턴도 상수다.)
+    private static final String ALLOWED_SPECIAL_CHAR = "~!@#$%^&*?";
+    private static final Pattern HTML_TAG_PATTERN = Pattern.compile("<[^<|>]*>");
+    private static final Pattern MORE_THAN_2_TYPE_PATTERN =
+            Pattern.compile("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[" + ALLOWED_SPECIAL_CHAR + "])[A-Za-z\\d" + ALLOWED_SPECIAL_CHAR + "]+$");
+    private static final Pattern MORE_THAN_3_TYPE_PATTERN =
+            Pattern.compile("^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[" + ALLOWED_SPECIAL_CHAR + "])[A-Za-z\\d" + ALLOWED_SPECIAL_CHAR + "]+$");
+
     private RteGenericValidator() {
     }
 
@@ -156,8 +165,7 @@ public final class RteGenericValidator implements Serializable {
      * @return
      */
     public static boolean isHtmlTag(String value) {
-        Pattern re = Pattern.compile("<[^<|>]*>");
-        Matcher m = re.matcher(value);
+        Matcher m = HTML_TAG_PATTERN.matcher(value);
         if (m.find()) {
             return false;
         }
@@ -203,12 +211,8 @@ public final class RteGenericValidator implements Serializable {
      */
     public static boolean isMoreThan2CharTypeComb(String password) {
         //영문대소문자 + 숫자 + 특수문자 조합
-        //한글 , 빈칸 제외
-        String ALLOWED_SPECIAL_CHAR = "~!@#$%^&*?";
-        String REGEXSTR = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[" + ALLOWED_SPECIAL_CHAR + "])[A-Za-z\\d" + ALLOWED_SPECIAL_CHAR + "]+$";
-
-        Pattern re = Pattern.compile(REGEXSTR);
-        Matcher m = re.matcher(password);
+        //한글 , 빈칸 제외 (패턴은 상수라 상단에서 1회 컴파일)
+        Matcher m = MORE_THAN_2_TYPE_PATTERN.matcher(password);
         return m.find();
     }
 
@@ -220,12 +224,8 @@ public final class RteGenericValidator implements Serializable {
      */
     public static boolean isMoreThan3CharTypeComb(String password) {
         //영문대문자+영문소문자 + 숫자 + 특수문자 조합
-        //한글 , 빈칸 제외
-        String ALLOWED_SPECIAL_CHAR = "~!@#$%^&*?";
-        String REGEXSTR = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[" + ALLOWED_SPECIAL_CHAR + "])[A-Za-z\\d" + ALLOWED_SPECIAL_CHAR + "]+$";
-
-        Pattern re = Pattern.compile(REGEXSTR);
-        Matcher m = re.matcher(password);
+        //한글 , 빈칸 제외 (패턴은 상수라 상단에서 1회 컴파일)
+        Matcher m = MORE_THAN_3_TYPE_PATTERN.matcher(password);
         return m.find();
     }
 
