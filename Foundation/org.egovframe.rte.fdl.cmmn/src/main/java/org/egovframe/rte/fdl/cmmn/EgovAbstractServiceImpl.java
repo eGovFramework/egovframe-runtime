@@ -40,6 +40,7 @@ import java.util.Locale;
  * 수정일		수정자				수정내용
  * ----------------------------------------------
  * 2014.06.01	Daniela Kwon		최초생성
+ *   2026.07.20  이백행          [2026년 컨트리뷰션] processRuntimeException 추가
  * </pre>
  * @since 2014.06.01
  */
@@ -62,6 +63,16 @@ public abstract class EgovAbstractServiceImpl {
     protected Exception processException(final String msgKey) {
         return processException(msgKey, new String[]{});
     }
+
+	/**
+	 * EgovBizException 발생을 위한 메소드.
+	 *
+	 * @param msgKey 메세지리소스에서 제공되는 메세지의 키값
+	 * @return RuntimeException EgovBizException 객체
+	 */
+	protected RuntimeException processRuntimeException(final String msgKey) {
+		return (RuntimeException) processException(msgKey, new String[] {});
+	}
 
     /**
      * EgovBizException 발생을 위한 메소드.
