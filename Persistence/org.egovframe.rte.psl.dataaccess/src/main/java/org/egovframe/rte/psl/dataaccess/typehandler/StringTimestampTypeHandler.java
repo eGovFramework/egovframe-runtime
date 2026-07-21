@@ -21,8 +21,9 @@ import com.ibatis.sqlmap.client.extensions.TypeHandlerCallback;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 /**
  * String - Timestamp 변환을 지원하는 TypeHandler 확장 클래스
@@ -54,7 +55,7 @@ public class StringTimestampTypeHandler implements TypeHandlerCallback {
     /**
      * SimpleDateFormat - DATE_FORMAT 기반 포맷터
      */
-    private static final SimpleDateFormat SDF = new SimpleDateFormat(DATE_FORMAT, java.util.Locale.getDefault());
+    private static final DateTimeFormatter DTF = DateTimeFormatter.ofPattern(DATE_FORMAT);
 
     /**
      * JDBC 의 Timestamp 로 조회된 값을 resultMap 처리 시 결과
@@ -71,7 +72,7 @@ public class StringTimestampTypeHandler implements TypeHandlerCallback {
             return null;
         }
         Timestamp ts = getter.getTimestamp();
-        return SDF.format(ts);
+        return DTF.format(ts.toLocalDateTime());
     }
 
     /**
@@ -89,9 +90,9 @@ public class StringTimestampTypeHandler implements TypeHandlerCallback {
             setter.setNull(java.sql.Types.DATE);
         } else {
             try {
-                Timestamp ts = new Timestamp(SDF.parse((String) parameter).getTime());
+                Timestamp ts = Timestamp.valueOf(LocalDateTime.parse((String) parameter, DTF));
                 setter.setTimestamp(ts);
-            } catch (ParseException e) {
+            } catch (DateTimeParseException e) {
                 throw new SQLException("Error parsing string to timestamp.  Cause: " + e.getMessage());
             }
         }

@@ -39,7 +39,7 @@ import java.util.regex.Pattern;
  */
 public class EgovPwdCheckValidation implements ConstraintValidator<EgovPwdCheck, String> {
 
-    private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[~!@#$%^&*?])(?=\\S+$).{8,20}$");
+    private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[~!@#$%^&*?])[A-Za-z\\d~!@#$%^&*?]{8,20}$");
     private static final Pattern REPETITIVE_PATTERN = Pattern.compile(".*(.)\\1{2,}.*");
 
     /**
