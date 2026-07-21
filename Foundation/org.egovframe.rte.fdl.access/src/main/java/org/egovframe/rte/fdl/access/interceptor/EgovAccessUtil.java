@@ -46,7 +46,7 @@ public class EgovAccessUtil {
     public static boolean regexMatcher(String pattern, String inputString) {
         Pattern p = Pattern.compile(pattern);
         Matcher m = p.matcher(inputString);
-        return m.find();
+        return m.matches();
     }
 
 }
