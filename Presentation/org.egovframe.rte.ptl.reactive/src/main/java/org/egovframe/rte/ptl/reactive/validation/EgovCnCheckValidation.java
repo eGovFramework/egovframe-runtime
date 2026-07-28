@@ -43,6 +43,9 @@ public class EgovCnCheckValidation implements ConstraintValidator<EgovCnCheck, S
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
+        if (value == null) {
+            return false;
+        }
         String mValue = value.replaceAll("-", "");
         Matcher matcher = CN_PATTERN.matcher(mValue);
         boolean check = matcher.find();
