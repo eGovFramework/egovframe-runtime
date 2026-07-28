@@ -122,6 +122,10 @@ public class PaginationInfo {
     }
 
     public int getTotalPageCount() {
+        if (getRecordCountPerPage() <= 0 || getTotalRecordCount() <= 0) {
+            totalPageCount = 0;
+            return totalPageCount;
+        }
         totalPageCount = ((getTotalRecordCount() - 1) / getRecordCountPerPage()) + 1;
         return totalPageCount;
     }
@@ -135,6 +139,10 @@ public class PaginationInfo {
     }
 
     public int getFirstPageNoOnPageList() {
+        if (getPageSize() <= 0) {
+            firstPageNoOnPageList = 1;
+            return firstPageNoOnPageList;
+        }
         firstPageNoOnPageList = ((getCurrentPageNo() - 1) / getPageSize()) * getPageSize() + 1;
         return firstPageNoOnPageList;
     }
