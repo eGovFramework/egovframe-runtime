@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.time.Duration;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -404,6 +405,36 @@ public class EgovStringUtilTest {
         String str = "a,b,c,d";
         // 2. get token list
         assertEquals(4, EgovStringUtil.getTokens(str).size());
+    }
+
+    /**
+     * search는 source 안에서 target이 나타나는 횟수를 센다.
+     */
+    @Test
+    public void testSearchCount() {
+        assertEquals(2, EgovStringUtil.search("aXbXc", "X"));
+        assertEquals(0, EgovStringUtil.search("abc", "z"));
+        assertEquals(2, EgovStringUtil.search("aaaa", "aa"));
+    }
+
+    /**
+     * target이 빈 문자열이면 indexOf("")가 항상 0을 반환해
+     * 기존 구현은 무한 루프에 빠졌다. 이제는 0을 반환해야 한다.
+     */
+    @Test
+    public void testSearchEmptyTargetDoesNotLoop() {
+        assertTimeoutPreemptively(Duration.ofSeconds(2),
+                () -> assertEquals(0, EgovStringUtil.search("abc", "")));
+    }
+
+    /**
+     * null 입력은 NPE 없이 0을 반환해야 한다.
+     */
+    @Test
+    public void testSearchNullInputs() {
+        assertEquals(0, EgovStringUtil.search(null, "a"));
+        assertEquals(0, EgovStringUtil.search("abc", null));
+        assertEquals(0, EgovStringUtil.search("", "a"));
     }
 
 }
