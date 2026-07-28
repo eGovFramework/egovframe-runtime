@@ -320,7 +320,7 @@ public class DefaultItemReader<T> implements ItemStreamReader<T> {
     private void printXmlConfig() {
         if (printXmlConf) {
             if (DELIMITED_FILE_TYPE.equalsIgnoreCase(this.readerResourceType)) {
-                System.out.println("======= " + stepName + " READER 설정(XML 버전) =========\n"
+                LOGGER.info("======= " + stepName + " READER 설정(XML 버전) =========\n"
                         + "<bean id=\"" + stepName + ".reader\" class=\"org.springframework.batch.item.file.FlatFileItemReader\" scope=\"step\">\n"
                         + "  <property name=\"resource\" value=\"" + this.resourceName + "\" />\n"
                         + "  <property name=\"lineMapper\">\n"
@@ -341,7 +341,7 @@ public class DefaultItemReader<T> implements ItemStreamReader<T> {
                         + "</bean>\n"
                         + "================================================");
             } else if (FIXED_LENGTH_FILE_TYPE.equalsIgnoreCase(this.readerResourceType)) {
-                System.out.println("======= " + stepName + " READER 설정(XML 버전) =========\n"
+                LOGGER.info("======= " + stepName + " READER 설정(XML 버전) =========\n"
                         + "<bean id=\"" + stepName + ".reader\" class=\"org.springframework.batch.item.file.FlatFileItemReader\" scope=\"step\">\n"
                         + "  <property name=\"resource\" value=\"" + this.resourceName + "\" />\n"
                         + "  <property name=\"lineMapper\">\n"
@@ -362,7 +362,7 @@ public class DefaultItemReader<T> implements ItemStreamReader<T> {
                         + "</bean>\n"
                         + "================================================");
             } else if (JDBC_DB_TYPE.equalsIgnoreCase(this.readerResourceType)) {
-                System.out.println("======= " + stepName + " READER 설정(XML 버전) =========\n"
+                LOGGER.info("======= " + stepName + " READER 설정(XML 버전) =========\n"
                         + "<bean id=\"" + stepName + ".reader\" class=\"org.springframework.batch.item.database.JdbcCursorItemReader\" scope=\"step\">\n"
                         + "  <property name=\"dataSource\" ref=\"dataSource\" />\n"
                         + "  <property name=\"sql\" value=\"" + this.sql + "\" />\n"
