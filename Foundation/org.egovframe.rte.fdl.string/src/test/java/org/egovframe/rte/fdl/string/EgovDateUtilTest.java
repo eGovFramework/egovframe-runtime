@@ -175,6 +175,78 @@ public class EgovDateUtilTest {
     }
 
     /**
+     * [Flow #-4-1] Positive Case : getFullAge() 의 세기 접두/생일 경과 분기를 고정하는 characterization 테스트.
+     * 현재 동작을 그대로 명세화한다(소스 무변경).
+     */
+    @Test
+    public void testGetFullAgeCenturyPrefix() throws ParseException {
+        // 주민번호 7번째 자리 0 → 1800년도 출생 ("18" + YYMMDD)
+        // birthDate=18800101, keyDate=19000101 → 0101>=0101(당일) → 1900-1880 = 20
+        assertEquals(20, EgovDateUtil.getFullAge("8001010000000", "19000101"));
+
+        // 주민번호 7번째 자리 9 → 1800년도 출생
+        // birthDate=18851231, keyDate=19000101 → 0101<1231(생일 전) → 1900-1885-1 = 14
+        assertEquals(14, EgovDateUtil.getFullAge("8512319000000", "19000101"));
+
+        // 주민번호 7번째 자리 1 → 1900년도 출생
+        // birthDate=19770101, keyDate=20090323 → 0323>=0101 → 2009-1977 = 32
+        assertEquals(32, EgovDateUtil.getFullAge("7701011234567", "20090323"));
+
+        // 주민번호 7번째 자리 2 → 1900년도 출생
+        // birthDate=19770101, keyDate=20090323 → 0323>=0101 → 2009-1977 = 32
+        assertEquals(32, EgovDateUtil.getFullAge("7701012234567", "20090323"));
+
+        // 주민번호 7번째 자리 3 → 2000년도 출생 ("20" + YYMMDD)
+        // birthDate=20050101, keyDate=20200101 → 0101>=0101(당일) → 2020-2005 = 15
+        assertEquals(15, EgovDateUtil.getFullAge("0501013000000", "20200101"));
+
+        // 주민번호 7번째 자리 4 → 2000년도 출생
+        // birthDate=20071231, keyDate=20200630 → 0630<1231(생일 전) → 2020-2007-1 = 12
+        assertEquals(12, EgovDateUtil.getFullAge("0712314000000", "20200630"));
+    }
+
+    /**
+     * [Flow #-4-2] Negative/Boundary Case : getFullAge() 의 0 반환 경로(미인식 세기코드, keyDate null)를 고정한다.
+     */
+    @Test
+    public void testGetFullAgeReturnsZero() throws ParseException {
+        // 미인식 세기코드(5,6,7,8) → birthDate=null → 0 반환
+        assertEquals(0, EgovDateUtil.getFullAge("8001015000000", "20200101"));
+        assertEquals(0, EgovDateUtil.getFullAge("8001016000000", "20200101"));
+        assertEquals(0, EgovDateUtil.getFullAge("8001017000000", "20200101"));
+        assertEquals(0, EgovDateUtil.getFullAge("8001018000000", "20200101"));
+
+        // keyDate == null → birthDate 유효해도 0 반환
+        assertEquals(0, EgovDateUtil.getFullAge("7701011234567", null));
+    }
+
+    /**
+     * [Flow #-4-3] Boundary Case : 생일 경과 여부(MMDD 비교) 경계를 고정한다.
+     */
+    @Test
+    public void testGetFullAgeBirthdayBoundary() throws ParseException {
+        // birthDate=19000615
+        // keyDate=20200614 → 0614<0615(생일 전날) → 2020-1900-1 = 119
+        assertEquals(119, EgovDateUtil.getFullAge("0006151000000", "20200614"));
+
+        // keyDate=20200615 → 0615>=0615(생일 당일) → 2020-1900 = 120
+        assertEquals(120, EgovDateUtil.getFullAge("0006151000000", "20200615"));
+
+        // keyDate=20200616 → 0616>=0615(생일 다음날) → 2020-1900 = 120
+        assertEquals(120, EgovDateUtil.getFullAge("0006151000000", "20200616"));
+    }
+
+    /**
+     * [Flow #-4-4] Positive Case : getCurrentFullAge() 가 현재 일자로 getFullAge() 에 위임함을 확인하는 스모크 테스트.
+     */
+    @Test
+    public void testGetCurrentFullAgeDelegation() throws ParseException {
+        // 미인식 세기코드(7번째 자리 5)는 출생년도가 정해지지 않아 현재일자 기준에서도 0 을 반환한다.
+        // (현재일자에 의존하지 않는 결정적 단정으로 위임 동작을 검증한다.)
+        assertEquals(0, EgovDateUtil.getCurrentFullAge("8001015000000"));
+    }
+
+    /**
      * [Flow #-5] Positive Case : 시작일자와 종료일자 사이의 일수(마지막 일자 제외된 일수)
      */
     @Test
