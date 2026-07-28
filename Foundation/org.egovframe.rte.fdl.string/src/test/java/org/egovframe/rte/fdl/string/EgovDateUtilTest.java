@@ -1,6 +1,7 @@
 package org.egovframe.rte.fdl.string;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +10,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -243,6 +245,35 @@ public class EgovDateUtilTest {
         assertEquals(52, EgovDateUtil.getDayOfWeekCount("20090101", "20091231", "금"));
 
         assertEquals(52, EgovDateUtil.getDayOfWeekCount("20090101", "20091231", "토"));
+    }
+
+    /**
+     * [Flow #-7-1] Negative Case : 미인식 요일이 입력되면 무한루프 대신 IllegalArgumentException 을 던진다.
+     * (수정 전에는 sYoil 집합에 없는 요일이 들어오면 while 루프가 영원히 종료되지 않아 무한루프에 빠졌다.)
+     * 무한루프 회귀를 막기 위해 timeout 을 건다.
+     */
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    public void testDayOfWeekCountInvalidYoil() {
+        // 영문 입력(substring 후 "M")
+        assertThrows(IllegalArgumentException.class,
+                () -> EgovDateUtil.getDayOfWeekCount("20090301", "20090331", "Mon"));
+
+        // length 2 입력("월요")
+        assertThrows(IllegalArgumentException.class,
+                () -> EgovDateUtil.getDayOfWeekCount("20090301", "20090331", "월요"));
+
+        // 빈 문자열
+        assertThrows(IllegalArgumentException.class,
+                () -> EgovDateUtil.getDayOfWeekCount("20090301", "20090331", ""));
+
+        // 오타(3자리이지만 정규화 후 미인식)
+        assertThrows(IllegalArgumentException.class,
+                () -> EgovDateUtil.getDayOfWeekCount("20090301", "20090331", "ABC"));
+
+        // null
+        assertThrows(IllegalArgumentException.class,
+                () -> EgovDateUtil.getDayOfWeekCount("20090301", "20090331", null));
     }
 
     /**
