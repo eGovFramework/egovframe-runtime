@@ -178,16 +178,11 @@ public class EgovFileUtil {
      * String 영으로 파일의 내용을 읽는다.
      */
     public static String readFile(File file, String encoding) throws IOException {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         List<String> lines = readTextLines(file, encoding);
 
-        for (Iterator<String> it = lines.iterator(); ; ) {
+        for (Iterator<String> it = lines.iterator(); it.hasNext(); ) {
             sb.append(it.next());
-            if (it.hasNext()) {
-                sb.append("");
-            } else {
-                break;
-            }
         }
 
         return sb.toString();
@@ -441,8 +436,8 @@ public class EgovFileUtil {
     /**
      * 지정한 위치의 하위 디렉토리 목록을 가져온다.
      */
-    private StringBuffer listChildren(final FileObject dir, final boolean recursive, final String prefix) throws FileSystemException {
-        StringBuffer line = new StringBuffer();
+    private StringBuilder listChildren(final FileObject dir, final boolean recursive, final String prefix) throws FileSystemException {
+        StringBuilder line = new StringBuilder();
         final FileObject[] children = dir.getChildren();
 
         for (final FileObject child : children) {

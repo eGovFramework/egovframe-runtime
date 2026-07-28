@@ -60,6 +60,17 @@ public class EgovIndexFileWriter<T> implements ItemStreamWriter<T> {
 
     private ResourceLoader resourceLoader;
     private JobParameters jobParameters;
+
+    /**
+     * classpath 리소스 경로 해석에 사용할 ResourceLoader를 주입한다.
+     * 형제 클래스 EgovIndexFileReader와 동일하게, classpath 기반 indexResource를 사용할 때
+     * 이 값이 주입되지 않으면 configureWriterIndexResouce()에서 NullPointerException이 발생한다.
+     *
+     * @param resourceLoader classpath 리소스 로더
+     */
+    public void setResourceLoader(ResourceLoader resourceLoader) {
+        this.resourceLoader = resourceLoader;
+    }
     private String writerResourceType;
     private Resource resource;
     private LineAggregator<T> lineAggregator;

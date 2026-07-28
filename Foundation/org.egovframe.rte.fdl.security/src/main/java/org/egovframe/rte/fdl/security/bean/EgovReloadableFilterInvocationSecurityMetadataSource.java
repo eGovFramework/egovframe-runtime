@@ -30,7 +30,7 @@ import java.util.Map.Entry;
 public class EgovReloadableFilterInvocationSecurityMetadataSource implements FilterInvocationSecurityMetadataSource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EgovReloadableFilterInvocationSecurityMetadataSource.class);
-    private final Map<RequestMatcher, Collection<ConfigAttribute>> requestMap;
+    private volatile Map<RequestMatcher, Collection<ConfigAttribute>> requestMap;
     private EgovSecuredObjectService securedObjectService;
 
     public EgovReloadableFilterInvocationSecurityMetadataSource(LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>> requestMap) {
@@ -69,12 +69,15 @@ public class EgovReloadableFilterInvocationSecurityMetadataSource implements Fil
     public void reload() {
         LinkedHashMap<RequestMatcher, List<ConfigAttribute>> reloadedMap = securedObjectService.getRolesAndUrl();
         Iterator<Entry<RequestMatcher, List<ConfigAttribute>>> iterator = reloadedMap.entrySet().iterator();
-        // 이전 데이터 삭제
-        requestMap.clear();
+        // 새 맵을 완성한 뒤 참조를 원자적으로 교체한다.
+        // 기존 requestMap을 clear() 후 다시 채우면, 재적재 중인 빈/부분 맵을 요청 스레드가
+        // 순회하여 ConcurrentModificationException 또는 일시적 권한 소실(인가 오판)이 발생할 수 있다.
+        Map<RequestMatcher, Collection<ConfigAttribute>> reloaded = new LinkedHashMap<>();
         while (iterator.hasNext()) {
             Entry<RequestMatcher, List<ConfigAttribute>> entry = iterator.next();
-            requestMap.put(entry.getKey(), entry.getValue());
+            reloaded.put(entry.getKey(), entry.getValue());
         }
+        this.requestMap = reloaded;
         LOGGER.debug("Secured Url Resources - Role Mappings reloaded at Runtime!");
     }
 

@@ -22,8 +22,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
 
+import javax.xml.XMLConstants;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
 import java.util.Set;
 
@@ -70,8 +72,26 @@ public class EgovSAXValidatorService extends AbstractXMLUtility {
             LOGGER.debug(message);
         }
 
-        //파서를 생성한다. SAX 파서는 파서의 직접 생성이 가능하다.
-        XMLReader parser = XMLReaderFactory.createXMLReader("org.apache.xerces.parsers.SAXParser");
+        // 파서를 생성한다. 제거된 standalone Xerces 클래스 대신 JAXP SAXParserFactory(JDK 내장 파서)를 사용한다.
+        SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
+
+        // XXE(XML External Entity) 방어 - 외부 엔티티/외부 DTD 로딩을 차단한다.
+        // 형제 클래스 EgovDOMValidatorService와 동일한 보안 처리(2026.02.28 KISA 조치)를 적용한다.
+        try {
+            saxParserFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            saxParserFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            saxParserFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            saxParserFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+        } catch (ParserConfigurationException | SAXException e) {
+            LOGGER.debug("SAX parser does not support one or more XXE-related features: {}", e.getMessage());
+        }
+
+        XMLReader parser;
+        try {
+            parser = saxParserFactory.newSAXParser().getXMLReader();
+        } catch (ParserConfigurationException e) {
+            throw new SAXException(e);
+        }
         parser.setFeature("http://xml.org/sax/features/validation", isValid);
         if (getSCHEMAFile() != null) {
             parser.setFeature("http://apache.org/xml/features/validation/schema", true);
