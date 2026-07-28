@@ -43,13 +43,15 @@ import java.util.Map;
  */
 public class EgovMethodMapItemPreparedStatementSetter<T> extends EgovItemPreparedStatementSetter<T> {
 
+    // invokeGettterMethod(item, param, methodMap) 는 인자만 사용하는 무상태 호출이므로
+    // 행마다 새로 생성하지 않고 1회 생성하여 재사용한다.
+    private final EgovReflectionSupport<T> reflector = new EgovReflectionSupport<T>();
+
     /**
      * params 만큼 돌면서 sqlType별로 PreparedStatement에 자동셋팅시킴
      */
     @Override
     public void setValues(T item, PreparedStatement ps, String[] params, String[] sqlTypes, Map<String, Method> methodMap) throws SQLException {
-        EgovReflectionSupport<T> reflector = new EgovReflectionSupport<T>();
-
         for (int i = 0; i < params.length; i++) {
             try {
                 if (sqlTypes[i].equals("String")) {

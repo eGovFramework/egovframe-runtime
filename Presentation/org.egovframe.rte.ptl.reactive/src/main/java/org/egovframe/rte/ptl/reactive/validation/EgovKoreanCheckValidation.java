@@ -43,6 +43,9 @@ public class EgovKoreanCheckValidation implements ConstraintValidator<EgovKorean
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
+        if (value == null) {
+            return false;
+        }
         Matcher matcher = KOREAN_PATTERN.matcher(value);
         return matcher.find();
     }

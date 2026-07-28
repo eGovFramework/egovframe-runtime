@@ -223,6 +223,26 @@ public class FilehandlingServiceTest {
     }
 
     /**
+     * 빈 파일 읽기 테스트. 내용이 없는 파일은 빈 문자열을 반환해야 한다.
+     */
+    @Test
+    public void testReadEmptyFile() throws IOException {
+        String emptyPath = tmppath + "/empty.txt";
+        EgovFileUtil.writeFile(emptyPath, "", "UTF-8");
+        assertEquals("", EgovFileUtil.readFile(new File(emptyPath), "UTF-8"));
+    }
+
+    /**
+     * 여러 줄 파일 읽기 테스트. 줄들이 종전과 동일하게 연결되어야 한다.
+     */
+    @Test
+    public void testReadMultiLineFile() throws IOException {
+        String multiPath = tmppath + "/multiline.txt";
+        EgovFileUtil.writeFile(multiPath, "line1\nline2\nline3", "UTF-8");
+        assertEquals("line1line2line3", EgovFileUtil.readFile(new File(multiPath), "UTF-8"));
+    }
+
+    /**
      * 파일 복사 테스트.
      */
     @Test
@@ -404,12 +424,20 @@ public class FilehandlingServiceTest {
                 "<project xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"",
                 "         xmlns=\"http://maven.apache.org/POM/4.0.0\"",
                 "         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd\">",
+                "",
+                "    <parent>",
+                "        <groupId>org.egovframe.rte</groupId>",
+                "        <artifactId>egovframe-rte-root</artifactId>",
+                "        <version>5.0.0</version>",
+                "        <relativePath>../../pom.xml</relativePath>",
+                "    </parent>",
+                "",
                 "    <modelVersion>4.0.0</modelVersion>",
-                "    <groupId>org.egovframe.rte</groupId>",
                 "    <artifactId>egovframe-rte-fdl-filehandling</artifactId>",
-                "    <version>5.0.0</version>",
                 "    <packaging>jar</packaging>",
-                "    <name>org.egovframe.rte.fdl.filehandling</name>"
+                "    <name>org.egovframe.rte.fdl.filehandling</name>",
+                "    <description>The eGovernment Standard Framework</description>",
+                "    <url>https://www.egovframe.go.kr</url>"
         };
 
         File file = new File("pom.xml");

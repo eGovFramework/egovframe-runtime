@@ -54,12 +54,6 @@ public class StringTimestampTypeHandler implements TypeHandlerCallback {
 
     /**
      * DateTimeFormatter - DATE_FORMAT 기반 포맷터
-     * <p>
-     * {@link java.text.SimpleDateFormat} 은 thread-safe 하지 않으나, {@link DateTimeFormatter} 는
-     * 불변(immutable) 객체로 여러 스레드가 안전하게 공유할 수 있다. iBatis 의
-     * {@link TypeHandlerCallback} 구현체는 싱글톤으로 공유되어 동시에 호출되므로
-     * 포맷터를 thread-safe 한 구현으로 사용한다.
-     * </p>
      */
     private static final DateTimeFormatter DTF = DateTimeFormatter.ofPattern(DATE_FORMAT);
 

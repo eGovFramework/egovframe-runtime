@@ -13,21 +13,26 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-/**
- * EgovFlatFileByteReader JUnit Test 클래스
- *
- * @author 배치실행개발팀
- * @version 1.0
- * @see <pre>
- * == 개정이력(Modification Information) ==
- *
- *   수정일        수정자           수정내용
- *  -------      -------------  ----------------------
- *   2026.07.17  배치실행개발팀   최초 생성
- * </pre>
- * @since 2026.07.17
- */
-class EgovFlatFileByteReaderTest {
+public class EgovFlatFileByteReaderTest {
+
+    @Test
+    public void testOsTypeIsIsolatedPerReader() {
+        EgovFlatFileByteReader<Object> readerA = new EgovFlatFileByteReader<>();
+        readerA.setOsType("UNIX");
+        EgovFlatFileByteReader<Object> readerB = new EgovFlatFileByteReader<>();
+        readerB.setOsType("WINDOWS");
+
+        // Regression guard: the old shared static value was overwritten by reader B.
+        assertEquals(1, readerA.getLineCrlf());
+        assertEquals(2, readerB.getLineCrlf());
+    }
+
+    @Test
+    public void testDefaultOsTypeIsWindows() {
+        EgovFlatFileByteReader<Object> reader = new EgovFlatFileByteReader<>();
+
+        assertEquals(2, reader.getLineCrlf());
+    }
 
     @Test
     void readLine_returnsActualBytesRead_forShorterFinalRecord() throws Exception {
@@ -65,4 +70,5 @@ class EgovFlatFileByteReaderTest {
             reader.close();
         }
     }
+
 }

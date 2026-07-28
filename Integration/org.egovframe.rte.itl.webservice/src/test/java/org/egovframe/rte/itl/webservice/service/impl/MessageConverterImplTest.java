@@ -253,6 +253,20 @@ public class MessageConverterImplTest {
             assertEquals(person.name, personMap.get("name"));
         }
     }
+
+    @Test
+    public void testConvertToValueObjectWithNullListSource() throws Exception {
+        // 메시지 body에서 List 필드가 생략되면 source가 null로 전달된다.
+        // null 역참조(NPE) 없이 null을 반환해야 한다.
+        assertNull(messageConverter.convertToValueObject(null, personListType));
+    }
+
+    @Test
+    public void testConvertToValueObjectWithNullRecordSource() throws Exception {
+        // 메시지 body에서 Record 필드가 생략되면 source가 null로 전달된다.
+        // null 역참조(NPE) 없이 null을 반환해야 한다.
+        assertNull(messageConverter.convertToValueObject(null, recordType));
+    }
 }
 
 class ValueObject {

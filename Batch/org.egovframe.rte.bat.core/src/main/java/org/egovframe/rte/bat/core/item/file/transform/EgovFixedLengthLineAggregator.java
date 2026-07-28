@@ -50,7 +50,7 @@ public class EgovFixedLengthLineAggregator<T> extends ExtractorLineAggregator<T>
     /**
      * 사용할 padding들을 저장하고 있는 list
      */
-    private List<String> paddingList;
+    private volatile List<String> paddingList;
 
     /**
      * Padding Pattern
@@ -83,8 +83,16 @@ public class EgovFixedLengthLineAggregator<T> extends ExtractorLineAggregator<T>
      */
     @Override
     protected String doAggregate(Object[] fields) {
+        // 멀티스레드 step에서 LineAggregator 빈이 공유되면 이 인스턴스도 공유된다.
+        // 기존 코드는 동기화 없이 paddingList를 지연 생성해, 콜드 캐시에 동시 진입한 스레드들이
+        // 서로 다른(또는 서로의 add()가 섞인) 리스트를 만들다 손상된 패딩 결과를 낼 수 있었다.
+        // double-checked locking + 지역변수로 완성한 뒤 발행하여 부분초기화 상태가 외부에 보이지 않게 한다.
         if (paddingList == null) {
-            createPaddingList();
+            synchronized (this) {
+                if (paddingList == null) {
+                    paddingList = createPaddingList();
+                }
+            }
         }
         Assert.notNull(fieldRanges, "This argument is required : It must not be null");
         return aggregateFixedLength(obtainFieldValueLength(fields), fields);
@@ -133,17 +141,18 @@ public class EgovFixedLengthLineAggregator<T> extends ExtractorLineAggregator<T>
     }
 
     /**
-     * n개(1~paddingListSize)짜리 padding을 생성하여 paddingList에 저장한다.
+     * n개(1~paddingListSize)짜리 padding을 생성하여 반환한다.
      */
-    private void createPaddingList() {
-        paddingList = new ArrayList<String>(PADDING_LISTSIZE);
+    private List<String> createPaddingList() {
+        List<String> localPaddingList = new ArrayList<String>(PADDING_LISTSIZE);
         StringBuilder paddingBuilder = new StringBuilder();
         for (int i = 1; i <= PADDING_LISTSIZE; i++) {
             paddingBuilder.append(padding);
             if (paddingBuilder.length() == i) {
-                paddingList.add(paddingBuilder.toString());
+                localPaddingList.add(paddingBuilder.toString());
             }
         }
+        return localPaddingList;
     }
 
     /**

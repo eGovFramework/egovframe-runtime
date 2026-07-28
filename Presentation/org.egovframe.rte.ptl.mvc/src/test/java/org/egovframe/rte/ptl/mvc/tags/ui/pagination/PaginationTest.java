@@ -47,4 +47,55 @@ public class PaginationTest {
         assertEquals(0, tag.doStartTag());
     }
 
+    /**
+     * recordCountPerPage 가 미설정(기본값 0)인 경우 getTotalPageCount() 에서
+     * '/ by zero' ArithmeticException 이 발생하지 않고 0 을 반환하는지 검증한다.
+     */
+    @Test
+    public void totalPageCountWithZeroRecordCountPerPageTest() {
+        PaginationInfo pageInfo = new PaginationInfo();
+        pageInfo.setTotalRecordCount(51);
+        assertEquals(0, pageInfo.getTotalPageCount());
+    }
+
+    /**
+     * pageSize 가 미설정(기본값 0)인 경우 getFirstPageNoOnPageList() 에서
+     * '/ by zero' ArithmeticException 이 발생하지 않고 1 을 반환하는지 검증한다.
+     */
+    @Test
+    public void firstPageNoOnPageListWithZeroPageSizeTest() {
+        PaginationInfo pageInfo = new PaginationInfo();
+        pageInfo.setCurrentPageNo(1);
+        assertEquals(1, pageInfo.getFirstPageNoOnPageList());
+    }
+
+    /**
+     * 전체 건수가 0 이면 페이지 수는 0 이어야 한다.
+     */
+    @Test
+    public void totalPageCountWithZeroTotalRecordCountTest() {
+        PaginationInfo pageInfo = new PaginationInfo();
+        pageInfo.setRecordCountPerPage(10);
+        pageInfo.setTotalRecordCount(0);
+        assertEquals(0, pageInfo.getTotalPageCount());
+    }
+
+    /**
+     * 정상 입력에 대한 계산 결과가 수정 전과 동일하게 유지되는지 회귀 검증한다.
+     */
+    @Test
+    public void paginationCalculationRegressionTest() {
+        PaginationInfo pageInfo = new PaginationInfo();
+        pageInfo.setCurrentPageNo(3);
+        pageInfo.setPageSize(5);
+        pageInfo.setRecordCountPerPage(10);
+        pageInfo.setTotalRecordCount(51);
+
+        assertEquals(6, pageInfo.getTotalPageCount());
+        assertEquals(1, pageInfo.getFirstPageNoOnPageList());
+        assertEquals(5, pageInfo.getLastPageNoOnPageList());
+        assertEquals(20, pageInfo.getFirstRecordIndex());
+        assertEquals(30, pageInfo.getLastRecordIndex());
+    }
+
 }

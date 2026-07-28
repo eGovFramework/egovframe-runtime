@@ -283,8 +283,8 @@ public class EgovSecurityConfigTest {
         assertTrue(config.getJdbcMapClass().contains("UserDetailsMapping"));
 
         assertEquals("regex", config.getRequestMatcherType());
-        assertEquals("plaintext", config.getHash());
-        assertFalse(config.isHashBase64());
+        assertEquals("egov-sha256", config.getHash());
+        assertTrue(config.isHashBase64());
         assertEquals(1, config.getConcurrentMaxSessons());
         assertEquals("/EgovContent.do", config.getConcurrentExpiredUrl());
         assertFalse(config.isErrorIfMaximumExceeded());

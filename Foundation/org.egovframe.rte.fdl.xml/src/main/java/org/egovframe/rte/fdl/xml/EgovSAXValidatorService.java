@@ -22,8 +22,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
 
+import javax.xml.XMLConstants;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
 import java.util.Set;
 
@@ -45,6 +47,15 @@ public class EgovSAXValidatorService extends AbstractXMLUtility {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EgovSAXValidatorService.class);
 
+    private static final String FEATURE_EXTERNAL_GENERAL_ENTITIES =
+            "http://xml.org/sax/features/external-general-entities";
+    private static final String FEATURE_EXTERNAL_PARAMETER_ENTITIES =
+            "http://xml.org/sax/features/external-parameter-entities";
+    private static final String FEATURE_LOAD_EXTERNAL_DTD =
+            "http://apache.org/xml/features/nonvalidating/load-external-dtd";
+    private static final String FEATURE_DISALLOW_DOCTYPE_DECL =
+            "http://apache.org/xml/features/disallow-doctype-decl";
+
     /**
      * EgovSAXValidatorService 생성자
      */
@@ -61,45 +72,102 @@ public class EgovSAXValidatorService extends AbstractXMLUtility {
     @Override
     public boolean parse(boolean isValid) throws IOException, SAXException, ValidatorException {
         if ((getXML() == null) && (getXMLFile() == null)) {
-            String message = null;
-            if (isValid) {
-                message = "XML Validation을 체크하기 위한 XML이 필요합니다.";
-            } else {
-                message = "Well-Formed를 체크하기 위한 XML이 필요합니다.";
-            }
+            String message = isValid
+                    ? "XML Validation을 체크하기 위한 XML이 필요합니다."
+                    : "Well-Formed를 체크하기 위한 XML이 필요합니다.";
             LOGGER.debug(message);
-        }
-
-        //파서를 생성한다. SAX 파서는 파서의 직접 생성이 가능하다.
-        XMLReader parser = XMLReaderFactory.createXMLReader("org.apache.xerces.parsers.SAXParser");
-        parser.setFeature("http://xml.org/sax/features/validation", isValid);
-        if (getSCHEMAFile() != null) {
-            parser.setFeature("http://apache.org/xml/features/validation/schema", true);
-            parser.setFeature("http://apache.org/xml/features/validation/schema-full-checking", true);
-            parser.setProperty("http://apache.org/xml/properties/schema/external-noNamespaceSchemaLocation", getSCHEMAFile());
-        }
-
-        ContentHandlerImpl contend = new ContentHandlerImpl();
-        parser.setContentHandler(contend);
-        //에러 메시지를 저장할 ErrorHandler를 세팅한다.
-        ErrorChecker errors = new ErrorChecker();
-        //파서에 ErrorHandler를 전달한다.
-        parser.setErrorHandler(errors);
-        //XML 문서를 파싱한다.
-        if (getXMLFile() != null) {
-            parser.parse(getXMLFile());
-        } else {
-            parser.parse(stringToInputSource());
-        }
-
-        Set<?> errorReport = errors.getErrorReport();
-
-        //XML 문서 파싱시 발생된 에러가 있다면 XMLValidatorException을 이용해서 에러 메시지를 사용자에게 전달한다.
-        if (!errorReport.isEmpty()) {
-            makeErrorMessage(errorReport);
             return false;
-        } else {
-            return true;
+        }
+
+        try {
+            SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
+            saxParserFactory.setNamespaceAware(true);
+            configureXxeProtection(saxParserFactory);
+
+            XMLReader parser = saxParserFactory.newSAXParser().getXMLReader();
+            configureXxeProtection(parser);
+
+            parser.setFeature("http://xml.org/sax/features/validation", isValid);
+            if (getSCHEMAFile() != null) {
+                parser.setFeature("http://apache.org/xml/features/validation/schema", true);
+                parser.setFeature("http://apache.org/xml/features/validation/schema-full-checking", true);
+                parser.setProperty("http://apache.org/xml/properties/schema/external-noNamespaceSchemaLocation", getSCHEMAFile());
+            }
+
+            ContentHandlerImpl contend = new ContentHandlerImpl();
+            parser.setContentHandler(contend);
+
+            ErrorChecker errors = new ErrorChecker();
+            parser.setErrorHandler(errors);
+            if (getXMLFile() != null) {
+                parser.parse(getXMLFile());
+            } else {
+                parser.parse(stringToInputSource());
+            }
+
+            Set<?> errorReport = errors.getErrorReport();
+
+            if (!errorReport.isEmpty()) {
+                makeErrorMessage(errorReport);
+                return false;
+            } else {
+                return true;
+            }
+        } catch (ParserConfigurationException e) {
+            LOGGER.debug("[{}] EgovSAXValidatorService Parser() : {}", e.getClass().getName(), e.getMessage());
+            throw new ValidatorException("Parser configuration error: " + e.getMessage());
+        }
+    }
+
+    /**
+     * XML 외부개체 참조(XXE) 방지 설정.
+     */
+    private void configureXxeProtection(SAXParserFactory factory) throws ParserConfigurationException {
+        setSaxParserFactoryFeature(factory, XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        setSaxParserFactoryFeature(factory, FEATURE_EXTERNAL_GENERAL_ENTITIES, false);
+        setSaxParserFactoryFeature(factory, FEATURE_EXTERNAL_PARAMETER_ENTITIES, false);
+        setSaxParserFactoryFeature(factory, FEATURE_LOAD_EXTERNAL_DTD, false);
+        setSaxParserFactoryFeature(factory, FEATURE_DISALLOW_DOCTYPE_DECL, true);
+    }
+
+    /**
+     * XML 외부개체 참조(XXE) 방지 설정.
+     */
+    private void configureXxeProtection(XMLReader parser) throws SAXException {
+        setXmlReaderFeature(parser, FEATURE_EXTERNAL_GENERAL_ENTITIES, false);
+        setXmlReaderFeature(parser, FEATURE_EXTERNAL_PARAMETER_ENTITIES, false);
+        setXmlReaderFeature(parser, FEATURE_LOAD_EXTERNAL_DTD, false);
+        setXmlReaderFeature(parser, FEATURE_DISALLOW_DOCTYPE_DECL, true);
+
+        try {
+            parser.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        } catch (SAXException ignored) {
+            // 일부 XMLReader 구현체는 secure processing feature를 지원하지 않을 수 있다.
+        }
+
+        parser.setEntityResolver((publicId, systemId) -> {
+            throw new SAXException("External entity resolution is disabled for security (XXE prevention)");
+        });
+    }
+
+    private void setSaxParserFactoryFeature(
+            SAXParserFactory factory, String feature, boolean value) throws ParserConfigurationException {
+        try {
+            factory.setFeature(feature, value);
+        } catch (ParserConfigurationException | SAXException e) {
+            ParserConfigurationException parserConfigurationException = new ParserConfigurationException(
+                    "SAXParserFactory does not support required XXE feature [" + feature + "]: " + e.getMessage());
+            parserConfigurationException.initCause(e);
+            throw parserConfigurationException;
+        }
+    }
+
+    private void setXmlReaderFeature(XMLReader parser, String feature, boolean value) throws SAXException {
+        try {
+            parser.setFeature(feature, value);
+        } catch (SAXException e) {
+            throw new SAXException(
+                    "XMLReader does not support required XXE feature [" + feature + "]: " + e.getMessage(), e);
         }
     }
 

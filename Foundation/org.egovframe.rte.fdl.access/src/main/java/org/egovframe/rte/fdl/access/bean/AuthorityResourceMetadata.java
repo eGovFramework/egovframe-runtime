@@ -17,7 +17,7 @@ package org.egovframe.rte.fdl.access.bean;
 
 import org.egovframe.rte.fdl.access.service.EgovAccessService;
 
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -36,18 +36,19 @@ import java.util.Map;
  * 2019.10.01	유지보수            최초 생성
  * 2021.02.01   유지보수            권한재설정 수정
  * 2024.03.29   유지보수            권한재설정(reload() method) 수정
+ * 2026.06.10   유지보수            reload() 동시성 개선(제자리 변이 → 참조 원자교체, volatile)
  * </pre>
  * @since 2019.10.01
  */
 public class AuthorityResourceMetadata {
 
-    private static List<Map<String, Object>> authorityList;
-    private static List<Map<String, Object>> resourceMap;
+    private static volatile List<Map<String, Object>> authorityList;
+    private static volatile List<Map<String, Object>> resourceMap;
     private EgovAccessService egovAccessService;
 
     public AuthorityResourceMetadata(List<Map<String, Object>> authorityList, List<Map<String, Object>> resourceMap) {
-        this.authorityList = authorityList;
-        this.resourceMap = resourceMap;
+        AuthorityResourceMetadata.authorityList = authorityList;
+        AuthorityResourceMetadata.resourceMap = resourceMap;
     }
 
     public static List<Map<String, Object>> getAuthorityList() {
@@ -63,19 +64,13 @@ public class AuthorityResourceMetadata {
     }
 
     public void reload() throws Exception {
-        List<Map<String, Object>> authList = egovAccessService.getAuthorityUser();
-        Iterator<Map<String, Object>> authIterator = authList.iterator();
-        authorityList.clear();
-        while (authIterator.hasNext()) {
-            authorityList.add(authIterator.next());
-        }
-
-        List<Map<String, Object>> rolelist = egovAccessService.getRoleAndUrl();
-        Iterator<Map<String, Object>> roleIterator = rolelist.iterator();
-        resourceMap.clear();
-        while (roleIterator.hasNext()) {
-            resourceMap.add(roleIterator.next());
-        }
+        // 새 리스트를 만들어 static 참조를 원자적으로 교체한다.
+        // 기존에는 authorityList/resourceMap을 clear()+add()로 제자리 변이했는데,
+        // getAuthorities()/getRoles()가 요청마다 같은 리스트를 순회·반환하므로
+        // 갱신과 동시에 ConcurrentModificationException이 발생하거나 부분(빈) 상태가
+        // 읽힐 수 있었다. 참조 교체 방식은 읽는 쪽이 항상 완전한 스냅샷만 보게 한다.
+        authorityList = new ArrayList<>(egovAccessService.getAuthorityUser());
+        resourceMap = new ArrayList<>(egovAccessService.getRoleAndUrl());
     }
 
 }
