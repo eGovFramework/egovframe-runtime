@@ -232,11 +232,23 @@ public class EgovFileUtil {
      * 텍스트 내용을 파일로 쓴다.
      */
     public static void writeFile(String fileName, String text) {
+        assertNoPathTraversal(fileName);
         writeFile(new File(fileName), text);
     }
 
     public static void writeFile(String fileName, String data, String encoding) throws IOException {
+        assertNoPathTraversal(fileName);
         FileUtils.writeStringToFile(new File(fileName), data, encoding);
+    }
+
+    /**
+     * 호출자가 지정한 파일 경로에 상위 디렉토리 이동 시퀀스("..")가 포함되어
+     * 의도한 위치를 벗어난 경로 순회(Path Traversal)로 이어지지 않도록 차단한다.
+     */
+    private static void assertNoPathTraversal(String fileName) {
+        if (fileName == null || fileName.contains("..")) {
+            throw new IllegalArgumentException("Invalid file path: path traversal sequence('..') is not allowed.");
+        }
     }
 
     /**
@@ -336,6 +348,7 @@ public class EgovFileUtil {
      * 텍스트 파일을 읽어온다.
      */
     public static StringBuffer readTextFile(String fileName, boolean newline) throws IOException {
+        assertNoPathTraversal(fileName);
         File file = new File(fileName);
         if (!file.exists()) {
             throw new FileNotFoundException();

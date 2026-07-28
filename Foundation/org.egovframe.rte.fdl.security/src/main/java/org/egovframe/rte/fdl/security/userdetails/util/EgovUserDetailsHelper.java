@@ -15,6 +15,7 @@
  */
 package org.egovframe.rte.fdl.security.userdetails.util;
 
+import org.egovframe.rte.fdl.security.config.EgovIdSaltSha256PasswordEncoder;
 import org.egovframe.rte.fdl.security.userdetails.EgovUserDetails;
 import org.egovframe.rte.fdl.string.EgovObjectUtil;
 import org.slf4j.Logger;
@@ -129,14 +130,27 @@ public final class EgovUserDetailsHelper {
     /**
      * 기본 algorithmd(SHA-256)에 대한 패스워드 얻기.
      *
-     * @param password
-     * @return
+     * @param password 평문 비밀번호
+     * @return SHA-256 해시
      */
     public static String getHashedPassword(String password) {
-        DelegatingPasswordEncoder delegatingPasswordEncoder = (DelegatingPasswordEncoder) PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        DelegatingPasswordEncoder delegatingPasswordEncoder =
+                (DelegatingPasswordEncoder) PasswordEncoderFactories.createDelegatingPasswordEncoder();
         delegatingPasswordEncoder.setDefaultPasswordEncoderForMatches(new MessageDigestPasswordEncoder("SHA-256"));
-        String hashed = delegatingPasswordEncoder.encode(password);
-        return hashed;
+        return delegatingPasswordEncoder.encode(password);
+    }
+
+    /**
+     * 사용자 ID를 salt로 적용한 SHA-256(Base64) 비밀번호 해시를 반환한다.
+     *
+     * <p>eGovFrame {@code hash=egov-sha256} / {@code hash=eccp} 설정과 동일한 방식이다.</p>
+     *
+     * @param password 평문 비밀번호
+     * @param username salt로 사용할 사용자 ID
+     * @return Base64 인코딩된 해시
+     */
+    public static String getIdSaltHashedPassword(String password, String username) {
+        return new EgovIdSaltSha256PasswordEncoder().encode(password, username);
     }
 
 }

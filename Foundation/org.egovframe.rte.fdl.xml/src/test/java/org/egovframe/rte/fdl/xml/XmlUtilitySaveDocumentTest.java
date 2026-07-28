@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * 반복 저장 시 파일 디스크립터가 누적되고 Windows에서는 파일 잠금이 지속될 수 있었다.
  * try-with-resources 적용 후 반복 저장이 매번 완결되는지 특성 테스트로 확인한다.</p>
  */
-class AbstractXMLUtilitySaveDocumentTest {
+class XmlUtilitySaveDocumentTest {
 
     private Document newSimpleDocument() throws Exception {
         Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();

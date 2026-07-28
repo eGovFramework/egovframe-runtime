@@ -19,6 +19,18 @@ import org.egovframe.rte.bat.support.EgovJobVariableListener;
 import org.egovframe.rte.bat.support.EgovResourceVariable;
 import org.egovframe.rte.bat.support.EgovStepVariableListener;
 import org.mybatis.spring.batch.MyBatisBatchItemWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.ReflectionUtils;
+
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * EgovMyBatisBatchItemWriter 클래스
@@ -39,6 +51,8 @@ import org.mybatis.spring.batch.MyBatisBatchItemWriter;
  */
 public class EgovMyBatisBatchItemWriter<T> extends MyBatisBatchItemWriter<T> {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(EgovMyBatisBatchItemWriter.class);
+
     /**
      * egovframework EgovResourceVariable
      */
@@ -53,6 +67,10 @@ public class EgovMyBatisBatchItemWriter<T> extends MyBatisBatchItemWriter<T> {
      * egovframework EgovStepVariableListener
      */
     private EgovStepVariableListener stepVariable = null;
+
+    public EgovMyBatisBatchItemWriter() {
+        setItemToParameterConverter(this::mergeSharedVariables);
+    }
 
     public EgovResourceVariable getResourceVariable() {
         return resourceVariable;
@@ -76,6 +94,39 @@ public class EgovMyBatisBatchItemWriter<T> extends MyBatisBatchItemWriter<T> {
 
     public void setStepVariable(EgovStepVariableListener stepVariable) {
         this.stepVariable = stepVariable;
+    }
+
+    /**
+     * item과 공유 변수(resourceVariable/jobVariable/stepVariable)를 병합한 파라미터로 변환한다.
+     * 공유 변수가 하나도 설정되지 않은 경우 기존 동작(item을 그대로 파라미터로 사용)을 그대로 보존한다.
+     */
+    Object mergeSharedVariables(T item) {
+        if (resourceVariable == null && jobVariable == null && stepVariable == null) {
+            return item;
+        }
+
+        Map<String, Object> map = new HashMap<>();
+
+        if (resourceVariable != null)
+            map.putAll(resourceVariable.getVariableMap());
+        if (jobVariable != null)
+            map.putAll(jobVariable.getVariableMap());
+        if (stepVariable != null)
+            map.putAll(stepVariable.getVariableMap());
+
+        try {
+            BeanInfo beanInfo = Introspector.getBeanInfo(item.getClass());
+            // item 프로퍼티가 공유 변수보다 우선하도록 이후에 덮어쓴다 (공유 변수는 보충 용도)
+            for (PropertyDescriptor pd : beanInfo.getPropertyDescriptors()) {
+                Method reader = pd.getReadMethod();
+                if (reader != null)
+                    map.put(pd.getName(), reader.invoke(item));
+            }
+        } catch (IntrospectionException | IllegalAccessException | InvocationTargetException e) {
+            ReflectionUtils.handleReflectionException(e);
+        }
+
+        return map;
     }
 
 }

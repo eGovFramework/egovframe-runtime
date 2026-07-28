@@ -18,6 +18,9 @@ package org.egovframe.rte.bat.core.item.file.transform;
 import org.springframework.batch.item.file.transform.ExtractorLineAggregator;
 import org.springframework.util.Assert;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Object 배열로 구성된 item 정보들을 Write 하기위해 fixedLength 방식으로 String화 하는 클래스
  *
@@ -35,9 +38,19 @@ import org.springframework.util.Assert;
 public class EgovFixedLengthLineAggregator<T> extends ExtractorLineAggregator<T> {
 
     /**
+     * paddingList 생성 사이즈
+     */
+    private static final int PADDING_LISTSIZE = 100;
+
+    /**
      * 각 field가 차지 할 length 배열
      */
     private int[] fieldRanges;
+
+    /**
+     * 사용할 padding들을 저장하고 있는 list
+     */
+    private volatile List<String> paddingList;
 
     /**
      * Padding Pattern
@@ -70,6 +83,17 @@ public class EgovFixedLengthLineAggregator<T> extends ExtractorLineAggregator<T>
      */
     @Override
     protected String doAggregate(Object[] fields) {
+        // 멀티스레드 step에서 LineAggregator 빈이 공유되면 이 인스턴스도 공유된다.
+        // 기존 코드는 동기화 없이 paddingList를 지연 생성해, 콜드 캐시에 동시 진입한 스레드들이
+        // 서로 다른(또는 서로의 add()가 섞인) 리스트를 만들다 손상된 패딩 결과를 낼 수 있었다.
+        // double-checked locking + 지역변수로 완성한 뒤 발행하여 부분초기화 상태가 외부에 보이지 않게 한다.
+        if (paddingList == null) {
+            synchronized (this) {
+                if (paddingList == null) {
+                    paddingList = createPaddingList();
+                }
+            }
+        }
         Assert.notNull(fieldRanges, "This argument is required : It must not be null");
         return aggregateFixedLength(obtainFieldValueLength(fields), fields);
     }
@@ -95,9 +119,17 @@ public class EgovFixedLengthLineAggregator<T> extends ExtractorLineAggregator<T>
             if (fieldRanges[k] >= fieldValueLength[k]) {
                 value.append(fields[k].toString());
                 if (fieldRanges[k] > fieldValueLength[k]) {
-                    // 부족한 길이만큼 padding 문자로 채운다. (무상태 생성 → thread-safe)
                     int needPaddingSize = fieldRanges[k] - fieldValueLength[k];
-                    value.append(String.valueOf(padding).repeat(needPaddingSize));
+                    if (needPaddingSize <= PADDING_LISTSIZE) {
+                        value.append(paddingList.get(needPaddingSize - 1));
+                    } else {
+                        int addMaxPaddingCount = needPaddingSize / PADDING_LISTSIZE;
+                        int remainderPaddingSize = needPaddingSize % PADDING_LISTSIZE;
+                        value.append(String.valueOf(paddingList.get(PADDING_LISTSIZE - 1)).repeat(addMaxPaddingCount));
+                        if (remainderPaddingSize != 0) {
+                            value.append(paddingList.get(remainderPaddingSize - 1));
+                        }
+                    }
                 }
             } else {
                 //2. VO의 field 길이가 XML에서 지정한 field 범위 길이를 벗어나면 예외 발생.
@@ -106,6 +138,21 @@ public class EgovFixedLengthLineAggregator<T> extends ExtractorLineAggregator<T>
         }
 
         return value.toString();
+    }
+
+    /**
+     * n개(1~paddingListSize)짜리 padding을 생성하여 반환한다.
+     */
+    private List<String> createPaddingList() {
+        List<String> localPaddingList = new ArrayList<String>(PADDING_LISTSIZE);
+        StringBuilder paddingBuilder = new StringBuilder();
+        for (int i = 1; i <= PADDING_LISTSIZE; i++) {
+            paddingBuilder.append(padding);
+            if (paddingBuilder.length() == i) {
+                localPaddingList.add(paddingBuilder.toString());
+            }
+        }
+        return localPaddingList;
     }
 
     /**

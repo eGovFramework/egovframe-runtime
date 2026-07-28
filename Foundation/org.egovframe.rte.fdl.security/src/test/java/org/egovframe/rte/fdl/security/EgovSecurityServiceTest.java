@@ -86,7 +86,13 @@ public class EgovSecurityServiceTest {
     public void testAllowAccessForAuthorizedUser() {
         AuthenticationManager authManager = (AuthenticationManager) applicationContext.getBean(BeanIds.AUTHENTICATION_MANAGER);
 
-        for (String[] cred : new String[][] { { "user", "1" }, { "admin", "1" }, { "jimi", "jimi" }, { "test", "test" }, { "buyer", "buyer" } }) {
+        for (String[] cred : new String[][] {
+            { "user", "1" },
+            { "admin", "1" },
+            { "jimi", "jimi" },
+            { "test", "test" },
+            { "buyer", "buyer" }
+        }) {
             UsernamePasswordAuthenticationToken login = new UsernamePasswordAuthenticationToken(cred[0], cred[1]);
             SecurityContextHolder.getContext().setAuthentication(authManager.authenticate(login));
             LOGGER.debug("### EgovSecurityServiceTest.testAllowAccessForAuthorizedUser {}'s password is right!!", cred[0]);

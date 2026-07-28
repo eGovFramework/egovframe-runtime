@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.egovframe.rte</groupId>
     <artifactId>egovframe-rte-fdl-security</artifactId>
-    <version>5.0.0</version>
+    <version>5.0.1</version>
     <packaging>jar</packaging>
     <name>org.egovframe.rte.fdl.security</name>
     <description>The eGovernment Standard Framework</description>

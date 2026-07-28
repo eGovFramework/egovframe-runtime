@@ -209,7 +209,9 @@ public class EgovFlatFileByteReader<T> extends AbstractItemCountingItemStreamIte
             throw new NonTransientFlatFileException("Unable to read from resource: [" + resource + "]", e, line + "", lineCount);
         }
 
-        return b;
+        // InputStream.read()는 요청한 길이만큼 채운다는 보장이 없다(마지막 레코드가 고정 길이보다 짧은 경우 등).
+        // b는 재사용되는 버퍼이므로, 실제로 읽은 바이트 수만큼만 잘라 반환하지 않으면 이전 호출의 잔여 바이트가 섞여 나간다.
+        return line == b.length ? b : java.util.Arrays.copyOf(b, offset + line);
     }
 
     @Override

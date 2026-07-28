@@ -54,7 +54,7 @@ public class EgovAccessUtil {
 
     public static boolean regexMatcher(String pattern, String inputString) {
         Matcher m = PATTERN_CACHE.computeIfAbsent(pattern, Pattern::compile).matcher(inputString);
-        return m.find();
+        return m.matches();
     }
 
 }
