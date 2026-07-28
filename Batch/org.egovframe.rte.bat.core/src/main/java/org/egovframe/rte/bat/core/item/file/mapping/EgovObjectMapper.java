@@ -33,6 +33,7 @@ import java.util.List;
  * 수정일		수정자				수정내용
  * ----------------------------------------------
  * 2012.07.20	이도형				최초 생성
+ * 2026.07.28	z3rotig4r			setNames null 체크 순서 수정(Assert 선행)
  * </pre>
  * @since 2012.07.20
  */
@@ -64,11 +65,11 @@ public class EgovObjectMapper<T> implements InitializingBean {
      * names를 설정한다.
      */
     public void setNames(String[] names) {
+        Assert.notNull(names, "Names must be non-null");
         this.names = new String[names.length];
         for (int i = 0; i < names.length; i++) {
             this.names[i] = names[i];
         }
-        Assert.notNull(names, "Names must be non-null");
     }
 
     /**
