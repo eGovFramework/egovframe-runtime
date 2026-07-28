@@ -217,14 +217,10 @@ public class EgovFileUtil {
      * 텍스트 내용을 파일로 쓴다.
      */
     public static void writeFile(File file, String text) {
-        FileWriter writer = null;
-        try {
-            writer = new FileWriter(file);
+        try (FileWriter writer = new FileWriter(file)) {
             writer.write(text);
         } catch (IOException e) {
             LOGGER.debug("[{}] EogvFileUtil : {}", e.getClass().getName(), e.getMessage());
-        } finally {
-            EgovResourceReleaser.close(writer);
         }
     }
 
@@ -355,9 +351,7 @@ public class EgovFileUtil {
         }
 
         StringBuffer buf = new StringBuffer();
-        BufferedReader in = null;
-        try {
-            in = new BufferedReader(new FileReader(file));
+        try (BufferedReader in = new BufferedReader(new FileReader(file))) {
             String str;
             while ((str = in.readLine()) != null) {
                 buf.append(str);
@@ -365,8 +359,6 @@ public class EgovFileUtil {
                     buf.append(System.lineSeparator());
                 }
             }
-        } finally {
-            EgovResourceReleaser.close(in);
         }
 
         return buf;

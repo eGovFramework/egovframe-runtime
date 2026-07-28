@@ -71,16 +71,15 @@ public class EgovARIACryptoServiceImpl implements EgovARIACryptoService {
     }
 
     public void encrypt(File srcFile, String password, File trgtFile) {
-        FileInputStream fis = null;
-        ByteArrayOutputStream baos = null;
         String fileString;
         byte[] buffer;
         if (passwordEncoder.checkPassword(password)) {
             ARIACipher cipher = new ARIACipher();
             cipher.setPassword(password);
-            try {
-                fis = new FileInputStream(srcFile);
-                baos = new ByteArrayOutputStream();
+            try (
+                FileInputStream fis = new FileInputStream(srcFile);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream()
+            ) {
                 buffer = new byte[blockSize];
                 LOGGER.debug("blockSize = {}", blockSize);
                 int len = 0;
@@ -100,8 +99,6 @@ public class EgovARIACryptoServiceImpl implements EgovARIACryptoService {
                 FileUtils.writeStringToFile(trgtFile, encString, "UTF-8", true);
             } catch (IOException e) {
                 ReflectionUtils.handleReflectionException(e);
-            } finally {
-                EgovResourceReleaser.close(fis, baos);
             }
         } else {
             throw new IllegalArgumentException("password not matched!!!");
