@@ -25,6 +25,7 @@ import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebExceptionHandler;
 import reactor.core.publisher.Mono;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -78,14 +79,14 @@ public class EgovExceptionHandler implements WebExceptionHandler {
 
     private Mono<Void> handlerResponse(ServerHttpResponse response, String timestamp, int status, String code, String message) {
         response.setStatusCode(HttpStatus.valueOf(status));
-        response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+        response.getHeaders().setContentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8));
         Map<String, Object> map = new HashMap<>();
         map.put("timestamp", timestamp);
         map.put("status", HttpStatus.valueOf(status));
         map.put("code", code);
         map.put("message", message);
         JSONObject jsonObject = new JSONObject(map);
-        DataBuffer dataBuffer = response.bufferFactory().wrap(JSONObject.toJSONString(jsonObject).getBytes());
+        DataBuffer dataBuffer = response.bufferFactory().wrap(JSONObject.toJSONString(jsonObject).getBytes(StandardCharsets.UTF_8));
         return response.writeWith(Mono.just(dataBuffer));
     }
 
