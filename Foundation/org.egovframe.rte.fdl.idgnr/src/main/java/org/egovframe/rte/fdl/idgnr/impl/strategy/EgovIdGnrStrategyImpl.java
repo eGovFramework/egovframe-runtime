@@ -78,7 +78,7 @@ public class EgovIdGnrStrategyImpl implements EgovIdGnrStrategy {
         }
 
         int difference = cipers - originalStrLength;
-        StringBuffer strBuf = new StringBuffer();
+        StringBuilder strBuf = new StringBuilder();
         for (int i = 0; i < difference; i++) {
             strBuf.append(ch);
         }
