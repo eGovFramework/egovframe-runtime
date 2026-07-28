@@ -198,6 +198,10 @@ public class EgovSecurityConfiguration {
         return specificity;
     }
 
+    private static boolean isIdSaltHash(String securityHash) {
+        return "eccp".equals(securityHash) || "egov-sha256".equals(securityHash);
+    }
+
     @Bean
     public PasswordEncoder passwordEncoder(EgovSecurityConfig securityConfig) {
         String rawHash = securityConfig != null ? securityConfig.getHash() : null;
@@ -207,6 +211,9 @@ public class EgovSecurityConfiguration {
             case "plaintext":
             case "noop":
                 return NoOpPasswordEncoder.getInstance();
+            case "eccp":
+            case "egov-sha256":
+                return new EgovIdSaltSha256PasswordEncoder();
             case "ldap":
                 return new LdapShaPasswordEncoder();
             case "md5":
@@ -232,10 +239,20 @@ public class EgovSecurityConfiguration {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(EgovSecurityConfig securityConfig) {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+    public AuthenticationManager authenticationManager(EgovSecurityConfig securityConfig, PasswordEncoder passwordEncoder) {
+        String rawHash = securityConfig != null ? securityConfig.getHash() : null;
+        String securityHash = (rawHash == null || rawHash.trim().isEmpty()) ? "sha-256" : rawHash.trim().toLowerCase();
+
+        DaoAuthenticationProvider provider;
+        if (isIdSaltHash(securityHash)) {
+            EgovDaoAuthenticationProvider egovProvider = new EgovDaoAuthenticationProvider();
+            egovProvider.setIdSaltPasswordEncoder((EgovIdSaltSha256PasswordEncoder) passwordEncoder);
+            provider = egovProvider;
+        } else {
+            provider = new DaoAuthenticationProvider();
+            provider.setPasswordEncoder(passwordEncoder);
+        }
         provider.setUserDetailsService(jdbcUserService(securityConfig));
-        provider.setPasswordEncoder(passwordEncoder(securityConfig));
 
         GrantedAuthoritiesMapper mapper = new RoleHierarchyAuthoritiesMapper(roleHierarchy(securityConfig));
         provider.setAuthoritiesMapper(mapper);
@@ -317,9 +334,9 @@ public class EgovSecurityConfiguration {
     }
 
     @Bean
-    public UsernamePasswordAuthenticationFilter usernamePasswordAuthenticationFilter(EgovSecurityConfig securityConfig) {
+    public UsernamePasswordAuthenticationFilter usernamePasswordAuthenticationFilter(AuthenticationManager authenticationManager) {
         UsernamePasswordAuthenticationFilter filter = new UsernamePasswordAuthenticationFilter();
-        filter.setAuthenticationManager(authenticationManager(securityConfig));
+        filter.setAuthenticationManager(authenticationManager);
         return filter;
     }
 
@@ -386,6 +403,7 @@ public class EgovSecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManager authManager,
                                                    SecurityContextRepository securityContextRepository, FilterSecurityInterceptor filterSecurityInterceptor,
+                                                   UsernamePasswordAuthenticationFilter usernamePasswordAuthenticationFilter,
                                                    EgovSecurityConfig securityConfig) throws Exception {
 
         // 익명사용자 활성화
@@ -487,7 +505,7 @@ public class EgovSecurityConfiguration {
 
         });
 
-        http.addFilterBefore(usernamePasswordAuthenticationFilter(securityConfig), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(usernamePasswordAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

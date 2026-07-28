@@ -43,6 +43,9 @@ public class EgovRrnCheckValidation implements ConstraintValidator<EgovRrnCheck,
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
+        if (value == null) {
+            return false;
+        }
         String mValue = value.replaceAll("-", "");
         Matcher matcher = RRN_PATTERN.matcher(mValue);
         boolean check = matcher.find();

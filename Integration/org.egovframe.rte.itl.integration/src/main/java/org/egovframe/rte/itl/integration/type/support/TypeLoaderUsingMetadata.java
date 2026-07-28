@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -56,7 +57,8 @@ public class TypeLoaderUsingMetadata implements TypeLoader, InitializingBean {
     /**
      * 기존에 load된 Type을 담고 있는 map
      */
-    private Map<String, Type> typePool = new HashMap<String, Type>();
+    // 싱글톤 빈으로 주입되어 여러 스레드에서 getType()으로 동시 접근되므로 thread-safe 맵을 사용한다.
+    private Map<String, Type> typePool = new ConcurrentHashMap<String, Type>();
 
     /**
      * Default Constructor
@@ -210,9 +212,9 @@ public class TypeLoaderUsingMetadata implements TypeLoader, InitializingBean {
             loadingTypes.remove(id);
         }
 
-        typePool.put(id, type);
-
-        return type;
+        // 동시에 같은 id를 load한 다른 스레드가 있으면 먼저 등록된 인스턴스를 정본으로 사용한다.
+        Type existing = typePool.putIfAbsent(id, type);
+        return existing != null ? existing : type;
     }
 
 }

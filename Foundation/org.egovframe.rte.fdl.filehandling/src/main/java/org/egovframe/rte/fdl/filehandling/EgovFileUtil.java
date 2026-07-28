@@ -178,16 +178,11 @@ public class EgovFileUtil {
      * String 영으로 파일의 내용을 읽는다.
      */
     public static String readFile(File file, String encoding) throws IOException {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         List<String> lines = readTextLines(file, encoding);
 
-        for (Iterator<String> it = lines.iterator(); ; ) {
+        for (Iterator<String> it = lines.iterator(); it.hasNext(); ) {
             sb.append(it.next());
-            if (it.hasNext()) {
-                sb.append("");
-            } else {
-                break;
-            }
         }
 
         return sb.toString();
@@ -233,11 +228,23 @@ public class EgovFileUtil {
      * 텍스트 내용을 파일로 쓴다.
      */
     public static void writeFile(String fileName, String text) {
+        assertNoPathTraversal(fileName);
         writeFile(new File(fileName), text);
     }
 
     public static void writeFile(String fileName, String data, String encoding) throws IOException {
+        assertNoPathTraversal(fileName);
         FileUtils.writeStringToFile(new File(fileName), data, encoding);
+    }
+
+    /**
+     * 호출자가 지정한 파일 경로에 상위 디렉토리 이동 시퀀스("..")가 포함되어
+     * 의도한 위치를 벗어난 경로 순회(Path Traversal)로 이어지지 않도록 차단한다.
+     */
+    private static void assertNoPathTraversal(String fileName) {
+        if (fileName == null || fileName.contains("..")) {
+            throw new IllegalArgumentException("Invalid file path: path traversal sequence('..') is not allowed.");
+        }
     }
 
     /**
@@ -337,6 +344,7 @@ public class EgovFileUtil {
      * 텍스트 파일을 읽어온다.
      */
     public static StringBuffer readTextFile(String fileName, boolean newline) throws IOException {
+        assertNoPathTraversal(fileName);
         File file = new File(fileName);
         if (!file.exists()) {
             throw new FileNotFoundException();
@@ -433,8 +441,8 @@ public class EgovFileUtil {
     /**
      * 지정한 위치의 하위 디렉토리 목록을 가져온다.
      */
-    private StringBuffer listChildren(final FileObject dir, final boolean recursive, final String prefix) throws FileSystemException {
-        StringBuffer line = new StringBuffer();
+    private StringBuilder listChildren(final FileObject dir, final boolean recursive, final String prefix) throws FileSystemException {
+        StringBuilder line = new StringBuilder();
         final FileObject[] children = dir.getChildren();
 
         for (final FileObject child : children) {

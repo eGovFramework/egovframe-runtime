@@ -49,6 +49,15 @@ public class EgovDOMValidatorService extends AbstractXMLUtility {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EgovDOMValidatorService.class);
 
+    private static final String FEATURE_EXTERNAL_GENERAL_ENTITIES =
+            "http://xml.org/sax/features/external-general-entities";
+    private static final String FEATURE_EXTERNAL_PARAMETER_ENTITIES =
+            "http://xml.org/sax/features/external-parameter-entities";
+    private static final String FEATURE_LOAD_EXTERNAL_DTD =
+            "http://apache.org/xml/features/nonvalidating/load-external-dtd";
+    private static final String FEATURE_DISALLOW_DOCTYPE_DECL =
+            "http://apache.org/xml/features/disallow-doctype-decl";
+
     /**
      * EgovDOMValidatorService 생성자
      */
@@ -71,25 +80,7 @@ public class EgovDOMValidatorService extends AbstractXMLUtility {
 
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            // 2026.02.28 KISA 보안취약점 조치 - XML 외부개체 참조(XXE) 방지
-            try {
-                factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-            } catch (ParserConfigurationException e) {
-                LOGGER.debug("DocumentBuilderFactory does not support secure processing feature: {}", e.getMessage());
-            }
-            try {
-                factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-                factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
-            } catch (IllegalArgumentException e) {
-                LOGGER.debug("DocumentBuilderFactory does not support external access restriction attributes: {}", e.getMessage());
-            }
-            try {
-                factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-                factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-                factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-            } catch (ParserConfigurationException e) {
-                LOGGER.debug("DocumentBuilderFactory does not support one or more XXE-related features: {}", e.getMessage());
-            }
+            configureXxeProtection(factory);
 
             factory.setNamespaceAware(true);
             factory.setValidating(isValid);
@@ -100,6 +91,9 @@ public class EgovDOMValidatorService extends AbstractXMLUtility {
             }
 
             DocumentBuilder builder = factory.newDocumentBuilder();
+            builder.setEntityResolver((publicId, systemId) -> {
+                throw new SAXException("External entity resolution is disabled for security (XXE prevention)");
+            });
 
             ErrorChecker errors = new ErrorChecker();
             builder.setErrorHandler(new ErrorHandler() {
@@ -135,7 +129,44 @@ public class EgovDOMValidatorService extends AbstractXMLUtility {
 
         } catch (ParserConfigurationException e) {
             LOGGER.debug("[{}] EgovDOMValidatorService Parser() : {}", e.getClass().getName(), e.getMessage());
-            throw new ValidatorException("Parser configuration error");
+            throw new ValidatorException("Parser configuration error: " + e.getMessage());
         }
     }
+
+    /**
+     * XML 외부개체 참조(XXE) 방지 설정.
+     */
+    private void configureXxeProtection(DocumentBuilderFactory factory) throws ParserConfigurationException {
+        setDocumentBuilderFactoryFeature(factory, XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        setDocumentBuilderFactoryFeature(factory, FEATURE_EXTERNAL_GENERAL_ENTITIES, false);
+        setDocumentBuilderFactoryFeature(factory, FEATURE_EXTERNAL_PARAMETER_ENTITIES, false);
+        setDocumentBuilderFactoryFeature(factory, FEATURE_LOAD_EXTERNAL_DTD, false);
+        setDocumentBuilderFactoryFeature(factory, FEATURE_DISALLOW_DOCTYPE_DECL, true);
+
+        try {
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+        } catch (IllegalArgumentException e) {
+            ParserConfigurationException parserConfigurationException = new ParserConfigurationException(
+                    "DocumentBuilderFactory does not support external access restriction: " + e.getMessage());
+            parserConfigurationException.initCause(e);
+            throw parserConfigurationException;
+        }
+
+        factory.setXIncludeAware(false);
+        factory.setExpandEntityReferences(false);
+    }
+
+    private void setDocumentBuilderFactoryFeature(
+            DocumentBuilderFactory factory, String feature, boolean value) throws ParserConfigurationException {
+        try {
+            factory.setFeature(feature, value);
+        } catch (ParserConfigurationException e) {
+            ParserConfigurationException parserConfigurationException = new ParserConfigurationException(
+                    "DocumentBuilderFactory does not support required XXE feature [" + feature + "]: " + e.getMessage());
+            parserConfigurationException.initCause(e);
+            throw parserConfigurationException;
+        }
+    }
+
 }

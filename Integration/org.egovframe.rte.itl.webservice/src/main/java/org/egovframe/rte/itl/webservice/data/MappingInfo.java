@@ -175,7 +175,7 @@ public class MappingInfo implements Validatable {
 
     @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append(this.getClass().getName()).append(" {").append("\n\ttype = ")
                 .append(StringUtils.quote(type)).append("\n\tindex = ")
                 .append(index).append("\n\targumentNAme = ")
