@@ -288,7 +288,7 @@ public class DefaultItemWriter<T> implements ItemStreamWriter<T> {
     private void printXmlConfig() {
         if (printXmlConf) {
             if (DELIMITED_FILE_TYPE.equalsIgnoreCase(this.writerResourceType)) {
-                System.out.println("======= " + stepName + " WRITER 설정(XML 버전) =========\n"
+                LOGGER.info("======= " + stepName + " WRITER 설정(XML 버전) =========\n"
                         + "<bean id=\"" + stepName + ".writer\" class=\"org.springframework.batch.item.file.FlatFileItemWriter\" scope=\"step\">\n"
                         + "  <property name=\"resource\" value=\"" + this.resourceName + "\" />\n"
                         + "  <property name=\"lineAggregator\">\n"
@@ -304,7 +304,7 @@ public class DefaultItemWriter<T> implements ItemStreamWriter<T> {
                         + "</bean>\n"
                         + "================================================");
             } else if (FIXED_LENGTH_FILE_TYPE.equalsIgnoreCase(this.writerResourceType)) {
-                System.out.println("======= " + stepName + " Writer 설정(XML 버전) =========\n"
+                LOGGER.info("======= " + stepName + " Writer 설정(XML 버전) =========\n"
                         + "<bean id=\"" + stepName + ".writer\" class=\"org.springframework.batch.item.file.FlatFileItemWriter\" scope=\"step\">\n"
                         + "  <property name=\"resource\" value=\"" + this.resourceName + "\" />\n"
                         + "  <property name=\"lineAggregator\">\n"
@@ -320,7 +320,7 @@ public class DefaultItemWriter<T> implements ItemStreamWriter<T> {
                         + "</bean>\n"
                         + "================================================");
             } else if (JDBC_DB_TYPE.equalsIgnoreCase(this.writerResourceType)) {
-                System.out.println("======= " + stepName + " Writer 설정(XML 버전) =========\n"
+                LOGGER.info("======= " + stepName + " Writer 설정(XML 버전) =========\n"
                         + "<bean id=\"" + stepName + ".writer\" class=\"org.egovframe.rte.bat.core.item.database.EgovJdbcBatchItemWriter\">\n"
                         + "  <property name=\"assertUpdates\" value=\"true\" />\n"
                         + "  <property name=\"itemPreparedStatementSetter\">\n"

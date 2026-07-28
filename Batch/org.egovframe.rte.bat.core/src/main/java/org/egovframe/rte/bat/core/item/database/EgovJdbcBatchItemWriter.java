@@ -73,6 +73,25 @@ public class EgovJdbcBatchItemWriter<T> implements ItemWriter<T>, InitializingBe
 
     private EgovReflectionSupport<T> reflector;
 
+    // params 가 고정이고 item 이 동질이면 sqlTypes 산출(getDeclaredField reflection)을 청크마다 반복할 필요가 없다.
+    // 최초 1회 산출 후 캐시하고, item 클래스가 달라지면(이질 item) 재산출하여 정확성을 보장한다.
+    // 멀티스레드 Step 에서 torn-read(이질 클래스 동시 청크 시 itemClass 와 sqlTypes 가 어긋나는 창)를
+    // 막기 위해 클래스+타입배열을 불변 holder 로 묶어 단일 volatile 참조로 원자 발행하고, 소비는 지역변수로 한다.
+    private volatile SqlTypeCache sqlTypeCache;
+
+    /**
+     * sqlTypes 캐시용 불변 holder. itemClass 와 sqlTypes 가 항상 한 쌍으로 발행된다.
+     */
+    private static final class SqlTypeCache {
+        private final Class<?> itemClass;
+        private final String[] sqlTypes;
+
+        private SqlTypeCache(Class<?> itemClass, String[] sqlTypes) {
+            this.itemClass = itemClass;
+            this.sqlTypes = sqlTypes;
+        }
+    }
+
     /**
      * AssertUpdates 설정 셋팅
      */
@@ -99,6 +118,8 @@ public class EgovJdbcBatchItemWriter<T> implements ItemWriter<T>, InitializingBe
      */
     public void setParams(String[] params) {
         this.params = params == null ? null : Arrays.asList(params).toArray(new String[params.length]);
+        // params 가 바뀌면 기존 sqlTypes 캐시는 stale 이므로 무효화한다.
+        this.sqlTypeCache = null;
     }
 
     /**
@@ -148,8 +169,15 @@ public class EgovJdbcBatchItemWriter<T> implements ItemWriter<T>, InitializingBe
                     // Parameters 가 있으면 item, ps, params, sqlTypes,methodMap 를 파라메터로 받는 setValues call
                     // 없으면 item, ps 를 파라메터로 받는 setValues call
                     if (usingParameters) {
-                        String[] sqlTypes = reflector.getSqlTypeArray(params, items.get(0));
-                        reflector.generateGetterMethodMap(params, items.get(0));
+                        T firstItem = items.get(0);
+                        Class<?> itemClass = firstItem.getClass();
+                        SqlTypeCache local = sqlTypeCache;     // volatile read 1회
+                        if (local == null || !itemClass.equals(local.itemClass)) {
+                            local = new SqlTypeCache(itemClass, reflector.getSqlTypeArray(params, firstItem));
+                            sqlTypeCache = local;              // volatile publish (원자 발행)
+                        }
+                        String[] sqlTypes = local.sqlTypes;    // 지역 소비, 공유필드 재독해 금지
+                        reflector.generateGetterMethodMap(params, firstItem);
                         Map<String, Method> methodMap = reflector.getMethodMap();
 
                         for (T item : items) {

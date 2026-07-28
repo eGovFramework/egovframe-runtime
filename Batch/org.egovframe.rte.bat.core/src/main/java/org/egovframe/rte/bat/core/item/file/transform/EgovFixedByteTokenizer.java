@@ -15,7 +15,6 @@
  */
 package org.egovframe.rte.bat.core.item.file.transform;
 
-import org.egovframe.rte.bat.core.item.file.EgovFlatFileByteReader;
 import org.springframework.batch.item.file.transform.IncorrectLineLengthException;
 import org.springframework.batch.item.file.transform.Range;
 import org.springframework.util.ObjectUtils;
@@ -66,6 +65,14 @@ public class EgovFixedByteTokenizer extends EgovAbstractByteLineTokenizer {
      */
     private String byteEncoding = DEFAULT_CHARSET;
 
+    private static final int UNIX_CRLF = 1;
+    private static final int WINDOWS_CRLF = 2;
+
+    /**
+     * 라인 구분자 길이
+     */
+    private int lineCrlf = WINDOWS_CRLF;
+
     /**
      * 범위값을 세팅
      */
@@ -79,6 +86,24 @@ public class EgovFixedByteTokenizer extends EgovAbstractByteLineTokenizer {
      */
     public void setByteEncoding(String encoding) {
         this.byteEncoding = encoding;
+    }
+
+    /**
+     * 라인 구분자 길이를 세팅
+     */
+    public void setLineCrlf(int lineCrlf) {
+        this.lineCrlf = lineCrlf;
+    }
+
+    /**
+     * OS타입에 따라 라인 구분자 길이를 세팅
+     */
+    public void setOsType(String osType) {
+        if (!osType.equalsIgnoreCase("WINDOWS")) {
+            this.lineCrlf = UNIX_CRLF;
+        } else {
+            this.lineCrlf = WINDOWS_CRLF;
+        }
     }
 
     /**
@@ -130,7 +155,7 @@ public class EgovFixedByteTokenizer extends EgovAbstractByteLineTokenizer {
     protected List<String> doTokenize(byte[] byteString, String encoding) throws Exception {
         String token;
         List<String> tokens = new ArrayList<String>(ranges.length);
-        int lineLength = byteString.length - EgovFlatFileByteReader.LINE_CRLF;
+        int lineLength = byteString.length - this.lineCrlf;
 
         if (lineLength == 0) {
             throw new IncorrectLineLengthException("Line length must be longer than 0", maxRange, lineLength);

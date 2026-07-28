@@ -33,25 +33,21 @@ package org.egovframe.rte.ptl.reactive.exception;
  */
 public class EgovServiceException extends RuntimeException {
 
-    protected EgovErrorCode egovErrorCode;
+    private static final long serialVersionUID = 1L;
 
-    protected String message;
+    protected EgovErrorCode egovErrorCode;
 
     public EgovServiceException(String message) {
         this(EgovErrorCode.INTERNAL_SERVER_ERROR, message);
     }
 
     public EgovServiceException(EgovErrorCode egovErrorCode, String message) {
+        super(message);
         this.egovErrorCode = egovErrorCode;
-        this.message = message;
     }
 
     public EgovErrorCode getEgovErrorCode() {
         return egovErrorCode;
-    }
-
-    public String getMessage() {
-        return message;
     }
 
 }

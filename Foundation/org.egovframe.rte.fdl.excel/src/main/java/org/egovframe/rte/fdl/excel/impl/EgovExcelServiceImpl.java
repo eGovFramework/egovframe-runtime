@@ -155,7 +155,6 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
                 wb = new HSSFWorkbook(fileIn);
             } finally {
                 LOGGER.debug("ExcelServiceImpl loadExcelTemplate End ");
-                if (wb != null) wb.close();
                 if (fileIn != null) fileIn.close();
             }
             return wb;
@@ -178,7 +177,6 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
                 wb = new XSSFWorkbook(fileIn);
             } finally {
                 LOGGER.debug("ExcelServiceImpl loadExcelTemplate(XSSF) End ");
-                if (wb != null) wb.close();
                 if (fileIn != null) fileIn.close();
             }
             return wb;
@@ -199,7 +197,6 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
                 fileIn = new FileInputStream(filepath);
                 wb = loadWorkbook(fileIn);
             } finally {
-                if (wb != null) wb.close();
                 if (fileIn != null) fileIn.close();
             }
             return wb;
@@ -219,7 +216,6 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
                 fileIn = new FileInputStream(filepath);
                 wb = loadWorkbook(fileIn, wb);
             } finally {
-                if (wb != null) wb.close();
                 if (fileIn != null) fileIn.close();
             }
             return wb;
@@ -241,8 +237,6 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
                 fs = new POIFSFileSystem(fileIn);
                 wb = new HSSFWorkbook(fs);
             } finally {
-                if (wb != null) wb.close();
-                if (fs != null) fs.close();
                 if (fileIn != null) fileIn.close();
             }
             return wb;

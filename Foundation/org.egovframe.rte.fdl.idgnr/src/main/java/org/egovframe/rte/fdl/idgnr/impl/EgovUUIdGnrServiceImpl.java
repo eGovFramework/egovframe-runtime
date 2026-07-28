@@ -177,8 +177,7 @@ public class EgovUUIdGnrServiceImpl implements EgovIdGnrService, ApplicationCont
      */
     public void setAddress(String address) throws FdlException, NoSuchAlgorithmException {
         byte[] addressBytes = new byte[6];
-        Random random = new Random();
-        random = SecureRandom.getInstanceStrong();
+        Random random = SecureRandom.getInstanceStrong();
         random.setSeed(System.currentTimeMillis());
         if (null == address) {
             LOGGER.debug("IDGeneration Service : Using a random number as the base for id's."
@@ -275,7 +274,6 @@ final class TimeBasedUUIDGenerator {
             }
         }
 
-        time = currentTimeMillis;
         // low Time
         time = currentTimeMillis << 32;
         // mid Time

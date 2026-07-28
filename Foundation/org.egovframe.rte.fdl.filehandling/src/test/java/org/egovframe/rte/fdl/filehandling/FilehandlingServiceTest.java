@@ -223,6 +223,26 @@ public class FilehandlingServiceTest {
     }
 
     /**
+     * 빈 파일 읽기 테스트. 내용이 없는 파일은 빈 문자열을 반환해야 한다.
+     */
+    @Test
+    public void testReadEmptyFile() throws IOException {
+        String emptyPath = tmppath + "/empty.txt";
+        EgovFileUtil.writeFile(emptyPath, "", "UTF-8");
+        assertEquals("", EgovFileUtil.readFile(new File(emptyPath), "UTF-8"));
+    }
+
+    /**
+     * 여러 줄 파일 읽기 테스트. 줄들이 종전과 동일하게 연결되어야 한다.
+     */
+    @Test
+    public void testReadMultiLineFile() throws IOException {
+        String multiPath = tmppath + "/multiline.txt";
+        EgovFileUtil.writeFile(multiPath, "line1\nline2\nline3", "UTF-8");
+        assertEquals("line1line2line3", EgovFileUtil.readFile(new File(multiPath), "UTF-8"));
+    }
+
+    /**
      * 파일 복사 테스트.
      */
     @Test

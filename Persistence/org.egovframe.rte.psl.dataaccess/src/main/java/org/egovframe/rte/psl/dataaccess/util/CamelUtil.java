@@ -44,6 +44,12 @@ public final class CamelUtil {
      * @return Camel 표기법 변수명
      */
     public static String convert2CamelCase(String underScore) {
+        // null 또는 빈 문자열은 변환할 대상이 없으므로 그대로 반환한다.
+        // (빈 문자열일 때 charAt(0)에서 StringIndexOutOfBoundsException이,
+        //  null일 때 indexOf 호출에서 NullPointerException이 발생하던 문제를 방지한다.)
+        if (underScore == null || underScore.isEmpty()) {
+            return underScore;
+        }
         // '_' 가 나타나지 않으면 이미 camel case 로 가정함.
         // 단 첫째문자가 대문자이면 camel case 변환 (전체를 소문자로) 처리가
         // 필요하다고 가정함. --> 아래 로직을 수행하면 바뀜

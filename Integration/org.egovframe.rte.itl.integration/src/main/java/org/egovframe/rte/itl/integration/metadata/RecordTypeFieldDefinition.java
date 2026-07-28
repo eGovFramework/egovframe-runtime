@@ -102,7 +102,7 @@ public class RecordTypeFieldDefinition implements Validatable {
 
     @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append(this.getClass().getName()).append(" {typeId = ").append(StringUtils.quote(typeId)).append("}");
         return sb.toString();
     }
