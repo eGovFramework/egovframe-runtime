@@ -95,7 +95,7 @@ public class EgovARIACryptoServiceImpl implements EgovARIACryptoService {
                 fileString = new String(Base64.encodeBase64(fileArray));
                 byte[] enc = cipher.encrypt(fileString.getBytes(StandardCharsets.UTF_8));
                 String encString = Base64.encodeBase64String(enc);
-                FileUtils.writeStringToFile(trgtFile, encString, "UTF-8", true);
+                FileUtils.writeStringToFile(trgtFile, encString, "UTF-8");
             } catch (IOException e) {
                 ReflectionUtils.handleReflectionException(e);
             }
