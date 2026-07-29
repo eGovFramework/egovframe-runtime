@@ -23,6 +23,8 @@ class ReactiveValidatorsSemanticTest {
         assertFalse(validator.isValid("124-81-009989", null), "사업자등록번호는 11자리 입력을 false로 판정해야 한다");
         assertFalse(validator.isValid("12481abcde", null), "사업자등록번호는 숫자가 아닌 입력을 false로 판정해야 한다");
         assertFalse(validator.isValid("", null), "사업자등록번호는 빈 문자열을 false로 판정해야 한다");
+        assertFalse(validator.isValid("1248100998\n", null), "사업자등록번호는 뒤에 개행이 붙은 입력을 예외 없이 false로 판정해야 한다");
+        assertFalse(validator.isValid("1248100998\r\n", null), "사업자등록번호는 뒤에 CRLF가 붙은 입력을 예외 없이 false로 판정해야 한다");
     }
 
     @Test
@@ -42,8 +44,9 @@ class ReactiveValidatorsSemanticTest {
         EgovRrnCheckValidation validator = new EgovRrnCheckValidation();
 
         // 아래 값은 실제 개인 식별번호가 아니라 존재할 수 없는 날짜로 만든 체크섬 규격 합성값이다.
-        assertTrue(validator.isValid("991332-1123459", null), "주민등록번호는 합성 유효 체크섬 값을 true로 판정해야 한다");
-        assertTrue(validator.isValid("001332-2123452", null), "주민등록번호는 합성 유효 체크섬 값을 true로 판정해야 한다");
+        // 이 검증기는 패턴과 체크섬만 검증하며 날짜 유효성은 검증하지 않는다.
+        assertTrue(validator.isValid("991332-1123459", null), "주민등록번호 검증기는 날짜를 검증하지 않고 체크섬만 검증하므로 존재할 수 없는 날짜라도 true로 판정한다");
+        assertTrue(validator.isValid("001332-2123452", null), "주민등록번호 검증기는 날짜를 검증하지 않고 체크섬만 검증하므로 존재할 수 없는 날짜라도 true로 판정한다");
 
         assertFalse(validator.isValid("991332-1123450", null), "주민등록번호는 체크디지트 오류를 false로 판정해야 한다");
         assertFalse(validator.isValid("991332-5123459", null), "주민등록번호는 성별코드 패턴 위반을 false로 판정해야 한다");
