@@ -18,7 +18,6 @@ package org.egovframe.rte.fdl.crypto.impl;
 import org.apache.commons.codec.binary.Base64;
 import org.egovframe.rte.fdl.crypto.EgovGeneralCryptoService;
 import org.egovframe.rte.fdl.crypto.EgovPasswordEncoder;
-import org.egovframe.rte.fdl.logging.util.EgovResourceReleaser;
 import org.jasypt.encryption.pbe.StandardPBEBigDecimalEncryptor;
 import org.jasypt.encryption.pbe.StandardPBEByteEncryptor;
 import org.slf4j.Logger;

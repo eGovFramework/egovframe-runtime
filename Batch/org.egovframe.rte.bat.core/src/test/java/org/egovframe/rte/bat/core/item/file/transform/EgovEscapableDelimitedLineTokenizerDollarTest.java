@@ -1,11 +1,11 @@
 package org.egovframe.rte.bat.core.item.file.transform;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * {@link EgovEscapableDelimitedLineTokenizer}가 {@code $}를 구분자로 사용할 때

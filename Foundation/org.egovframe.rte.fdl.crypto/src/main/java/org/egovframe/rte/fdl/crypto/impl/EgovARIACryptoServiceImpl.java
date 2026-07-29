@@ -19,7 +19,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.egovframe.rte.fdl.crypto.EgovARIACryptoService;
 import org.egovframe.rte.fdl.crypto.EgovPasswordEncoder;
-import org.egovframe.rte.fdl.logging.util.EgovResourceReleaser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.ReflectionUtils;

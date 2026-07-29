@@ -1,9 +1,9 @@
 package org.egovframe.rte.ptl.reactive.validation;
 
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-
-import org.junit.jupiter.api.Test;
 
 /**
  * reactive validation 패키지의 ConstraintValidator 구현이 null 입력에서
