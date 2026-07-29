@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
  * 수정일		수정자				수정내용
  * ----------------------------------------------
  * 2019.10.01	유지보수            최초 생성
- * 2026.07.27	z3rotig4r          접근 검사 핫패스 최적화 — 정규식 Pattern 캐싱, AntPathMatcher 재사용
+ * 2026.07.27	유지보수          접근 검사 핫패스 최적화 — 정규식 Pattern 캐싱, AntPathMatcher 재사용
  * </pre>
  * @since 2019.10.01
  */

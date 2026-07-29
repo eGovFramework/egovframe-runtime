@@ -57,12 +57,19 @@ public class EgovAccessHandlerMappingPostProcessor implements BeanPostProcessor 
         }
 
         if (!"session".equals(accessConfig.getGlobalAuthen())) {
+            LOGGER.warn("EgovAccessInterceptor is NOT registered for '{}' because globalAuthen='{}' (expected \"session\"). " +
+                    "URL-level access control via EgovAccessInterceptor will be DISABLED for this HandlerMapping. " +
+                    "If this is unintentional, check egov-access-config.properties.",
+                    beanName, accessConfig.getGlobalAuthen());
             return bean;
         }
 
         String profile = System.getProperty("spring.profiles.active");
         boolean shouldRegister = ObjectUtils.isEmpty(profile) || (profile != null && profile.contains(accessConfig.getGlobalAuthen()));
         if (!shouldRegister) {
+            LOGGER.warn("EgovAccessInterceptor is NOT registered for '{}' because active profile(s) '{}' do not contain '{}'. " +
+                    "URL-level access control via EgovAccessInterceptor will be DISABLED for this HandlerMapping.",
+                    beanName, profile, accessConfig.getGlobalAuthen());
             return bean;
         }
 
@@ -80,10 +87,13 @@ public class EgovAccessHandlerMappingPostProcessor implements BeanPostProcessor 
 
         // addPathPatterns / excludePathPatterns와 동일하게 적용 (기동 시 /, /index.do 등에서 리다이렉트 방지)
         String mappingPath = StringUtils.hasText(accessConfig.getMappingPath()) ? accessConfig.getMappingPath() : "/**/*.do";
-        String[] excludePatterns = Stream.of(accessConfig.getExcludeList().split(","))
-                .map(String::trim)
-                .filter(StringUtils::hasText)
-                .toArray(String[]::new);
+        String excludeList = accessConfig.getExcludeList();
+        String[] excludePatterns = StringUtils.hasText(excludeList)
+                ? Stream.of(excludeList.split(","))
+                        .map(String::trim)
+                        .filter(StringUtils::hasText)
+                        .toArray(String[]::new)
+                : new String[0];
 
         HandlerInterceptor toAdd = new MappedInterceptor(
                 new String[]{mappingPath},

@@ -225,25 +225,51 @@ public class EgovFileUtil {
     }
 
     /**
+     * 텍스트 내용을 지정한 인코딩으로 파일에 쓴다.
+     * <p>호출자가 이미 만든 {@link File}을 받으므로(신뢰 여부는 호출자 책임), 상대/절대 경로 제한이
+     * 적용되는 {@link #writeFile(String, String, String)}과 달리 절대 경로도 그대로 허용한다.</p>
+     */
+    public static void writeFile(File file, String data, String encoding) throws IOException {
+        FileUtils.writeStringToFile(file, data, encoding);
+    }
+
+    /**
      * 텍스트 내용을 파일로 쓴다.
+     * <p>fileName은 상대 경로만 허용한다(신뢰할 수 없는 입력에도 안전하게 사용하기 위함).
+     * 신뢰할 수 있는 절대 경로에 써야 한다면 {@link #writeFile(File, String)}을 직접 사용하라.</p>
      */
     public static void writeFile(String fileName, String text) {
         assertNoPathTraversal(fileName);
         writeFile(new File(fileName), text);
     }
 
+    /**
+     * 텍스트 내용을 지정한 인코딩으로 파일에 쓴다.
+     * <p>fileName은 상대 경로만 허용한다(신뢰할 수 없는 입력에도 안전하게 사용하기 위함).
+     * 신뢰할 수 있는 절대 경로에 써야 한다면 {@link #writeFile(File, String, String)}을 직접 사용하라.</p>
+     */
     public static void writeFile(String fileName, String data, String encoding) throws IOException {
         assertNoPathTraversal(fileName);
         FileUtils.writeStringToFile(new File(fileName), data, encoding);
     }
 
     /**
-     * 호출자가 지정한 파일 경로에 상위 디렉토리 이동 시퀀스("..")가 포함되어
-     * 의도한 위치를 벗어난 경로 순회(Path Traversal)로 이어지지 않도록 차단한다.
+     * 호출자가 지정한 파일 경로가 상위 디렉토리 이동 시퀀스("..")를 포함하거나 절대 경로여서
+     * 의도한 위치를 벗어난 경로 순회(Path Traversal)나 임의 파일 쓰기/읽기로 이어지지 않도록 차단한다.
+     * 신뢰할 수 없는 입력(사용자 업로드 파일명 등)은 항상 이 검증을 통과하는 상대 경로여야 한다.
      */
     private static void assertNoPathTraversal(String fileName) {
-        if (fileName == null || fileName.contains("..")) {
+        if (fileName == null || fileName.isEmpty()) {
+            throw new IllegalArgumentException("Invalid file path: path must not be null or empty.");
+        }
+        if (fileName.indexOf('\0') >= 0) {
+            throw new IllegalArgumentException("Invalid file path: null byte is not allowed.");
+        }
+        if (fileName.contains("..")) {
             throw new IllegalArgumentException("Invalid file path: path traversal sequence('..') is not allowed.");
+        }
+        if (new File(fileName).isAbsolute()) {
+            throw new IllegalArgumentException("Invalid file path: absolute path is not allowed.");
         }
     }
 
@@ -342,6 +368,7 @@ public class EgovFileUtil {
 
     /**
      * 텍스트 파일을 읽어온다.
+     * <p>fileName은 상대 경로만 허용한다({@link #assertNoPathTraversal(String)} 참고).</p>
      */
     public static StringBuffer readTextFile(String fileName, boolean newline) throws IOException {
         assertNoPathTraversal(fileName);

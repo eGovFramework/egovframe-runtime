@@ -24,13 +24,21 @@ import reactor.core.publisher.Hooks;
 import reactor.core.publisher.Operators;
 import reactor.util.context.Context;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
  * MDC 서비스를 위한 Sequence 구현 클래스
  *
  * <p>Desc.: MDC 서비스를 위한 Sequence 구현 클래스</p>
+ *
+ * <p><b>보안 주의:</b> Reactor {@link Context}에 담긴 모든 key-value를 필터링 없이 그대로 MDC(로그)에
+ * 복사한다. 세션ID·인증 토큰·개인정보 등 민감한 값을 Reactor Context에 저장하는 관행이 있다면 로그에
+ * 그대로 노출될 수 있다(CWE-532). 민감한 키를 로그에서 제외하려면 {@link #setExcludedKeys(Set)}으로
+ * 지정하라(기본값은 빈 집합=제외 없음, 기존 동작과 동일).</p>
  *
  * @author 유지보수
  * @version 1.0
@@ -46,6 +54,21 @@ import java.util.stream.Collectors;
 public class EgovMdcContextConfig {
 
     public static final String MDC_CONTEXT_KEY = EgovMdcContextConfig.class.getName();
+
+    /** MDC로 복사하지 않을 Reactor Context 키 집합. 기본값은 빈 집합(제외 없음, 기존 동작과 동일). */
+    private static volatile Set<String> excludedKeys = Collections.emptySet();
+
+    /**
+     * 민감정보가 담길 수 있는 Reactor Context 키를 MDC(로그) 복사 대상에서 제외하려면 이 메서드로
+     * 지정한다. null 또는 빈 집합을 넘기면 제외 목록이 해제된다(기본값).
+     *
+     * @param keys 로그에서 제외할 Context 키 집합
+     */
+    public static void setExcludedKeys(Set<String> keys) {
+        excludedKeys = (keys == null || keys.isEmpty())
+                ? Collections.emptySet()
+                : Collections.unmodifiableSet(new HashSet<>(keys));
+    }
 
     @PostConstruct
     public void contextOperatorHook() {
@@ -100,7 +123,10 @@ public class EgovMdcContextConfig {
          */
         private void copyToMdc(Context context) {
             if (context != null && !context.isEmpty()) {
-                Map<String, String> map = context.stream().collect(Collectors.toMap(e -> e.getKey().toString(), e -> e.getValue().toString()));
+                Set<String> excluded = excludedKeys;
+                Map<String, String> map = context.stream()
+                        .filter(e -> !excluded.contains(e.getKey().toString()))
+                        .collect(Collectors.toMap(e -> e.getKey().toString(), e -> e.getValue().toString()));
                 MDC.setContextMap(map);
             } else {
                 MDC.clear();

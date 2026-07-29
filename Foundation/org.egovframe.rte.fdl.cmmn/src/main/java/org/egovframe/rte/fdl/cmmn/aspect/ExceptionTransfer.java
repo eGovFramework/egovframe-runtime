@@ -133,7 +133,12 @@ public class ExceptionTransfer {
             if (be instanceof DataAccessException) {
                 LOGGER.debug("RuntimeException case :: DataAccessException ");
                 DataAccessException sqlEx = (DataAccessException) be;
-                throw sqlEx;
+                // DataAccessException 메시지는 SQL 구문·테이블/컬럼명·드라이버 오류 등 내부 정보를
+                // 담고 있는 경우가 많다. 원본은 위 getLog(clazz).error(...)로 이미 서버 로그에
+                // 남겼으므로, 상위로 전파되는 메시지는 일반화해 CWE-209(오류 메시지를 통한 정보노출)를
+                // 방지한다. cause로 원본을 보존해 DataAccessException 타입 계약(상위 catch 호환)은 유지한다.
+                throw new DataAccessException("A data access error occurred. See server log for details.", sqlEx) {
+                };
             }
             throw be;
             //실행환경 확장모듈에서 발생한 Exception (요청: 공통모듈) :: 후처리로직 실행하지 않음.

@@ -41,6 +41,14 @@ import java.util.UUID;
  *
  * <p><b>NOTE</b>: UUID(Universally Unique Identifier) 알고리즘 기반의 유일키를 제공 받을 수 있다.</p>
  *
+ * <p><b>보안 주의:</b> {@link #setAddress(String)}로 IP/MAC 주소를 설정하면 {@link #getNextStringId()}는
+ * 타임스탬프+호스트ID+순차 증가 clockSequence로만 구성된 <b>결정론적</b>(예측 가능한) 버전1 스타일 UUID를
+ * 생성한다(암호학적 난수 요소 없음). 세션ID·비밀번호 재설정 토큰·API 키 등 <b>보안 목적 식별자로
+ * 사용하지 말 것</b> — 그런 용도라면 {@code setAddress}를 호출하지 않은 기본 경로
+ * ({@link java.util.UUID#randomUUID()}) 또는 별도의 CSPRNG 기반 토큰 생성기를 사용하라. 또한
+ * clockSequence는 JVM별 static 상태이므로, 여러 WAS 인스턴스가 동일한 address로 설정되어 같은 밀리초에
+ * ID를 생성하면 서로 다른 인스턴스가 동일한 UUID를 생성할 수 있다(다중 인스턴스 배포 시 유일성 미보장).</p>
+ *
  * @author 실행환경 개발팀 김태호
  * @version 1.0
  * <pre>

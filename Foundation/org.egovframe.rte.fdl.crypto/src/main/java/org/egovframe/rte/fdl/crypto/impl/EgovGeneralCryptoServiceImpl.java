@@ -32,10 +32,15 @@ public class EgovGeneralCryptoServiceImpl implements EgovGeneralCryptoService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EgovGeneralCryptoServiceImpl.class);
 
+    /** SHA-1/3중 DES 기반 — NIST 등에서 폐기 권고된 약한 알고리즘 조합. 하위 호환을 위해 기본값은
+     * 유지하되, 그대로 사용되면 {@link #warnIfWeakDefaultAlgorithm()}이 경고를 남긴다. */
+    private static final String DEFAULT_ALGORITHM = "PBEWithSHA1AndDESede";
+
     private final Base64 base64 = new Base64();
-    private String algorithm = "PBEWithSHA1AndDESede";
+    private String algorithm = DEFAULT_ALGORITHM;
     private EgovPasswordEncoder passwordEncoder;
     private int blockSize = 1024;
+    private volatile boolean defaultAlgorithmWarningLogged = false;
 
     public String getAlgorithm() {
         return algorithm;
@@ -44,6 +49,20 @@ public class EgovGeneralCryptoServiceImpl implements EgovGeneralCryptoService {
     public void setAlgorithm(String algorithm) {
         this.algorithm = algorithm;
         LOGGER.debug("General Crypto Service's algorithm : {}", algorithm);
+    }
+
+    /**
+     * 기본 알고리즘({@value #DEFAULT_ALGORITHM}, SHA-1/DES 기반)이 그대로 사용 중이면 최초 1회
+     * 경고 로그를 남긴다. 신규 배포에는 {@link #setAlgorithm(String)}으로
+     * {@code PBEWithHmacSHA256AndAES_256} 등 더 강한 PBE 알고리즘을 명시적으로 설정할 것을 권장한다.
+     */
+    private void warnIfWeakDefaultAlgorithm() {
+        if (DEFAULT_ALGORITHM.equals(algorithm) && !defaultAlgorithmWarningLogged) {
+            defaultAlgorithmWarningLogged = true;
+            LOGGER.warn("EgovGeneralCryptoServiceImpl is using the default algorithm '{}' (SHA-1/DES-based, " +
+                    "considered weak). Call setAlgorithm(...) with a stronger PBE algorithm " +
+                    "(e.g. PBEWithHmacSHA256AndAES_256) for new deployments.", DEFAULT_ALGORITHM);
+        }
     }
 
     public void setPasswordEncoder(EgovPasswordEncoder passwordEncoder) {
@@ -61,6 +80,7 @@ public class EgovGeneralCryptoServiceImpl implements EgovGeneralCryptoService {
     }
 
     public byte[] encrypt(byte[] data, String password) {
+        warnIfWeakDefaultAlgorithm();
         if (passwordEncoder.checkPassword(password)) {
             StandardPBEByteEncryptor cipher = new StandardPBEByteEncryptor();
             cipher.setAlgorithm(algorithm);
@@ -72,6 +92,7 @@ public class EgovGeneralCryptoServiceImpl implements EgovGeneralCryptoService {
     }
 
     public BigDecimal encrypt(BigDecimal number, String password) {
+        warnIfWeakDefaultAlgorithm();
         if (passwordEncoder.checkPassword(password)) {
             StandardPBEBigDecimalEncryptor cipher = new StandardPBEBigDecimalEncryptor();
             cipher.setAlgorithm(algorithm);
@@ -83,6 +104,7 @@ public class EgovGeneralCryptoServiceImpl implements EgovGeneralCryptoService {
     }
 
     public void encrypt(File srcFile, String password, File trgtFile) {
+        warnIfWeakDefaultAlgorithm();
         byte[] buffer = null;
         if (passwordEncoder.checkPassword(password)) {
             StandardPBEByteEncryptor cipher = new StandardPBEByteEncryptor();
@@ -123,6 +145,7 @@ public class EgovGeneralCryptoServiceImpl implements EgovGeneralCryptoService {
     }
 
     public byte[] decrypt(byte[] encryptedData, String password) {
+        warnIfWeakDefaultAlgorithm();
         if (passwordEncoder.checkPassword(password)) {
             StandardPBEByteEncryptor cipher = new StandardPBEByteEncryptor();
             cipher.setAlgorithm(algorithm);
@@ -134,6 +157,7 @@ public class EgovGeneralCryptoServiceImpl implements EgovGeneralCryptoService {
     }
 
     public BigDecimal decrypt(BigDecimal encryptedNumber, String password) {
+        warnIfWeakDefaultAlgorithm();
         if (passwordEncoder.checkPassword(password)) {
             StandardPBEBigDecimalEncryptor cipher = new StandardPBEBigDecimalEncryptor();
             cipher.setAlgorithm(algorithm);
@@ -145,6 +169,7 @@ public class EgovGeneralCryptoServiceImpl implements EgovGeneralCryptoService {
     }
 
     public void decrypt(File encryptedFile, String password, File trgtFile) {
+        warnIfWeakDefaultAlgorithm();
         if (passwordEncoder.checkPassword(password)) {
             StandardPBEByteEncryptor cipher = new StandardPBEByteEncryptor();
             cipher.setAlgorithm(algorithm);

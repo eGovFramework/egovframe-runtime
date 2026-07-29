@@ -42,7 +42,7 @@ public class EgovExceptionHandlerTest {
                 .uri("/korean-message")
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange()
-                .expectStatus().is5xxServerError()
+                .expectStatus().isBadRequest()
                 .expectBody()
                 .consumeWith(result -> assertTrue(new String(result.getResponseBody(), StandardCharsets.UTF_8)
                         .contains("\"message\":\"서비스 예외 메시지\"")));
@@ -53,7 +53,7 @@ public class EgovExceptionHandlerTest {
 
         @GetMapping("/korean-message")
         public Mono<String> koreanMessage() {
-            return Mono.error(new EgovServiceException("서비스 예외 메시지"));
+            return Mono.error(new EgovServiceException(EgovErrorCode.INVALID_INPUT_VALUE, "서비스 예외 메시지"));
         }
 
     }

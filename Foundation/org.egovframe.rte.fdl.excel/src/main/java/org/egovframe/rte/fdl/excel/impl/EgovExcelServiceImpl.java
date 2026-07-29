@@ -19,6 +19,7 @@ import com.ibatis.sqlmap.client.SqlMapClient;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -253,6 +254,11 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
         InputStream streamToUse = null;
         // 2026.02.28 KISA 보안취약점 조치
         try {
+            // xlsx는 zip 포맷이라 압축률이 극단적인 zip bomb에 노출될 수 있다. POI 라이브러리 기본값
+            // (minInflateRatio=0.01)에만 암묵적으로 의존하지 않고, 신뢰할 수 없는 업로드 파일을 열기
+            // 직전 명시적으로 재적용해 같은 JVM의 다른 코드가 이 전역 설정을 완화했더라도 방어가
+            // 유지되도록 한다.
+            ZipSecureFile.setMinInflateRatio(0.01d);
             LOGGER.debug("ExcelServiceImpl loadWorkbook(XSSF) ...");
             streamToUse = (fileIn != null && fileIn.markSupported()) ? fileIn : new BufferedInputStream(fileIn);
             wb = new XSSFWorkbook(streamToUse);

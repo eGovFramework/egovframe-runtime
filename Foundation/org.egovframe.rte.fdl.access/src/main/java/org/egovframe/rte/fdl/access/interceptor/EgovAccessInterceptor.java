@@ -22,7 +22,9 @@ import org.egovframe.rte.fdl.access.service.EgovUserDetailsHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.util.UrlPathHelper;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -51,6 +53,10 @@ public class EgovAccessInterceptor implements HandlerInterceptor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EgovAccessInterceptor.class);
 
+    // getPathWithinApplication()이 요청 경로를 디코딩하고 contextPath 접두사만 정확히 제거해준다.
+    // (기존의 String.replace(contextPath, "")는 문자열 내 모든 occurrence를 치환해 경로가 왜곡될 수 있었음)
+    private static final UrlPathHelper URL_PATH_HELPER = new UrlPathHelper();
+
     private final EgovAccessConfig config;
 
     public EgovAccessInterceptor(EgovAccessConfig config) {
@@ -59,7 +65,10 @@ public class EgovAccessInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
-        String requestUrl = request.getRequestURI().replace(request.getContextPath(), "");
+        // 1) UrlPathHelper: 요청 경로를 디코딩(%2e%2e 등)하고 contextPath는 접두사 위치에서만 제거.
+        // 2) StringUtils.cleanPath: "." / ".." 세그먼트와 중복 슬래시를 정규화해, 인코딩·경로 조작으로
+        //    Ant/정규식 인가 패턴을 우회하려는 시도가 정규화 전 원문 그대로 매칭되지 않도록 함.
+        String requestUrl = StringUtils.cleanPath(URL_PATH_HELPER.getPathWithinApplication(request));
 
         // 인증 체크
         if (!EgovUserDetailsHelper.isAuthenticated()) {

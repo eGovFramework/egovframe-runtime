@@ -46,6 +46,11 @@ import java.util.regex.Pattern;
  *   );
  * </pre>
  *
+ * <p><b>주의:</b> 블록 채번의 SELECT에 {@code FOR UPDATE} 행 잠금을 사용해 다중 WAS 인스턴스가 같은
+ * DB를 공유하는 배포에서도 next_id 중복 할당을 방지한다. Oracle/Tibero/PostgreSQL/MySQL(InnoDB)/
+ * HSQLDB/H2 등 주요 DBMS는 이 구문을 지원하나, SQL Server(T-SQL)는 표준 {@code FOR UPDATE} 구문을
+ * 지원하지 않으므로 SQL Server 사용 시 별도 잠금 힌트(예: {@code WITH (UPDLOCK, ROWLOCK)}) 적용이 필요하다.</p>
+ *
  * @author 실행환경 개발팀 김태호
  * @version 1.0
  * <pre>
@@ -150,7 +155,11 @@ public class EgovTableIdGnrServiceImpl extends AbstractDataBlockIdGnrService {
                     Object nextId;
                     Object newNextId;
                     try {
-                        String selectQuery = "SELECT " + nextIdFieldName + " FROM " + table + " WHERE " + tableNameFieldName + " = ?";
+                        // mSemaphore(AbstractIdGnrService)는 같은 JVM 내 동시성만 막는다. 여러 WAS
+                        // 인스턴스가 같은 DB를 공유하는 배포에서는 서로 다른 JVM의 트랜잭션이 이 SELECT를
+                        // 동시에 실행해 같은 next_id를 읽어갈 수 있으므로, FOR UPDATE로 행 잠금을 걸어
+                        // 다른 트랜잭션이 UPDATE 커밋 전까지 대기하도록 한다(ID 블록 중복 할당 방지).
+                        String selectQuery = "SELECT " + nextIdFieldName + " FROM " + table + " WHERE " + tableNameFieldName + " = ? FOR UPDATE";
                         LOGGER.debug("Select Query : {}", selectQuery);
                         if (useBigDecimals) {
                             try {

@@ -29,6 +29,12 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  * <b>NOTE:</b> 전자정부 웹 서비스를 Servlet을 통해 제공하기 위해 사용하는 Servlet class이다.
  * </p>
  *
+ * <p><b>보안 주의:</b> {@link CXFNonSpringServlet}의 기본 동작을 그대로 상속하므로, 게시된 각 서비스는
+ * {@code ?wsdl} 쿼리로 WSDL(오퍼레이션명·파라미터 타입 등 서비스 구조)이 별도 인증 없이 노출된다.
+ * 내부망 전용으로 의도된 연계 서비스라면 이 서블릿 경로를 네트워크/게이트웨이 수준에서 접근 제어해야
+ * 한다(이 클래스 자체는 WSDL 비공개 옵션을 제공하지 않음). 또한 WSDL/XSD 파싱 시 XXE 방어는 이 코드가
+ * 아니라 CXF/JAX-WS 런타임의 기본 XML 파서 보안 설정에 의존한다.</p>
+ *
  * @author 실행환경 개발팀 심상호
  * @version 1.0
  * <pre>

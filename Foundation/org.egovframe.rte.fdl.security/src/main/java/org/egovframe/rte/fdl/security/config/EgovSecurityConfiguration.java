@@ -60,6 +60,8 @@ import org.springframework.security.web.servlet.util.matcher.PathPatternRequestM
 import org.springframework.security.web.util.matcher.RegexRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.util.ObjectUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -75,6 +77,8 @@ import java.util.*;
 @Configuration
 @EnableWebSecurity
 public class EgovSecurityConfiguration {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(EgovSecurityConfiguration.class);
 
     @Value("${Globals.SecurityConfigPath:}")
     private String securityConfigPath;
@@ -496,8 +500,11 @@ public class EgovSecurityConfiguration {
                 headers.xssProtection(HeadersConfigurer.XXssConfig::disable);
             }
 
-            // Cache-Control
+            // Cache-Control (주의: cacheControl=true는 보호 헤더를 "비활성화"한다 - 이름과 반대 동작)
             if (securityConfig.isCacheControl()) {
+                LOGGER.warn("cacheControl=true - this DISABLES the protective Cache-Control/Pragma/Expires " +
+                        "response headers (the property name is misleading). Sensitive pages may be cached by " +
+                        "browsers/proxies. Leave cacheControl unset or false (default) to keep these headers enabled.");
                 headers.cacheControl(HeadersConfigurer.CacheControlConfig::disable);
             } else {
                 headers.cacheControl(Customizer.withDefaults()); // enable

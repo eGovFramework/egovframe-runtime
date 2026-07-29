@@ -34,7 +34,6 @@ import java.util.List;
  * ----------------------------------------------
  * 2017.10.23	신용호			최초 생성
  * 2023.08.31	유지보수			불필요한 replaceAll을 replace 로 수정(getRegexDelimiter(), Contribution 반영)
- * 2026.07.19	z3rotig4r		getRegexDelimiter()의 남은 replaceAll을 replace로 수정($ 구분자 시 Illegal group reference 예외 제거)
  * </pre>
  * @since 2017.10.23
  */

@@ -19,6 +19,10 @@ import jakarta.jws.WebParam.Mode;
 import jakarta.xml.ws.Holder;
 import jakarta.xml.ws.Service;
 import jakarta.xml.ws.WebServiceException;
+import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.frontend.ClientProxy;
+import org.apache.cxf.transport.http.HTTPConduit;
+import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.egovframe.rte.itl.integration.EgovIntegrationMessage;
 import org.egovframe.rte.itl.integration.EgovIntegrationMessageHeader;
 import org.egovframe.rte.itl.integration.EgovIntegrationMessageHeader.ResultCode;
@@ -55,10 +59,27 @@ import java.util.Map;
  * 2017.02.15	장동한				시큐어코딩(ES)-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
  * </pre>
  * @since 2009.06.01
+ *
+ * <p><b>보안 주의:</b> {@code wsdlAddress}(WSDL 조회 URL)는 신뢰할 수 있는 연계 설정에서만 지정해야
+ * 한다 — 이 값이 외부 입력으로 오염되면 SSRF로 이어질 수 있다. 또한 WSDL/XSD 파싱 시 XXE 방어는 이
+ * 클래스가 별도로 강화하는 것이 아니라 {@link jakarta.xml.ws.Service#create}가 내부적으로 사용하는
+ * CXF/JAX-WS 런타임의 기본 XML 파서 보안 설정에 의존한다.</p>
  */
 public class EgovWebServiceClientImpl implements EgovWebServiceClient {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EgovWebServiceClientImpl.class);
+
+    /** 연결 타임아웃 기본값(ms) — 연계 대상이 무응답이어도 호출 스레드가 무한정 블로킹되지 않도록 함 */
+    private static final long DEFAULT_CONNECTION_TIMEOUT_MS = 5000L;
+    /** 응답 수신 타임아웃 기본값(ms) */
+    private static final long DEFAULT_RECEIVE_TIMEOUT_MS = 30000L;
+
+    /**
+     * 연결/응답 타임아웃(ms). 소비 앱이 {@link #setConnectionTimeout(long)}/{@link #setReceiveTimeout(long)}로
+     * 재정의하지 않으면 기본값이 적용된다.
+     */
+    private long connectionTimeout = DEFAULT_CONNECTION_TIMEOUT_MS;
+    private long receiveTimeout = DEFAULT_RECEIVE_TIMEOUT_MS;
 
     /**
      * ServiceEndpointInterfaceInfo
@@ -177,6 +198,47 @@ public class EgovWebServiceClientImpl implements EgovWebServiceClient {
         LOGGER.debug("### EgovWebServiceClientImpl Finish to creating EgovWebServiceClient");
     }
 
+    /**
+     * 연결 타임아웃(ms)을 재정의한다. 기본값은 {@value #DEFAULT_CONNECTION_TIMEOUT_MS}ms.
+     */
+    public void setConnectionTimeout(long connectionTimeoutMillis) {
+        this.connectionTimeout = connectionTimeoutMillis;
+    }
+
+    /**
+     * 응답 수신 타임아웃(ms)을 재정의한다. 기본값은 {@value #DEFAULT_RECEIVE_TIMEOUT_MS}ms.
+     */
+    public void setReceiveTimeout(long receiveTimeoutMillis) {
+        this.receiveTimeout = receiveTimeoutMillis;
+    }
+
+    /**
+     * 연계 대상 서비스가 응답을 지연시키더라도 호출 스레드/소켓이 무한정 블로킹되지 않도록
+     * CXF HTTPConduit에 연결/응답 타임아웃을 적용한다. CXF가 아닌 JAX-WS 런타임이 사용되어
+     * HTTPConduit로 캐스팅할 수 없는 경우 조용히 무시한다(타임아웃 미적용 상태로 남을 수 있으므로
+     * 그 경우 호출측에서 별도 타임아웃 전략이 필요하다).
+     */
+    private void applyDefaultTimeouts(Object clientPort) {
+        try {
+            Client cxfClient = ClientProxy.getClient(clientPort);
+            if (cxfClient.getConduit() instanceof HTTPConduit) {
+                HTTPConduit httpConduit = (HTTPConduit) cxfClient.getConduit();
+                HTTPClientPolicy policy = httpConduit.getClient();
+                if (policy == null) {
+                    policy = new HTTPClientPolicy();
+                }
+                policy.setConnectionTimeout(connectionTimeout);
+                policy.setReceiveTimeout(receiveTimeout);
+                httpConduit.setClient(policy);
+                LOGGER.debug("### EgovWebServiceClientImpl applyDefaultTimeouts() connectionTimeout={}, receiveTimeout={}",
+                        connectionTimeout, receiveTimeout);
+            }
+        } catch (RuntimeException e) {
+            LOGGER.debug("[{}] EgovWebServiceClientImpl applyDefaultTimeouts() Could not apply HTTP timeout policy: {}",
+                    e.getClass().getSimpleName(), e.getMessage());
+        }
+    }
+
     @SuppressWarnings("unchecked")
     public EgovIntegrationMessage service(EgovIntegrationMessage requestMessage) {
         LOGGER.debug("### EgovWebServiceClientImpl service() requestMesage : {}", requestMessage);
@@ -189,6 +251,7 @@ public class EgovWebServiceClientImpl implements EgovWebServiceClient {
                 try {
                     service = Service.create(wsdlURL, serviceName);
                     client = service.getPort(portName, serviceEndpointInterfaceClass);
+                    applyDefaultTimeouts(client);
                     initialized = true;
                 } catch (WebServiceException e) {
                     LOGGER.debug("[{}] EgovWebServiceClientImpl service() Cannot create web service port (WebServiceException) : {}", e.getClass().getSimpleName(), e.getMessage());

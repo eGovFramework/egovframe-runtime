@@ -188,7 +188,8 @@ public class FilehandlingServiceTest {
             EgovFileUtil.delete(new File(absoluteFilePath));
         }
 
-        EgovFileUtil.writeFile(absoluteFilePath, text, "UTF-8");
+        // absoluteFilePath는 java.io.tmpdir 기반의 신뢰된 경로이므로 File 오버로드를 사용한다.
+        EgovFileUtil.writeFile(new File(absoluteFilePath), text, "UTF-8");
         assertTrue(EgovFileUtil.isExistsFile(absoluteFilePath));
     }
 
@@ -213,7 +214,8 @@ public class FilehandlingServiceTest {
     @Test
     public void testReadFileWithAbsolutePath() throws IOException {
         if (!EgovFileUtil.isExistsFile(absoluteFilePath)) {
-            EgovFileUtil.writeFile(absoluteFilePath, text, "UTF-8");
+            // absoluteFilePath는 java.io.tmpdir 기반의 신뢰된 경로이므로 File 오버로드를 사용한다.
+        EgovFileUtil.writeFile(new File(absoluteFilePath), text, "UTF-8");
         }
         assertEquals(EgovFileUtil.readFile(new File(absoluteFilePath), "UTF-8"), text);
 
@@ -265,7 +267,8 @@ public class FilehandlingServiceTest {
     @Test
     public void testCpWithAbsolutePath() throws IOException {
         if (!EgovFileUtil.isExistsFile(absoluteFilePath)) {
-            EgovFileUtil.writeFile(absoluteFilePath, text, "UTF-8");
+            // absoluteFilePath는 java.io.tmpdir 기반의 신뢰된 경로이므로 File 오버로드를 사용한다.
+        EgovFileUtil.writeFile(new File(absoluteFilePath), text, "UTF-8");
         }
 
         EgovFileUtil.cp(absoluteFilePath, tmppath + "/" + filename);
@@ -421,26 +424,16 @@ public class FilehandlingServiceTest {
     @Test
     public void testLineIterator() throws IOException {
         String[] string = {
-                "<project xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"",
-                "         xmlns=\"http://maven.apache.org/POM/4.0.0\"",
-                "         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd\">",
-                "",
-                "    <parent>",
-                "        <groupId>org.egovframe.rte</groupId>",
-                "        <artifactId>egovframe-rte-root</artifactId>",
-                "        <version>5.0.0</version>",
-                "        <relativePath>../../pom.xml</relativePath>",
-                "    </parent>",
-                "",
-                "    <modelVersion>4.0.0</modelVersion>",
-                "    <artifactId>egovframe-rte-fdl-filehandling</artifactId>",
-                "    <packaging>jar</packaging>",
-                "    <name>org.egovframe.rte.fdl.filehandling</name>",
-                "    <description>The eGovernment Standard Framework</description>",
-                "    <url>https://www.egovframe.go.kr</url>"
+                "line one",
+                "line two",
+                "line three",
+                "line four",
+                "line five"
         };
 
-        File file = new File("pom.xml");
+        URL fixtureUrl = FilehandlingServiceTest.class.getResource("lineIteratorFixture.txt");
+        assertNotNull(fixtureUrl, "테스트 픽스처 파일을 찾을 수 없습니다: lineIteratorFixture.txt");
+        File file = new File(fixtureUrl.getFile());
         LineIterator it = FileUtils.lineIterator(file, "UTF-8");
 
         try {
@@ -471,7 +464,8 @@ public class FilehandlingServiceTest {
         String testFolder = FilehandlingServiceTest.class.getResource(".").getPath();
         LOGGER.debug("testFolder = {}", testFolder);
         FileSystemManager manager = VFS.getManager();
-        EgovFileUtil.writeFile(testFolder + "/file1.txt", text, "UTF-8");
+        // testFolder는 클래스 리소스 경로 기반의 신뢰된 절대경로이므로 File 오버로드를 사용한다.
+        EgovFileUtil.writeFile(new File(testFolder, "file1.txt"), text, "UTF-8");
 
         /*
          * 캐싱 Manager 생성
