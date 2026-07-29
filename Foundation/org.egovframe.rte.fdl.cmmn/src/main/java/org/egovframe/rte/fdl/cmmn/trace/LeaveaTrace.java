@@ -139,7 +139,7 @@ public class LeaveaTrace {
         }
 
         for (TraceHandlerService traceHandlerService : traceHandlerServices) {
-            if (traceHandlerService.hasReqExpMatcher()) {
+            if (!traceHandlerService.hasReqExpMatcher()) {
                 traceHandlerService.setReqExpMatcher(pm);
             }
             traceHandlerService.setPackageName(clazz.getCanonicalName());
