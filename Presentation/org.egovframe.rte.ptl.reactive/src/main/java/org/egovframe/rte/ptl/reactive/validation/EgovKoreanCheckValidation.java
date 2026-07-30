@@ -47,7 +47,7 @@ public class EgovKoreanCheckValidation implements ConstraintValidator<EgovKorean
             return false;
         }
         Matcher matcher = KOREAN_PATTERN.matcher(value);
-        return matcher.find();
+        return matcher.matches();
     }
 
 }

@@ -47,7 +47,7 @@ public class EgovEnglishCheckValidation implements ConstraintValidator<EgovEngli
             return false;
         }
         Matcher matcher = ENGLISH_PATTERN.matcher(value);
-        return matcher.find();
+        return matcher.matches();
     }
 
 }
