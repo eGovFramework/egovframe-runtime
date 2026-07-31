@@ -116,6 +116,11 @@ public class MessageConverterImpl implements MessageConverter {
             return source;
         } else if (type instanceof ListType) {
             LOGGER.debug("### MessageConverterImpl convertToTypedObject() : Type is a List Type");
+            // 변환 대상 Value Object의 List 필드가 null이면 역참조 전에 null을 그대로 반환한다.
+            // 타입 체계가 null을 유효 값으로 허용한다.
+            if (source == null) {
+                return null;
+            }
             ListType listType = (ListType) type;
             Object[] components = (Object[]) source;
             List<Object> list = new ArrayList<Object>();
@@ -125,6 +130,11 @@ public class MessageConverterImpl implements MessageConverter {
             return list;
         } else if (type instanceof RecordType) {
             LOGGER.debug("### MessageConverterImpl convertToTypedObject() : Type is a Record(Map) Type");
+            // 변환 대상 Value Object의 Record 필드가 null이면 역참조 전에 null을 그대로 반환한다.
+            // 타입 체계가 null을 유효 값으로 허용한다.
+            if (source == null) {
+                return null;
+            }
             RecordType recordType = (RecordType) type;
             Class<?> recordClass = classLoader.loadClass(recordType);
             Map<String, Object> map = new HashMap<String, Object>();
