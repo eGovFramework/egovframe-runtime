@@ -83,7 +83,7 @@ public class EgovEscapableDelimitedLineTokenizer extends EgovAbstractLineTokeniz
      */
     public EgovEscapableDelimitedLineTokenizer(String delimiter) {
         Assert.state(!delimiter.equals(DEFAULT_QUOTE_CHARACTER), "[" + DEFAULT_QUOTE_CHARACTER + "] is not allowed as delimiter for tokenizers.");
-        this.delimiter = delimiter;
+        initDelimiter(delimiter);
         setQuoteCharacter(DEFAULT_QUOTE_CHARACTER);
     }
 
@@ -93,6 +93,10 @@ public class EgovEscapableDelimitedLineTokenizer extends EgovAbstractLineTokeniz
      * @param delimiter : delimiter로 사용 할 문자열
      */
     public void setDelimiter(String delimiter) {
+        initDelimiter(delimiter);
+    }
+
+    private void initDelimiter(String delimiter) {
         this.delimiter = delimiter;
         // regex 정규식에서 특수문자로 인식하는 것에 대한 처리
         this.regexDelimiter = getRegexDelimiter(delimiter);
@@ -133,7 +137,7 @@ public class EgovEscapableDelimitedLineTokenizer extends EgovAbstractLineTokeniz
         int closeIndex = 0;
         boolean flagEndQuote = true;
         String incompleteToken = "";
-        String[] arrLine = line.split(this.regexDelimiter);
+        String[] arrLine = line.split(this.regexDelimiter, -1);
 
         for (int ii = 0; ii < arrLine.length; ii++) {
             if (this.escape) {
@@ -153,9 +157,10 @@ public class EgovEscapableDelimitedLineTokenizer extends EgovAbstractLineTokeniz
                         tokens.add(arrLine[ii]);
                     }
                 } else {
-                    closeIndex = findCloseIndex(arrLine[ii], quoteCharacter, quoteIndex + 1);
+                    // 이어붙이는 셀에서는 닫는 따옴표가 0번에 올 수 있으므로 셀 처음부터 찾는다.
+                    closeIndex = findCloseIndex(arrLine[ii], quoteCharacter, 0);
                     incompleteToken += this.delimiter + arrLine[ii];
-                    if (closeIndex > 0) {
+                    if (closeIndex >= 0) {
                         tokens.add(incompleteToken);
                         flagEndQuote = true;
                     } else {
