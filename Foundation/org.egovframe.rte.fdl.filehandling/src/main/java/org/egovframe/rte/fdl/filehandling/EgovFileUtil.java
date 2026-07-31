@@ -170,17 +170,14 @@ public class EgovFileUtil {
     }
 
     /**
-     * String 영으로 파일의 내용을 읽는다.
+     * String 형으로 파일 전체를 읽어 지정한 인코딩으로 디코딩한다. 원본의 개행은 그대로 보존된다.
+     * encoding이 null이면 플랫폼 기본 문자셋을 사용한다.
      */
     public static String readFile(File file, String encoding) throws IOException {
-        StringBuilder sb = new StringBuilder();
-        List<String> lines = readTextLines(file, encoding);
-
-        for (Iterator<String> it = lines.iterator(); it.hasNext(); ) {
-            sb.append(it.next());
+        Charset charset = encoding == null ? Charset.defaultCharset() : Charset.forName(encoding);
+        try (InputStream in = new FileInputStream(file)) {
+            return new String(in.readAllBytes(), charset);
         }
-
-        return sb.toString();
     }
 
     /**
