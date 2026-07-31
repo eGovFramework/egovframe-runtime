@@ -21,7 +21,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.*;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Iterator;
 import java.util.List;
 
@@ -242,6 +244,44 @@ public class FilehandlingServiceTest {
         String multiPath = tmppath + "/multiline.txt";
         EgovFileUtil.writeFile(multiPath, "line1\nline2\nline3", "UTF-8");
         assertEquals("line1line2line3", EgovFileUtil.readFile(new File(multiPath), "UTF-8"));
+    }
+
+    /**
+     * 파일 읽기 테스트. 플랫폼 기본 문자셋으로 쓴 한글은 그대로 읽혀야 한다.
+     */
+    @Test
+    public void testReadFileKoreanWithDefaultCharset() throws IOException {
+        File file = new File(EgovFileUtil.getTmpDirectory() + "/read-default-korean.txt");
+        String content = "행정안전부 표준프레임워크";
+
+        try {
+            Files.write(file.toPath(), content.getBytes(Charset.defaultCharset()));
+
+            assertEquals(content, EgovFileUtil.readFile(file));
+        } finally {
+            if (file.exists()) {
+                EgovFileUtil.delete(file);
+            }
+        }
+    }
+
+    /**
+     * 빈 파일 읽기 테스트. 내용이 없는 파일은 두 오버로드 모두 빈 문자열을 반환해야 한다.
+     */
+    @Test
+    public void testReadEmptyFileWithDefaultCharsetAndEncoding() throws IOException {
+        File file = new File(EgovFileUtil.getTmpDirectory() + "/read-empty.txt");
+
+        try {
+            Files.write(file.toPath(), new byte[0]);
+
+            assertEquals("", EgovFileUtil.readFile(file));
+            assertEquals("", EgovFileUtil.readFile(file, "UTF-8"));
+        } finally {
+            if (file.exists()) {
+                EgovFileUtil.delete(file);
+            }
+        }
     }
 
     /**
