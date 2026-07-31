@@ -229,8 +229,7 @@ public abstract class AbstractIdGnrService implements EgovIdGnrService, Applicat
      * @throws FdlException 다음 아이디가 유효한 byte의 범위를 벗어날때
      */
     public String getNextStringId(EgovIdGnrStrategy strategy) throws FdlException {
-        this.strategy = strategy;
-        return getNextStringId();
+        return strategy.makeId(getNextBigDecimalId().toString());
     }
 
     /**
@@ -241,8 +240,8 @@ public abstract class AbstractIdGnrService implements EgovIdGnrService, Applicat
      * @throws FdlException 다음 아이디가 유효한 byte의 범위를 벗어날때
      */
     public String getNextStringId(String strategyId) throws FdlException {
-        this.strategy = (EgovIdGnrStrategy) this.beanFactory.getBean(strategyId);
-        return getNextStringId();
+        EgovIdGnrStrategy strategy = (EgovIdGnrStrategy) this.beanFactory.getBean(strategyId);
+        return strategy.makeId(getNextBigDecimalId().toString());
     }
 
     /**
