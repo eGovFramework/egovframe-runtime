@@ -234,6 +234,42 @@ public class EgovStringUtilTest {
         assertEquals(i, result.length());
     }
 
+    /**
+     * 생략 표기(isEllipsis) 옵션이 alignLeft/alignRight/alignCenter에서 동일하게 동작하는지 검사한다.
+     */
+    @Test
+    public void testAlignStringWithEllipsis() {
+        String source = "abcdefghij";
+
+        // 지정한 길이를 넘으면 뒷부분을 "..."으로 대체하고, 결과 길이는 지정한 길이와 같다
+        assertEquals("ab...", EgovStringUtil.alignLeft(source, 5, true));
+        assertEquals("ab...", EgovStringUtil.alignRight(source, 5, true));
+        assertEquals("ab...", EgovStringUtil.alignCenter(source, 5, true));
+
+        // isEllipsis가 false이면 지정한 길이만큼 자른다
+        assertEquals("abcde", EgovStringUtil.alignLeft(source, 5, false));
+        assertEquals("abcde", EgovStringUtil.alignRight(source, 5, false));
+        assertEquals("abcde", EgovStringUtil.alignCenter(source, 5, false));
+
+        // 길이가 정확히 같으면 원본을 그대로 반환한다
+        assertEquals("abcde", EgovStringUtil.alignLeft("abcde", 5, true));
+        assertEquals("abcde", EgovStringUtil.alignRight("abcde", 5, true));
+
+        // 길이가 미달이면 isEllipsis와 무관하게 공백으로 채운다
+        assertEquals("abc   ", EgovStringUtil.alignLeft("abc", 6, true));
+        assertEquals("abc   ", EgovStringUtil.alignLeft("abc", 6, false));
+        assertEquals("   abc", EgovStringUtil.alignRight("abc", 6, true));
+
+        // 빈 문자열은 지정한 길이만큼의 공백이 된다
+        assertEquals("   ", EgovStringUtil.alignLeft("", 3, true));
+        assertEquals("   ", EgovStringUtil.alignRight("", 3, true));
+
+        // null은 세 메서드 모두 NullPointerException을 발생시킨다
+        assertThrows(NullPointerException.class, () -> EgovStringUtil.alignLeft(null, 3, true));
+        assertThrows(NullPointerException.class, () -> EgovStringUtil.alignRight(null, 3, true));
+        assertThrows(NullPointerException.class, () -> EgovStringUtil.alignCenter(null, 3, true));
+    }
+
     @Test
     public void testEncodePassword() {
         // 1. try to encode password and compare
