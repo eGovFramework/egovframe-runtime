@@ -88,7 +88,6 @@ public class EgovBatchException extends BaseRuntimeException {
         this.message = getExceptionMessageSelect(dataSource);
         this.wrappedException = wrappedException;
         this.messageParameters = null;
-        this.wrappedException = null;
     }
 
     /**
