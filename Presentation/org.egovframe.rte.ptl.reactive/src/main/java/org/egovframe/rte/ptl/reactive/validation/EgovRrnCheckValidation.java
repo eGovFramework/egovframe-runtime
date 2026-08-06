@@ -48,7 +48,7 @@ public class EgovRrnCheckValidation implements ConstraintValidator<EgovRrnCheck,
         }
         String mValue = value.replaceAll("-", "");
         Matcher matcher = RRN_PATTERN.matcher(mValue);
-        boolean check = matcher.find();
+        boolean check = matcher.matches();
         if (!check) {
             return false;
         }

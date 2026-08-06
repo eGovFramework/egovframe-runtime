@@ -48,7 +48,7 @@ public class EgovPhoneCheckValidation implements ConstraintValidator<EgovPhoneCh
         }
         String mValue = value.replaceAll("-", "");
         Matcher matcher = PHONE_PATTERN.matcher(mValue);
-        return matcher.find();
+        return matcher.matches();
     }
 
 }
