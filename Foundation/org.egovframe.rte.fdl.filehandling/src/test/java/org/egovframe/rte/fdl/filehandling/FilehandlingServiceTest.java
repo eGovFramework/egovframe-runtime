@@ -21,7 +21,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.*;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Iterator;
 import java.util.List;
 
@@ -235,13 +237,126 @@ public class FilehandlingServiceTest {
     }
 
     /**
-     * 여러 줄 파일 읽기 테스트. 줄들이 종전과 동일하게 연결되어야 한다.
+     * 여러 줄 파일 읽기 테스트. 원본의 개행이 보존되어야 한다.
      */
     @Test
-    public void testReadMultiLineFile() throws IOException {
+    public void testReadMultiLineFilePreservesLineSeparator() throws IOException {
         String multiPath = tmppath + "/multiline.txt";
         EgovFileUtil.writeFile(multiPath, "line1\nline2\nline3", "UTF-8");
-        assertEquals("line1line2line3", EgovFileUtil.readFile(new File(multiPath), "UTF-8"));
+        assertEquals("line1\nline2\nline3", EgovFileUtil.readFile(new File(multiPath), "UTF-8"));
+    }
+
+    /**
+     * 파일 읽기 테스트. 플랫폼 기본 문자셋으로 쓴 한글은 그대로 읽혀야 한다.
+     */
+    @Test
+    public void testReadFileKoreanWithDefaultCharset() throws IOException {
+        File file = new File(EgovFileUtil.getTmpDirectory() + "/read-default-korean.txt");
+        String content = "행정안전부 표준프레임워크";
+
+        try {
+            Files.write(file.toPath(), content.getBytes(Charset.defaultCharset()));
+
+            assertEquals(content, EgovFileUtil.readFile(file));
+        } finally {
+            if (file.exists()) {
+                EgovFileUtil.delete(file);
+            }
+        }
+    }
+
+    /**
+     * 빈 파일 읽기 테스트. 내용이 없는 파일은 두 오버로드 모두 빈 문자열을 반환해야 한다.
+     */
+    @Test
+    public void testReadEmptyFileWithDefaultCharsetAndEncoding() throws IOException {
+        File file = new File(EgovFileUtil.getTmpDirectory() + "/read-empty.txt");
+
+        try {
+            Files.write(file.toPath(), new byte[0]);
+
+            assertEquals("", EgovFileUtil.readFile(file));
+            assertEquals("", EgovFileUtil.readFile(file, "UTF-8"));
+        } finally {
+            if (file.exists()) {
+                EgovFileUtil.delete(file);
+            }
+        }
+    }
+
+    /**
+     * 파일 읽기 테스트. 지정 인코딩으로 읽을 때 LF 개행은 보존되어야 한다.
+     */
+    @Test
+    public void testReadFileWithEncodingPreservesLf() throws IOException {
+        File file = new File(EgovFileUtil.getTmpDirectory() + "/read-utf8-lf.txt");
+        String content = "첫째 줄\n둘째 줄\n셋째 줄\n";
+
+        try {
+            Files.write(file.toPath(), content.getBytes(StandardCharsets.UTF_8));
+
+            assertEquals(content, EgovFileUtil.readFile(file, "UTF-8"));
+        } finally {
+            if (file.exists()) {
+                EgovFileUtil.delete(file);
+            }
+        }
+    }
+
+    /**
+     * 파일 읽기 테스트. 지정 인코딩으로 읽을 때 CRLF 개행은 보존되어야 한다.
+     */
+    @Test
+    public void testReadFileWithEncodingPreservesCrLf() throws IOException {
+        File file = new File(EgovFileUtil.getTmpDirectory() + "/read-utf8-crlf.txt");
+        String content = "a\r\nb\r\n";
+
+        try {
+            Files.write(file.toPath(), content.getBytes(StandardCharsets.UTF_8));
+
+            assertEquals(content, EgovFileUtil.readFile(file, "UTF-8"));
+        } finally {
+            if (file.exists()) {
+                EgovFileUtil.delete(file);
+            }
+        }
+    }
+
+    /**
+     * 파일 읽기 테스트. EUC-KR로 쓴 파일은 지정 인코딩으로 그대로 읽혀야 한다.
+     */
+    @Test
+    public void testReadFileWithEucKrEncoding() throws IOException {
+        File file = new File(EgovFileUtil.getTmpDirectory() + "/read-euc-kr.txt");
+        String content = "한글\nEUC-KR\n";
+
+        try {
+            Files.write(file.toPath(), content.getBytes(Charset.forName("EUC-KR")));
+
+            assertEquals(content, EgovFileUtil.readFile(file, "EUC-KR"));
+        } finally {
+            if (file.exists()) {
+                EgovFileUtil.delete(file);
+            }
+        }
+    }
+
+    /**
+     * 파일 읽기 테스트. 잘못된 UTF-8 바이트 시퀀스는 종전과 같이 대체 문자로 처리되어야 한다.
+     */
+    @Test
+    public void testReadFileWithInvalidUtf8BytesReplacesMalformedInput() throws IOException {
+        File file = new File(EgovFileUtil.getTmpDirectory() + "/read-invalid-utf8.txt");
+
+        try {
+            Files.write(file.toPath(), new byte[]{(byte) 0xC3, (byte) 0x28});
+
+            assertEquals("�(", EgovFileUtil.readFile(file, "UTF-8"));
+        } finally {
+            if (file.exists()) {
+                EgovFileUtil.delete(file);
+            }
+        }
     }
 
     /**

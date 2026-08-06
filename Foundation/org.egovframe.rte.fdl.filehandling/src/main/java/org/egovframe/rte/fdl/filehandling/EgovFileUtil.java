@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.io.FileNotFoundException;
+import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
@@ -146,46 +147,37 @@ public class EgovFileUtil {
     }
 
     /**
-     * 파일을 읽는다.
+     * 파일을 플랫폼 기본 문자셋({@link Charset#defaultCharset()})으로 읽는다.
+     * 인코딩을 지정하려면 {@link #readFile(File, String)}을 사용한다.
      */
     public static String readFile(File file) throws IOException {
-        BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
         String sResult = "";
 
-        try {
+        try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
             sResult = readFileContent(in);
         } catch (IllegalArgumentException e) {
             LOGGER.debug("[{}] EogvFileUtil : {}", e.getClass().getName(), e.getMessage());
-        } finally {
-            in.close();
         }
 
         return sResult;
     }
 
     /**
-     * String 형으로 파일의 내용을 읽는다.
+     * String 형으로 스트림 전체를 읽어 플랫폼 기본 문자셋으로 디코딩한다.
      */
     public static String readFileContent(InputStream in) throws IOException {
-        StringBuilder buf = new StringBuilder();
-        for (int i = in.read(); i != -1; i = in.read()) {
-            buf.append((char) i);
-        }
-        return buf.toString();
+        return new String(in.readAllBytes(), Charset.defaultCharset());
     }
 
     /**
-     * String 영으로 파일의 내용을 읽는다.
+     * String 형으로 파일 전체를 읽어 지정한 인코딩으로 디코딩한다. 원본의 개행은 그대로 보존된다.
+     * encoding이 null이면 플랫폼 기본 문자셋을 사용한다.
      */
     public static String readFile(File file, String encoding) throws IOException {
-        StringBuilder sb = new StringBuilder();
-        List<String> lines = readTextLines(file, encoding);
-
-        for (Iterator<String> it = lines.iterator(); it.hasNext(); ) {
-            sb.append(it.next());
+        Charset charset = encoding == null ? Charset.defaultCharset() : Charset.forName(encoding);
+        try (InputStream in = new FileInputStream(file)) {
+            return new String(in.readAllBytes(), charset);
         }
-
-        return sb.toString();
     }
 
     /**
