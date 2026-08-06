@@ -115,6 +115,7 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
 
     /**
      * Workbook 객체를 생성하여 엑셀파일을 생성한다.
+     * 전달받은 Workbook을 닫지 않고 그대로 반환하며, 호출자가 이어서 사용·수정·재저장할 수 있다. 닫는 책임은 호출자에게 있다.
      */
     @Override
     public Workbook createWorkbook(Workbook wb, String filepath) {
@@ -124,16 +125,12 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
                 LOGGER.debug("make dir {}", FilenameUtils.getFullPath(filepath));
                 FileUtils.forceMkdir(new File(FilenameUtils.getFullPath(filepath)));
             }
-            FileOutputStream fileOut = null;
             LOGGER.debug("EgovExcelServiceImpl.createWorkbook 2 : templatePath is {}", filepath);
-            try {
+            try (FileOutputStream fileOut = new FileOutputStream(filepath)) {
                 LOGGER.debug("ExcelServiceImpl filepath ...");
-                fileOut = new FileOutputStream(filepath);
                 wb.write(fileOut);
             } finally {
                 LOGGER.debug("ExcelServiceImpl loadExcelObject End ");
-                if (wb != null) wb.close();
-                if (fileOut != null) fileOut.close();
             }
             return wb;
         } catch (IOException e) {
