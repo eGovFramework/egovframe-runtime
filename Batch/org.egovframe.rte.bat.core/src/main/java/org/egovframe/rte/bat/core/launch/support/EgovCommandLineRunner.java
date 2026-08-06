@@ -272,9 +272,9 @@ public class EgovCommandLineRunner {
             // 다음 Batch Job을 실행하기 위한 Job Parameters를 생성한다.
             if (opts.contains("-next")) {
                 JobParameters nextParameters = getNextJobParameters(job);
-                Map<String, JobParameter> map = new HashMap<>(nextParameters.getParameters());
+                Map<String, JobParameter<?>> map = new HashMap<>(nextParameters.getParameters());
                 map.putAll(jobParameters.getParameters());
-                jobParameters = new JobParameters();
+                jobParameters = new JobParameters(map);
             }
 
             // Batch Job을 실행한다.
