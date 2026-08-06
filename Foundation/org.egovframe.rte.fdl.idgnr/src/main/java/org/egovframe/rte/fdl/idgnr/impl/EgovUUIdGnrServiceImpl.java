@@ -273,6 +273,8 @@ final class TimeBasedUUIDGenerator {
 
     public static final UUID generateIdFromTimestamp(long currentTimeMillis, long hostId) {
         long time;
+        long timestamp;
+        long sequence;
         synchronized (LOCK) {
             if (currentTimeMillis > lastTime) {
                 lastTime = currentTimeMillis;
@@ -280,16 +282,18 @@ final class TimeBasedUUIDGenerator {
             } else {
                 ++clockSequence;
             }
+            timestamp = lastTime;
+            sequence = clockSequence;
         }
 
         // low Time
-        time = currentTimeMillis << 32;
+        time = timestamp << 32;
         // mid Time
-        time |= ((currentTimeMillis & 0xFFFF00000000L) >> 16);
+        time |= ((timestamp & 0xFFFF00000000L) >> 16);
         // hi Time
-        time |= 0x1000 | ((currentTimeMillis >> 48) & 0x0FFF);
+        time |= 0x1000 | ((timestamp >> 48) & 0x0FFF);
 
-        long clockSequenceHi = clockSequence;
+        long clockSequenceHi = sequence;
         clockSequenceHi <<= 48;
         long lsb = (hostId != 0L ? clockSequenceHi | hostId : clockSequenceHi | HOST_IDENTIFIER);
 
