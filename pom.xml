@@ -47,16 +47,16 @@
 
     <!-- Common properties: modules에 선언된 모든 자식 모듈의 pom.xml에서 참조되는 공통 속성 값 -->
     <properties>
-        
+
         <!-- System Properties -->
         <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        
+
         <!-- Library Version -->
         <spring.framework.version>6.2.11</spring.framework.version>
         <junit.jupiter.version>5.12.1</junit.jupiter.version>
-        
+
         <!-- Plugin Version -->
         <maven.compiler.plugins.version>3.14.0</maven.compiler.plugins.version>
         <maven.install.plugins.version>3.1.4</maven.install.plugins.version>
@@ -145,6 +145,21 @@
                     </includes>
                 </configuration>
             </plugin>
+
+            <!-- JaCoCo Test coverage plugin -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.14</version>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -186,6 +201,20 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jxr-plugin</artifactId>
                 <version>${maven.jxr.plugins.version}</version>
+            </plugin>
+
+            <!-- JaCoCo site plugin -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.14</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
             </plugin>
         </plugins>
     </reporting>
