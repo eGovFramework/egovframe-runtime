@@ -214,6 +214,7 @@ public class EgovPartitionFlatFileItemWriter<T> extends ExecutionContextUserSupp
      */
     @Override
     public void setResource(WritableResource resource) {
+        setResource((Resource) resource);
     }
 
     /**
@@ -224,7 +225,8 @@ public class EgovPartitionFlatFileItemWriter<T> extends ExecutionContextUserSupp
      * @param chunk the chunk of items to be written; must not be null
      */
     @Override
-    public void write(@NonNull Chunk<? extends T> chunk) {
+    public synchronized void write(@NonNull Chunk<? extends T> chunk) {
+        doWrite(chunk.getItems());
     }
 
     /**
@@ -235,6 +237,10 @@ public class EgovPartitionFlatFileItemWriter<T> extends ExecutionContextUserSupp
      * @param items output Stream 에 쓰여실 itmes 리스트
      */
     public synchronized void write(List<? extends T> items) throws Exception {
+        doWrite(items);
+    }
+
+    private void doWrite(List<? extends T> items) {
         if (!getOutputState().isInitialized()) {
             throw new WriterNotOpenException("Writer must be open before it can be written to");
         }
