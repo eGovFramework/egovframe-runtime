@@ -393,8 +393,9 @@ public final class EgovStringUtil {
      * 문자열의 뒷쪽에 지정한 길이만큼 공백으로 채움
      */
     public static String alignLeft(String str, int length, boolean isEllipsis) {
-        StringBuilder result = new StringBuilder(str);
+        StringBuilder result = new StringBuilder(length);
         if (str.length() <= length) {
+            result.append(str);
             for (int i = 0; i < (length - str.length()); i++) {
                 result.append(WHITE_SPACE);
             }
