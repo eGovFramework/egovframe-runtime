@@ -267,6 +267,39 @@ public class MessageConverterImplTest {
         // null 역참조(NPE) 없이 null을 반환해야 한다.
         assertNull(messageConverter.convertToValueObject(null, recordType));
     }
+
+    @Test
+    public void testConvertToTypedObjectWithNullListSource() throws Exception {
+        // 변환 대상 Value Object의 List 필드가 null인 경우이다.
+        // null 역참조(NPE) 없이 null을 반환해야 한다.
+        assertNull(messageConverter.convertToTypedObject(null, personListType));
+    }
+
+    @Test
+    public void testConvertToTypedObjectWithNullRecordSource() throws Exception {
+        // 변환 대상 Value Object의 Record 필드가 null인 경우이다.
+        // null 역참조(NPE) 없이 null을 반환해야 한다.
+        assertNull(messageConverter.convertToTypedObject(null, personRecordType));
+    }
+
+    @Test
+    public void testConvertToTypedObjectWithNullListField() throws Exception {
+        // List 필드가 null인 Value Object도 나머지 필드는 정상적으로 변환되어야 한다.
+        ValueObject source = new ValueObject() {
+            {
+                stringValue = "String";
+                personList = null;
+            }
+        };
+
+        Object object = messageConverter.convertToTypedObject(source, recordType);
+        assertInstanceOf(Map.class, object);
+
+        Map<String, Object> typedObject = (Map<String, Object>) object;
+        assertEquals("String", typedObject.get("stringValue"));
+        assertTrue(typedObject.containsKey("personList"));
+        assertNull(typedObject.get("personList"));
+    }
 }
 
 class ValueObject {
