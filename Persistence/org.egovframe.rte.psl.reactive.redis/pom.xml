@@ -33,6 +33,7 @@
         <slf4j.version>2.0.17</slf4j.version>
         <easymock.version>5.3.0</easymock.version>
         <lombok.version>1.18.42</lombok.version>
+        <commons-pool2.version>2.12.1</commons-pool2.version>
     </properties>
 
     <repositories>
@@ -110,6 +111,11 @@
             <groupId>io.lettuce</groupId>
             <artifactId>lettuce-core</artifactId>
             <version>${lettuce.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+            <version>${commons-pool2.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
