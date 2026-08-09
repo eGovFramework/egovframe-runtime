@@ -57,7 +57,7 @@ public class SampleRepository extends EgovMongoDbRepository<Sample> {
     public Sample deleteSample(Sample sample) {
         Query query = new Query();
         query.addCriteria(Criteria.where("id").is(sample.getId()));
-        return deleteDate(query, Sample.class);
+        return deleteData(query, Sample.class);
     }
 
 }
