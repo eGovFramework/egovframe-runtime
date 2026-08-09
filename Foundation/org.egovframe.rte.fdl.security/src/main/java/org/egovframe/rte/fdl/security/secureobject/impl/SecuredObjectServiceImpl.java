@@ -46,7 +46,7 @@ public class SecuredObjectServiceImpl implements EgovSecuredObjectService {
 
     private final EgovSecurityConfig config;
     private SecuredObjectDAO securedObjectDAO;
-    private String requestMatcherType = "ant";    // default
+    private String requestMatcherType = "regex";    // default
 
     public SecuredObjectServiceImpl(EgovSecurityConfig config) {
         this.config = config;
