@@ -846,7 +846,7 @@ public final class EgovStringUtil {
      */
     public static boolean containsInvalidChars(String str, String invalidChars) {
         if (str == null || invalidChars == null) {
-            return true;
+            return false;
         }
         return containsInvalidChars(str, invalidChars.toCharArray());
     }

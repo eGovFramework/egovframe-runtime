@@ -380,6 +380,13 @@ public class EgovStringUtilTest {
     }
 
     @Test
+    public void testContainsInvalidCharsNullString() {
+        // String-overload null cases must match the javadoc's own example table.
+        assertFalse(EgovStringUtil.containsInvalidChars(null, "xyz"));
+        assertFalse(EgovStringUtil.containsInvalidChars("abc", (String) null));
+    }
+
+    @Test
     public void testIsNumeric() {
         // 1. string is empty
         String str = "";
