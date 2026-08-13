@@ -37,20 +37,16 @@ public class TaskletShellStep implements Tasklet, InitializingBean {
             throw new UnexpectedJobExecutionException("Shell Script is Empty!");
         }
 
-        String[] arrCmdLine = shellScript.split("[\\r?\\n]+");
+        String[] arrCmdLine = shellScript.split("[\\r\\n]+");
 
         int resultShellScript = 0;
-        if (arrCmdLine.length == 0) { // single line
-            resultShellScript = ShellScriptSupport.shellCmd(shellScript, encoding);
+        for (String s : arrCmdLine) {
+            if (s.trim().isEmpty()) {
+                continue;
+            }
+            resultShellScript = ShellScriptSupport.shellCmd(s, encoding);
             if (resultShellScript > 0) {
                 throw new UnexpectedJobExecutionException("Error Executing shell script!");
-            }
-        } else { // multiline
-            for (String s : arrCmdLine) {
-                resultShellScript = ShellScriptSupport.shellCmd(s, encoding);
-                if (resultShellScript > 0) {
-                    throw new UnexpectedJobExecutionException("Error Executing shell script!");
-                }
             }
         }
 
