@@ -26,6 +26,7 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -110,7 +111,7 @@ public class EgovReflectionSupport<T> {
                 for (int i = 0; i < names.length; i++) {
                     String strMethod;
                     if (names[i].length() > 0) {
-                        strMethod = "set" + (names[i].substring(0, 1)).toUpperCase() + names[i].substring(1);
+                        strMethod = "set" + (names[i].substring(0, 1)).toUpperCase(Locale.ROOT) + names[i].substring(1);
                         methodMap.put(names[i], retrieveMethod(methods, strMethod));
                     }
                 }
@@ -169,7 +170,7 @@ public class EgovReflectionSupport<T> {
                     for (int i = 0; i < names.length; i++) {
                         String strMethod;
                         if (names[i].length() > 0) {
-                            strMethod = "get" + (names[i].substring(0, 1)).toUpperCase() + names[i].substring(1);
+                            strMethod = "get" + (names[i].substring(0, 1)).toUpperCase(Locale.ROOT) + names[i].substring(1);
                             localMap.put(names[i], retrieveMethod(localMethods, strMethod));
                         }
                     }
