@@ -26,7 +26,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.lang.Nullable;
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
@@ -296,12 +295,12 @@ public class EgovSecurityConfiguration {
     }
 
     /**
-     * Role Hierarchy
+     * Role Hierarchy.
+     * sqlHierarchicalRoles 미설정 시에도 hierarchyStrings()가(HierarchyStringsFactoryBean 경유)
+     * 안전 기본값("ROLE_ADMIN > ROLE_USER > ROLE_ANONYMOUS")을 반환하므로 null을 반환하지 않는다.
      */
     @Bean
-    @Nullable
     public RoleHierarchy roleHierarchy(EgovSecurityConfig securityConfig) {
-        if (ObjectUtils.isEmpty(securityConfig.getSqlHierarchicalRoles())) return null;
         RoleHierarchyImpl hierarchy = new RoleHierarchyImpl();
         hierarchy.setHierarchy(hierarchyStrings(securityConfig));
         return hierarchy;
