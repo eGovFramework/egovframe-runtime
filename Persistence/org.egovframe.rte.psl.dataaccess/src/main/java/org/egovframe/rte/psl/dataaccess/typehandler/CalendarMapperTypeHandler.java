@@ -77,7 +77,14 @@ public class CalendarMapperTypeHandler implements TypeHandler<Calendar> {
     }
 
     public Calendar getResult(CallableStatement cs, int columnIndex) throws SQLException {
-        return null;
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        if (cs.getTimestamp(columnIndex) == null) {
+            return null;
+        } else {
+            java.sql.Timestamp ts = cs.getTimestamp(columnIndex);
+            cal.setTime(ts);
+            return cal;
+        }
     }
 
 }
