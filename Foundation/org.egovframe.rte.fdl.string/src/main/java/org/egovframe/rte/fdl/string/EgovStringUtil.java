@@ -25,6 +25,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -990,7 +991,7 @@ public final class EgovStringUtil {
     public static String convertToCamelCase(String targetString, char posChar) {
         StringBuilder result = new StringBuilder();
         boolean nextUpper = false;
-        String allLower = targetString.toLowerCase();
+        String allLower = targetString.toLowerCase(Locale.ROOT);
         for (int i = 0; i < allLower.length(); i++) {
             char currentChar = allLower.charAt(i);
             if (currentChar == posChar) {
@@ -1029,7 +1030,7 @@ public final class EgovStringUtil {
             if (i > 0 && Character.isUpperCase(currentChar)) {
                 result = result.concat("_");
             }
-            result = result.concat(Character.toString(currentChar).toLowerCase());
+            result = result.concat(Character.toString(currentChar).toLowerCase(Locale.ROOT));
         }
         return result;
     }
