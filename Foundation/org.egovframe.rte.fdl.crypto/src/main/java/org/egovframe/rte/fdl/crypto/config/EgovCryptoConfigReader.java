@@ -25,6 +25,7 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 import java.util.Properties;
 
 /**
@@ -122,7 +123,7 @@ public class EgovCryptoConfigReader {
         for (String key : props.stringPropertyNames()) {
             String value = props.getProperty(key);
             if (value == null) continue;
-            String setterName = "set" + key.substring(0, 1).toUpperCase() + key.substring(1);
+            String setterName = "set" + key.substring(0, 1).toUpperCase(Locale.ROOT) + key.substring(1);
             // 2026.02.28 KISA 보안취약점 조치
             try {
                 Method setter = findSetter(bean.getClass(), setterName);
