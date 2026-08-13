@@ -24,6 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
+import java.util.concurrent.locks.ReentrantLock;
+
 /**
  * 전자정부 연계 서비스의 Service interface를 구현 추상 클래스
  * <p>
@@ -55,6 +57,12 @@ public abstract class AbstractService implements EgovIntegrationService {
      * default timeout
      */
     protected long defaultTimeout;
+
+    /**
+     * MessageSender가 doSend 호출 전후로 잡는 락. synchronized 대신 사용해 락 대기 중에도
+     * interrupt()가 실제로 동작하도록 한다.
+     */
+    final ReentrantLock invocationLock = new ReentrantLock();
 
     /**
      * Constructor
@@ -250,7 +258,16 @@ class MessageSender extends Thread {
     public void run() {
         LOGGER.debug("### MessageSender run() MessageSender just Start");
         //2017.02.13 장동한 시큐어코딩(ES)-검사시점과 사용시점(TOCTOU)[CWE-367]
-        synchronized (service) {
+        //synchronized(service) 대신 lockInterruptibly()를 사용해, 락을 기다리는 동안
+        //호출자가 이미 타임아웃으로 포기해 interrupt()를 건 경우 doSend를 시도하지 않고
+        //즉시 빠져나오도록 한다. (락이 지키는 검사~발송 원자성은 그대로 유지된다.)
+        try {
+            service.invocationLock.lockInterruptibly();
+        } catch (InterruptedException e) {
+            LOGGER.debug("### MessageSender run() interrupted while waiting for the lock; doSend not attempted");
+            return;
+        }
+        try {
             CallbackId callbackId = null;
             if (callback != null) {
                 callbackId = callback.createId(service, requestMessage);
@@ -264,6 +281,8 @@ class MessageSender extends Thread {
                 LOGGER.debug("### MessageSender run() Notify to callback");
                 callback.onReceive(callbackId, responseMessage);
             }
+        } finally {
+            service.invocationLock.unlock();
         }
     }
 }
