@@ -26,10 +26,13 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.csrf.InvalidCsrfTokenException;
 import org.springframework.security.web.csrf.MissingCsrfTokenException;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 
 public class EgovAccessDeniedHandler implements AccessDeniedHandler {
+
+    private static final String DEFAULT_ACCESS_DENIED_URL = "/index.html";
 
     private final EgovSecurityConfig config;
 
@@ -53,6 +56,9 @@ public class EgovAccessDeniedHandler implements AccessDeniedHandler {
         boolean isCsrfFailure = accessDeniedException instanceof InvalidCsrfTokenException
                 || accessDeniedException instanceof MissingCsrfTokenException;
         String targetUrl = isCsrfFailure ? config.getCsrfAccessDeniedUrl() : config.getAccessDeniedUrl();
+        if (!StringUtils.hasText(targetUrl)) {
+            targetUrl = DEFAULT_ACCESS_DENIED_URL;
+        }
 
         RequestDispatcher dispatcher = request.getRequestDispatcher(targetUrl);
         dispatcher.forward(request, response);
