@@ -15,9 +15,13 @@
  */
 package org.egovframe.rte.psl.reactive.redis.connect;
 
+import io.lettuce.core.ClientOptions;
+import io.lettuce.core.SocketOptions;
+import io.lettuce.core.api.StatefulConnection;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.data.redis.connection.ReactiveRedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
-import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettucePoolingClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 
 import java.time.Duration;
@@ -123,16 +127,18 @@ public class EgovRedisConfiguration {
             redisStandaloneConfiguration.setPassword(password);
         }
         
-        // Lettuce 클라이언트 설정
-        LettuceClientConfiguration clientConfig = LettuceClientConfiguration.builder()
+        // Lettuce 클라이언트 설정 (연결 타임아웃 + 커넥션 풀 적용)
+        LettucePoolingClientConfiguration clientConfig = LettucePoolingClientConfiguration.builder()
+                .clientOptions(clientOptions())
                 .commandTimeout(commandTimeout)
                 .shutdownTimeout(Duration.ofSeconds(2))
+                .poolConfig(poolConfig())
                 .build();
-        
+
         LettuceConnectionFactory connectionFactory = new LettuceConnectionFactory(redisStandaloneConfiguration, clientConfig);
         connectionFactory.setValidateConnection(true);
         connectionFactory.setShareNativeConnection(false);
-        
+
         return connectionFactory;
     }
 
@@ -149,18 +155,34 @@ public class EgovRedisConfiguration {
             redisStandaloneConfiguration.setPassword(password);
         }
         
-        // Lettuce 클라이언트 설정 (SSL 포함)
-        LettuceClientConfiguration clientConfig = LettuceClientConfiguration.builder()
+        // Lettuce 클라이언트 설정 (연결 타임아웃 + 커넥션 풀 + SSL 적용)
+        LettucePoolingClientConfiguration clientConfig = LettucePoolingClientConfiguration.builder()
+                .clientOptions(clientOptions())
                 .commandTimeout(commandTimeout)
                 .shutdownTimeout(Duration.ofSeconds(2))
+                .poolConfig(poolConfig())
                 .useSsl()
                 .build();
-        
+
         LettuceConnectionFactory connectionFactory = new LettuceConnectionFactory(redisStandaloneConfiguration, clientConfig);
         connectionFactory.setValidateConnection(true);
         connectionFactory.setShareNativeConnection(false);
-        
+
         return connectionFactory;
+    }
+
+    private ClientOptions clientOptions() {
+        return ClientOptions.builder()
+                .socketOptions(SocketOptions.builder().connectTimeout(connectTimeout).build())
+                .build();
+    }
+
+    private GenericObjectPoolConfig<StatefulConnection<?, ?>> poolConfig() {
+        GenericObjectPoolConfig<StatefulConnection<?, ?>> poolConfig = new GenericObjectPoolConfig<>();
+        poolConfig.setMaxTotal(maxActive);
+        poolConfig.setMaxIdle(maxIdle);
+        poolConfig.setMinIdle(minIdle);
+        return poolConfig;
     }
 
     /**
