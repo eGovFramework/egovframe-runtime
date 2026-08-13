@@ -2,6 +2,9 @@ package org.egovframe.rte.ptl.reactive.validation;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Locale;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -117,5 +120,27 @@ class ReactiveValidatorsSemanticTest {
         assertFalse(validator.isValid("Egov!2aaa", null), "비밀번호는 동일문자 3회 반복을 false로 판정해야 한다");
         assertFalse(validator.isValid("Egov!2abc", null), "비밀번호는 오름차순 연속 3자를 false로 판정해야 한다");
         assertFalse(validator.isValid("Egov!2123", null), "비밀번호는 연속 숫자 3자를 false로 판정해야 한다");
+    }
+
+    @Test
+    void pwdCheck_consecutiveDetectionIsLocaleIndependent() {
+        // 터키어 로케일에서는 'i'가 대문자 'İ'(U+0130)로 변환되어,
+        // toUpperCase()가 로케일에 의존하면 'ghi'·'hij' 같은 연속열이 탐지되지 않고
+        // 약한 비밀번호가 통과되는 우회가 발생할 수 있다. Locale.ROOT 고정으로 방지한다.
+        Locale original = Locale.getDefault();
+        try {
+            Locale.setDefault(Locale.forLanguageTag("tr-TR"));
+            assertTrue(EgovPwdCheckValidation.consecutivePasswordCheck("ghi"),
+                    "터키어 로케일에서도 'ghi' 오름차순 연속 3자는 탐지되어야 한다");
+
+            EgovPwdCheckValidation validator = new EgovPwdCheckValidation();
+            boolean turkish = validator.isValid("Egov!2ghi", null);
+            Locale.setDefault(Locale.ENGLISH);
+            boolean english = validator.isValid("Egov!2ghi", null);
+            assertFalse(turkish, "터키어 로케일에서 'ghi' 연속을 포함한 비밀번호는 거부되어야 한다");
+            assertEquals(english, turkish, "연속 문자 검증 결과는 JVM 기본 로케일과 무관해야 한다");
+        } finally {
+            Locale.setDefault(original);
+        }
     }
 }
