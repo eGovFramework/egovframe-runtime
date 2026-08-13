@@ -147,6 +147,43 @@ public class TypedList implements List<Object> {
         return newCollection;
     }
 
+    /**
+     * 조회·삭제 인자를 저장 형태와 같은 값으로 맞춘다.
+     *
+     * <p>{@link #add(Object)}·{@link #set(int, Object)}는 값을 element type으로 변환해 담으므로,
+     * 조회할 때도 같은 변환을 거쳐야 넣은 값을 찾을 수 있다. element type에 담을 수 없는 값은
+     * 애초에 목록에 들어있을 수 없으므로 예외를 던지지 않고 원본을 그대로 돌려준다.
+     * {@link java.util.List#contains(Object)} 계약이 이종 타입 인자에 대해 예외가 아닌
+     * <code>false</code>를 요구하기 때문이다.</p>
+     *
+     * @param value 조회·삭제 대상 값
+     * @return 변환된 값, 변환할 수 없으면 원본 값
+     */
+    protected Object toLookupValue(final Object value) {
+        try {
+            return convertToTypedObject(value);
+        } catch (RuntimeException e) {
+            return value;
+        }
+    }
+
+    /**
+     * Collection 인자의 각 요소를 조회용 값으로 맞춘다.
+     *
+     * @param c 조회·삭제 대상 값을 담고 있는 Collection 객체
+     * @return 변환된 값을 담고 있는 Collection 객체
+     */
+    protected Collection<Object> toLookupValues(final Collection<?> c) {
+        if (c == null) {
+            return null;
+        }
+        Collection<Object> newCollection = new ArrayList<Object>();
+        for (Object object : c) {
+            newCollection.add(toLookupValue(object));
+        }
+        return newCollection;
+    }
+
     public void add(int index, Object element) {
         inner.add(index, convertToTypedObject(element));
     }
@@ -168,11 +205,11 @@ public class TypedList implements List<Object> {
     }
 
     public boolean contains(Object o) {
-        return inner.contains(o);
+        return inner.contains(toLookupValue(o));
     }
 
     public boolean containsAll(Collection<?> c) {
-        return inner.containsAll(c);
+        return inner.containsAll(toLookupValues(c));
     }
 
     public Object get(int index) {
@@ -180,7 +217,7 @@ public class TypedList implements List<Object> {
     }
 
     public int indexOf(Object o) {
-        return inner.indexOf(o);
+        return inner.indexOf(toLookupValue(o));
     }
 
     public boolean isEmpty() {
@@ -192,7 +229,7 @@ public class TypedList implements List<Object> {
     }
 
     public int lastIndexOf(Object o) {
-        return inner.lastIndexOf(o);
+        return inner.lastIndexOf(toLookupValue(o));
     }
 
     public ListIterator<Object> listIterator() {
@@ -208,15 +245,15 @@ public class TypedList implements List<Object> {
     }
 
     public boolean remove(Object o) {
-        return inner.remove(o);
+        return inner.remove(toLookupValue(o));
     }
 
     public boolean removeAll(Collection<?> c) {
-        return inner.removeAll(c);
+        return inner.removeAll(toLookupValues(c));
     }
 
     public boolean retainAll(Collection<?> c) {
-        return inner.retainAll(c);
+        return inner.retainAll(toLookupValues(c));
     }
 
     public Object set(int index, Object element) {
