@@ -23,6 +23,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -57,7 +58,7 @@ public class DefaultMapUserDetailsMapping extends EgovUsersByUsernameMapping {
         ResultSetMetaData md = rs.getMetaData();
         int cnt = md.getColumnCount();
         for (int i = 1; i <= cnt; i++) {
-            String column = md.getColumnName(i).toLowerCase();
+            String column = md.getColumnName(i).toLowerCase(Locale.ROOT);
             String value = rs.getString(column);
             map.put(CamelCaseUtil.convert2CamelCase(column), value);
         }
