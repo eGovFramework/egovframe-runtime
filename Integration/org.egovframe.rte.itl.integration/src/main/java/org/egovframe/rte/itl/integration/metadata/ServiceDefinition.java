@@ -337,7 +337,7 @@ public class ServiceDefinition implements Validatable {
                 .append(StringUtils.quote(requestMessageTypeId))
                 .append("\n\tresponseMessageTypeId = ")
                 .append(StringUtils.quote(responseMessageTypeId))
-                .append("\n\tserivceProviderBeanId = ")
+                .append("\n\tserviceProviderBeanId = ")
                 .append(StringUtils.quote(serviceProviderBeanId))
                 .append("\n\tusing = ").append(using).append("\n\tstandard = ")
                 .append(standard).append("\n}");
