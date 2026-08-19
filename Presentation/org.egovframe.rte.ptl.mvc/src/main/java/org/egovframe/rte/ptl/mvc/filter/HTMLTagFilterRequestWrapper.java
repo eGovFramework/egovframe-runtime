@@ -46,14 +46,15 @@ public class HTMLTagFilterRequestWrapper extends HttpServletRequestWrapper {
         if (values == null) {
             return null;
         }
+        String[] safeValues = new String[values.length];
         for (int i = 0; i < values.length; i++) {
             if (values[i] != null) {
-                values[i] = getSafeParamData(values[i]);
+                safeValues[i] = getSafeParamData(values[i]);
             } else {
-                values[i] = null;
+                safeValues[i] = null;
             }
         }
-        return values;
+        return safeValues;
     }
 
     public String getParameter(String parameter) {
