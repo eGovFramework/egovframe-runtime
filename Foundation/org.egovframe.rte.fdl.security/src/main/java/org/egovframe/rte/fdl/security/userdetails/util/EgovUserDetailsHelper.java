@@ -24,8 +24,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.MessageDigestPasswordEncoder;
 import org.springframework.util.ObjectUtils;
 
@@ -128,16 +126,17 @@ public final class EgovUserDetailsHelper {
     }
 
     /**
-     * 기본 algorithmd(SHA-256)에 대한 패스워드 얻기.
+     * 기본 algorithm(SHA-256)에 대한 패스워드 얻기.
+     *
+     * <p>eGovFrame {@code hash}를 지정하지 않았을 때 적용되는 기본 설정과 동일한 방식이다.
+     * {@code hash=eccp} / {@code hash=egov-sha256}을 쓴다면
+     * {@link #getIdSaltHashedPassword(String, String)}를 사용한다.</p>
      *
      * @param password 평문 비밀번호
-     * @return SHA-256 해시
+     * @return salt를 앞에 붙인 SHA-256 해시
      */
     public static String getHashedPassword(String password) {
-        DelegatingPasswordEncoder delegatingPasswordEncoder =
-                (DelegatingPasswordEncoder) PasswordEncoderFactories.createDelegatingPasswordEncoder();
-        delegatingPasswordEncoder.setDefaultPasswordEncoderForMatches(new MessageDigestPasswordEncoder("SHA-256"));
-        return delegatingPasswordEncoder.encode(password);
+        return new MessageDigestPasswordEncoder("SHA-256").encode(password);
     }
 
     /**
