@@ -68,7 +68,7 @@ public class EgovWebServiceClassLoaderImpl extends ClassLoader implements EgovWe
     public static final String CLASS_NAME_PREFIX = BASE_PACKAGE_NAME + "." + "EgovType";
     public static final String SERVICE_ENDPOINT_CLASS_NAME_POSTFIX = "ServiceImpl";
     public static final String SERVICE_ENDPOINT_INTERFACE_CLASS_NAME_POSTFIX = "Service";
-    public static final String NAME_OF_SERVICE_BRIDGE_CLASS = "egovframework/rte/itl/webservice/service/ServiceBridge";
+    public static final String NAME_OF_SERVICE_BRIDGE_CLASS = "org/egovframe/rte/itl/webservice/service/ServiceBridge";
     public static final String DESC_OF_SERVICE_BRIDGE_CLASS = "L" + NAME_OF_SERVICE_BRIDGE_CLASS + ";";
     public static final String FIELD_NAME_OF_SERVICE_BRIDGE = "serviceBridge";
     private static final Logger LOGGER = LoggerFactory.getLogger(EgovWebServiceClassLoaderImpl.class);
@@ -111,31 +111,31 @@ public class EgovWebServiceClassLoaderImpl extends ClassLoader implements EgovWe
     };
     private static final String DESC_OF_XML_ACCESSOR_TYPE =
             // org.objectweb.asm.Type.getDescriptor(XmlAccessorType.class);
-            "Ljavax/xml/bind/annotation/XmlAccessorType;";
+            "Ljakarta/xml/bind/annotation/XmlAccessorType;";
     private static final String DESC_OF_XML_ACCESS_TYPE =
             // org.objectweb.asm.Type.getDescriptor(XmlAccessType.class);
-            "Ljavax/xml/bind/annotation/XmlAccessType;";
+            "Ljakarta/xml/bind/annotation/XmlAccessType;";
     private static final String DESC_OF_WEB_SERVICE =
             // org.objectweb.asm.Type.getDescriptor(WebService.class);
-            "Ljavax/jws/WebService;";
+            "Ljakarta/jws/WebService;";
     private static final String DESC_OF_SOAP_BINDING =
             // org.objectweb.asm.Type.getDescriptor(SOAPBinding.class);
-            "Ljavax/jws/soap/SOAPBinding;";
+            "Ljakarta/jws/soap/SOAPBinding;";
     private static final String DESC_OF_SOAP_BINDING_PARAMETER_STYLE =
             // org.objectweb.asm.Type.getDescriptor(SOAPBinding.ParameterStyle.class);
-            "Ljavax/jws/soap/SOAPBinding$ParameterStyle;";
+            "Ljakarta/jws/soap/SOAPBinding$ParameterStyle;";
     private static final String DESC_OF_WEB_METHOD =
             // org.objectweb.asm.Type.getDescriptor(WebMethod.class);
-            "Ljavax/jws/WebMethod;";
+            "Ljakarta/jws/WebMethod;";
     private static final String DESC_OF_WEB_PARAM =
             // org.objectweb.asm.Type.getDescriptor(WebParam.class);
-            "Ljavax/jws/WebParam;";
+            "Ljakarta/jws/WebParam;";
     private static final String DESC_OF_WEB_PARAM_MODE =
             // org.objectweb.asm.Type.getDescriptor(WebParam.Mode.class);
-            "Ljavax/jws/WebParam$Mode;";
+            "Ljakarta/jws/WebParam$Mode;";
     private static final String DESC_OF_WEB_RESULT =
             // org.objectweb.asm.Type.getDescriptor(WebResult.class);
-            "Ljavax/jws/WebResult;";
+            "Ljakarta/jws/WebResult;";
     private static final org.objectweb.asm.Type TYPE_OF_HOLDER = org.objectweb.asm.Type.getType(Holder.class);
 
     /**
@@ -319,7 +319,7 @@ public class EgovWebServiceClassLoaderImpl extends ClassLoader implements EgovWe
                 }
                 paramClass = Holder.class;
                 paramType = TYPE_OF_HOLDER;
-                paramSign = "Ljavax/xml/ws/Holder<" + paramSign + ">;";
+                paramSign = "L" + TYPE_OF_HOLDER.getInternalName() + "<" + paramSign + ">;";
             }
             desc.append(paramType.getDescriptor());
             signature.append(paramSign);
@@ -415,7 +415,7 @@ public class EgovWebServiceClassLoaderImpl extends ClassLoader implements EgovWe
                 }
                 paramClass = Holder.class;
                 paramType = TYPE_OF_HOLDER;
-                paramSign = "Ljavax/xml/ws/Holder<" + paramSign + ">;";
+                paramSign = "L" + TYPE_OF_HOLDER.getInternalName() + "<" + paramSign + ">;";
             }
             desc.append(paramType.getDescriptor());
             signature.append(paramSign);
