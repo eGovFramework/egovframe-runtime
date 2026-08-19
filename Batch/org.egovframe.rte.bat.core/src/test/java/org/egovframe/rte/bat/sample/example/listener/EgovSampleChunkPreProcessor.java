@@ -3,6 +3,7 @@ package org.egovframe.rte.bat.sample.example.listener;
 import org.egovframe.rte.bat.core.listener.EgovChunkPreProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.batch.core.scope.context.ChunkContext;
 
 /**
  * 청크단계 이전에 호출되는 리스너 클래스
@@ -25,7 +26,8 @@ public class EgovSampleChunkPreProcessor extends EgovChunkPreProcessor {
     /**
      * chunk 수행 이전에 호출되는 부분
      */
-    public void beforeChunk() {
+    @Override
+    public void beforeChunk(ChunkContext context) {
         LOGGER.debug("### EgovSampleChunkPreProcessor beforeChunk()...");
     }
 

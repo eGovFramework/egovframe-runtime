@@ -3,6 +3,7 @@ package org.egovframe.rte.bat.sample.example.listener;
 import org.egovframe.rte.bat.core.listener.EgovChunkPostProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.batch.core.scope.context.ChunkContext;
 
 /**
  * 청크단계 이후에 호출되는 프로세서 클래스
@@ -26,7 +27,8 @@ public class EgovSampleChunkPostProcessor extends EgovChunkPostProcessor {
     /**
      * chunk 단계 수행 이후에 호출되는 부분
      */
-    public void afterChunk() {
+    @Override
+    public void afterChunk(ChunkContext context) {
         LOGGER.debug("### EgovSampleChunkPostProcessor afterChunk()...");
     }
 
