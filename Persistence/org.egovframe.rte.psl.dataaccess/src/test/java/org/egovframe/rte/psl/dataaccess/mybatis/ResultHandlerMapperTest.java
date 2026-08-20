@@ -71,7 +71,7 @@ public class ResultHandlerMapperTest {
 
         // check
         ResourceLoader resourceLoader = new DefaultResourceLoader();
-        org.springframework.core.io.Resource resource = resourceLoader.getResource("file:./src/test/resources/META-INF/spring/" + schemaProperties.getProperty("outResultFile"));
+        org.springframework.core.io.Resource resource = resourceLoader.getResource("file:./target/test-output/" + schemaProperties.getProperty("outResultFile"));
 
         // 각 38,416개씩 두번 실행했으므로 총 76,832개 출력
         assertEquals(76832, resultHandler.getTotalCount());
