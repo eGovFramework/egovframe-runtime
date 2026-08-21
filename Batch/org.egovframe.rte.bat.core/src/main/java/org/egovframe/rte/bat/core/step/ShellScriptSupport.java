@@ -25,6 +25,7 @@ import java.io.InputStreamReader;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -40,7 +41,7 @@ public class ShellScriptSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ShellScriptSupport.class);
 
-    private static String OS = System.getProperty("os.name").toLowerCase();
+    private static String OS = System.getProperty("os.name").toLowerCase(Locale.ROOT);
     private static String OSEncoding = System.getProperty("file.encoding");
 
     /** 셸 메타문자 패턴 - 명령어 삽입 방지용 (; | & ` $ ( ) \ < > newline 등) */
@@ -145,7 +146,7 @@ public class ShellScriptSupport {
     }
 
     public static boolean isUnix() {
-        return (OS.indexOf("nix") >= 0 || OS.indexOf("nux") >= 0 || OS.indexOf("aix") > 0);
+        return (OS.indexOf("nix") >= 0 || OS.indexOf("nux") >= 0 || OS.indexOf("aix") >= 0);
     }
 
     public static boolean isSolaris() {
