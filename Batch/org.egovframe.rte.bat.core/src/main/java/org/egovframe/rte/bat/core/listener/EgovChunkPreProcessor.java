@@ -16,6 +16,7 @@
 package org.egovframe.rte.bat.core.listener;
 
 import org.springframework.batch.core.listener.ChunkListenerSupport;
+import org.springframework.batch.core.scope.context.ChunkContext;
 
 /**
  * Chunk 단계 이전에 호출되는 메소드를 갖고 있는 클래스
@@ -36,6 +37,20 @@ public class EgovChunkPreProcessor extends ChunkListenerSupport {
     /**
      * Chunk 수행 이전에 호출되는 부분
      */
+    @Override
+    public void beforeChunk(ChunkContext context) {
+        beforeChunk();
+    }
+
+    /**
+     * Chunk 수행 이전에 호출되는 부분
+     *
+     * @deprecated 프레임워크가 호출하는 시그니처가 ChunkContext 를 받는 형태로 바뀌어
+     * 이 메소드는 더 이상 직접 호출되지 않는다. 기존에 이 메소드를 재정의한 코드가
+     * 계속 동작하도록 {@link #beforeChunk(ChunkContext)} 에서 호출해 주며,
+     * 새로 작성하는 코드는 {@link #beforeChunk(ChunkContext)} 를 재정의한다.
+     */
+    @Deprecated
     public void beforeChunk() {
     }
 
