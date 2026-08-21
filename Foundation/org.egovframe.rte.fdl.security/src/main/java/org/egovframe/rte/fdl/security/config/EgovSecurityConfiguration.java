@@ -208,9 +208,9 @@ public class EgovSecurityConfiguration {
     @Bean
     public PasswordEncoder passwordEncoder(EgovSecurityConfig securityConfig) {
         String rawHash = securityConfig != null ? securityConfig.getHash() : null;
-        String securityHash = (rawHash == null || rawHash.trim().isEmpty()) ? "sha-256" : rawHash.trim().toLowerCase();
+        String securityHash = (rawHash == null || rawHash.trim().isEmpty()) ? "sha-256" : rawHash.trim().toLowerCase(Locale.ROOT);
         boolean securityHashBase64 = securityConfig != null && securityConfig.isHashBase64();
-        switch (securityHash.toLowerCase()) {
+        switch (securityHash) {
             case "plaintext":
             case "noop":
                 return NoOpPasswordEncoder.getInstance();
@@ -225,7 +225,7 @@ public class EgovSecurityConfiguration {
                 return md5Encoder;
             default:
                 if (securityHash.startsWith("sha")) {
-                    String algorithm = securityHash.replace("-", "").toUpperCase();
+                    String algorithm = securityHash.replace("-", "").toUpperCase(Locale.ROOT);
                     if ("SHA".equals(algorithm)) algorithm = "SHA-256"; // "sha" 입력 시 기본값 설정
                     MessageDigestPasswordEncoder shaEncoder = new MessageDigestPasswordEncoder(algorithm);
                     shaEncoder.setEncodeHashAsBase64(securityHashBase64);
@@ -244,7 +244,7 @@ public class EgovSecurityConfiguration {
     @Bean
     public AuthenticationManager authenticationManager(EgovSecurityConfig securityConfig, PasswordEncoder passwordEncoder) {
         String rawHash = securityConfig != null ? securityConfig.getHash() : null;
-        String securityHash = (rawHash == null || rawHash.trim().isEmpty()) ? "sha-256" : rawHash.trim().toLowerCase();
+        String securityHash = (rawHash == null || rawHash.trim().isEmpty()) ? "sha-256" : rawHash.trim().toLowerCase(Locale.ROOT);
 
         DaoAuthenticationProvider provider;
         if (isIdSaltHash(securityHash)) {
