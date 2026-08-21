@@ -57,7 +57,7 @@ public class EgovMongoDbRepository<T> extends MongoTemplate {
     }
 
     public T insertData(T objectToSave) {
-        return save(objectToSave);
+        return insert(objectToSave);
     }
 
     public T updateData(Query query, UpdateDefinition update, Class<T> entityClass) {
