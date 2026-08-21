@@ -73,6 +73,7 @@ public class EgovBizException extends BaseException {
      * @param wrappedException  원인 Exception
      */
     public EgovBizException(String defaultMessage, Object[] messageParameters, Exception wrappedException) {
+        super(wrappedException);
         String userMessage = defaultMessage;
         if (messageParameters != null) {
             userMessage = MessageFormat.format(defaultMessage, messageParameters);
@@ -163,6 +164,7 @@ public class EgovBizException extends BaseException {
      * @param wrappedException  원인 Exception
      */
     public EgovBizException(MessageSource messageSource, String messageKey, Object[] messageParameters, String defaultMessage, Locale locale, Exception wrappedException) {
+        super(wrappedException);
         this.messageKey = messageKey;
         this.messageParameters = messageParameters;
         this.message = messageSource.getMessage(messageKey, messageParameters, defaultMessage, locale);
