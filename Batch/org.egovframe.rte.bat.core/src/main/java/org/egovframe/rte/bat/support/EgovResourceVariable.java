@@ -103,7 +103,7 @@ public class EgovResourceVariable {
 
     public void setClear() {
         synchronized (this.map) {
-            this.map = new HashMap<String, Object>();
+            this.map.clear();
         }
     }
 
