@@ -68,4 +68,27 @@ public class HTMLTagFilterTest {
         assertArrayEquals(new String[]{"added"}, parameterMap.get("param02"));
     }
 
+    @Test
+    public void getParameterValuesShouldNotEscapeRepeatedCallsTwice() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter("param01", "<b>test&\"'</b>");
+        HTMLTagFilterRequestWrapper requestWrapper = new HTMLTagFilterRequestWrapper(request);
+
+        String[] expected = {"&lt;b&gt;test&amp;&quot;&apos;&lt;/b&gt;"};
+
+        assertArrayEquals(expected, requestWrapper.getParameterValues("param01"));
+        assertArrayEquals(expected, requestWrapper.getParameterValues("param01"));
+    }
+
+    @Test
+    public void getParameterValuesShouldNotMutateOriginalRequest() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter("param01", "<b>test</b>");
+        HTMLTagFilterRequestWrapper requestWrapper = new HTMLTagFilterRequestWrapper(request);
+
+        requestWrapper.getParameterValues("param01");
+
+        assertEquals("<b>test</b>", request.getParameter("param01"));
+    }
+
 }
