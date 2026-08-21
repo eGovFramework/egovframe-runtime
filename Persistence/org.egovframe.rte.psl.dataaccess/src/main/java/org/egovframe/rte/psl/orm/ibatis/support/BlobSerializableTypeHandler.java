@@ -68,6 +68,7 @@ public class BlobSerializableTypeHandler extends AbstractLobTypeHandler {
         ALLOWED_CLASS_NAMES.add(Boolean.class.getName());
         ALLOWED_CLASS_NAMES.add(Short.class.getName());
         ALLOWED_CLASS_NAMES.add(Byte.class.getName());
+        ALLOWED_CLASS_NAMES.add(Number.class.getName());
         ALLOWED_CLASS_NAMES.add(java.util.Date.class.getName());
         ALLOWED_CLASS_NAMES.add(java.sql.Timestamp.class.getName());
         ALLOWED_CLASS_NAMES.add(java.sql.Date.class.getName());
