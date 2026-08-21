@@ -11,7 +11,9 @@ import org.springframework.data.redis.connection.lettuce.LettucePoolingClientCon
 import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EgovRedisConfigurationTest {
 
@@ -45,6 +47,29 @@ public class EgovRedisConfigurationTest {
         assertEquals(20, poolConfig.getMaxTotal());
         assertEquals(15, poolConfig.getMaxIdle());
         assertEquals(5, poolConfig.getMinIdle());
+    }
+
+    @Test
+    public void reactiveRedisConnectionFactory_appliesUseSsl() {
+        EgovRedisConfiguration config = new EgovRedisConfiguration(
+                "localhost", 6379, null, true,
+                Duration.ofSeconds(10), Duration.ofSeconds(5), 8, 8, 0);
+
+        LettuceConnectionFactory factory = (LettuceConnectionFactory) config.reactiveRedisConnectionFactory();
+
+        assertTrue(config.isUseSsl());
+        assertTrue(factory.isUseSsl());
+    }
+
+    @Test
+    public void reactiveRedisConnectionFactory_doesNotApplySslWhenUseSslIsFalse() {
+        EgovRedisConfiguration config = new EgovRedisConfiguration(
+                "localhost", 6379, null, false,
+                Duration.ofSeconds(10), Duration.ofSeconds(5), 8, 8, 0);
+
+        LettuceConnectionFactory factory = (LettuceConnectionFactory) config.reactiveRedisConnectionFactory();
+
+        assertFalse(factory.isUseSsl());
     }
 
 }
