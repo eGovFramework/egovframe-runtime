@@ -536,7 +536,7 @@ public final class EgovStringUtil {
      * @return encypted password based on the algorithm.
      */
     public static String encodePassword(String password, String algorithm) {
-        byte[] unencodedPassword = password.getBytes();
+        byte[] unencodedPassword = password.getBytes(StandardCharsets.UTF_8);
         MessageDigest md;
 
         try {
