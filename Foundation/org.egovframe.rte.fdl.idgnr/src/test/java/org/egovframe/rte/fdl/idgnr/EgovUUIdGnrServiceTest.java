@@ -4,6 +4,7 @@ import jakarta.annotation.Resource;
 import org.egovframe.rte.fdl.cmmn.exception.FdlException;
 import org.egovframe.rte.fdl.idgnr.config.IdgnrTestConfig;
 import org.egovframe.rte.fdl.idgnr.config.UUIdGenerationConfig;
+import org.egovframe.rte.fdl.idgnr.impl.EgovUUIdGnrServiceImpl;
 import org.egovframe.rte.fdl.idgnr.impl.strategy.EgovIdGnrStrategyImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,7 +12,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -89,6 +92,33 @@ public class EgovUUIdGnrServiceTest {
         for (int i = 0; i < 10; i++) {
             assertNotNull(decimal = uUIdGenerationServiceWithIP.getNextBigDecimalId());
         }
+    }
+
+    /**
+     * IP 세팅시 octet 은 10진수로 해석되어야 함 테스트
+     */
+    @Test
+    public void testUUIdGenerationIPOctetRadix() throws FdlException {
+        // 100.128.120.107 의 octet 은 0x64, 0x80, 0x78, 0x6B (앞 2 byte 는 0xFF 고정)
+        assertEquals(0x0000FFFF6480786BL, hostId(uUIdGenerationServiceWithIP.getNextStringId()));
+    }
+
+    /**
+     * 서로 다른 IP 가 같은 host id 로 접히지 않는지 테스트
+     */
+    @Test
+    public void testUUIdGenerationIPHostIdCollision() throws Exception {
+        EgovUUIdGnrServiceImpl generator = new EgovUUIdGnrServiceImpl();
+        generator.setAddress("192.168.156.1");
+        EgovUUIdGnrServiceImpl other = new EgovUUIdGnrServiceImpl();
+        other.setAddress("192.168.56.1");
+
+        assertEquals(0x0000FFFFC0A89C01L, hostId(generator.getNextStringId()));
+        assertEquals(0x0000FFFFC0A83801L, hostId(other.getNextStringId()));
+    }
+
+    private long hostId(String uuid) {
+        return UUID.fromString(uuid).getLeastSignificantBits() & 0xFFFFFFFFFFFFL;
     }
 
     /**

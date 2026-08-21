@@ -206,7 +206,7 @@ public class EgovUUIdGnrServiceImpl implements EgovIdGnrService, ApplicationCont
                 addressBytes[1] = (byte) 255;
                 int i = 2;
                 while (stok.hasMoreTokens()) {
-                    addressBytes[i++] = Integer.valueOf(stok.nextToken(), 16).byteValue();
+                    addressBytes[i++] = Integer.valueOf(stok.nextToken(), 10).byteValue();
                 }
             } else if (address.indexOf(":") > 0) {
                 // we should have a MAC
