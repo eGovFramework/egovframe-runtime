@@ -18,6 +18,7 @@ package org.egovframe.rte.psl.dataaccess.typehandler;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Proxy;
+import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.Calendar;
@@ -60,6 +61,33 @@ public class CalendarMapperTypeHandlerTest {
         CalendarMapperTypeHandler handler = new CalendarMapperTypeHandler();
         Timestamp ts = Timestamp.valueOf("2024-01-02 03:04:05");
         Calendar cal = handler.getResult(resultSet(ts), 1);
+        assertEquals(ts.getTime(), cal.getTimeInMillis());
+    }
+
+    /** 지정한 컬럼인덱스에서 주어진 Timestamp 를 반환하는 CallableStatement 프록시 (필요 메서드만 구현). */
+    private CallableStatement callableStatement(final Timestamp ts) {
+        return (CallableStatement) Proxy.newProxyInstance(
+                getClass().getClassLoader(),
+                new Class<?>[]{CallableStatement.class},
+                (proxy, method, args) -> {
+                    if ("getTimestamp".equals(method.getName())) {
+                        return ts;
+                    }
+                    throw new UnsupportedOperationException(method.getName());
+                });
+    }
+
+    @Test
+    public void callableStatementNullColumnReturnsNull() throws Exception {
+        CalendarMapperTypeHandler handler = new CalendarMapperTypeHandler();
+        assertNull(handler.getResult(callableStatement(null), 1));
+    }
+
+    @Test
+    public void callableStatementNonNullColumnConverts() throws Exception {
+        CalendarMapperTypeHandler handler = new CalendarMapperTypeHandler();
+        Timestamp ts = Timestamp.valueOf("2024-01-02 03:04:05");
+        Calendar cal = handler.getResult(callableStatement(ts), 1);
         assertEquals(ts.getTime(), cal.getTimeInMillis());
     }
 }
