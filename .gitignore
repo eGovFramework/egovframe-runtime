@@ -3,6 +3,8 @@
 
 # Log file #
 *.log
+# 롤링 로그는 .log 뒤에 인덱스·타임스탬프가 붙어 위 패턴을 비껴간다
+*.log.*
 
 # BlueJ files #
 *.ctxt

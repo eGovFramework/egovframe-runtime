@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.time.Duration;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -233,6 +234,42 @@ public class EgovStringUtilTest {
         assertEquals(i, result.length());
     }
 
+    /**
+     * 생략 표기(isEllipsis) 옵션이 alignLeft/alignRight/alignCenter에서 동일하게 동작하는지 검사한다.
+     */
+    @Test
+    public void testAlignStringWithEllipsis() {
+        String source = "abcdefghij";
+
+        // 지정한 길이를 넘으면 뒷부분을 "..."으로 대체하고, 결과 길이는 지정한 길이와 같다
+        assertEquals("ab...", EgovStringUtil.alignLeft(source, 5, true));
+        assertEquals("ab...", EgovStringUtil.alignRight(source, 5, true));
+        assertEquals("ab...", EgovStringUtil.alignCenter(source, 5, true));
+
+        // isEllipsis가 false이면 지정한 길이만큼 자른다
+        assertEquals("abcde", EgovStringUtil.alignLeft(source, 5, false));
+        assertEquals("abcde", EgovStringUtil.alignRight(source, 5, false));
+        assertEquals("abcde", EgovStringUtil.alignCenter(source, 5, false));
+
+        // 길이가 정확히 같으면 원본을 그대로 반환한다
+        assertEquals("abcde", EgovStringUtil.alignLeft("abcde", 5, true));
+        assertEquals("abcde", EgovStringUtil.alignRight("abcde", 5, true));
+
+        // 길이가 미달이면 isEllipsis와 무관하게 공백으로 채운다
+        assertEquals("abc   ", EgovStringUtil.alignLeft("abc", 6, true));
+        assertEquals("abc   ", EgovStringUtil.alignLeft("abc", 6, false));
+        assertEquals("   abc", EgovStringUtil.alignRight("abc", 6, true));
+
+        // 빈 문자열은 지정한 길이만큼의 공백이 된다
+        assertEquals("   ", EgovStringUtil.alignLeft("", 3, true));
+        assertEquals("   ", EgovStringUtil.alignRight("", 3, true));
+
+        // null은 세 메서드 모두 NullPointerException을 발생시킨다
+        assertThrows(NullPointerException.class, () -> EgovStringUtil.alignLeft(null, 3, true));
+        assertThrows(NullPointerException.class, () -> EgovStringUtil.alignRight(null, 3, true));
+        assertThrows(NullPointerException.class, () -> EgovStringUtil.alignCenter(null, 3, true));
+    }
+
     @Test
     public void testEncodePassword() {
         // 1. try to encode password and compare
@@ -343,6 +380,13 @@ public class EgovStringUtilTest {
     }
 
     @Test
+    public void testContainsInvalidCharsNullString() {
+        // String-overload null cases must match the javadoc's own example table.
+        assertFalse(EgovStringUtil.containsInvalidChars(null, "xyz"));
+        assertFalse(EgovStringUtil.containsInvalidChars("abc", (String) null));
+    }
+
+    @Test
     public void testIsNumeric() {
         // 1. string is empty
         String str = "";
@@ -404,6 +448,36 @@ public class EgovStringUtilTest {
         String str = "a,b,c,d";
         // 2. get token list
         assertEquals(4, EgovStringUtil.getTokens(str).size());
+    }
+
+    /**
+     * search는 source 안에서 target이 나타나는 횟수를 센다.
+     */
+    @Test
+    public void testSearchCount() {
+        assertEquals(2, EgovStringUtil.search("aXbXc", "X"));
+        assertEquals(0, EgovStringUtil.search("abc", "z"));
+        assertEquals(2, EgovStringUtil.search("aaaa", "aa"));
+    }
+
+    /**
+     * target이 빈 문자열이면 indexOf("")가 항상 0을 반환해
+     * 기존 구현은 무한 루프에 빠졌다. 이제는 0을 반환해야 한다.
+     */
+    @Test
+    public void testSearchEmptyTargetDoesNotLoop() {
+        assertTimeoutPreemptively(Duration.ofSeconds(2),
+                () -> assertEquals(0, EgovStringUtil.search("abc", "")));
+    }
+
+    /**
+     * null 입력은 NPE 없이 0을 반환해야 한다.
+     */
+    @Test
+    public void testSearchNullInputs() {
+        assertEquals(0, EgovStringUtil.search(null, "a"));
+        assertEquals(0, EgovStringUtil.search("abc", null));
+        assertEquals(0, EgovStringUtil.search("", "a"));
     }
 
 }

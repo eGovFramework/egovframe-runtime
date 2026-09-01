@@ -16,6 +16,7 @@
 package org.egovframe.rte.psl.reactive.cassandra.connect;
 
 import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.CqlSessionBuilder;
 import org.springframework.data.cassandra.ReactiveSession;
 import org.springframework.data.cassandra.core.cql.session.DefaultBridgedReactiveSession;
 
@@ -98,12 +99,19 @@ public class EgovCassandraConfiguration {
     }
 
     public ReactiveSession reactiveSession() {
-        return new DefaultBridgedReactiveSession(CqlSession.builder()
+        CqlSessionBuilder builder = CqlSession.builder()
                 .withLocalDatacenter(getDataCenterName())
                 .withKeyspace(getKeyspaceName())
-                .addContactPoint(InetSocketAddress.createUnresolved(getContactPoint(), getPort()))
-                .withAuthCredentials(getUsername(), getPassword())
-                .build());
+                .addContactPoint(InetSocketAddress.createUnresolved(getContactPoint(), getPort()));
+        // 자격증명을 설정하지 않으면 인증 없이 접속한다. 형제 EgovRedisConfiguration도 같은 처리다.
+        // 비어 있다는 판정은 드라이버의 Strings.requireNotEmpty와 같은 기준(null 또는 길이 0)을 쓴다.
+        // 한쪽만 설정된 경우는 설정 실수이므로 드라이버가 그대로 검증하도록 넘긴다.
+        boolean hasUsername = getUsername() != null && !getUsername().isEmpty();
+        boolean hasPassword = getPassword() != null && !getPassword().isEmpty();
+        if (hasUsername || hasPassword) {
+            builder = builder.withAuthCredentials(getUsername(), getPassword());
+        }
+        return new DefaultBridgedReactiveSession(builder.build());
     }
 
 }

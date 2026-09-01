@@ -415,8 +415,21 @@ public class EgovDateUtil {
         int dayOfWeek = cd.get(Calendar.DAY_OF_WEEK);
 
         // 요일이 3자리이면 첫자리만 취한다.
-        if (yoil.length() == 3) {
+        if (yoil != null && yoil.length() == 3) {
             yoil = yoil.substring(0, 1);
+        }
+
+        // 정규화된 요일이 유효 요일집합에 속하는지 검증한다.
+        // 미인식 요일이 들어오면 아래 while 루프가 영원히 일치하지 못해 무한루프에 빠지므로 사전에 차단한다.
+        boolean validYoil = false;
+        for (String s : sYoil) {
+            if (s.equals(yoil)) {
+                validYoil = true;
+                break;
+            }
+        }
+        if (!validYoil) {
+            throw new IllegalArgumentException("요일 인자는 [일, 월, 화, 수, 목, 금, 토] 또는 3자리 형식(예: 월요일)이어야 합니다. 입력값: " + yoil);
         }
 
         while (!sYoil[(dayOfWeek - 1) % 7].equals(yoil)) {

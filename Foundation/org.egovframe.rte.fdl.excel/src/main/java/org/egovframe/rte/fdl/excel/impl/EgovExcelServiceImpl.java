@@ -19,6 +19,7 @@ import com.ibatis.sqlmap.client.SqlMapClient;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -114,6 +115,7 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
 
     /**
      * Workbook 객체를 생성하여 엑셀파일을 생성한다.
+     * 전달받은 Workbook을 닫지 않고 그대로 반환하며, 호출자가 이어서 사용·수정·재저장할 수 있다. 닫는 책임은 호출자에게 있다.
      */
     @Override
     public Workbook createWorkbook(Workbook wb, String filepath) {
@@ -123,16 +125,12 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
                 LOGGER.debug("make dir {}", FilenameUtils.getFullPath(filepath));
                 FileUtils.forceMkdir(new File(FilenameUtils.getFullPath(filepath)));
             }
-            FileOutputStream fileOut = null;
             LOGGER.debug("EgovExcelServiceImpl.createWorkbook 2 : templatePath is {}", filepath);
-            try {
+            try (FileOutputStream fileOut = new FileOutputStream(filepath)) {
                 LOGGER.debug("ExcelServiceImpl filepath ...");
-                fileOut = new FileOutputStream(filepath);
                 wb.write(fileOut);
             } finally {
                 LOGGER.debug("ExcelServiceImpl loadExcelObject End ");
-                if (wb != null) wb.close();
-                if (fileOut != null) fileOut.close();
             }
             return wb;
         } catch (IOException e) {
@@ -155,7 +153,6 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
                 wb = new HSSFWorkbook(fileIn);
             } finally {
                 LOGGER.debug("ExcelServiceImpl loadExcelTemplate End ");
-                if (wb != null) wb.close();
                 if (fileIn != null) fileIn.close();
             }
             return wb;
@@ -178,7 +175,6 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
                 wb = new XSSFWorkbook(fileIn);
             } finally {
                 LOGGER.debug("ExcelServiceImpl loadExcelTemplate(XSSF) End ");
-                if (wb != null) wb.close();
                 if (fileIn != null) fileIn.close();
             }
             return wb;
@@ -199,7 +195,6 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
                 fileIn = new FileInputStream(filepath);
                 wb = loadWorkbook(fileIn);
             } finally {
-                if (wb != null) wb.close();
                 if (fileIn != null) fileIn.close();
             }
             return wb;
@@ -219,7 +214,6 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
                 fileIn = new FileInputStream(filepath);
                 wb = loadWorkbook(fileIn, wb);
             } finally {
-                if (wb != null) wb.close();
                 if (fileIn != null) fileIn.close();
             }
             return wb;
@@ -241,8 +235,6 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
                 fs = new POIFSFileSystem(fileIn);
                 wb = new HSSFWorkbook(fs);
             } finally {
-                if (wb != null) wb.close();
-                if (fs != null) fs.close();
                 if (fileIn != null) fileIn.close();
             }
             return wb;
@@ -259,6 +251,11 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
         InputStream streamToUse = null;
         // 2026.02.28 KISA 보안취약점 조치
         try {
+            // xlsx는 zip 포맷이라 압축률이 극단적인 zip bomb에 노출될 수 있다. POI 라이브러리 기본값
+            // (minInflateRatio=0.01)에만 암묵적으로 의존하지 않고, 신뢰할 수 없는 업로드 파일을 열기
+            // 직전 명시적으로 재적용해 같은 JVM의 다른 코드가 이 전역 설정을 완화했더라도 방어가
+            // 유지되도록 한다.
+            ZipSecureFile.setMinInflateRatio(0.01d);
             LOGGER.debug("ExcelServiceImpl loadWorkbook(XSSF) ...");
             streamToUse = (fileIn != null && fileIn.markSupported()) ? fileIn : new BufferedInputStream(fileIn);
             wb = new XSSFWorkbook(streamToUse);

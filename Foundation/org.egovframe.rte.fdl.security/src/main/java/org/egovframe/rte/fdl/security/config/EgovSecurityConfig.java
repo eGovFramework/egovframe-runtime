@@ -110,6 +110,12 @@ public class EgovSecurityConfig {
     @JsonProperty("xssProtection")
     private boolean xssProtection;
 
+    /**
+     * 이름과 반대로 동작하는 필드이니 주의: {@code true}로 설정하면 보호적 Cache-Control/Pragma/Expires
+     * 응답 헤더가 오히려 <b>비활성화</b>된다(민감 페이지가 브라우저/프록시에 캐시될 위험, CWE-525).
+     * 기본값({@code false})에서는 헤더가 활성화되어 안전하다. "캐시 제어를 켠다"는 의미로 오해해 이
+     * 값을 {@code true}로 설정하지 않도록 주의할 것 — {@code true}로 설정 시 기동 로그에 경고가 남는다.
+     */
     @JsonProperty("cacheControl")
     private boolean cacheControl;
 

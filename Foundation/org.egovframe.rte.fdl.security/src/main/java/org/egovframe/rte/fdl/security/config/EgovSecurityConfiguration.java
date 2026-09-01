@@ -26,7 +26,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.lang.Nullable;
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
@@ -60,6 +59,8 @@ import org.springframework.security.web.servlet.util.matcher.PathPatternRequestM
 import org.springframework.security.web.util.matcher.RegexRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.util.ObjectUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -75,6 +76,8 @@ import java.util.*;
 @Configuration
 @EnableWebSecurity
 public class EgovSecurityConfiguration {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(EgovSecurityConfiguration.class);
 
     @Value("${Globals.SecurityConfigPath:}")
     private String securityConfigPath;
@@ -205,9 +208,9 @@ public class EgovSecurityConfiguration {
     @Bean
     public PasswordEncoder passwordEncoder(EgovSecurityConfig securityConfig) {
         String rawHash = securityConfig != null ? securityConfig.getHash() : null;
-        String securityHash = (rawHash == null || rawHash.trim().isEmpty()) ? "sha-256" : rawHash.trim().toLowerCase();
+        String securityHash = (rawHash == null || rawHash.trim().isEmpty()) ? "sha-256" : rawHash.trim().toLowerCase(Locale.ROOT);
         boolean securityHashBase64 = securityConfig != null && securityConfig.isHashBase64();
-        switch (securityHash.toLowerCase()) {
+        switch (securityHash) {
             case "plaintext":
             case "noop":
                 return NoOpPasswordEncoder.getInstance();
@@ -222,7 +225,7 @@ public class EgovSecurityConfiguration {
                 return md5Encoder;
             default:
                 if (securityHash.startsWith("sha")) {
-                    String algorithm = securityHash.replace("-", "").toUpperCase();
+                    String algorithm = securityHash.replace("-", "").toUpperCase(Locale.ROOT);
                     if ("SHA".equals(algorithm)) algorithm = "SHA-256"; // "sha" 입력 시 기본값 설정
                     MessageDigestPasswordEncoder shaEncoder = new MessageDigestPasswordEncoder(algorithm);
                     shaEncoder.setEncodeHashAsBase64(securityHashBase64);
@@ -241,7 +244,7 @@ public class EgovSecurityConfiguration {
     @Bean
     public AuthenticationManager authenticationManager(EgovSecurityConfig securityConfig, PasswordEncoder passwordEncoder) {
         String rawHash = securityConfig != null ? securityConfig.getHash() : null;
-        String securityHash = (rawHash == null || rawHash.trim().isEmpty()) ? "sha-256" : rawHash.trim().toLowerCase();
+        String securityHash = (rawHash == null || rawHash.trim().isEmpty()) ? "sha-256" : rawHash.trim().toLowerCase(Locale.ROOT);
 
         DaoAuthenticationProvider provider;
         if (isIdSaltHash(securityHash)) {
@@ -292,12 +295,12 @@ public class EgovSecurityConfiguration {
     }
 
     /**
-     * Role Hierarchy
+     * Role Hierarchy.
+     * sqlHierarchicalRoles 미설정 시에도 hierarchyStrings()가(HierarchyStringsFactoryBean 경유)
+     * 안전 기본값("ROLE_ADMIN > ROLE_USER > ROLE_ANONYMOUS")을 반환하므로 null을 반환하지 않는다.
      */
     @Bean
-    @Nullable
     public RoleHierarchy roleHierarchy(EgovSecurityConfig securityConfig) {
-        if (ObjectUtils.isEmpty(securityConfig.getSqlHierarchicalRoles())) return null;
         RoleHierarchyImpl hierarchy = new RoleHierarchyImpl();
         hierarchy.setHierarchy(hierarchyStrings(securityConfig));
         return hierarchy;
@@ -496,8 +499,11 @@ public class EgovSecurityConfiguration {
                 headers.xssProtection(HeadersConfigurer.XXssConfig::disable);
             }
 
-            // Cache-Control
+            // Cache-Control (주의: cacheControl=true는 보호 헤더를 "비활성화"한다 - 이름과 반대 동작)
             if (securityConfig.isCacheControl()) {
+                LOGGER.warn("cacheControl=true - this DISABLES the protective Cache-Control/Pragma/Expires " +
+                        "response headers (the property name is misleading). Sensitive pages may be cached by " +
+                        "browsers/proxies. Leave cacheControl unset or false (default) to keep these headers enabled.");
                 headers.cacheControl(HeadersConfigurer.CacheControlConfig::disable);
             } else {
                 headers.cacheControl(Customizer.withDefaults()); // enable

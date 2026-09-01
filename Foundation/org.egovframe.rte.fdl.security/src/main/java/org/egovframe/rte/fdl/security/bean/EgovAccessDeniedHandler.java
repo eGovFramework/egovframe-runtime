@@ -26,10 +26,13 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.csrf.InvalidCsrfTokenException;
 import org.springframework.security.web.csrf.MissingCsrfTokenException;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 
 public class EgovAccessDeniedHandler implements AccessDeniedHandler {
+
+    private static final String DEFAULT_ACCESS_DENIED_URL = "/index.html";
 
     private final EgovSecurityConfig config;
 
@@ -43,20 +46,22 @@ public class EgovAccessDeniedHandler implements AccessDeniedHandler {
             throw new NoSuchBeanDefinitionException("### EgovAccessDeniedHandler EgovSecurityProperties not found.");
         }
 
-        if (!ObjectUtils.isEmpty(accessDeniedException)) {
-            RequestDispatcher dispatcher = request.getRequestDispatcher(config.getAccessDeniedUrl());
-            dispatcher.forward(request, response);
+        if (ObjectUtils.isEmpty(accessDeniedException)) {
+            return;
         }
 
-        if (accessDeniedException instanceof InvalidCsrfTokenException) {
-            RequestDispatcher dispatcher = request.getRequestDispatcher(config.getCsrfAccessDeniedUrl());
-            dispatcher.forward(request, response);
+        // accessDeniedException은 항상 non-null이므로, 예전처럼 일반 forward를 먼저 실행하면 응답이
+        // 이미 커밋되어 아래 CSRF 전용 forward가 도달 불가능했다(IllegalStateException 위험). CSRF
+        // 예외 여부를 먼저 판별해 목적지를 하나로 정하고 forward는 한 번만 수행한다.
+        boolean isCsrfFailure = accessDeniedException instanceof InvalidCsrfTokenException
+                || accessDeniedException instanceof MissingCsrfTokenException;
+        String targetUrl = isCsrfFailure ? config.getCsrfAccessDeniedUrl() : config.getAccessDeniedUrl();
+        if (!StringUtils.hasText(targetUrl)) {
+            targetUrl = DEFAULT_ACCESS_DENIED_URL;
         }
 
-        if (accessDeniedException instanceof MissingCsrfTokenException) {
-            RequestDispatcher dispatcher = request.getRequestDispatcher(config.getCsrfAccessDeniedUrl());
-            dispatcher.forward(request, response);
-        }
+        RequestDispatcher dispatcher = request.getRequestDispatcher(targetUrl);
+        dispatcher.forward(request, response);
     }
 
 }

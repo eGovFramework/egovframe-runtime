@@ -64,11 +64,11 @@ public class EgovObjectMapper<T> implements InitializingBean {
      * names를 설정한다.
      */
     public void setNames(String[] names) {
+        Assert.notNull(names, "Names must be non-null");
         this.names = new String[names.length];
         for (int i = 0; i < names.length; i++) {
             this.names[i] = names[i];
         }
-        Assert.notNull(names, "Names must be non-null");
     }
 
     /**

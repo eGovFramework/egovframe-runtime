@@ -47,7 +47,7 @@ import java.text.MessageFormat;
  * </pre>
  * @since 2025.06.01
  */
-public class AbstractKrdsPaginationRenderer implements PaginationRenderer {
+public abstract class AbstractKrdsPaginationRenderer implements PaginationRenderer {
 
     protected String firstPageLabel;
     protected String previousPageLabel;

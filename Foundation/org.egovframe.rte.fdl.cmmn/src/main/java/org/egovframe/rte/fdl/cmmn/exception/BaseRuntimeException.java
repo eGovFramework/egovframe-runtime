@@ -95,6 +95,9 @@ public class BaseRuntimeException extends RuntimeException {
             userMessage = MessageFormat.format(defaultMessage, messageParameters);
         }
         this.message = userMessage;
+        if (wrappedException instanceof Exception exception) {
+            this.wrappedException = exception;
+        }
     }
 
     /**
@@ -182,6 +185,9 @@ public class BaseRuntimeException extends RuntimeException {
         this.messageKey = messageKey;
         this.messageParameters = messageParameters;
         this.message = messageSource.getMessage(messageKey, messageParameters, defaultMessage, locale);
+        if (wrappedException instanceof Exception exception) {
+            this.wrappedException = exception;
+        }
     }
 
     public String getMessage() {

@@ -30,7 +30,9 @@ public class FileWritingRowHandler implements RowHandler {
 
     @PostConstruct
     public void init() throws IOException {
-        this.file = new File("./src/test/resources/META-INF/spring/" + schemaProperties.getProperty("outResultFile"));
+        this.file = new File("./target/test-output/" + schemaProperties.getProperty("outResultFile"));
+        // 산출물은 빌드 디렉터리에 만든다. 소스 트리에 쓰면 추적 중인 파일이 더러워진다.
+        this.file.getParentFile().mkdirs();
         if (this.file.exists()) {
             this.file.delete();
             this.file.createNewFile();

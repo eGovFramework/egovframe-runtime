@@ -43,15 +43,18 @@ public class EgovCrnCheckValidation implements ConstraintValidator<EgovCrnCheck,
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
+        if (value == null) {
+            return false;
+        }
         String mValue = value.replaceAll("-", "");
         Matcher matcher = CRN_PATTERN.matcher(mValue);
-        boolean check = matcher.find();
+        boolean check = matcher.matches();
         if (!check) {
             return false;
         }
 
         int sum = 0;
-        int[] weightArray = {1, 3, 7, 1, 3, 7, 1, 3, 5, 1};
+        int[] weightArray = {1, 3, 7, 1, 3, 7, 1, 3, 5};
         for (int i = 0; i < weightArray.length; i++) {
             sum += weightArray[i] * Integer.parseInt(mValue.substring(i, i + 1));
         }

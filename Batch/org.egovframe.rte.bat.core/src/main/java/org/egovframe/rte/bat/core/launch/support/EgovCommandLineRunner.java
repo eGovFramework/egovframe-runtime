@@ -60,7 +60,6 @@ public class EgovCommandLineRunner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EgovCommandLineRunner.class);
     private static final int EXE_COUNT = 100;
-    private static int EXESTART = 0;
 
     /**
      * 실행 종료를 위한 SystemExiter
@@ -273,9 +272,9 @@ public class EgovCommandLineRunner {
             // 다음 Batch Job을 실행하기 위한 Job Parameters를 생성한다.
             if (opts.contains("-next")) {
                 JobParameters nextParameters = getNextJobParameters(job);
-                Map<String, JobParameter> map = new HashMap<>(nextParameters.getParameters());
+                Map<String, JobParameter<?>> map = new HashMap<>(nextParameters.getParameters());
                 map.putAll(jobParameters.getParameters());
-                jobParameters = new JobParameters();
+                jobParameters = new JobParameters(map);
             }
 
             // Batch Job을 실행한다.
@@ -308,7 +307,10 @@ public class EgovCommandLineRunner {
         }
 
         List<JobExecution> executions = new ArrayList<JobExecution>();
-        List<JobInstance> lastInstances = jobExplorer.getJobInstances(jobIdentifier, EXESTART, EXE_COUNT);
+        // 페이징 offset은 호출마다 0에서 시작해야 한다. static 필드로 두면 이전 호출의 누적값이 남아
+        // (restart 처리가 이 메서드를 실패·실행중·완료 판정으로 반복 호출) 오래된 offset부터 조회해 빈 결과를 얻는다.
+        int start = 0;
+        List<JobInstance> lastInstances = jobExplorer.getJobInstances(jobIdentifier, start, EXE_COUNT);
         while (!lastInstances.isEmpty()) {
             for (JobInstance jobInstance : lastInstances) {
                 List<JobExecution> jobExecutions = jobExplorer.getJobExecutions(jobInstance);
@@ -321,8 +323,8 @@ public class EgovCommandLineRunner {
                     }
                 }
             }
-            EXESTART += EXE_COUNT;
-            lastInstances = jobExplorer.getJobInstances(jobIdentifier, EXESTART, EXE_COUNT);
+            start += EXE_COUNT;
+            lastInstances = jobExplorer.getJobInstances(jobIdentifier, start, EXE_COUNT);
         }
 
         return executions;

@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.io.FileNotFoundException;
+import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
@@ -146,51 +147,37 @@ public class EgovFileUtil {
     }
 
     /**
-     * 파일을 읽는다.
+     * 파일을 플랫폼 기본 문자셋({@link Charset#defaultCharset()})으로 읽는다.
+     * 인코딩을 지정하려면 {@link #readFile(File, String)}을 사용한다.
      */
     public static String readFile(File file) throws IOException {
-        BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
         String sResult = "";
 
-        try {
+        try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
             sResult = readFileContent(in);
         } catch (IllegalArgumentException e) {
             LOGGER.debug("[{}] EogvFileUtil : {}", e.getClass().getName(), e.getMessage());
-        } finally {
-            in.close();
         }
 
         return sResult;
     }
 
     /**
-     * String 형으로 파일의 내용을 읽는다.
+     * String 형으로 스트림 전체를 읽어 플랫폼 기본 문자셋으로 디코딩한다.
      */
     public static String readFileContent(InputStream in) throws IOException {
-        StringBuilder buf = new StringBuilder();
-        for (int i = in.read(); i != -1; i = in.read()) {
-            buf.append((char) i);
-        }
-        return buf.toString();
+        return new String(in.readAllBytes(), Charset.defaultCharset());
     }
 
     /**
-     * String 영으로 파일의 내용을 읽는다.
+     * String 형으로 파일 전체를 읽어 지정한 인코딩으로 디코딩한다. 원본의 개행은 그대로 보존된다.
+     * encoding이 null이면 플랫폼 기본 문자셋을 사용한다.
      */
     public static String readFile(File file, String encoding) throws IOException {
-        StringBuffer sb = new StringBuffer();
-        List<String> lines = readTextLines(file, encoding);
-
-        for (Iterator<String> it = lines.iterator(); ; ) {
-            sb.append(it.next());
-            if (it.hasNext()) {
-                sb.append("");
-            } else {
-                break;
-            }
+        Charset charset = encoding == null ? Charset.defaultCharset() : Charset.forName(encoding);
+        try (InputStream in = new FileInputStream(file)) {
+            return new String(in.readAllBytes(), charset);
         }
-
-        return sb.toString();
     }
 
     /**
@@ -222,37 +209,59 @@ public class EgovFileUtil {
      * 텍스트 내용을 파일로 쓴다.
      */
     public static void writeFile(File file, String text) {
-        FileWriter writer = null;
-        try {
-            writer = new FileWriter(file);
+        try (FileWriter writer = new FileWriter(file)) {
             writer.write(text);
         } catch (IOException e) {
             LOGGER.debug("[{}] EogvFileUtil : {}", e.getClass().getName(), e.getMessage());
-        } finally {
-            EgovResourceReleaser.close(writer);
         }
     }
 
     /**
+     * 텍스트 내용을 지정한 인코딩으로 파일에 쓴다.
+     * <p>호출자가 이미 만든 {@link File}을 받으므로(신뢰 여부는 호출자 책임), 상대/절대 경로 제한이
+     * 적용되는 {@link #writeFile(String, String, String)}과 달리 절대 경로도 그대로 허용한다.</p>
+     */
+    public static void writeFile(File file, String data, String encoding) throws IOException {
+        FileUtils.writeStringToFile(file, data, encoding);
+    }
+
+    /**
      * 텍스트 내용을 파일로 쓴다.
+     * <p>fileName은 상대 경로만 허용한다(신뢰할 수 없는 입력에도 안전하게 사용하기 위함).
+     * 신뢰할 수 있는 절대 경로에 써야 한다면 {@link #writeFile(File, String)}을 직접 사용하라.</p>
      */
     public static void writeFile(String fileName, String text) {
         assertNoPathTraversal(fileName);
         writeFile(new File(fileName), text);
     }
 
+    /**
+     * 텍스트 내용을 지정한 인코딩으로 파일에 쓴다.
+     * <p>fileName은 상대 경로만 허용한다(신뢰할 수 없는 입력에도 안전하게 사용하기 위함).
+     * 신뢰할 수 있는 절대 경로에 써야 한다면 {@link #writeFile(File, String, String)}을 직접 사용하라.</p>
+     */
     public static void writeFile(String fileName, String data, String encoding) throws IOException {
         assertNoPathTraversal(fileName);
         FileUtils.writeStringToFile(new File(fileName), data, encoding);
     }
 
     /**
-     * 호출자가 지정한 파일 경로에 상위 디렉토리 이동 시퀀스("..")가 포함되어
-     * 의도한 위치를 벗어난 경로 순회(Path Traversal)로 이어지지 않도록 차단한다.
+     * 호출자가 지정한 파일 경로가 상위 디렉토리 이동 시퀀스("..")를 포함하거나 절대 경로여서
+     * 의도한 위치를 벗어난 경로 순회(Path Traversal)나 임의 파일 쓰기/읽기로 이어지지 않도록 차단한다.
+     * 신뢰할 수 없는 입력(사용자 업로드 파일명 등)은 항상 이 검증을 통과하는 상대 경로여야 한다.
      */
     private static void assertNoPathTraversal(String fileName) {
-        if (fileName == null || fileName.contains("..")) {
+        if (fileName == null || fileName.isEmpty()) {
+            throw new IllegalArgumentException("Invalid file path: path must not be null or empty.");
+        }
+        if (fileName.indexOf('\0') >= 0) {
+            throw new IllegalArgumentException("Invalid file path: null byte is not allowed.");
+        }
+        if (fileName.contains("..")) {
             throw new IllegalArgumentException("Invalid file path: path traversal sequence('..') is not allowed.");
+        }
+        if (new File(fileName).isAbsolute()) {
+            throw new IllegalArgumentException("Invalid file path: absolute path is not allowed.");
         }
     }
 
@@ -351,6 +360,7 @@ public class EgovFileUtil {
 
     /**
      * 텍스트 파일을 읽어온다.
+     * <p>fileName은 상대 경로만 허용한다({@link #assertNoPathTraversal(String)} 참고).</p>
      */
     public static StringBuffer readTextFile(String fileName, boolean newline) throws IOException {
         assertNoPathTraversal(fileName);
@@ -360,9 +370,7 @@ public class EgovFileUtil {
         }
 
         StringBuffer buf = new StringBuffer();
-        BufferedReader in = null;
-        try {
-            in = new BufferedReader(new FileReader(file));
+        try (BufferedReader in = new BufferedReader(new FileReader(file))) {
             String str;
             while ((str = in.readLine()) != null) {
                 buf.append(str);
@@ -370,8 +378,6 @@ public class EgovFileUtil {
                     buf.append(System.lineSeparator());
                 }
             }
-        } finally {
-            EgovResourceReleaser.close(in);
         }
 
         return buf;
@@ -454,8 +460,8 @@ public class EgovFileUtil {
     /**
      * 지정한 위치의 하위 디렉토리 목록을 가져온다.
      */
-    private StringBuffer listChildren(final FileObject dir, final boolean recursive, final String prefix) throws FileSystemException {
-        StringBuffer line = new StringBuffer();
+    private StringBuilder listChildren(final FileObject dir, final boolean recursive, final String prefix) throws FileSystemException {
+        StringBuilder line = new StringBuilder();
         final FileObject[] children = dir.getChildren();
 
         for (final FileObject child : children) {

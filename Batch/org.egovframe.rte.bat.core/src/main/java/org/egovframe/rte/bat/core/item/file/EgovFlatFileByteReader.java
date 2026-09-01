@@ -54,7 +54,7 @@ public class EgovFlatFileByteReader<T> extends AbstractItemCountingItemStreamIte
     private static final Logger LOGGER = LoggerFactory.getLogger(EgovFlatFileByteReader.class);
     private static final int UNIX_CRLF = 1;
     private static final int WINDOWS_CRLF = 2;
-    public static int LINE_CRLF = 2;
+    private int lineCrlf = WINDOWS_CRLF;
     byte[] b = null;
     private RecordSeparatorPolicy recordSeparatorPolicy = new SimpleRecordSeparatorPolicy();
     private EgovByteReaderFactory bufferedReaderFactory = new EgovByteReaderFactory();
@@ -112,10 +112,17 @@ public class EgovFlatFileByteReader<T> extends AbstractItemCountingItemStreamIte
      */
     public void setOsType(String osType) {
         if (!osType.equalsIgnoreCase("WINDOWS")) {
-            LINE_CRLF = UNIX_CRLF;
+            this.lineCrlf = UNIX_CRLF;
         } else {
-            LINE_CRLF = WINDOWS_CRLF;
+            this.lineCrlf = WINDOWS_CRLF;
         }
+    }
+
+    /**
+     * 라인 구분자 길이를 반환
+     */
+    public int getLineCrlf() {
+        return this.lineCrlf;
     }
 
     /**
@@ -186,13 +193,13 @@ public class EgovFlatFileByteReader<T> extends AbstractItemCountingItemStreamIte
      */
     private byte[] readLine() {
         if (b == null) {
-            b = new byte[length + LINE_CRLF];
+            b = new byte[length + this.lineCrlf];
         }
 
         int line = 0;
 
         try {
-            line = this.reader.read(b, offset, length + LINE_CRLF);
+            line = this.reader.read(b, offset, length + this.lineCrlf);
             if (line < 0) {
                 return null;
             }
@@ -202,7 +209,9 @@ public class EgovFlatFileByteReader<T> extends AbstractItemCountingItemStreamIte
             throw new NonTransientFlatFileException("Unable to read from resource: [" + resource + "]", e, line + "", lineCount);
         }
 
-        return b;
+        // InputStream.read()는 요청한 길이만큼 채운다는 보장이 없다(마지막 레코드가 고정 길이보다 짧은 경우 등).
+        // b는 재사용되는 버퍼이므로, 실제로 읽은 바이트 수만큼만 잘라 반환하지 않으면 이전 호출의 잔여 바이트가 섞여 나간다.
+        return line == b.length ? b : java.util.Arrays.copyOf(b, offset + line);
     }
 
     @Override

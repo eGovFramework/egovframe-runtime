@@ -300,7 +300,12 @@ public class EgovPropertyServiceImpl implements EgovPropertyService, Application
     }
 
     /**
-     * extFileName을 지정할 때 Attribute로 정의
+     * extFileName을 지정할 때 Attribute로 정의.
+     * <p><b>보안 주의:</b> 각 원소(문자열 또는 {@code filename}/{@code encoding} 키를 가진 Map)의
+     * {@code filename} 값은 {@link ResourceLoader}에 그대로 전달되어 {@code classpath:}/{@code file:}/
+     * {@code http(s):} 등 스킴에 따라 로컬 파일이나 원격 URL을 읽어올 수 있다. 이 값은 반드시 신뢰할 수
+     * 있는 배포 설정(Spring Bean 구성)에서만 지정해야 하며, 사용자 입력 등 신뢰할 수 없는 값을 여기에
+     * 바인딩하면 임의 파일 읽기·SSRF로 이어질 수 있다.</p>
      */
     public void setExtFileName(Set<?> extFileName) {
         this.extFileName = extFileName;

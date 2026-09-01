@@ -19,7 +19,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.egovframe.rte.fdl.crypto.EgovARIACryptoService;
 import org.egovframe.rte.fdl.crypto.EgovPasswordEncoder;
-import org.egovframe.rte.fdl.logging.util.EgovResourceReleaser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.ReflectionUtils;
@@ -45,6 +44,11 @@ public class EgovARIACryptoServiceImpl implements EgovARIACryptoService {
     }
 
     public void setBlockSize(int blockSize) {
+        // blockSize가 0이면 encrypt(File)의 read 루프가 종료되지 않아 무한 루프에 빠지고(CWE-835),
+        // 음수이면 버퍼 할당에서 예외가 발생하므로 양수만 허용한다.
+        if (blockSize <= 0) {
+            throw new IllegalArgumentException("blockSize must be a positive number: " + blockSize);
+        }
         if (blockSize % BLOCKSIZE_MODULAR != 0) {
             blockSize += (BLOCKSIZE_MODULAR - blockSize % BLOCKSIZE_MODULAR);
         }
@@ -66,16 +70,15 @@ public class EgovARIACryptoServiceImpl implements EgovARIACryptoService {
     }
 
     public void encrypt(File srcFile, String password, File trgtFile) {
-        FileInputStream fis = null;
-        ByteArrayOutputStream baos = null;
         String fileString;
         byte[] buffer;
         if (passwordEncoder.checkPassword(password)) {
             ARIACipher cipher = new ARIACipher();
             cipher.setPassword(password);
-            try {
-                fis = new FileInputStream(srcFile);
-                baos = new ByteArrayOutputStream();
+            try (
+                FileInputStream fis = new FileInputStream(srcFile);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream()
+            ) {
                 buffer = new byte[blockSize];
                 LOGGER.debug("blockSize = {}", blockSize);
                 int len = 0;
@@ -92,11 +95,9 @@ public class EgovARIACryptoServiceImpl implements EgovARIACryptoService {
                 fileString = new String(Base64.encodeBase64(fileArray));
                 byte[] enc = cipher.encrypt(fileString.getBytes(StandardCharsets.UTF_8));
                 String encString = Base64.encodeBase64String(enc);
-                FileUtils.writeStringToFile(trgtFile, encString, "UTF-8", true);
+                FileUtils.writeStringToFile(trgtFile, encString, "UTF-8");
             } catch (IOException e) {
                 ReflectionUtils.handleReflectionException(e);
-            } finally {
-                EgovResourceReleaser.close(fis, baos);
             }
         } else {
             throw new IllegalArgumentException("password not matched!!!");

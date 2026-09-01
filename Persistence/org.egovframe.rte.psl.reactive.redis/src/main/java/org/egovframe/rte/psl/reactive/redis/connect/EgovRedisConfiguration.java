@@ -15,9 +15,14 @@
  */
 package org.egovframe.rte.psl.reactive.redis.connect;
 
+import io.lettuce.core.ClientOptions;
+import io.lettuce.core.SocketOptions;
+import io.lettuce.core.api.StatefulConnection;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.data.redis.connection.ReactiveRedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
-import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettucePoolingClientConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettucePoolingClientConfiguration.LettucePoolingClientConfigurationBuilder;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 
 import java.time.Duration;
@@ -113,6 +118,8 @@ public class EgovRedisConfiguration {
     /**
      * ReactiveRedisConnectionFactory를 생성합니다.
      *
+     * <p>생성자로 지정한 SSL 사용 여부(useSsl)를 반영합니다.</p>
+     *
      * @return ReactiveRedisConnectionFactory 인스턴스
      */
     public ReactiveRedisConnectionFactory reactiveRedisConnectionFactory() {
@@ -123,21 +130,27 @@ public class EgovRedisConfiguration {
             redisStandaloneConfiguration.setPassword(password);
         }
         
-        // Lettuce 클라이언트 설정
-        LettuceClientConfiguration clientConfig = LettuceClientConfiguration.builder()
+        // Lettuce 클라이언트 설정 (연결 타임아웃 + 커넥션 풀 + SSL 사용 여부 적용)
+        LettucePoolingClientConfigurationBuilder clientConfigBuilder = LettucePoolingClientConfiguration.builder()
+                .clientOptions(clientOptions())
                 .commandTimeout(commandTimeout)
                 .shutdownTimeout(Duration.ofSeconds(2))
-                .build();
-        
+                .poolConfig(poolConfig());
+        LettucePoolingClientConfiguration clientConfig = useSsl
+                ? clientConfigBuilder.useSsl().build()
+                : clientConfigBuilder.build();
+
         LettuceConnectionFactory connectionFactory = new LettuceConnectionFactory(redisStandaloneConfiguration, clientConfig);
         connectionFactory.setValidateConnection(true);
         connectionFactory.setShareNativeConnection(false);
-        
+
         return connectionFactory;
     }
 
     /**
      * SSL을 사용하는 ReactiveRedisConnectionFactory를 생성합니다.
+     *
+     * <p>생성자로 지정한 SSL 사용 여부(useSsl)와 무관하게 SSL을 사용합니다.</p>
      *
      * @return SSL이 활성화된 ReactiveRedisConnectionFactory 인스턴스
      */
@@ -149,18 +162,34 @@ public class EgovRedisConfiguration {
             redisStandaloneConfiguration.setPassword(password);
         }
         
-        // Lettuce 클라이언트 설정 (SSL 포함)
-        LettuceClientConfiguration clientConfig = LettuceClientConfiguration.builder()
+        // Lettuce 클라이언트 설정 (연결 타임아웃 + 커넥션 풀 + SSL 적용)
+        LettucePoolingClientConfiguration clientConfig = LettucePoolingClientConfiguration.builder()
+                .clientOptions(clientOptions())
                 .commandTimeout(commandTimeout)
                 .shutdownTimeout(Duration.ofSeconds(2))
+                .poolConfig(poolConfig())
                 .useSsl()
                 .build();
-        
+
         LettuceConnectionFactory connectionFactory = new LettuceConnectionFactory(redisStandaloneConfiguration, clientConfig);
         connectionFactory.setValidateConnection(true);
         connectionFactory.setShareNativeConnection(false);
-        
+
         return connectionFactory;
+    }
+
+    private ClientOptions clientOptions() {
+        return ClientOptions.builder()
+                .socketOptions(SocketOptions.builder().connectTimeout(connectTimeout).build())
+                .build();
+    }
+
+    private GenericObjectPoolConfig<StatefulConnection<?, ?>> poolConfig() {
+        GenericObjectPoolConfig<StatefulConnection<?, ?>> poolConfig = new GenericObjectPoolConfig<>();
+        poolConfig.setMaxTotal(maxActive);
+        poolConfig.setMaxIdle(maxIdle);
+        poolConfig.setMinIdle(minIdle);
+        return poolConfig;
     }
 
     /**

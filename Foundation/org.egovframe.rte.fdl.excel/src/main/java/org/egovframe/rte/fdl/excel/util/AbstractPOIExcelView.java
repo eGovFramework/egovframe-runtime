@@ -119,7 +119,7 @@ public abstract class AbstractPOIExcelView extends AbstractView {
 
     protected void setText(XSSFCell cell, String text) {
         cell.setCellType(CellType.STRING);
-        cell.setCellValue(text);
+        cell.setCellValue(FormulaInjectionSanitizer.sanitize(text));
     }
 
 }

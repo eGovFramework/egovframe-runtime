@@ -33,9 +33,9 @@ package org.egovframe.rte.ptl.reactive.exception;
  */
 public class EgovException extends RuntimeException {
 
-    protected EgovErrorCode egovErrorCode;
+    private static final long serialVersionUID = 1L;
 
-    protected String message;
+    protected EgovErrorCode egovErrorCode;
 
     public EgovException(EgovErrorCode egovErrorCode) {
         this(egovErrorCode, true, null);
@@ -50,17 +50,12 @@ public class EgovException extends RuntimeException {
     }
 
     public EgovException(EgovErrorCode egovErrorCode, boolean messageCode, String message) {
+        super(messageCode ? egovErrorCode.getMessage() : message);
         this.egovErrorCode = egovErrorCode;
-        if (messageCode) message = egovErrorCode.getMessage();
-        this.message = message;
     }
 
     public EgovErrorCode getEgovErrorCode() {
         return egovErrorCode;
-    }
-
-    public String getMessage() {
-        return message;
     }
 
 }

@@ -25,6 +25,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -282,6 +283,13 @@ public final class EgovStringUtil {
      * search
      */
     public static int search(String source, String target) {
+        // source 또는 target이 null/빈 문자열이면 셀 대상이 없으므로 0을 반환한다.
+        // 특히 target이 빈 문자열이면 indexOf("")가 항상 0을 반환해
+        // i가 0에 고정되어 무한 루프에 빠지므로 반드시 먼저 걸러낸다.
+        if (source == null || source.isEmpty() || target == null || target.isEmpty()) {
+            return 0;
+        }
+
         int result = 0;
         String strCheck = source;
         for (int i = 0; i < source.length(); ) {
@@ -386,8 +394,9 @@ public final class EgovStringUtil {
      * 문자열의 뒷쪽에 지정한 길이만큼 공백으로 채움
      */
     public static String alignLeft(String str, int length, boolean isEllipsis) {
-        StringBuilder result = new StringBuilder(str);
+        StringBuilder result = new StringBuilder(length);
         if (str.length() <= length) {
+            result.append(str);
             for (int i = 0; i < (length - str.length()); i++) {
                 result.append(WHITE_SPACE);
             }
@@ -527,7 +536,7 @@ public final class EgovStringUtil {
      * @return encypted password based on the algorithm.
      */
     public static String encodePassword(String password, String algorithm) {
-        byte[] unencodedPassword = password.getBytes();
+        byte[] unencodedPassword = password.getBytes(StandardCharsets.UTF_8);
         MessageDigest md;
 
         try {
@@ -838,7 +847,7 @@ public final class EgovStringUtil {
      */
     public static boolean containsInvalidChars(String str, String invalidChars) {
         if (str == null || invalidChars == null) {
-            return true;
+            return false;
         }
         return containsInvalidChars(str, invalidChars.toCharArray());
     }
@@ -903,7 +912,7 @@ public final class EgovStringUtil {
         if (str == null) {
             return null;
         }
-        return new StringBuffer(str).reverse().toString();
+        return new StringBuilder(str).reverse().toString();
     }
 
     /**
@@ -982,7 +991,7 @@ public final class EgovStringUtil {
     public static String convertToCamelCase(String targetString, char posChar) {
         StringBuilder result = new StringBuilder();
         boolean nextUpper = false;
-        String allLower = targetString.toLowerCase();
+        String allLower = targetString.toLowerCase(Locale.ROOT);
         for (int i = 0; i < allLower.length(); i++) {
             char currentChar = allLower.charAt(i);
             if (currentChar == posChar) {
@@ -1021,7 +1030,7 @@ public final class EgovStringUtil {
             if (i > 0 && Character.isUpperCase(currentChar)) {
                 result = result.concat("_");
             }
-            result = result.concat(Character.toString(currentChar).toLowerCase());
+            result = result.concat(Character.toString(currentChar).toLowerCase(Locale.ROOT));
         }
         return result;
     }

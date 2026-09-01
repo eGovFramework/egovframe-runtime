@@ -25,6 +25,7 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 import java.util.Properties;
 
 /**
@@ -94,7 +95,9 @@ public class EgovSecurityConfigReader {
                 try (InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
                     props.load(reader);
                 }
-                return mapPropertiesToBean(props, EgovSecurityConfig.class);
+                // 파일에 명시되지 않은 키(sniff, xssProtection 등)는 안전한 기본값을 유지하도록
+                // 빈 인스턴스가 아니라 createDefaultConfig()를 베이스로 덮어쓴다.
+                return mapPropertiesToBean(props, createDefaultConfig());
             }
         } catch (IOException e) {
             LOGGER.debug("Failed to read security configuration file, use default config. tried: {} - {}", triedPath, e.getMessage());
@@ -115,22 +118,15 @@ public class EgovSecurityConfigReader {
     }
 
     // 2026.02.28 KISA 보안취약점 조치
-    // properties 설정 파일을 읽어 EgovCryptoConfig 객체로 변환
-    private static EgovSecurityConfig mapPropertiesToBean(Properties props, Class<EgovSecurityConfig> beanClass) {
-        EgovSecurityConfig bean;
-        // 2026.02.28 KISA 보안취약점 조치
-        try {
-            bean = beanClass.getDeclaredConstructor().newInstance();
-        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException("Failed to create config instance: " + e.getMessage(), e);
-        }
+    // properties 설정 파일을 읽어 기존 bean(기본값이 채워진 상태) 위에 덮어쓴다.
+    private static EgovSecurityConfig mapPropertiesToBean(Properties props, EgovSecurityConfig bean) {
         for (String key : props.stringPropertyNames()) {
             String value = props.getProperty(key);
             if (value == null) continue;
-            String setterName = "set" + key.substring(0, 1).toUpperCase() + key.substring(1);
+            String setterName = "set" + key.substring(0, 1).toUpperCase(Locale.ROOT) + key.substring(1);
             // 2026.02.28 KISA 보안취약점 조치
             try {
-                Method setter = findSetter(beanClass, setterName);
+                Method setter = findSetter(bean.getClass(), setterName);
                 if (setter != null) {
                     Object arg = convertValue(value, setter.getParameterTypes()[0]);
                     setter.invoke(bean, arg);

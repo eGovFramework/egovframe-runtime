@@ -18,7 +18,6 @@ package org.egovframe.rte.fdl.crypto.impl;
 import org.apache.commons.codec.binary.Base64;
 import org.egovframe.rte.fdl.crypto.EgovGeneralCryptoService;
 import org.egovframe.rte.fdl.crypto.EgovPasswordEncoder;
-import org.egovframe.rte.fdl.logging.util.EgovResourceReleaser;
 import org.jasypt.encryption.pbe.StandardPBEBigDecimalEncryptor;
 import org.jasypt.encryption.pbe.StandardPBEByteEncryptor;
 import org.slf4j.Logger;
@@ -33,10 +32,15 @@ public class EgovGeneralCryptoServiceImpl implements EgovGeneralCryptoService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EgovGeneralCryptoServiceImpl.class);
 
+    /** SHA-1/3중 DES 기반 — NIST 등에서 폐기 권고된 약한 알고리즘 조합. 하위 호환을 위해 기본값은
+     * 유지하되, 그대로 사용되면 {@link #warnIfWeakDefaultAlgorithm()}이 경고를 남긴다. */
+    private static final String DEFAULT_ALGORITHM = "PBEWithSHA1AndDESede";
+
     private final Base64 base64 = new Base64();
-    private String algorithm = "PBEWithSHA1AndDESede";
+    private String algorithm = DEFAULT_ALGORITHM;
     private EgovPasswordEncoder passwordEncoder;
     private int blockSize = 1024;
+    private volatile boolean defaultAlgorithmWarningLogged = false;
 
     public String getAlgorithm() {
         return algorithm;
@@ -47,16 +51,36 @@ public class EgovGeneralCryptoServiceImpl implements EgovGeneralCryptoService {
         LOGGER.debug("General Crypto Service's algorithm : {}", algorithm);
     }
 
+    /**
+     * 기본 알고리즘({@value #DEFAULT_ALGORITHM}, SHA-1/DES 기반)이 그대로 사용 중이면 최초 1회
+     * 경고 로그를 남긴다. 신규 배포에는 {@link #setAlgorithm(String)}으로
+     * {@code PBEWithHmacSHA256AndAES_256} 등 더 강한 PBE 알고리즘을 명시적으로 설정할 것을 권장한다.
+     */
+    private void warnIfWeakDefaultAlgorithm() {
+        if (DEFAULT_ALGORITHM.equals(algorithm) && !defaultAlgorithmWarningLogged) {
+            defaultAlgorithmWarningLogged = true;
+            LOGGER.warn("EgovGeneralCryptoServiceImpl is using the default algorithm '{}' (SHA-1/DES-based, " +
+                    "considered weak). Call setAlgorithm(...) with a stronger PBE algorithm " +
+                    "(e.g. PBEWithHmacSHA256AndAES_256) for new deployments.", DEFAULT_ALGORITHM);
+        }
+    }
+
     public void setPasswordEncoder(EgovPasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
         LOGGER.debug("passwordEncoder's algorithm : {}", passwordEncoder.getAlgorithm());
     }
 
     public void setBlockSize(int blockSize) {
+        // blockSize가 0이면 encrypt(File)의 read 루프가 종료되지 않아 무한 루프에 빠지고(CWE-835),
+        // 음수이면 버퍼 할당에서 NegativeArraySizeException이 발생하므로 양수만 허용한다.
+        if (blockSize <= 0) {
+            throw new IllegalArgumentException("blockSize must be a positive number: " + blockSize);
+        }
         this.blockSize = blockSize;
     }
 
     public byte[] encrypt(byte[] data, String password) {
+        warnIfWeakDefaultAlgorithm();
         if (passwordEncoder.checkPassword(password)) {
             StandardPBEByteEncryptor cipher = new StandardPBEByteEncryptor();
             cipher.setAlgorithm(algorithm);
@@ -68,6 +92,7 @@ public class EgovGeneralCryptoServiceImpl implements EgovGeneralCryptoService {
     }
 
     public BigDecimal encrypt(BigDecimal number, String password) {
+        warnIfWeakDefaultAlgorithm();
         if (passwordEncoder.checkPassword(password)) {
             StandardPBEBigDecimalEncryptor cipher = new StandardPBEBigDecimalEncryptor();
             cipher.setAlgorithm(algorithm);
@@ -79,10 +104,7 @@ public class EgovGeneralCryptoServiceImpl implements EgovGeneralCryptoService {
     }
 
     public void encrypt(File srcFile, String password, File trgtFile) {
-        FileInputStream fis = null;
-        FileWriter fw = null;
-        BufferedInputStream bis = null;
-        BufferedWriter bw = null;
+        warnIfWeakDefaultAlgorithm();
         byte[] buffer = null;
         if (passwordEncoder.checkPassword(password)) {
             StandardPBEByteEncryptor cipher = new StandardPBEByteEncryptor();
@@ -90,11 +112,12 @@ public class EgovGeneralCryptoServiceImpl implements EgovGeneralCryptoService {
             cipher.setPassword(password);
             buffer = new byte[blockSize];
             LOGGER.debug("blockSize = {}", blockSize);
-            try {
-                fis = new FileInputStream(srcFile);
-                bis = new BufferedInputStream(fis);
-                fw = new FileWriter(trgtFile);
-                bw = new BufferedWriter(fw);
+            try (
+                FileInputStream fis = new FileInputStream(srcFile);
+                FileWriter fw = new FileWriter(trgtFile);
+                BufferedInputStream bis = new BufferedInputStream(fis);
+                BufferedWriter bw = new BufferedWriter(fw)
+            ) {
                 byte[] encrypted = null;
                 int length = 0;
                 long size = 0L;
@@ -115,8 +138,6 @@ public class EgovGeneralCryptoServiceImpl implements EgovGeneralCryptoService {
                 LOGGER.debug("processed bytes = {}", size);
             } catch (IOException e) {
                 ReflectionUtils.handleReflectionException(e);
-            } finally {
-                EgovResourceReleaser.close(fw, bw, fis, bis);
             }
         } else {
             throw new IllegalArgumentException("password not matched!!!");
@@ -124,6 +145,7 @@ public class EgovGeneralCryptoServiceImpl implements EgovGeneralCryptoService {
     }
 
     public byte[] decrypt(byte[] encryptedData, String password) {
+        warnIfWeakDefaultAlgorithm();
         if (passwordEncoder.checkPassword(password)) {
             StandardPBEByteEncryptor cipher = new StandardPBEByteEncryptor();
             cipher.setAlgorithm(algorithm);
@@ -135,6 +157,7 @@ public class EgovGeneralCryptoServiceImpl implements EgovGeneralCryptoService {
     }
 
     public BigDecimal decrypt(BigDecimal encryptedNumber, String password) {
+        warnIfWeakDefaultAlgorithm();
         if (passwordEncoder.checkPassword(password)) {
             StandardPBEBigDecimalEncryptor cipher = new StandardPBEBigDecimalEncryptor();
             cipher.setAlgorithm(algorithm);
@@ -146,19 +169,17 @@ public class EgovGeneralCryptoServiceImpl implements EgovGeneralCryptoService {
     }
 
     public void decrypt(File encryptedFile, String password, File trgtFile) {
-        FileReader fr = null;
-        FileOutputStream fos = null;
-        BufferedReader br = null;
-        BufferedOutputStream bos = null;
+        warnIfWeakDefaultAlgorithm();
         if (passwordEncoder.checkPassword(password)) {
             StandardPBEByteEncryptor cipher = new StandardPBEByteEncryptor();
             cipher.setAlgorithm(algorithm);
             cipher.setPassword(password);
-            try {
-                fr = new FileReader(encryptedFile);
-                br = new BufferedReader(fr);
-                fos = new FileOutputStream(trgtFile);
-                bos = new BufferedOutputStream(fos);
+            try (
+                FileReader fr = new FileReader(encryptedFile);
+                FileOutputStream fos = new FileOutputStream(trgtFile);
+                BufferedReader br = new BufferedReader(fr);
+                BufferedOutputStream bos = new BufferedOutputStream(fos)
+            ) {
                 byte[] encrypted = null;
                 byte[] decrypted = null;
                 String line = null;
@@ -170,8 +191,6 @@ public class EgovGeneralCryptoServiceImpl implements EgovGeneralCryptoService {
                 bos.flush();
             } catch (IOException e) {
                 ReflectionUtils.handleReflectionException(e);
-            } finally {
-                EgovResourceReleaser.close(fos, bos, fr, br);
             }
         } else {
             throw new IllegalArgumentException("password not matched!!!");

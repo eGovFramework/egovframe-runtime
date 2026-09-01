@@ -115,6 +115,10 @@ public class SqlMapClientFactoryBean implements FactoryBean<SqlMapClient>, Initi
      * are going to be merged into one unified configuration at runtime.
      */
     public void setConfigLocations(Resource[] configLocations) {
+        if (configLocations == null) {
+            this.configLocations = null;
+            return;
+        }
         // 2020.08.31 유지보수 시큐어코딩(ES)-Private 배열에 Public 데이터 할당[CWE-496]
         this.configLocations = new Resource[configLocations.length];
         for (int i = 0; i < configLocations.length; i++) {
@@ -133,6 +137,10 @@ public class SqlMapClientFactoryBean implements FactoryBean<SqlMapClient>, Initi
      * with any previous iBATIS version.
      */
     public void setMappingLocations(Resource[] mappingLocations) {
+        if (mappingLocations == null) {
+            this.mappingLocations = null;
+            return;
+        }
         // 2020.08.31 유지보수 시큐어코딩(ES)-Private 배열에 Public 데이터 할당[CWE-496]
         this.mappingLocations = new Resource[mappingLocations.length];
         for (int i = 0; i < mappingLocations.length; i++) {

@@ -261,7 +261,7 @@ public class RecordTypeDefinition implements Validatable {
 
     @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append(this.getClass().getName()).append(" {").append("\n\tid = ")
                 .append(StringUtils.quote(id)).append("\n\tname = ")
                 .append(StringUtils.quote(name)).append("\n\tparent.id = ")

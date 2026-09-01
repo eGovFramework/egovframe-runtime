@@ -53,7 +53,7 @@ public class StringTimestampTypeHandler implements TypeHandlerCallback {
     private static final String DATE_FORMAT = "yyyyMMddHHmmss";
 
     /**
-     * SimpleDateFormat - DATE_FORMAT 기반 포맷터
+     * DateTimeFormatter - DATE_FORMAT 기반 포맷터
      */
     private static final DateTimeFormatter DTF = DateTimeFormatter.ofPattern(DATE_FORMAT);
 

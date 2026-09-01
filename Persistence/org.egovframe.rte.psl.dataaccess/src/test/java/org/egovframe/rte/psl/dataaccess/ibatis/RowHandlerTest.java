@@ -66,7 +66,7 @@ public class RowHandlerTest {
 
         // check
         ResourceLoader resourceLoader = new DefaultResourceLoader();
-        org.springframework.core.io.Resource resource = resourceLoader.getResource("file:./src/test/resources/META-INF/spring/" + schemaProperties.getProperty("outResultFile"));
+        org.springframework.core.io.Resource resource = resourceLoader.getResource("file:./target/test-output/" + schemaProperties.getProperty("outResultFile"));
         rowHandler.releaseResource();
 
         assertEquals(38416, rowHandler.getTotalCount());

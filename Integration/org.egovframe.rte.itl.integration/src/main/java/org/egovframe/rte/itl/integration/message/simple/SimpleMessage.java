@@ -122,6 +122,9 @@ public class SimpleMessage implements EgovIntegrationMessage {
             if (StringUtils.hasText(entry.getKey()) == false) {
                 throw new IllegalArgumentException();
             }
+            if (entry.getValue() == null) {
+                throw new IllegalArgumentException();
+            }
         }
         this.body = body;
     }
@@ -153,12 +156,18 @@ public class SimpleMessage implements EgovIntegrationMessage {
             if (StringUtils.hasText(entry.getKey()) == false) {
                 throw new IllegalArgumentException();
             }
+            if (entry.getValue() == null) {
+                throw new IllegalArgumentException();
+            }
         }
         this.attachments = attachments;
     }
 
     public Object putAttachment(String name, Object attachment) {
         if (StringUtils.hasText(name) == false) {
+            throw new IllegalArgumentException();
+        }
+        if (attachment == null) {
             throw new IllegalArgumentException();
         }
         return attachments.put(name, attachment);

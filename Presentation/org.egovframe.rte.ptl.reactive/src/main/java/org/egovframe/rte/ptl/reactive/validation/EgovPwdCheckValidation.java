@@ -18,6 +18,7 @@ package org.egovframe.rte.ptl.reactive.validation;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -62,7 +63,7 @@ public class EgovPwdCheckValidation implements ConstraintValidator<EgovPwdCheck,
      * 연속된 문자열 3개 이상 (ex: abc, def, 123 등) 체크
      */
     public static boolean consecutivePasswordCheck(String value) {
-        String tmpValue = value.toUpperCase();
+        String tmpValue = value.toUpperCase(Locale.ROOT);
         for (int i = 0; i < tmpValue.length() - 2; i++) {
             if (isConsecutive(tmpValue.charAt(i), tmpValue.charAt(i + 1), tmpValue.charAt(i + 2))) {
                 return true;
@@ -80,6 +81,9 @@ public class EgovPwdCheckValidation implements ConstraintValidator<EgovPwdCheck,
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
+        if (value == null) {
+            return false;
+        }
         // 비밀번호 패턴 검증
         if (!passwordCheck(value)) {
             return false;

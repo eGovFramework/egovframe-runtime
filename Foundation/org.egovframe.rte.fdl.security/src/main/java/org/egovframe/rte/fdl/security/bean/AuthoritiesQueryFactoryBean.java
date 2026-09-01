@@ -40,7 +40,7 @@ import org.springframework.util.StringUtils;
  */
 public class AuthoritiesQueryFactoryBean implements FactoryBean<String> {
 
-    private static final String AUTHOR_DEFAULT_QUERY = "select user_id, authority from authorites where user_id = ?";
+    private static final String AUTHOR_DEFAULT_QUERY = "select user_id, authority from authorities where user_id = ?";
     private final EgovSecurityConfig config;
 
     public AuthoritiesQueryFactoryBean(EgovSecurityConfig config) {

@@ -43,8 +43,11 @@ public class EgovEnglishCheckValidation implements ConstraintValidator<EgovEngli
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
+        if (value == null) {
+            return false;
+        }
         Matcher matcher = ENGLISH_PATTERN.matcher(value);
-        return matcher.find();
+        return matcher.matches();
     }
 
 }

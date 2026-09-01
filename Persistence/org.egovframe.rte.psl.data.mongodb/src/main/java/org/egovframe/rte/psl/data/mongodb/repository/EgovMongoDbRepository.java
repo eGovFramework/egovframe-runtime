@@ -57,15 +57,23 @@ public class EgovMongoDbRepository<T> extends MongoTemplate {
     }
 
     public T insertData(T objectToSave) {
-        return save(objectToSave);
+        return insert(objectToSave);
     }
 
     public T updateData(Query query, UpdateDefinition update, Class<T> entityClass) {
         return findAndModify(query, update, entityClass);
     }
 
-    public T deleteDate(Query query, Class<T> entityClass) {
+    public T deleteData(Query query, Class<T> entityClass) {
         return findAndRemove(query, entityClass);
+    }
+
+    /**
+     * @deprecated 메서드명 오타(Date/Data)로 도입됐습니다. {@link #deleteData(Query, Class)}를 대신 사용하세요.
+     */
+    @Deprecated
+    public T deleteDate(Query query, Class<T> entityClass) {
+        return deleteData(query, entityClass);
     }
 
 }

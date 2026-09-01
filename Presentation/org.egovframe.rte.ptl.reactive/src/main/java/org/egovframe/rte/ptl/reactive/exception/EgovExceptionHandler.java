@@ -16,6 +16,8 @@
 package org.egovframe.rte.ptl.reactive.exception;
 
 import org.json.simple.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpStatus;
@@ -25,6 +27,7 @@ import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebExceptionHandler;
 import reactor.core.publisher.Mono;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,24 +50,40 @@ import java.util.Map;
 @Order(-3)
 public class EgovExceptionHandler implements WebExceptionHandler {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(EgovExceptionHandler.class);
+
     @Override
     public Mono<Void> handle(ServerWebExchange exchange, Throwable ex) {
         ServerHttpResponse response = exchange.getResponse();
         if (ex instanceof EgovException) {
             EgovException egovException = (EgovException) ex;
             EgovErrorCode egovErrorCode = egovException.getEgovErrorCode();
-            String message = egovException.getMessage();
+            String message = resolveResponseMessage(egovErrorCode, egovException.getMessage(), ex);
             return getExceptionResponse(response, egovErrorCode, message);
         } else if (ex instanceof EgovServiceException) {
             EgovServiceException egovServiceException = (EgovServiceException) ex;
             EgovErrorCode egovErrorCode = egovServiceException.getEgovErrorCode();
-            String message = egovServiceException.getMessage();
+            String message = resolveResponseMessage(egovErrorCode, egovServiceException.getMessage(), ex);
             return getExceptionResponse(response, egovErrorCode, message);
         } else {
             EgovErrorCode egovErrorCode = EgovErrorCode.INTERNAL_SERVER_ERROR;
-            String message = egovErrorCode.getMessage();
-            return getExceptionResponse(response, egovErrorCode, message);
+            LOGGER.error("Unhandled exception while processing request", ex);
+            return getExceptionResponse(response, egovErrorCode, egovErrorCode.getMessage());
         }
+    }
+
+    /**
+     * INTERNAL_SERVER_ERROR로 분류된 예외는 하위 계층(DB 등) 원본 메시지를 그대로 감싼 것일 수 있어
+     * (CWE-209 오류 메시지를 통한 정보노출) 클라이언트 응답에는 일반화된 메시지만 노출하고, 원본
+     * 메시지·스택트레이스는 서버 로그로만 남긴다. 그 외 명시적 오류코드(입력값 검증 등 개발자가
+     * 의도적으로 설정한 사용자 대상 메시지)는 기존처럼 그대로 전달한다.
+     */
+    private String resolveResponseMessage(EgovErrorCode egovErrorCode, String originalMessage, Throwable ex) {
+        if (egovErrorCode == EgovErrorCode.INTERNAL_SERVER_ERROR) {
+            LOGGER.error("Internal error while processing request: {}", originalMessage, ex);
+            return egovErrorCode.getMessage();
+        }
+        return originalMessage;
     }
 
     private Mono<Void> getExceptionResponse(ServerHttpResponse response, EgovErrorCode egovErrorCode, String message) {
@@ -78,14 +97,14 @@ public class EgovExceptionHandler implements WebExceptionHandler {
 
     private Mono<Void> handlerResponse(ServerHttpResponse response, String timestamp, int status, String code, String message) {
         response.setStatusCode(HttpStatus.valueOf(status));
-        response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+        response.getHeaders().setContentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8));
         Map<String, Object> map = new HashMap<>();
         map.put("timestamp", timestamp);
         map.put("status", HttpStatus.valueOf(status));
         map.put("code", code);
         map.put("message", message);
         JSONObject jsonObject = new JSONObject(map);
-        DataBuffer dataBuffer = response.bufferFactory().wrap(JSONObject.toJSONString(jsonObject).getBytes());
+        DataBuffer dataBuffer = response.bufferFactory().wrap(JSONObject.toJSONString(jsonObject).getBytes(StandardCharsets.UTF_8));
         return response.writeWith(Mono.just(dataBuffer));
     }
 
