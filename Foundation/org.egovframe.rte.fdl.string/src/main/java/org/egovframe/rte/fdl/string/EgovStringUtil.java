@@ -720,13 +720,12 @@ public final class EgovStringUtil {
      * @return converting result
      */
     public static String replace(String str, String replacedStr, String replaceStr) {
-        String newStr = "";
-        if (str.contains(replacedStr)) {
-            String s1 = str.substring(0, str.indexOf(replacedStr));
-            String s2 = str.substring(str.indexOf(replacedStr) + 1);
-            newStr = s1 + replaceStr + s2;
+        int startPosit = str.indexOf(replacedStr);
+        if (startPosit != -1) {
+            int endPosit = replacedStr.length() + startPosit;
+            return str.substring(0, startPosit) + replaceStr + str.substring(endPosit);
         }
-        return newStr;
+        return str;
     }
 
     /**
