@@ -112,16 +112,10 @@ public class EgovCryptoTestConfig {
         return egovDigestService;
     }
 
-    /**
-     * Jasypt PBE는 SecretKeyFactory 알고리즘명(PBEWithSHA1AndDESede 등)이 필요하나,
-     * 설정 파일의 algorithm=SHA-256은 MessageDigest용이라 GeneralCryptoService에서 오류가 난다.
-     * 테스트에서만 PBE 알고리즘으로 오버라이드한다.
-     */
     @Bean(name = "generalCryptoService")
     @Primary
-    public org.egovframe.rte.fdl.crypto.impl.EgovGeneralCryptoServiceImpl generalCryptoServiceForTest(
+    public org.egovframe.rte.fdl.crypto.impl.EgovGeneralCryptoServiceImpl generalCryptoServiceAlias(
             org.egovframe.rte.fdl.crypto.impl.EgovGeneralCryptoServiceImpl egovGeneralCryptoService) {
-        egovGeneralCryptoService.setAlgorithm("PBEWithSHA1AndDESede");
         return egovGeneralCryptoService;
     }
 
