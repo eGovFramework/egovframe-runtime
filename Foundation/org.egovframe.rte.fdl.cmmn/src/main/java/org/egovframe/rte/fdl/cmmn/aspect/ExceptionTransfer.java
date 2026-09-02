@@ -216,6 +216,10 @@ public class ExceptionTransfer {
      * @param exceptionHandlerServices 등록되어 있는 ExceptionHandlerService 리스트
      */
     protected void processHandling(Class<?> clazz, String methodName, Exception exception, PathMatcher pm, ExceptionHandlerService[] exceptionHandlerServices) {
+        if (exceptionHandlerServices == null) {
+            return;
+        }
+
         for (ExceptionHandlerService ehm : exceptionHandlerServices) {
             // 2026.02.28 KISA 보안취약점 조치
             try {
