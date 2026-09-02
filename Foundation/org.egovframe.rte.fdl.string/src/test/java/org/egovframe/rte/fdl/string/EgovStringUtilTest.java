@@ -340,6 +340,11 @@ public class EgovStringUtilTest {
         String replaced = EgovStringUtil.replace("password,password", ",", "-");
 
         assertEquals("password-password", replaced);
+
+        // 1. token longer than one character
+        assertEquals("work.id", EgovStringUtil.replace("work$$id", "$$", "."));
+        // 2. original String has no token
+        assertEquals("password", EgovStringUtil.replace("password", ",", "-"));
     }
 
     @Test
