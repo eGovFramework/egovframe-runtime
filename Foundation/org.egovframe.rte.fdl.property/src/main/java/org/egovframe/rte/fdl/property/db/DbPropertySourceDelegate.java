@@ -61,11 +61,10 @@ public class DbPropertySourceDelegate {
                     String pValue = null;
                     while (iterator.hasNext()) {
                         String key = iterator.next();
-                        String data = (String) property.get(key);
                         if (PROPERTY_SOURCE_KEY.equalsIgnoreCase(key)) {
-                            pKey = data;
+                            pKey = (String) property.get(key);
                         } else if (PROPERTY_SOURCE_VALUE.equalsIgnoreCase(key)) {
-                            pValue = data;
+                            pValue = (String) property.get(key);
                         }
                     }
                     if (pKey == null) {
