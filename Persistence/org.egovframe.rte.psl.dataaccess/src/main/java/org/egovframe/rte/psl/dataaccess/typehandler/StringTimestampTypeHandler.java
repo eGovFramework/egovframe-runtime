@@ -68,10 +68,10 @@ public class StringTimestampTypeHandler implements TypeHandlerCallback {
      * @throws SQLException
      */
     public Object getResult(ResultGetter getter) throws SQLException {
-        if (getter.wasNull()) {
+        Timestamp ts = getter.getTimestamp();
+        if (ts == null) {
             return null;
         }
-        Timestamp ts = getter.getTimestamp();
         return DTF.format(ts.toLocalDateTime());
     }
 
