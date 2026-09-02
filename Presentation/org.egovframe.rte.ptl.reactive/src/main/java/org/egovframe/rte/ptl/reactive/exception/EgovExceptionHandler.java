@@ -100,7 +100,7 @@ public class EgovExceptionHandler implements WebExceptionHandler {
         response.getHeaders().setContentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8));
         Map<String, Object> map = new HashMap<>();
         map.put("timestamp", timestamp);
-        map.put("status", HttpStatus.valueOf(status));
+        map.put("status", status);
         map.put("code", code);
         map.put("message", message);
         JSONObject jsonObject = new JSONObject(map);
