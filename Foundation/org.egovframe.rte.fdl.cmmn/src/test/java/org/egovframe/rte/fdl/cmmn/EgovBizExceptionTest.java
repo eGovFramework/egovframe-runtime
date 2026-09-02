@@ -33,4 +33,11 @@ public class EgovBizExceptionTest {
         assertSame(wrapped, be.getWrappedException());
     }
 
+    @Test
+    public void testDefaultMessageWithoutArgument() {
+        EgovBizException be = new EgovBizException();
+
+        assertEquals("EgovBizException without message", be.getMessage());
+    }
+
 }
