@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.egovframe.rte</groupId>
         <artifactId>egovframe-rte-root</artifactId>
-        <version>5.0.0</version>
+        <version>5.0.1</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -24,7 +24,7 @@
     </licenses>
 
     <properties>
-        <org.egovframe.rte.version>5.0.0</org.egovframe.rte.version>
+        <org.egovframe.rte.version>5.0.1</org.egovframe.rte.version>
         <jakarta.servlet.version>6.0.0</jakarta.servlet.version>
         <jakarta.jakartaee.version>10.0.0</jakarta.jakartaee.version>
         <jakarta.validation.version>3.1.1</jakarta.validation.version>

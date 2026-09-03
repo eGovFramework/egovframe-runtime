@@ -2,7 +2,7 @@
 
 **Apache Commons VFS2**를 활용해 로컬·URL 등 다양한 **파일 시스템을 통합 추상화**하고, 업로드/다운로드·경로 처리에 필요한 유틸을 제공합니다.
 
-- **Artifact**: `org.egovframe.rte:egovframe-rte-fdl-filehandling:5.0.0`
+- **Artifact**: `org.egovframe.rte:egovframe-rte-fdl-filehandling:5.0.1`
 - **Runtime**: Java 17
 - **의존**: `egovframe-rte-fdl-string`, `commons-vfs2`, `commons-io`, `commons-lang3`
 
@@ -54,7 +54,7 @@ mvn test
 <dependency>
   <groupId>org.egovframe.rte</groupId>
   <artifactId>egovframe-rte-fdl-filehandling</artifactId>
-  <version>5.0.0</version>
+  <version>5.0.1</version>
 </dependency>
 ```
 

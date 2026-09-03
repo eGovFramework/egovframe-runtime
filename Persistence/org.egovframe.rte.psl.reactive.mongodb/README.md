@@ -2,7 +2,7 @@
 
 **Spring Data MongoDB**와 **Reactor**를 결합한 **리액티브 MongoDB** 접근 모듈입니다. `Mono`/`Flux` 기반으로 문서 저장소를 사용합니다.
 
-- **Artifact**: `org.egovframe.rte:egovframe-rte-psl-reactive-mongodb:5.0.0`
+- **Artifact**: `org.egovframe.rte:egovframe-rte-psl-reactive-mongodb:5.0.1`
 - **Runtime**: Java 17 / Spring WebFlux / Spring Data MongoDB / Reactor
 - **의존**: `egovframe-rte-fdl-cmmn`
 
@@ -56,7 +56,7 @@ mvn test
 <dependency>
   <groupId>org.egovframe.rte</groupId>
   <artifactId>egovframe-rte-psl-reactive-mongodb</artifactId>
-  <version>5.0.0</version>
+  <version>5.0.1</version>
 </dependency>
 ```
 

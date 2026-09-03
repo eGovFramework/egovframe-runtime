@@ -37,7 +37,6 @@ public interface EgovExcelService {
 
     /**
      * Workbook 객체를 생성하여 엑셀파일을 생성한다.
-     * 전달받은 Workbook을 닫지 않고 그대로 반환하며, 호출자가 이어서 사용·수정·재저장할 수 있다. 닫는 책임은 호출자에게 있다.
      */
     Workbook createWorkbook(Workbook wb, String filepath);
 

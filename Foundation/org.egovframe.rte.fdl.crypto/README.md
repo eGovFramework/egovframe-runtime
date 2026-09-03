@@ -2,7 +2,7 @@
 
 `egovframe-rte-fdl-crypto`는 **대칭키 암복호화(ARIA / PBE)**, **Digest(해시)**, **환경설정(DB 접속정보 등) 암복호화 유틸**을 제공하는 라이브러리입니다.
 
-- **Artifact**: `org.egovframe.rte:egovframe-rte-fdl-crypto:5.0.0`
+- **Artifact**: `org.egovframe.rte:egovframe-rte-fdl-crypto:5.0.1`
 - **Runtime**: Java 17 / Spring Framework 6.x
 
 ---
@@ -106,7 +106,7 @@ org/egovframe/rte/fdl/crypto/
 <dependency>
   <groupId>org.egovframe.rte</groupId>
   <artifactId>egovframe-rte-fdl-crypto</artifactId>
-  <version>5.0.0</version>
+  <version>5.0.1</version>
 </dependency>
 ```
 
@@ -261,7 +261,7 @@ mvn test
 <dependency>
   <groupId>org.egovframe.rte</groupId>
   <artifactId>egovframe-rte-fdl-crypto</artifactId>
-  <version>5.0.0</version>
+  <version>5.0.1</version>
 </dependency>
 ```
 

@@ -2,7 +2,7 @@
 
 **Spring MVC** 기반 **표현(Presentation)** 계층 확장입니다. 입력 검증, HTML 태그 필터, **페이지네이션 JSP 태그**(KRDS/기본 렌더러)를 제공합니다.
 
-- **Artifact**: `org.egovframe.rte:egovframe-rte-ptl-mvc:5.0.0`
+- **Artifact**: `org.egovframe.rte:egovframe-rte-ptl-mvc:5.0.1`
 - **Runtime**: Java 17 / Spring WebMVC / Jakarta Servlet·JSP
 - **의존**: `egovframe-rte-fdl-cmmn`
 
@@ -72,7 +72,7 @@ mvn test
 <dependency>
   <groupId>org.egovframe.rte</groupId>
   <artifactId>egovframe-rte-ptl-mvc</artifactId>
-  <version>5.0.0</version>
+  <version>5.0.1</version>
 </dependency>
 ```
 

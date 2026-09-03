@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.egovframe.rte</groupId>
         <artifactId>egovframe-rte-root</artifactId>
-        <version>5.0.0</version>
+        <version>5.0.1</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -24,7 +24,7 @@
     </licenses>
 
     <properties>
-        <org.egovframe.rte.version>5.0.0</org.egovframe.rte.version>
+        <org.egovframe.rte.version>5.0.1</org.egovframe.rte.version>
         <spring.data.redis.version>3.5.1</spring.data.redis.version>
         <reactor.version>3.7.5</reactor.version>
         <lettuce.version>6.6.0.RELEASE</lettuce.version>

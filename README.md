@@ -158,7 +158,7 @@ mvn test
 
 ## 라이브러리별 특징 및 기능
 
-버전 **5.0.0** 기준 Maven 좌표는 `org.egovframe.rte:<artifactId>:5.0.0` 형태입니다. 상세 사용법은 일부 모듈(`/Foundation/.../README.md`)에 별도 문서가 있습니다.
+버전 **5.0.1** 기준 Maven 좌표는 `org.egovframe.rte:<artifactId>:5.0.1` 형태입니다. 상세 사용법은 일부 모듈(`/Foundation/.../README.md`)에 별도 문서가 있습니다.
 
 ### 요약 표
 
@@ -339,7 +339,7 @@ mvn test
 <dependency>
     <groupId>org.egovframe.rte</groupId>
     <artifactId>egovframe-rte-fdl-cmmn</artifactId>
-    <version>5.0.0</version>
+    <version>5.0.1</version>
 </dependency>
 ```
 
@@ -399,4 +399,4 @@ limitations under the License.
 
 ---
 
-**전자정부 표준프레임워크 런타임 5.0.0** - 공공기관 정보시스템 개발을 위한 표준화된 컴포넌트 제공
+**전자정부 표준프레임워크 런타임 5.0.1** - 공공기관 정보시스템 개발을 위한 표준화된 컴포넌트 제공

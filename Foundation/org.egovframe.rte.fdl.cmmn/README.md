@@ -2,7 +2,7 @@
 
 **Foundation 공통(Common)** 레이어입니다. 서비스 베이스 클래스, 예외/예외 처리 연계, 호출 추적(Trace) AOP를 제공하며 다른 FDL·표준 컴포넌트가 자주 의존하는 허브 역할을 합니다.
 
-- **Artifact**: `org.egovframe.rte:egovframe-rte-fdl-cmmn:5.0.0`
+- **Artifact**: `org.egovframe.rte:egovframe-rte-fdl-cmmn:5.0.1`
 - **Runtime**: Java 17 / Spring Framework 6.x
 - **의존**: `egovframe-rte-fdl-logging`
 
@@ -80,7 +80,7 @@ mvn test
 <dependency>
   <groupId>org.egovframe.rte</groupId>
   <artifactId>egovframe-rte-fdl-cmmn</artifactId>
-  <version>5.0.0</version>
+  <version>5.0.1</version>
 </dependency>
 ```
 

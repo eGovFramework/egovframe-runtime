@@ -2,7 +2,7 @@
 
 **Spring Data Cassandra**를 사용하는 **리액티브 Cassandra** 연동 모듈입니다. 연결·세션 구성과 Egov 표준 리포지토리 인터페이스를 제공합니다.
 
-- **Artifact**: `org.egovframe.rte:egovframe-rte-psl-reactive-cassandra:5.0.0`
+- **Artifact**: `org.egovframe.rte:egovframe-rte-psl-reactive-cassandra:5.0.1`
 - **Runtime**: Java 17 / Spring Data Cassandra / Cassandra Java Driver / Reactor
 - **의존**: `egovframe-rte-fdl-logging`
 
@@ -56,7 +56,7 @@ mvn test
 <dependency>
   <groupId>org.egovframe.rte</groupId>
   <artifactId>egovframe-rte-psl-reactive-cassandra</artifactId>
-  <version>5.0.0</version>
+  <version>5.0.1</version>
 </dependency>
 ```
 

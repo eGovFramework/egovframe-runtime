@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.egovframe.rte</groupId>
         <artifactId>egovframe-rte-root</artifactId>
-        <version>5.0.0</version>
+        <version>5.0.1</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -24,7 +24,7 @@
     </licenses>
 
     <properties>
-        <org.egovframe.rte.version>5.0.0</org.egovframe.rte.version>
+        <org.egovframe.rte.version>5.0.1</org.egovframe.rte.version>
         <spring.data.jpa.version>3.5.3</spring.data.jpa.version>
         <jakarta.annotation.version>3.0.0</jakarta.annotation.version>
         <jakarta.transaction.version>2.0.1</jakarta.transaction.version>

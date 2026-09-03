@@ -2,7 +2,7 @@
 
 **Spring WebFlux** 환경에서 쓰기 위한 소규모 **리액티브 공통** 빌딩 블록입니다. MDC(로깅 컨텍스트)와 시퀀스 생성 보조를 제공합니다.
 
-- **Artifact**: `org.egovframe.rte:egovframe-rte-fdl-reactive:5.0.0`
+- **Artifact**: `org.egovframe.rte:egovframe-rte-fdl-reactive:5.0.1`
 - **Runtime**: Java 17 / Spring Framework 6.x (`spring-webflux`)
 - **의존**: `egovframe-rte-fdl-logging`
 
@@ -58,7 +58,7 @@ mvn test
 <dependency>
   <groupId>org.egovframe.rte</groupId>
   <artifactId>egovframe-rte-fdl-reactive</artifactId>
-  <version>5.0.0</version>
+  <version>5.0.1</version>
 </dependency>
 ```
 

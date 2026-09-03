@@ -2,7 +2,7 @@
 
 **Spring Data MongoDB**(동기)와 공식 **MongoDB Java Driver**를 묶어, Egov 형식의 **연결 팩토리**와 **리포지토리** 베이스를 제공합니다.
 
-- **Artifact**: `org.egovframe.rte:egovframe-rte-psl-data-mongodb:5.0.0`
+- **Artifact**: `org.egovframe.rte:egovframe-rte-psl-data-mongodb:5.0.1`
 - **Runtime**: Java 17 / Spring Data MongoDB 4.x / Driver 5.x
 - **의존**: `egovframe-rte-fdl-cmmn`
 
@@ -56,7 +56,7 @@ mvn test
 <dependency>
   <groupId>org.egovframe.rte</groupId>
   <artifactId>egovframe-rte-psl-data-mongodb</artifactId>
-  <version>5.0.0</version>
+  <version>5.0.1</version>
 </dependency>
 ```
 

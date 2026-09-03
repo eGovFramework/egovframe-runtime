@@ -2,7 +2,7 @@
 
 전자정부 표준프레임워크 **배치** 확장 라이브러리입니다. **Spring Batch 5.x**를 기반으로 대용량 파일·DB 연동, 복합 Reader, 잡/스텝 리스너, 배치 실행 진입점을 제공합니다.
 
-- **Artifact**: `org.egovframe.rte:egovframe-rte-bat-core:5.0.0`
+- **Artifact**: `org.egovframe.rte:egovframe-rte-bat-core:5.0.1`
 - **Runtime**: Java 17 / Spring Framework 6.x / Spring Batch 5.x
 - **연관 모듈**: `egovframe-rte-fdl-cmmn`, `egovframe-rte-psl-dataaccess` (및 테스트용 `egovframe-rte-fdl-idgnr`)
 
@@ -130,7 +130,7 @@ mvn test
 <dependency>
   <groupId>org.egovframe.rte</groupId>
   <artifactId>egovframe-rte-bat-core</artifactId>
-  <version>5.0.0</version>
+  <version>5.0.1</version>
 </dependency>
 ```
 

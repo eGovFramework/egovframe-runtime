@@ -2,7 +2,7 @@
 
 **시스템 간 연계(Integration)** 메타데이터·메시지·타입 로더를 **Hibernate ORM**과 결합해 제공합니다. 기관·서비스·레코드 타입 정의를 DB에서 로딩하고, 형식화된 메시지(`TypedMessage` 등)와 통합 컨텍스트로 연계 서비스를 표현합니다.
 
-- **Artifact**: `org.egovframe.rte:egovframe-rte-itl-integration:5.0.0`
+- **Artifact**: `org.egovframe.rte:egovframe-rte-itl-integration:5.0.1`
 - **Runtime**: Java 17 / Spring Framework 6.x / Hibernate ORM
 - **의존**: `egovframe-rte-fdl-logging`
 
@@ -76,7 +76,7 @@ mvn test
 <dependency>
   <groupId>org.egovframe.rte</groupId>
   <artifactId>egovframe-rte-itl-integration</artifactId>
-  <version>5.0.0</version>
+  <version>5.0.1</version>
 </dependency>
 ```
 

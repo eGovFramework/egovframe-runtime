@@ -2,7 +2,7 @@
 
 **Spring Data R2DBC** 기반 **논블로킹 관계형 DB** 접근을 위한 Egov 확장입니다. 연결 팩토리와 리액티브 리포지토리 베이스를 제공합니다.
 
-- **Artifact**: `org.egovframe.rte:egovframe-rte-psl-reactive-r2dbc:5.0.0`
+- **Artifact**: `org.egovframe.rte:egovframe-rte-psl-reactive-r2dbc:5.0.1`
 - **Runtime**: Java 17 / Spring Framework 6.x / Spring Data R2DBC / Project Reactor
 - **의존**: `egovframe-rte-fdl-cmmn`
 
@@ -56,7 +56,7 @@ mvn test
 <dependency>
   <groupId>org.egovframe.rte</groupId>
   <artifactId>egovframe-rte-psl-reactive-r2dbc</artifactId>
-  <version>5.0.0</version>
+  <version>5.0.1</version>
 </dependency>
 ```
 

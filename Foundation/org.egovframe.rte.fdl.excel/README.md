@@ -2,7 +2,7 @@
 
 **Apache POI**·**jxls-poi** 기반 **엑셀 업로드/다운로드·템플릿 렌더링**과 Spring MVC **AbstractExcelView** 계열을 제공합니다. `psl.dataaccess`·`fdl.filehandling`·`fdl.cmmn`과 연동해 DB 매핑 엑셀 처리가 가능합니다.
 
-- **Artifact**: `org.egovframe.rte:egovframe-rte-fdl-excel:5.0.0`
+- **Artifact**: `org.egovframe.rte:egovframe-rte-fdl-excel:5.0.1`
 - **Runtime**: Java 17 / Spring Framework 6.x / Jakarta Servlet 6.x
 
 ---
@@ -65,7 +65,7 @@ mvn test
 <dependency>
   <groupId>org.egovframe.rte</groupId>
   <artifactId>egovframe-rte-fdl-excel</artifactId>
-  <version>5.0.0</version>
+  <version>5.0.1</version>
 </dependency>
 ```
 

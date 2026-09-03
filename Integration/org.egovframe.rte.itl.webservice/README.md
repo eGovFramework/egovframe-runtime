@@ -2,7 +2,7 @@
 
 **Apache CXF** 기반 **JAX-WS(SOAP)** 웹서비스 클라이언트·서버 브리지를 제공합니다. 연계 정의(`WebServiceClientDefinition`, `WebServiceServerDefinition`)를 Hibernate DAO로 관리하고, `itl.integration` 메시지와 변환기로 연결합니다.
 
-- **Artifact**: `org.egovframe.rte:egovframe-rte-itl-webservice:5.0.0`
+- **Artifact**: `org.egovframe.rte:egovframe-rte-itl-webservice:5.0.1`
 - **Runtime**: Java 17 / Spring 6.x / Jakarta XML WS / CXF 4.x
 - **의존**: `egovframe-rte-itl-integration`
 
@@ -73,7 +73,7 @@ mvn test
 <dependency>
   <groupId>org.egovframe.rte</groupId>
   <artifactId>egovframe-rte-itl-webservice</artifactId>
-  <version>5.0.0</version>
+  <version>5.0.1</version>
 </dependency>
 ```
 

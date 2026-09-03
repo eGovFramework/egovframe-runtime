@@ -2,7 +2,7 @@
 
 `egovframe-rte-fdl-security`는 **Spring Security 6.x** 기반으로 **폼 로그인·세션·URL(요청) 단위 접근제어**를 구성하고, **DB에서 URL–권한 매핑·사용자·역할 계층**을 읽어 쓰도록 돕는 라이브러리입니다.
 
-- **Artifact**: `org.egovframe.rte:egovframe-rte-fdl-security:5.0.0`
+- **Artifact**: `org.egovframe.rte:egovframe-rte-fdl-security:5.0.1`
 - **Runtime**: Java 17, Spring Framework 6.x, Spring Security 6.x
 
 ---
@@ -82,7 +82,7 @@ org/egovframe/rte/fdl/security/
 <dependency>
   <groupId>org.egovframe.rte</groupId>
   <artifactId>egovframe-rte-fdl-security</artifactId>
-  <version>5.0.0</version>
+  <version>5.0.1</version>
 </dependency>
 ```
 
@@ -270,7 +270,7 @@ mvn test
 <dependency>
   <groupId>org.egovframe.rte</groupId>
   <artifactId>egovframe-rte-fdl-security</artifactId>
-  <version>5.0.0</version>
+  <version>5.0.1</version>
 </dependency>
 ```
 

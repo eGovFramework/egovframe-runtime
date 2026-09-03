@@ -2,7 +2,7 @@
 
 다른 런타임 모듈이 공통으로 사용하는 **로깅 기반** 라이브러리입니다. **Apache Log4j 2**와 **SLF4J** 브리지를 중심으로 연동 리소스 정리·DB 커넥션 팩토리 유틸을 제공합니다.
 
-- **Artifact**: `org.egovframe.rte:egovframe-rte-fdl-logging:5.0.0`
+- **Artifact**: `org.egovframe.rte:egovframe-rte-fdl-logging:5.0.1`
 - **Runtime**: Java 17 / Spring Framework 6.x
 
 ---
@@ -60,7 +60,7 @@ mvn test
 <dependency>
   <groupId>org.egovframe.rte</groupId>
   <artifactId>egovframe-rte-fdl-logging</artifactId>
-  <version>5.0.0</version>
+  <version>5.0.1</version>
 </dependency>
 ```
 

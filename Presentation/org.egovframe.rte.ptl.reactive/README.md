@@ -2,7 +2,7 @@
 
 **Spring WebFlux** 기반 **리액티브 표현 계층** 패키지입니다. 스테레오타입 어노테이션(`@EgovController` 등), 공통 예외 응답, **도메인 검증 어노테이션**(주민번호·사업자번호·이메일 등)을 제공합니다.
 
-- **Artifact**: `org.egovframe.rte:egovframe-rte-ptl-reactive:5.0.0`
+- **Artifact**: `org.egovframe.rte:egovframe-rte-ptl-reactive:5.0.1`
 - **Runtime**: Java 17 / Spring WebFlux / Jakarta Validation(테스트·연동)
 - **의존**: `egovframe-rte-fdl-logging`
 
@@ -74,7 +74,7 @@ mvn test
 <dependency>
   <groupId>org.egovframe.rte</groupId>
   <artifactId>egovframe-rte-ptl-reactive</artifactId>
-  <version>5.0.0</version>
+  <version>5.0.1</version>
 </dependency>
 ```
 

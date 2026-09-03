@@ -2,7 +2,7 @@
 
 문자열·날짜·숫자·객체 관련 **공통 유틸리티**를 제공합니다. Spring `ApplicationContext`와 함께 사용되는 경량 FDL 모듈입니다.
 
-- **Artifact**: `org.egovframe.rte:egovframe-rte-fdl-string:5.0.0`
+- **Artifact**: `org.egovframe.rte:egovframe-rte-fdl-string:5.0.1`
 - **Runtime**: Java 17 / Spring Framework 6.x
 - **의존**: `egovframe-rte-fdl-logging`, `commons-codec`
 
@@ -58,7 +58,7 @@ mvn test
 <dependency>
   <groupId>org.egovframe.rte</groupId>
   <artifactId>egovframe-rte-fdl-string</artifactId>
-  <version>5.0.0</version>
+  <version>5.0.1</version>
 </dependency>
 ```
 

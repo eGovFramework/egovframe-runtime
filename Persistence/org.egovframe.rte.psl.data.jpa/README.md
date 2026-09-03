@@ -2,7 +2,7 @@
 
 **Spring Data JPA**와 **Hibernate**를 사용하는 영속성 확장 모듈입니다. `psl.dataaccess` 위에서 Egov 스타일 **JPA 리포지토리** 베이스를 제공합니다.
 
-- **Artifact**: `org.egovframe.rte:egovframe-rte-psl-data-jpa:5.0.0`
+- **Artifact**: `org.egovframe.rte:egovframe-rte-psl-data-jpa:5.0.1`
 - **Runtime**: Java 17 / Spring Data JPA 3.x / Hibernate 6.x
 - **의존**: `egovframe-rte-psl-dataaccess`
 
@@ -55,7 +55,7 @@ mvn test
 <dependency>
   <groupId>org.egovframe.rte</groupId>
   <artifactId>egovframe-rte-psl-data-jpa</artifactId>
-  <version>5.0.0</version>
+  <version>5.0.1</version>
 </dependency>
 ```
 
