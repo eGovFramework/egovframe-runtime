@@ -976,7 +976,7 @@ public final class EgovStringUtil {
      * @param lst using commas as separators
      * @return List result
      */
-    public static List<?> getTokens(String lst) {
+    public static List<String> getTokens(String lst) {
         return getTokens(lst, ",");
     }
 
