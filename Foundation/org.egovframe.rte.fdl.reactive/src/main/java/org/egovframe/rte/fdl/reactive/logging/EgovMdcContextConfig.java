@@ -110,11 +110,13 @@ public class EgovMdcContextConfig {
 
         @Override
         public void onError(Throwable throwable) {
+            copyToMdc(coreSubscriber.currentContext());
             coreSubscriber.onError(throwable);
         }
 
         @Override
         public void onComplete() {
+            copyToMdc(coreSubscriber.currentContext());
             coreSubscriber.onComplete();
         }
 
