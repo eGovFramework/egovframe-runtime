@@ -28,7 +28,7 @@
         <jakarta.annotation.version>3.0.0</jakarta.annotation.version>
         <commons.io.version>2.18.0</commons.io.version>
         <commons.lang3.version>3.18.0</commons.lang3.version>
-        <commons.vfs2.veraion>2.10.0</commons.vfs2.veraion>
+        <commons.vfs2.version>2.10.0</commons.vfs2.version>
     </properties>
 
     <dependencies>
@@ -69,7 +69,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-vfs2</artifactId>
-            <version>${commons.vfs2.veraion}</version>
+            <version>${commons.vfs2.version}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-logging</artifactId>
