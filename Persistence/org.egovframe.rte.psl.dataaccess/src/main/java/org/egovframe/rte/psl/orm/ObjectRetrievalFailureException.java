@@ -23,8 +23,11 @@ import org.springframework.dao.DataRetrievalFailureException;
  *
  * @author Juergen Hoeller
  * @since 13.10.2003
+ * @deprecated in favor of {@link org.springframework.orm.ObjectRetrievalFailureException org.springframework.orm.ObjectRetrievalFailureException},
+ * which spring-orm still provides with the same API
  */
 @SuppressWarnings("serial")
+@Deprecated
 public class ObjectRetrievalFailureException extends DataRetrievalFailureException {
 
     private Object persistentClass;
