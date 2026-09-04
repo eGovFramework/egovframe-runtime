@@ -97,11 +97,17 @@ public abstract class AbstractLobTypeHandler extends BaseTypeHandler {
         }
 
         final LobCreator lobCreator = this.lobHandler.getLobCreator();
+        boolean succeeded = false;
 
         try {
             setParameterInternal(ps, i, parameter, jdbcType, lobCreator);
+            succeeded = true;
         } catch (IOException ex) {
             throw new SQLException("I/O errors during LOB access: " + ex.getMessage());
+        } finally {
+            if (!succeeded) {
+                lobCreator.close();
+            }
         }
 
         TransactionSynchronizationManager.registerSynchronization(new LobCreatorSynchronization(lobCreator));
