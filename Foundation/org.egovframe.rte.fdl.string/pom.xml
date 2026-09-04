@@ -27,6 +27,7 @@
         <org.egovframe.rte.version>5.0.0</org.egovframe.rte.version>
         <jakarta.annotation.version>3.0.0</jakarta.annotation.version>
         <commons.codec.version>1.18.0</commons.codec.version>
+        <icu4j.version>77.1</icu4j.version>
         <easymock.version>5.3.0</easymock.version>
     </properties>
 
@@ -63,6 +64,14 @@
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
             <version>${commons.codec.version}</version>
+        </dependency>
+        <!-- EgovLunarDates 의 음력 변환 전용 - optional 이므로 전이되지 않는다.
+             음력 변환을 쓰는 애플리케이션만 icu4j 를 직접 선언하면 된다. -->
+        <dependency>
+            <groupId>com.ibm.icu</groupId>
+            <artifactId>icu4j</artifactId>
+            <version>${icu4j.version}</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.easymock</groupId>
