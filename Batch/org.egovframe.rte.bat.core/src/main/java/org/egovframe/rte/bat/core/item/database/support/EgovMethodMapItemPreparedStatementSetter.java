@@ -70,7 +70,7 @@ public class EgovMethodMapItemPreparedStatementSetter<T> extends EgovItemPrepare
                     ps.setBoolean(i + 1, (Boolean) reflector.invokeGettterMethod(item, params[i], methodMap));
                 } else if (sqlTypes[i].equals("long")) {
                     ps.setLong(i + 1, (Long) reflector.invokeGettterMethod(item, params[i], methodMap));
-                } else if (sqlTypes[i].equals("Float")) {
+                } else if (sqlTypes[i].equals("float") || sqlTypes[i].equals("Float")) {
                     ps.setFloat(i + 1, (Float) reflector.invokeGettterMethod(item, params[i], methodMap));
                 } else if (sqlTypes[i].equals("BigDecimal")) {
                     ps.setBigDecimal(i + 1, (BigDecimal) reflector.invokeGettterMethod(item, params[i], methodMap));
