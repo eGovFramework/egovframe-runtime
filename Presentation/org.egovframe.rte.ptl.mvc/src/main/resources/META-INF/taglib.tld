@@ -33,4 +33,17 @@
         </attribute>
     </tag>
 
+    <tag>
+        <name>submitToken</name>
+        <tag-class>org.egovframe.rte.ptl.mvc.tags.ui.SubmitTokenTag</tag-class>
+        <body-content>empty</body-content>
+        <description>중복 제출 방지 토큰을 hidden input 으로 출력한다. 검증은 컨트롤러에서
+            EgovSubmitTokens.validateOrThrow(request) 로 수행한다.</description>
+        <attribute>
+            <name>tokenKey</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
 </taglib>
