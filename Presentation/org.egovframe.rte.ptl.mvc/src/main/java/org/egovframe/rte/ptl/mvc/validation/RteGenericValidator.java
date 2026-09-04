@@ -204,7 +204,7 @@ public final class RteGenericValidator implements Serializable {
     }
 
     /**
-     * 패스워드 점검 : 최소 3가지 조합. 영문자, 숫자, 특수문자 $@$!%*#?& 필수
+     * 패스워드 점검 : 최소 3가지 조합. 영문자, 숫자, 특수문자 ~!@#$%^&*? 필수
      *
      * @param password
      * @return boolean 일치여부
