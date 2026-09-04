@@ -154,17 +154,17 @@ public class DefaultItemWriter<T> implements ItemStreamWriter<T> {
                     this.delimiter = jobParameters.getString(stepName + WRITER_DELIMITER_KEY);
                     if (this.resourceName == null || this.delimiter == null || this.names == null) {
                         throw new RuntimeException(stepName + "스텝의 Writer 설정에서 resourceName, delimiter, names는 필수입니다. 다음 처럼 설정하세요.\n"
-                                + stepName + ".writer.resourceName=file:./inputs/csvData.csv "
-                                + stepName + ".writer.delimiter=, "
-                                + stepName + ".writer.fieldNames=name,age ");
+                                + stepName + WRITER_RESOURCE_NAME_KEY + "=file:./inputs/csvData.csv "
+                                + stepName + WRITER_DELIMITER_KEY + "=, "
+                                + stepName + WRITER_FIELD_NAMES_KEY + "=name,age ");
                     }
                 } else {
                     this.ranges = jobParameters.getString(stepName + WRITER_FIELD_RANGES_KEY);
                     if (this.resourceName == null || ranges == null || this.names == null) {
-                        throw new RuntimeException(stepName + "스텝의 Reader 설정에서 resourceName, fieldRanges, names는 필수입니다. 다음 처럼 설정하세요.\n"
-                                + stepName + ".writer.resourceName=./target/test-outputs/txtOutput.txt "
-                                + stepName + ".writer.fieldRanges=9,2 "
-                                + stepName + ".writer.fieldNames=name,age ");
+                        throw new RuntimeException(stepName + "스텝의 Writer 설정에서 resourceName, fieldRanges, names는 필수입니다. 다음 처럼 설정하세요.\n"
+                                + stepName + WRITER_RESOURCE_NAME_KEY + "=./target/test-outputs/txtOutput.txt "
+                                + stepName + WRITER_FIELD_RANGES_KEY + "=9,2 "
+                                + stepName + WRITER_FIELD_NAMES_KEY + "=name,age ");
                     }
                     String[] rangeArray = ranges.split(",");
                     this.fieldRanges = new int[rangeArray.length];
@@ -179,14 +179,14 @@ public class DefaultItemWriter<T> implements ItemStreamWriter<T> {
                 tempParams = jobParameters.getString(stepName + WRITER_PARAMS_KEY);
                 if (this.sql == null || tempParams == null) {
                     throw new RuntimeException(stepName + "스텝의 Writer 설정에서 sql, params는 필수입니다. 다음 처럼 설정하세요.\n"
-                            + stepName + ".writer.sql=UPDATE CUSTOMER set credit =? where name =? "
-                            + stepName + ".writer.params=credit,name ");
+                            + stepName + WRITER_SQL_KEY + "=UPDATE CUSTOMER set credit =? where name =? "
+                            + stepName + WRITER_PARAMS_KEY + "=credit,name ");
                 }
                 this.params = tempParams.split(",");
             }
         } else {
             throw new RuntimeException(stepName
-                    + ".writerResourceType=delimitedFile'처럼, 출력 리소스 타입을 Job 파라미터로 입력하세요.\n"
+                    + WRITER_RESOURCE_TYPE_KEY + "=delimitedFile'처럼, 출력 리소스 타입을 Job 파라미터로 입력하세요.\n"
                     + "리소스 타입 종류) delimitedFile, fixedLengthFile, jdbcDb");
         }
     }
