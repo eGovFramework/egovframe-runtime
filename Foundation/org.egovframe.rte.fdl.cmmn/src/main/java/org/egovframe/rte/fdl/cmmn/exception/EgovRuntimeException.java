@@ -34,6 +34,7 @@ import java.util.Locale;
  * 수정일		수정자				수정내용
  * ----------------------------------------------
  * 2017.07.25	장동한				최초생성
+ *   2026-09-05  이백행          [2026년 컨트리뷰션] BaseRuntimeException 대체를 위한 EgovRuntimeException 추가
  * </pre>
  * @since 2017.07.25
  */
