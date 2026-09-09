@@ -178,7 +178,7 @@ public class MappingInfo implements Validatable {
         StringBuilder sb = new StringBuilder();
         sb.append(this.getClass().getName()).append(" {").append("\n\ttype = ")
                 .append(StringUtils.quote(type)).append("\n\tindex = ")
-                .append(index).append("\n\targumentNAme = ")
+                .append(index).append("\n\targumentName = ")
                 .append(StringUtils.quote(argumentName))
                 .append("\n\theader = ").append(header).append("\n}");
         return sb.toString();
