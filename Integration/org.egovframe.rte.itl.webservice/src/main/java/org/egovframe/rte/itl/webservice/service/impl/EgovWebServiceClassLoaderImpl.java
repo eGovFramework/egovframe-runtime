@@ -171,41 +171,41 @@ public class EgovWebServiceClassLoaderImpl extends ClassLoader implements EgovWe
     }
 
     public Class<?> loadClass(final Type type) throws ClassNotFoundException {
-        LOGGER.debug("### EgovWebServiceClassLoaderImpl getFieldNameOfServiceBridge() loadClass of Type ({})", type);
+        LOGGER.debug("### EgovWebServiceClassLoaderImpl loadClass() loadClass of Type ({})", type);
 
         if (type == EgovWebServiceMessageHeader.TYPE) {
-            LOGGER.debug("### EgovWebServiceClassLoaderImpl getFieldNameOfServiceBridge() Type is EgovWebServiceMessageHeader.");
+            LOGGER.debug("### EgovWebServiceClassLoaderImpl loadClass() Type is EgovWebServiceMessageHeader.");
             return EgovWebServiceMessageHeader.class;
         }
 
         if (type instanceof PrimitiveType) {
-            LOGGER.debug("### EgovWebServiceClassLoaderImpl getFieldNameOfServiceBridge() Type is a Primitive Type");
+            LOGGER.debug("### EgovWebServiceClassLoaderImpl loadClass() Type is a Primitive Type");
             Class<?> clazz = primitiveClasses.get((PrimitiveType) type);
             if (clazz == null) {
-                LOGGER.debug("### EgovWebServiceClassLoaderImpl getFieldNameOfServiceBridge() No such primitive type");
+                LOGGER.debug("### EgovWebServiceClassLoaderImpl loadClass() No such primitive type");
                 throw new ClassNotFoundException();
             }
             return clazz;
         } else if (type instanceof ListType) {
-            LOGGER.debug("### EgovWebServiceClassLoaderImpl getFieldNameOfServiceBridge() Type is a List Type");
+            LOGGER.debug("### EgovWebServiceClassLoaderImpl loadClass() Type is a List Type");
             ListType listType = (ListType) type;
             Class<?> elementClass = loadClass(listType.getElementType());
             return Array.newInstance(elementClass, 0).getClass();
         } else if (type instanceof RecordType) {
-            LOGGER.debug("### EgovWebServiceClassLoaderImpl getFieldNameOfServiceBridge() Type is a Record Type");
+            LOGGER.debug("### EgovWebServiceClassLoaderImpl loadClass() Type is a Record Type");
             RecordType recordType = (RecordType) type;
             String className = getRecordTypeClassName(recordType.getName());
             try {
-                LOGGER.debug("### EgovWebServiceClassLoaderImpl getFieldNameOfServiceBridge() Check the class \"{}\" is already loaded.", className);
+                LOGGER.debug("### EgovWebServiceClassLoaderImpl loadClass() Check the class \"{}\" is already loaded.", className);
                 return loadClass(className);
             } catch (ClassNotFoundException e) {
-                LOGGER.debug("### EgovWebServiceClassLoaderImpl getFieldNameOfServiceBridge() Create a new class \"{}\"", className);
+                LOGGER.debug("### EgovWebServiceClassLoaderImpl loadClass() Create a new class \"{}\"", className);
                 byte[] byteCode = createRecordClass(className, recordType);
                 return defineClass(className, byteCode, 0, byteCode.length);
             }
         }
 
-        LOGGER.debug("### EgovWebServiceClassLoaderImpl getFieldNameOfServiceBridge() Type is invalid");
+        LOGGER.debug("### EgovWebServiceClassLoaderImpl loadClass() Type is invalid");
         throw new ClassNotFoundException();
     }
 
