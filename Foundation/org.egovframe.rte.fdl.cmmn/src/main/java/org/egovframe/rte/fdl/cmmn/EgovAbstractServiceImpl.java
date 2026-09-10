@@ -40,12 +40,13 @@ import java.util.Locale;
  * 수정일		수정자				수정내용
  * ----------------------------------------------
  * 2014.06.01	Daniela Kwon		최초생성
+ *   2026-09-05  이백행          [2026년 컨트리뷰션] 서비스 로거와 추적 로케일 처리 수정
  * </pre>
  * @since 2014.06.01
  */
 public abstract class EgovAbstractServiceImpl {
 
-    protected Logger egovLogger = LoggerFactory.getLogger(EgovAbstractServiceImpl.class);
+    protected Logger egovLogger = LoggerFactory.getLogger(getClass());
 
     @Resource(name = "messageSource")
     private MessageSource messageSource;
@@ -150,7 +151,7 @@ public abstract class EgovAbstractServiceImpl {
      * @param msgArgs msgKey의 메세지에서 변수에 취환되는 값들
      */
     protected void leaveaTrace(String msgKey, String[] msgArgs) {
-        leaveaTrace(msgKey, msgArgs, null);
+        leaveaTrace(msgKey, msgArgs, LocaleContextHolder.getLocale());
     }
 
     /**
