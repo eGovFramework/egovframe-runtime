@@ -51,7 +51,7 @@ public class DefaultTraceHandleManager extends AbstractTraceHandleManager implem
      */
     @Override
     public boolean trace(Class<?> clazz, String message) {
-        LOGGER.debug(" DefaultExceptionHandleManager.run() ");
+        LOGGER.debug(" DefaultTraceHandleManager.trace() ");
         // 매칭조건이 false 인 경우
         if (!enableMatcher()) {
             return false;
