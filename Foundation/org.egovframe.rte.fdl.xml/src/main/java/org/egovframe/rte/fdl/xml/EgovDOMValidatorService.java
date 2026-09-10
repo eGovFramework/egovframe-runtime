@@ -42,12 +42,22 @@ import java.util.Set;
  * 수정일		수정자				수정내용
  * ----------------------------------------------
  * 2009.03.18	김종호				최초생성
+ * 2026.09.10	실행환경 개발팀		저장 경로 직접 주입 생성자 추가
  * </pre>
  * @since 2009.03.18
  */
 public class EgovDOMValidatorService extends AbstractXMLUtility {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EgovDOMValidatorService.class);
+
+    /**
+     * 기본 저장 경로를 직접 주입받는 생성자 — 설정 파일과 Spring 컨텍스트 없이 동작한다.
+     *
+     * @param savedPath 경로를 지정하지 않은 저장 API 의 기본 위치(경로 구분자로 끝나야 한다)
+     */
+    public EgovDOMValidatorService(String savedPath) {
+        super(savedPath);
+    }
 
     private static final String FEATURE_EXTERNAL_GENERAL_ENTITIES =
             "http://xml.org/sax/features/external-general-entities";
