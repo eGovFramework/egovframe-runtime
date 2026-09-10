@@ -33,6 +33,7 @@ import java.util.Locale;
  * 2009.06.01	윤성종            최초 생성
  * 2017.02.28	장동한            시큐어코딩(ES)-Null Pointer 역참조[CWE-476]
  * 2023.08.31   유지보수            코드 리팩토링(addCalendar(), Contribution 반영)
+ * 2026.09.10	실행환경 개발팀        getFullAge 외국인 세대코드 5~8 지원, 해석 불가 입력은 예외
  */
 public class EgovDateUtil {
 
@@ -252,37 +253,56 @@ public class EgovDateUtil {
 
     /**
      * 해당 대상자에 대해 기준일자에서의 만 나이를 구한다.
+     *
+     * <p>7번째 자리(세대코드)로 출생 세기를 정한다. 0·9 는 1800년대, 1·2 는 1900년대, 3·4 는 2000년대이며,
+     * 외국인등록번호의 5·6 은 1900년대, 7·8 은 2000년대다.</p>
+     *
+     * @param socialNo 주민등록번호 또는 외국인등록번호(구분자 없이 7자리 이상)
+     * @param keyDate  기준일자(yyyyMMdd)
+     * @return 기준일자 기준 만 나이
+     * @throws IllegalArgumentException 인자가 null 이거나 짧은 경우, 세대코드가 0~9 밖인 경우, 숫자가 아닌 경우
      */
     public static int getFullAge(String socialNo, String keyDate) {
-        String birthDate = null;
-
-        // 주민번호 7번째 자리가 0 또는 9 라면 1800년도 출생이다.
-        if (EgovStringUtil.equals(EgovStringUtil.toSubString(socialNo, 6, 7), "0") || EgovStringUtil.equals(EgovStringUtil.toSubString(socialNo, 6, 7), "9")) {
-            birthDate = "18" + socialNo.substring(0, 6);
-        }
-
-        // 주민번호 7번째 자리가 1 또는 2 라면 1900년도 출생이다.
-        else if (EgovStringUtil.equals(EgovStringUtil.toSubString(socialNo, 6, 7), "1") || EgovStringUtil.equals(EgovStringUtil.toSubString(socialNo, 6, 7), "2")) {
-            birthDate = "19" + socialNo.substring(0, 6);
-        }
-
-        // 주민번호 7번째 자리가 3 또는 4 라면 2000년도 출생이다.
-        else if (EgovStringUtil.equals(EgovStringUtil.toSubString(socialNo, 6, 7), "3") || EgovStringUtil.equals(EgovStringUtil.toSubString(socialNo, 6, 7), "4")) {
-            birthDate = "20" + socialNo.substring(0, 6);
-        }
-
         //2017.02.28 장동한 시큐어코딩(ES)-Null Pointer 역참조[CWE-476]
-        if (keyDate != null && birthDate != null) {
-            // 생일이 안지났을때 기준일자 년에서 생일년을 빼고 1년을 더뺀다.
-            if (Integer.parseInt(keyDate.substring(4, 8)) < Integer.parseInt(birthDate.substring(4, 8))) {
-                return Integer.parseInt(keyDate.substring(0, 4)) - Integer.parseInt(birthDate.substring(0, 4)) - 1;
-                // 생일이 지났을때 기준일자 년에서 생일년을 뺀다.
-            } else {
-                return Integer.parseInt(keyDate.substring(0, 4)) - Integer.parseInt(birthDate.substring(0, 4));
-            }
-        } else {
-            return 0;
+        if (socialNo == null || socialNo.length() < 7) {
+            throw new IllegalArgumentException("socialNo must have at least 7 digits");
         }
+        if (keyDate == null || keyDate.length() < 8) {
+            throw new IllegalArgumentException("keyDate must be yyyyMMdd");
+        }
+
+        // 세대코드(7번째 자리) → 출생 세기. 0·9=1800년대, 1·2=1900년대, 3·4=2000년대,
+        // 5·6=1900년대 외국인, 7·8=2000년대 외국인
+        char generationCode = socialNo.charAt(6);
+        String century;
+        switch (generationCode) {
+            case '0':
+            case '9':
+                century = "18";
+                break;
+            case '1':
+            case '2':
+            case '5':
+            case '6':
+                century = "19";
+                break;
+            case '3':
+            case '4':
+            case '7':
+            case '8':
+                century = "20";
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported generation code (7th digit) in socialNo: " + generationCode);
+        }
+        String birthDate = century + socialNo.substring(0, 6);
+
+        // 생일이 안지났을때 기준일자 년에서 생일년을 빼고 1년을 더뺀다.
+        if (Integer.parseInt(keyDate.substring(4, 8)) < Integer.parseInt(birthDate.substring(4, 8))) {
+            return Integer.parseInt(keyDate.substring(0, 4)) - Integer.parseInt(birthDate.substring(0, 4)) - 1;
+        }
+        // 생일이 지났을때 기준일자 년에서 생일년을 뺀다.
+        return Integer.parseInt(keyDate.substring(0, 4)) - Integer.parseInt(birthDate.substring(0, 4));
     }
 
     /**
