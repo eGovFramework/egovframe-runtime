@@ -58,6 +58,7 @@ import static org.apache.commons.configuration2.PropertiesConfiguration.DEFAULT_
  * 2009.02.01	김태호			최초 생성
  * 2014.08.12	Vincent Han		"properties" 속성이 없는 경우 처리
  * 2020.08.31	유지보수			Property 값을 정확히 등록하기 위해 put() 메소드를 addProperty() 메소드로 변경
+ * 2026.09.10	실행환경 개발팀		리소스 로딩 실패 시 실패한 리소스를 담은 IllegalStateException 으로 보고
  * </pre>
  * @since 2009.02.01
  */
@@ -388,7 +389,8 @@ public class EgovPropertyServiceImpl implements EgovPropertyService, Application
             inputStreamReader = new InputStreamReader(inputStream, StringUtils.isEmpty(encoding) ? DEFAULT_ENCODING : encoding);
             propertiesConfiguration.read(inputStreamReader);
         } catch (ConfigurationException | IOException e) {
-            throw new RuntimeException(e);
+            // 어느 리소스가 왜 실패했는지 예외만 보고 알 수 있도록 리소스 설명을 메시지에 담는다
+            throw new IllegalStateException("Failed to load property resource: " + resource, e);
         } finally {
             if (inputStreamReader != null) {
                 try {
