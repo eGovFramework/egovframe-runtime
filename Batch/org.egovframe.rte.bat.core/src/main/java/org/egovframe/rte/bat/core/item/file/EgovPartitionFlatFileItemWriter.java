@@ -584,7 +584,7 @@ public class EgovPartitionFlatFileItemWriter<T> extends ExecutionContextUserSupp
                     try {
                         stream.close();
                     } catch (IOException e) {
-                        LOGGER.debug("EgovPartitionFlatFileItemWriter initializeBufferedWriter() : {}", e.getClass().getName(), e.getMessage());
+                        LOGGER.debug("EgovPartitionFlatFileItemWriter initializeBufferedWriter() : {} : {}", e.getClass().getName(), e.getMessage());
                     }
                 }
             }
