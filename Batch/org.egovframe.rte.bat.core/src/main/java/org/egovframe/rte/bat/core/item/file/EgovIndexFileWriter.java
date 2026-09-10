@@ -332,20 +332,11 @@ public class EgovIndexFileWriter<T> implements ItemStreamWriter<T> {
 
     // (+1) 옵션이고 기존 파일이 없는 경우 초기 파일명을 생성한다.
     private String generateInitialIndexFilename(String resourceFileName) {
-        // 파일명에서 확장자 추출 (괄호 이전 부분에서)
-        String baseFileName = resourceFileName;
-        int parenIndex = resourceFileName.indexOf('(');
-        if (parenIndex > 0) {
-            baseFileName = resourceFileName.substring(0, parenIndex);
-        }
-
+        // 파일명 규칙("파일명" + "_NDX" + "(순번)" + ".확장자")에 따라 (순번) 뒷부분을 확장자로 사용한다.
         String extension = "";
-        int lastDotIndex = baseFileName.lastIndexOf('.');
-        if (lastDotIndex > 0) {
-            extension = baseFileName.substring(lastDotIndex);
-        } else {
-            // 확장자가 없으면 기본적으로 .csv 사용
-            extension = ".csv";
+        int closeParenIndex = resourceFileName.indexOf(')');
+        if (closeParenIndex > 0) {
+            extension = resourceFileName.substring(closeParenIndex + 1);
         }
 
         // 현재 시간을 기반으로 초기 인덱스 생성 (YYYYMMDDhhmmss 형식)
