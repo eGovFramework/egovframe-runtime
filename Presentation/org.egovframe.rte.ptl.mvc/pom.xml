@@ -30,6 +30,7 @@
         <jakarta.servlet.jsp.version>4.0.0</jakarta.servlet.jsp.version>
         <log4j2.version>2.25.3</log4j2.version>
         <slf4j.version>2.0.17</slf4j.version>
+        <jsoup.version>1.21.1</jsoup.version>
         <commons.beanutils.version>1.11.0</commons.beanutils.version>
         <commons.validator.version>1.9.0</commons.validator.version>
         <easymock.version>5.3.0</easymock.version>
@@ -118,6 +119,14 @@
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
             <version>${commons.beanutils.version}</version>
+        </dependency>
+        <!-- EgovHtmlSanitizer 전용 - optional 이므로 전이되지 않는다.
+             정제 기능을 쓰는 애플리케이션만 jsoup 을 직접 선언하면 된다. -->
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>${jsoup.version}</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>commons-validator</groupId>
