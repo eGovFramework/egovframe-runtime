@@ -44,6 +44,7 @@ import java.util.regex.Pattern;
  * 2013.03.22	한성곤				패스워드 관련 점검 메소드 추가
  * 2017.02.28	장동한				시큐어코딩(ES)-오류 메시지를 통한 정보노출[CWE-209]
  * 2020.07.20	윤주호				패스워드 점검 강화 관련 메소드 수정
+ * 2026.09.10	실행환경 개발팀		순수 한글 판정 isHangul 추가, isKorean 의 판정 범위(다른 CJK 문자 통과)를 javadoc 에 명시
  * </pre>
  * @since 2009.06.01
  */
@@ -57,6 +58,8 @@ public final class RteGenericValidator implements Serializable {
     // (특수문자 집합 ~!@#$%^&*? 은 고정이므로 조합 검증 패턴도 상수다.)
     private static final String ALLOWED_SPECIAL_CHAR = "~!@#$%^&*?";
     private static final Pattern HTML_TAG_PATTERN = Pattern.compile("<[^<|>]*>");
+    /** 순수 한글(자모 ㄱ-ㅎ·ㅏ-ㅣ + 완성형 가-힣) 판정 패턴 */
+    private static final Pattern HANGUL_PATTERN = Pattern.compile("^[ㄱ-ㅎㅏ-ㅣ가-힣]*$");
     private static final Pattern MORE_THAN_2_TYPE_PATTERN =
             Pattern.compile("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[" + ALLOWED_SPECIAL_CHAR + "])[A-Za-z\\d" + ALLOWED_SPECIAL_CHAR + "]+$");
     private static final Pattern MORE_THAN_3_TYPE_PATTERN =
@@ -129,6 +132,10 @@ public final class RteGenericValidator implements Serializable {
     /**
      * 한글여부 체크
      *
+     * <p><b>주의:</b> {@code Character.getType() == OTHER_LETTER} 판정이라 한자·가나 등 다른 CJK 문자도 통과한다
+     * (인명용 한자 등 기존 사용처 호환을 위해 동작은 유지한다). 순수 한글만 허용해야 하면 {@link #isHangul(String)} 을
+     * 사용하라.</p>
+     *
      * @param value
      * @return
      */
@@ -140,6 +147,21 @@ public final class RteGenericValidator implements Serializable {
             }
         }
         return true;
+    }
+
+    /**
+     * 순수 한글(자모 ㄱ-ㅎ·ㅏ-ㅣ + 완성형 가-힣)만으로 구성되었는지 검사한다.
+     * {@link #isKorean(String)} 과 달리 한자·가나 등 다른 CJK 문자는 거부한다. 빈 문자열은 {@code isKorean} 과 같이 true,
+     * null 은 false 다.
+     *
+     * @param value 검사할 문자열
+     * @return 한글 자모·완성형만으로 되어 있으면 true
+     */
+    public static boolean isHangul(String value) {
+        if (value == null) {
+            return false;
+        }
+        return HANGUL_PATTERN.matcher(value).matches();
     }
 
     /**
