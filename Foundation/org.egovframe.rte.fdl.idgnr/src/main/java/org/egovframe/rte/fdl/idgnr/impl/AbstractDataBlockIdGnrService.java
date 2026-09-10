@@ -116,7 +116,7 @@ public abstract class AbstractDataBlockIdGnrService extends AbstractDataIdGnrSer
         long id = mFirstLong + mAllocated;
         if (id < 0) {
             LOGGER.debug(messageSource.getMessage("error.idgnr.greater.maxid", new String[]{"Long"}, Locale.getDefault()));
-            throw new FdlException(messageSource, "error.idgnr.greater.maxid");
+            throw new FdlException(messageSource, "error.idgnr.greater.maxid", new String[]{"Long"}, null);
         }
 
         mAllocated++;
