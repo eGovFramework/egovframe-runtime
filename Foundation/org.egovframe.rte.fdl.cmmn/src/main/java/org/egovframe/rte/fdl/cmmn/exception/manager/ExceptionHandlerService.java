@@ -31,6 +31,7 @@ import org.springframework.util.PathMatcher;
  * ----------------------------------------------
  * 2009.05.30	Judd Cho			최초 생성
  * 2015.01.31	Vincent Han			코드 품질 개선
+ * 2026.09.10	실행환경 개발팀		발생 위치를 파라미터로 받는 run(Exception, String) 추가 — 싱글톤 상태 변경 방식 deprecated
  * </pre>
  * @since 2009.06.01
  */
@@ -54,7 +55,10 @@ public interface ExceptionHandlerService {
      * 비교할 클래스 정보.
      *
      * @param canonicalName 비교할 클래스명
+     * @deprecated 싱글톤 빈의 상태를 요청마다 바꾸는 방식이라 동시 요청에서 다른 호출의
+     * 발생 위치로 매칭될 수 있다. {@link #run(Exception, String)} 으로 발생 위치를 직접 전달한다.
      */
+    @Deprecated
     void setPackageName(String canonicalName);
 
     /**
@@ -76,8 +80,31 @@ public interface ExceptionHandlerService {
      *
      * @param exception 발생한 Exception
      * @return boolean 실행성공여부
+     * @deprecated {@link #setPackageName(String)} 으로 미리 넣어 둔 상태에 의존하므로 동시 요청에서
+     * 오동작할 수 있다. {@link #run(Exception, String)} 으로 대체한다.
      */
+    @Deprecated
     boolean run(Exception exception) throws Exception;
+
+    /**
+     * 발생 위치(패키지.클래스.메소드)를 파라미터로 받아 후처리 로직을 실행한다.
+     * 실행환경의 {@code ExceptionTransfer} 는 이 메소드로 호출한다.
+     *
+     * <p>기본 구현은 하위 호환을 위해 구 방식({@link #setPackageName(String)} 뒤 {@link #run(Exception)})으로
+     * 위임하되, 인스턴스 잠금으로 동시 호출 간의 발생 위치 혼선을 막는다. 구현체가 이 메소드를 직접
+     * 재정의하면 잠금 없이 상태 변경 없는 처리가 가능하다({@code DefaultExceptionHandleManager} 참고).</p>
+     *
+     * @param exception   발생한 Exception
+     * @param packageName 발생 위치(패키지.클래스.메소드)
+     * @return boolean 실행성공여부
+     * @throws Exception 후처리 중 발생한 예외
+     */
+    default boolean run(Exception exception, String packageName) throws Exception {
+        synchronized (this) {
+            setPackageName(packageName);
+            return run(exception);
+        }
+    }
 
     /**
      * PathMatcher 가 있는지 여부 반환.

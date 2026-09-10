@@ -50,6 +50,7 @@ import java.util.Locale;
  * 2009.05.30	Judd Cho		최초 생성
  * 2015.01.31	Vincent Han		코드 품질 개선 및 보완 (processHandling 메소드 Exception 처리)
  * 2020.08.31	유지보수			시큐어코딩(ES)-Private 배열에 Public 데이터 할당[CWE-496]
+ * 2026.09.10	실행환경 개발팀		후처리 매니저 호출을 run(Exception, String) 으로 — 싱글톤 상태 변경 제거
  * </pre>
  * @since 2009.06.01
  */
@@ -219,15 +220,16 @@ public class ExceptionTransfer {
         if (exceptionHandlerServices == null) {
             return;
         }
-
+        // 발생 위치를 파라미터로 전달한다. 싱글톤 매니저 빈의 상태(setPackageName)를 바꾸는 방식은
+        // 동시 요청 간에 발생 위치가 섞인다.
+        String packageName = clazz.getCanonicalName() + "." + methodName;
         for (ExceptionHandlerService ehm : exceptionHandlerServices) {
             // 2026.02.28 KISA 보안취약점 조치
             try {
                 if (!ehm.hasReqExpMatcher()) {
                     ehm.setReqExpMatcher(pm);
                 }
-                ehm.setPackageName(clazz.getCanonicalName() + "." + methodName);
-                ehm.run(exception);
+                ehm.run(exception, packageName);
             } catch (NullPointerException e) {
                 LOGGER.debug("[{}] ExceptionTransfer processHandling() Error >>> {}", e.getClass().getSimpleName(), e.getMessage());
             } catch (IllegalArgumentException e) {
