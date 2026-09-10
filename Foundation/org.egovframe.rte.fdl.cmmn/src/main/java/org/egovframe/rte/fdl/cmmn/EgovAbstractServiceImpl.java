@@ -17,6 +17,8 @@ package org.egovframe.rte.fdl.cmmn;
 
 import jakarta.annotation.Resource;
 import org.egovframe.rte.fdl.cmmn.exception.EgovBizException;
+import org.egovframe.rte.fdl.cmmn.exception.EgovBizRuntimeException;
+import org.egovframe.rte.fdl.cmmn.exception.EgovErrorMessage;
 import org.egovframe.rte.fdl.cmmn.trace.LeaveaTrace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +34,12 @@ import java.util.Locale;
  * 또한 EgovAbstractServiceImpl을 상속하는 클래스는 직접 Logger 생성없이
  * protected로 선언된 egovLogger를 사용할 수 있다.</p>
  *
+ * <p>업무 예외를 던질 때는 {@link #throwBizException(String)} (checked) 또는
+ * {@code throw} {@link #newBizRuntimeException(String)} (unchecked) 를 쓸 수 있다. 두 헬퍼는 메시지 키 규약
+ * ({@code key}, {@code key.reason}, {@code key.solution})으로 구조화 오류 메시지({@link EgovErrorMessage})를
+ * 해석해 예외에 담는다. {@code processException} 은 예외를 반환하므로 호출부에서 {@code throw} 를 빠뜨리면
+ * 아무 일도 일어나지 않는데, {@code throwBizException} 은 그 자리에서 던진다.</p>
+ *
  * @author Daniela Kwon
  * @version 3.0
  * <pre>
@@ -41,6 +49,7 @@ import java.util.Locale;
  * ----------------------------------------------
  * 2014.06.01	Daniela Kwon		최초생성
  *   2026-09-05  이백행          [2026년 컨트리뷰션] 서비스 로거와 추적 로케일 처리 수정
+ * 2026.09.10	실행환경 개발팀		구조화 오류 메시지를 담는 throwBizException·newBizRuntimeException 헬퍼 추가
  * </pre>
  * @since 2014.06.01
  */
@@ -163,6 +172,119 @@ public abstract class EgovAbstractServiceImpl {
      */
     protected void leaveaTrace(String msgKey, String[] msgArgs, Locale locale) {
         traceObj.trace(this.getClass(), messageSource, msgKey, msgArgs, locale, egovLogger);
+    }
+
+    /**
+     * 구조화 오류 메시지를 담은 {@link EgovBizException} 을 그 자리에서 던진다.
+     *
+     * <pre class="code">
+     * if (stock &lt; quantity) {
+     *     throwBizException("fail.biz.order.stock");
+     * }
+     * </pre>
+     *
+     * @param messageKey 메세지리소스 키. {@code key}/{@code key.reason}/{@code key.solution} 규약으로 구조화 해석
+     * @throws EgovBizException 항상 발생
+     */
+    protected void throwBizException(String messageKey) throws EgovBizException {
+        throwBizException(messageKey, null, null, LocaleContextHolder.getLocale());
+    }
+
+    /**
+     * 구조화 오류 메시지를 담은 {@link EgovBizException} 을 그 자리에서 던진다.
+     *
+     * @param messageKey  메세지리소스 키
+     * @param messageArgs 메시지 치환 인자
+     * @throws EgovBizException 항상 발생
+     */
+    protected void throwBizException(String messageKey, Object[] messageArgs) throws EgovBizException {
+        throwBizException(messageKey, messageArgs, null, LocaleContextHolder.getLocale());
+    }
+
+    /**
+     * 구조화 오류 메시지를 담은 {@link EgovBizException} 을 그 자리에서 던진다.
+     *
+     * @param messageKey 메세지리소스 키
+     * @param cause      원인 예외(cause 체인에 연결된다)
+     * @throws EgovBizException 항상 발생
+     */
+    protected void throwBizException(String messageKey, Throwable cause) throws EgovBizException {
+        throwBizException(messageKey, null, cause, LocaleContextHolder.getLocale());
+    }
+
+    /**
+     * 구조화 오류 메시지를 담은 {@link EgovBizException} 을 그 자리에서 던진다.
+     *
+     * @param messageKey  메세지리소스 키
+     * @param messageArgs 메시지 치환 인자
+     * @param cause       원인 예외(cause 체인에 연결된다)
+     * @throws EgovBizException 항상 발생
+     */
+    protected void throwBizException(String messageKey, Object[] messageArgs, Throwable cause) throws EgovBizException {
+        throwBizException(messageKey, messageArgs, cause, LocaleContextHolder.getLocale());
+    }
+
+    /**
+     * 구조화 오류 메시지를 담은 {@link EgovBizException} 을 그 자리에서 던진다.
+     *
+     * @param messageKey  메세지리소스 키
+     * @param messageArgs 메시지 치환 인자
+     * @param cause       원인 예외(cause 체인에 연결된다)
+     * @param locale      명시적 국가/언어지정
+     * @throws EgovBizException 항상 발생
+     */
+    protected void throwBizException(String messageKey, Object[] messageArgs, Throwable cause, Locale locale) throws EgovBizException {
+        throw new EgovBizException(EgovErrorMessage.resolve(messageSource, messageKey, messageArgs, locale), cause);
+    }
+
+    /**
+     * 구조화 오류 메시지를 담은 unchecked {@link EgovBizRuntimeException} 을 만든다. 반드시 {@code throw} 와 함께 쓴다.
+     *
+     * <pre class="code">
+     * throw newBizRuntimeException("fail.biz.order.stock");
+     * </pre>
+     *
+     * @param messageKey 메세지리소스 키. {@code key}/{@code key.reason}/{@code key.solution} 규약으로 구조화 해석
+     * @return 만든 unchecked 예외. 호출부에서 바로 던진다
+     */
+    protected EgovBizRuntimeException newBizRuntimeException(String messageKey) {
+        return newBizRuntimeException(messageKey, null, null);
+    }
+
+    /**
+     * 구조화 오류 메시지를 담은 unchecked {@link EgovBizRuntimeException} 을 만든다.
+     *
+     * @param messageKey  메세지리소스 키
+     * @param messageArgs 메시지 치환 인자
+     * @return 만든 unchecked 예외. 호출부에서 바로 던진다
+     */
+    protected EgovBizRuntimeException newBizRuntimeException(String messageKey, Object[] messageArgs) {
+        return newBizRuntimeException(messageKey, messageArgs, null);
+    }
+
+    /**
+     * 구조화 오류 메시지를 담은 unchecked {@link EgovBizRuntimeException} 을 만든다.
+     *
+     * @param messageKey  메세지리소스 키
+     * @param messageArgs 메시지 치환 인자
+     * @param cause       원인 예외(cause 체인에 연결된다)
+     * @return 만든 unchecked 예외. 호출부에서 바로 던진다
+     */
+    protected EgovBizRuntimeException newBizRuntimeException(String messageKey, Object[] messageArgs, Throwable cause) {
+        return newBizRuntimeException(messageKey, messageArgs, cause, LocaleContextHolder.getLocale());
+    }
+
+    /**
+     * 구조화 오류 메시지를 담은 unchecked {@link EgovBizRuntimeException} 을 만든다.
+     *
+     * @param messageKey  메세지리소스 키
+     * @param messageArgs 메시지 치환 인자
+     * @param cause       원인 예외(cause 체인에 연결된다)
+     * @param locale      명시적 국가/언어지정
+     * @return 만든 unchecked 예외. 호출부에서 바로 던진다
+     */
+    protected EgovBizRuntimeException newBizRuntimeException(String messageKey, Object[] messageArgs, Throwable cause, Locale locale) {
+        return new EgovBizRuntimeException(EgovErrorMessage.resolve(messageSource, messageKey, messageArgs, locale), cause);
     }
 
     protected interface ExceptionCreator {

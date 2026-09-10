@@ -32,12 +32,18 @@ import java.util.Locale;
  * ----------------------------------------------
  * 2009.05.30	Judd Cho			최초 생성
  * 2015.01.31	Vincent Han			코드 품질 개선
+ * 2026.09.10	실행환경 개발팀		구조화 오류 메시지(EgovErrorMessage) 생성자와 getErrorMessage() 추가
  * </pre>
  * @since 2009.06.01
  */
 public class EgovBizException extends BaseException {
 
     private static final long serialVersionUID = 1L;
+
+    /**
+     * 구조화 오류 메시지. 구조화 생성자로 만든 경우에만 설정되며 그 외에는 null 이다.
+     */
+    private EgovErrorMessage errorMessage;
 
     /**
      * EgovBizException 생성자.
@@ -169,6 +175,28 @@ public class EgovBizException extends BaseException {
         this.messageParameters = messageParameters;
         this.message = messageSource.getMessage(messageKey, messageParameters, defaultMessage, locale);
         this.wrappedException = wrappedException;
+    }
+
+    /**
+     * 구조화 오류 메시지로 생성한다. 예외 메시지는 사용자 메시지, 메시지 키는 오류 코드가 되며
+     * 원인 예외는 cause 체인에 연결된다.
+     *
+     * @param errorMessage 구조화 오류 메시지(코드·사용자 메시지·원인·조치)
+     * @param cause        원인 예외(null 가능)
+     */
+    public EgovBizException(EgovErrorMessage errorMessage, Throwable cause) {
+        super(errorMessage.getUserMessage(), (Object[]) null, cause);
+        this.messageKey = errorMessage.getCode();
+        this.errorMessage = errorMessage;
+    }
+
+    /**
+     * 구조화 오류 메시지. 구조화 생성자로 만든 경우에만 값이 있고 그 외에는 null 이다.
+     *
+     * @return 구조화 오류 메시지 또는 null
+     */
+    public EgovErrorMessage getErrorMessage() {
+        return errorMessage;
     }
 
 }
