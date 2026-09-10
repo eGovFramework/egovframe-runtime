@@ -40,6 +40,7 @@ import java.time.temporal.ChronoField;
  * 수정일		수정자				수정내용
  * ----------------------------------------------
  * 2023.08.31   유지보수            최초 생성
+ * 2026.09.10   실행환경 개발팀      난수 소스를 SecureRandom 하나로 통일(Math.random() 제거, 호출마다 새 SecureRandom 생성 제거)
  * </pre>
  * @since 2023.08.31
  */
@@ -48,6 +49,12 @@ public class EgovSequenceGenerator {
     private static final Logger LOGGER = LoggerFactory.getLogger(EgovSequenceGenerator.class);
 
     private static final int SALT_BYTE_LENGTH = 16;
+
+    /**
+     * 난수 소스. 랜덤 문자열과 솔트 모두 이 하나의 SecureRandom 을 쓴다.
+     * SecureRandom 은 스레드 안전하므로 공유해도 되며, 호출마다 새로 만들면 시드 수집 비용만 든다.
+     */
+    private static final SecureRandom RANDOM = new SecureRandom();
 
     public static String generateSequence(String instance) {
         byte[] salt = generateSalt();
@@ -67,7 +74,7 @@ public class EgovSequenceGenerator {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         sb.append(nowDate);
         for (int i = 0; i < 5; i++) {
-            sb.append(characters.charAt((int) (Math.random() * characters.length())));
+            sb.append(characters.charAt(RANDOM.nextInt(characters.length())));
         }
         return sb.toString();
     }
@@ -101,7 +108,7 @@ public class EgovSequenceGenerator {
 
     private static byte[] generateSalt() {
         byte[] salt = new byte[SALT_BYTE_LENGTH];
-        new SecureRandom().nextBytes(salt);
+        RANDOM.nextBytes(salt);
         return salt;
     }
 
