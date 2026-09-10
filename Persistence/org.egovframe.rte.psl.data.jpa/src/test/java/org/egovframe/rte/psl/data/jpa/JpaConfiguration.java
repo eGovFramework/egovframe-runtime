@@ -6,6 +6,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
+import org.springframework.data.domain.AuditorAware;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
@@ -14,12 +16,20 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
 import javax.sql.DataSource;
+import java.util.Optional;
 import java.util.Properties;
 
 @Configuration
 @ComponentScan(basePackages = "org.egovframe.rte.psl.data.jpa")
 @EnableJpaRepositories(basePackages = "org.egovframe.rte.psl.data.jpa")
+@EnableJpaAuditing
 public class JpaConfiguration {
+
+    /** EgovBaseEntity 감사 필드의 등록자·수정자 공급원 */
+    @Bean
+    public AuditorAware<String> auditorProvider() {
+        return () -> Optional.of("testUser");
+    }
 
     private final Environment env;
 
