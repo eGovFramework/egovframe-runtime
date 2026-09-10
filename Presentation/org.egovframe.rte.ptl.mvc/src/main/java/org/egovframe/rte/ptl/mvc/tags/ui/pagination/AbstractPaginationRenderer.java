@@ -45,6 +45,7 @@ import java.text.MessageFormat;
  * 수정일		수정자				수정내용
  * ----------------------------------------------
  * 2009.05.30	함철				최초 생성
+ * 2026.09.10	실행환경 개발팀		라벨 setter 와 라벨 파라미터형 doRender() 추가(로케일별 라벨 렌더러 지원)
  * </pre>
  * @since 2009.06.01
  */
@@ -57,7 +58,42 @@ public abstract class AbstractPaginationRenderer implements PaginationRenderer {
     protected String nextPageLabel;
     protected String lastPageLabel;
 
+    public void setFirstPageLabel(String firstPageLabel) {
+        this.firstPageLabel = firstPageLabel;
+    }
+
+    public void setPreviousPageLabel(String previousPageLabel) {
+        this.previousPageLabel = previousPageLabel;
+    }
+
+    public void setCurrentPageLabel(String currentPageLabel) {
+        this.currentPageLabel = currentPageLabel;
+    }
+
+    public void setOtherPageLabel(String otherPageLabel) {
+        this.otherPageLabel = otherPageLabel;
+    }
+
+    public void setNextPageLabel(String nextPageLabel) {
+        this.nextPageLabel = nextPageLabel;
+    }
+
+    public void setLastPageLabel(String lastPageLabel) {
+        this.lastPageLabel = lastPageLabel;
+    }
+
     public String renderPagination(PaginationInfo paginationInfo, String jsFunction) {
+        return doRender(paginationInfo, jsFunction,
+                firstPageLabel, previousPageLabel, currentPageLabel, otherPageLabel, nextPageLabel, lastPageLabel);
+    }
+
+    /**
+     * 라벨 템플릿을 파라미터로 받아 렌더링한다.
+     * 요청 로케일(Locale)마다 라벨이 달라지는 렌더러가 공유 필드를 바꾸지 않고(스레드 안전) 재사용하는 렌더링 지점이다.
+     */
+    protected String doRender(PaginationInfo paginationInfo, String jsFunction,
+            String firstPageLabel, String previousPageLabel, String currentPageLabel,
+            String otherPageLabel, String nextPageLabel, String lastPageLabel) {
 
         StringBuilder stringBuilder = new StringBuilder();
 
