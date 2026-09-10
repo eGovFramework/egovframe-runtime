@@ -376,7 +376,7 @@ public class EgovDateUtil {
         } else if (date.length() == 17) {
             format = "yyyyMMddHHmmssSSS";
         } else {
-            throw new ParseException(" wrong date format!:\"" + format + "\"", 0);
+            throw new ParseException(" wrong date format!:\"" + date + "\"", 0);
         }
 
         return format;

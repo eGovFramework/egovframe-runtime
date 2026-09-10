@@ -300,6 +300,18 @@ public class EgovDateUtilTest {
     }
 
     /**
+     * [Flow #-6-1] Negative Case : 인식하지 못한 길이의 일자 문자열에 대한 예외 메시지 확인
+     */
+    @Test
+    public void testTimeCountUnknownLengthMessage() {
+        // 길이가 4, 8, 12, 14, 17 중 어느 것도 아니면 형식을 정할 수 없어 ParseException 이 난다.
+        ParseException e = assertThrows(ParseException.class, () -> EgovDateUtil.getTimeCount("2009040112", "2009040113"));
+
+        // 형제인 dateFormatCheck() 과 같이 어긋난 입력값을 알려야 한다.
+        assertTrue(e.getMessage().contains("2009040112"), "예외 메시지: " + e.getMessage());
+    }
+
+    /**
      * [Flow #-7] Positive Case : 시작일자와 종료일자 사이의 해당 요일이 몇번 있는지 계산한다.
      */
     @Test
