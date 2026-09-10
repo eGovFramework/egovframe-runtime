@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -453,6 +454,18 @@ public class EgovStringUtilTest {
         String str = "a,b,c,d";
         // 2. get token list
         assertEquals(4, EgovStringUtil.getTokens(str).size());
+    }
+
+    /**
+     * 구분자를 생략한 getTokens는 구분자를 넘기는 오버로드에 그대로 위임하므로
+     * 두 오버로드의 결과는 같고, 원소 타입도 String으로 받을 수 있어야 한다.
+     */
+    @Test
+    public void testGetTokensDefaultSeparatorElementType() {
+        String str = "a,b,c,d";
+        List<String> tokens = EgovStringUtil.getTokens(str);
+        assertEquals(EgovStringUtil.getTokens(str, ","), tokens);
+        assertEquals("a", tokens.get(0));
     }
 
     /**
