@@ -57,6 +57,12 @@
             <artifactId>egovframe-rte-fdl-cmmn</artifactId>
             <version>${org.egovframe.rte.version}</version>
         </dependency>
+        <!-- 업로드 검증 정책(EgovUploadPolicy)과 안전 경로 해석(EgovFiles)을 쓴다. -->
+        <dependency>
+            <groupId>org.egovframe.rte</groupId>
+            <artifactId>egovframe-rte-fdl-filehandling</artifactId>
+            <version>${org.egovframe.rte.version}</version>
+        </dependency>
 
         <!-- Spring -->
         <dependency>
