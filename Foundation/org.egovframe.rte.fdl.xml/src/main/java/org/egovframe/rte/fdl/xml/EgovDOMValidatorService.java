@@ -85,7 +85,7 @@ public class EgovDOMValidatorService extends AbstractXMLUtility {
             factory.setNamespaceAware(true);
             factory.setValidating(isValid);
 
-            if (!ObjectUtils.isEmpty(getXMLFile())) {
+            if (!ObjectUtils.isEmpty(getSCHEMAFile())) {
                 factory.setAttribute("http://java.sun.com/xml/jaxp/properties/schemaLanguage", "http://www.w3.org/2001/XMLSchema");
                 factory.setAttribute("http://java.sun.com/xml/jaxp/properties/schemaSource", getSCHEMAFile());
             }
