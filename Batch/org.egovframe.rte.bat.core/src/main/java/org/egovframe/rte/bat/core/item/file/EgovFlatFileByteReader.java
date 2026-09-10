@@ -18,7 +18,6 @@ package org.egovframe.rte.bat.core.item.file;
 import org.egovframe.rte.bat.core.item.file.mapping.EgovByteLineMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.NonTransientFlatFileException;
 import org.springframework.batch.item.file.ResourceAwareItemReaderItemStream;
 import org.springframework.batch.item.file.separator.RecordSeparatorPolicy;
@@ -70,7 +69,7 @@ public class EgovFlatFileByteReader<T> extends AbstractItemCountingItemStreamIte
     private boolean strict = true;
 
     public EgovFlatFileByteReader() {
-        setName(ClassUtils.getShortName(FlatFileItemReader.class));
+        setName(ClassUtils.getShortName(EgovFlatFileByteReader.class));
     }
 
     /**
