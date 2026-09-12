@@ -71,6 +71,7 @@ public class EgovDelimitedLineTokenizer extends EgovAbstractLineTokenizer {
      * @param delimiter : delimiter로 사용 할 문자열
      */
     public EgovDelimitedLineTokenizer(String delimiter) {
+        Assert.hasLength(delimiter, "Delimiter must not be null or empty");
         Assert.state(!delimiter.equals(DEFAULT_QUOTE_CHARACTER), DEFAULT_QUOTE_CHARACTER + " is not allowed as delimiter for tokenizers.");
         this.delimiter = delimiter;
         setQuoteCharacter(DEFAULT_QUOTE_CHARACTER);
@@ -82,6 +83,7 @@ public class EgovDelimitedLineTokenizer extends EgovAbstractLineTokenizer {
      * @param delimiter : delimiter로 사용 할 문자열
      */
     public void setDelimiter(String delimiter) {
+        Assert.hasLength(delimiter, "Delimiter must not be null or empty");
         this.delimiter = delimiter;
     }
 
@@ -117,7 +119,7 @@ public class EgovDelimitedLineTokenizer extends EgovAbstractLineTokenizer {
             if (quoteIndex == -1) {
                 lastCut = (delimiterIndex != -1 ? delimiterIndex : length);
                 tokens.add(line.substring(beginIndex, lastCut));
-                beginIndex = lastCut + 1;
+                beginIndex = lastCut + delimiter.length();
             } else {
                 if (quoteIndex < delimiterIndex) {
                     // delimiter보다 앞에 있는 quotation을 발견했을 경우, 이는 첫 quotation(여는 quotation)이므로 다음 quotation(닫는 quotation)을 찾는다.
@@ -128,7 +130,7 @@ public class EgovDelimitedLineTokenizer extends EgovAbstractLineTokenizer {
                         // 마지막 token 인지 체크하여 마지막 token 이라면 끝내고, 아니라면 마지막 자른 위치를 닫는 quotation 문자열 다음 식별자로 한다.
                         if (line.indexOf(quoteCharacter, endQuoteIndex) != -1) {
                             lastCut = line.indexOf(delimiter, endQuoteIndex);
-                            beginIndex = lastCut + 1;
+                            beginIndex = lastCut + delimiter.length();
                         }
                     } else {
                         // 닫는 quotation이 없다면 모든 token 을 하나로 처리한다.
@@ -139,7 +141,7 @@ public class EgovDelimitedLineTokenizer extends EgovAbstractLineTokenizer {
                     // quotation이 delimiter보다 뒤에 있으면 해당 delimiter를 기준으로 자른다.
                     lastCut = (delimiterIndex != -1 ? delimiterIndex : length);
                     tokens.add(line.substring(beginIndex, lastCut));
-                    beginIndex = lastCut + 1;
+                    beginIndex = lastCut + delimiter.length();
                 }
                 quoteIndex = line.indexOf(quoteCharacter, beginIndex);
             }
