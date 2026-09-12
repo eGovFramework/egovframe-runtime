@@ -67,12 +67,13 @@ public abstract class EgovAbstractLineTokenizer implements EgovLineTokenizer<Obj
 
     /**
      * Encoding Type에 따른 Token 목록을 생성한다.
-     * 실제 구현은 Token을 만드는 방식에 따라 하위 클래스에서 이루어진다.
+     * 문자 단위 분리는 기본 분리 방식을 사용한다.
+     * 인코딩이 필요한 바이트 단위 분리는 하위 클래스에서 재정의한다.
      *
      * @return List String: token 목록
      */
     protected List<String> doTokenize(String line, String encoding) throws Exception {
-        return null;
+        return doTokenize(line);
     }
 
 }
