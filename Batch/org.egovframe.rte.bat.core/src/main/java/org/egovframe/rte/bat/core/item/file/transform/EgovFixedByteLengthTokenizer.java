@@ -97,9 +97,7 @@ public class EgovFixedByteLengthTokenizer extends EgovAbstractLineTokenizer {
                 upperBound = ranges[i].getMax();
             } else {
                 upperBound = ranges[i].getMin();
-                if (upperBound > maxRange) {
-                    open = true;
-                }
+                open = true;
             }
             if (upperBound > maxRange) {
                 maxRange = upperBound;
