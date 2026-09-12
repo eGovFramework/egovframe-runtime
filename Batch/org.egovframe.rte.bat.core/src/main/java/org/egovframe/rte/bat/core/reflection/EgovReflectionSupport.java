@@ -82,6 +82,15 @@ public class EgovReflectionSupport<T> {
         return method;
     }
 
+    private Method retrieveGetterMethod(Method[] methods, String methodName) {
+        for (Method method : methods) {
+            if (method.getName().equals(methodName) && method.getParameterCount() == 0) {
+                return method;
+            }
+        }
+        return null;
+    }
+
     /**
      * VO 타입의 instance 생성
      *
@@ -168,10 +177,17 @@ public class EgovReflectionSupport<T> {
             try {
                 if (ArrayUtils.isNotEmpty(names) && names.length > 0) {
                     for (int i = 0; i < names.length; i++) {
-                        String strMethod;
                         if (names[i].length() > 0) {
-                            strMethod = "get" + (names[i].substring(0, 1)).toUpperCase(Locale.ROOT) + names[i].substring(1);
-                            localMap.put(names[i], retrieveMethod(localMethods, strMethod));
+                            String suffix = names[i].substring(0, 1).toUpperCase(Locale.ROOT) + names[i].substring(1);
+                            // 기존 getXxx 선택을 유지하고, 없으면 boolean isXxx를 사용한다.
+                            Method getter = retrieveGetterMethod(localMethods, "get" + suffix);
+                            if (getter == null) {
+                                Method booleanGetter = retrieveGetterMethod(localMethods, "is" + suffix);
+                                if (booleanGetter != null && booleanGetter.getReturnType() == boolean.class) {
+                                    getter = booleanGetter;
+                                }
+                            }
+                            localMap.put(names[i], getter);
                         }
                     }
                 }
