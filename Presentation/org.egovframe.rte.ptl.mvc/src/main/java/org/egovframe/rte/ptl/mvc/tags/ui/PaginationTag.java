@@ -80,7 +80,7 @@ public class PaginationTag extends TagSupport {
             out.println(contents);
             return EVAL_PAGE;
         } catch (IOException e) {
-            throw new JspException();
+            throw new JspException(e);
         }
     }
 
