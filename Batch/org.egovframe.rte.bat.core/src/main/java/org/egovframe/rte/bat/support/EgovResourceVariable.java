@@ -18,7 +18,6 @@ package org.egovframe.rte.bat.support;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -59,13 +58,10 @@ public class EgovResourceVariable {
 
     public void setPros(Properties pros) {
         LOGGER.debug("### EgovResourceVariable setPros run. ");
-        String key = "";
         synchronized (this.map) {
             map.clear();
             this.pros = pros;
-            Enumeration<Object> keys = this.pros.keys();
-            while (keys.hasMoreElements()) {
-                key = (String) keys.nextElement();
+            for (String key : pros.stringPropertyNames()) {
                 this.map.put(key, pros.getProperty(key));
             }
         }
