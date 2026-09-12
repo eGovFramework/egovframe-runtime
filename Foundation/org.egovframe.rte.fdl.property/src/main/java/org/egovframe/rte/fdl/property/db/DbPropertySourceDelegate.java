@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -37,7 +38,7 @@ public class DbPropertySourceDelegate {
     public static final String PROPERTY_SOURCE_KEY = "PKEY";
     public static final String PROPERTY_SOURCE_VALUE = "PVALUE";
 
-    private final Map<String, Object> properties = new HashMap<>();
+    private volatile Map<String, Object> properties = Collections.emptyMap();
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -51,6 +52,7 @@ public class DbPropertySourceDelegate {
 
     public void initProperties() {
         List<Map<String, Object>> result = jdbcTemplate.queryForList(sql);
+        Map<String, Object> loadedProperties = new HashMap<>();
         if (ObjectUtils.isNotEmpty(result)) {
             int skippedRowCount = 0;
             Set<String> skippedColumnLabels = null;
@@ -72,7 +74,7 @@ public class DbPropertySourceDelegate {
                         skippedColumnLabels = property.keySet();
                         continue;
                     }
-                    properties.put(pKey, pValue);
+                    loadedProperties.put(pKey, pValue);
                 }
             }
             if (skippedRowCount > 0) {
@@ -80,6 +82,8 @@ public class DbPropertySourceDelegate {
                         skippedRowCount, PROPERTY_SOURCE_KEY, skippedColumnLabels);
             }
         }
+        // 조회와 변환이 모두 끝난 설정을 반영해 실패 시 기존 값을 보존한다.
+        properties = Collections.unmodifiableMap(loadedProperties);
     }
 
     public Object getProperty(String key) {
