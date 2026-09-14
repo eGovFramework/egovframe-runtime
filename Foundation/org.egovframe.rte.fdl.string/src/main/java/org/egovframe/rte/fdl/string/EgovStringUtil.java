@@ -45,6 +45,7 @@ import java.util.regex.Pattern;
  * 2009.06.01	윤성종			최초 생성
  * 2017.02.15	장동한			시큐어코딩(ES)-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
  * 2017.02.28	장동한			시큐어코딩(ES)-오류 메시지를 통한 정보노출[CWE-209]
+ * 2026.09.10	실행환경 개발팀		encodePassword 의 미지원 알고리즘 평문 반환을 예외로 변경, deprecated 표기
  * </pre>
  * @since 2009.06.01
  */
@@ -529,12 +530,16 @@ public final class EgovStringUtil {
 
     /**
      * Encode a string using algorithm specified in web.xml and return the resulting encrypted password.
-     * If exception, the plain credentials string is returned
      *
      * @param password  Password or other credentials to use in authenticating this username
      * @param algorithm Algorithm used to do the digest
      * @return encypted password based on the algorithm.
+     * @throws IllegalArgumentException 지원하지 않는 다이제스트 알고리즘인 경우. 예전에는 평문을 그대로 돌려줬다
+     * @deprecated 솔트 없는 1회 해시라 패스워드 저장·검증에는 부적합하다. 실행환경의
+     * {@code org.egovframe.rte.fdl.security.config.EgovIdSaltSha256PasswordEncoder}(솔트 SHA-256) 나
+     * Spring Security 의 {@code org.springframework.security.crypto.password.PasswordEncoder} 구현(bcrypt·PBKDF2)을 사용한다.
      */
+    @Deprecated
     public static String encodePassword(String password, String algorithm) {
         byte[] unencodedPassword = password.getBytes(StandardCharsets.UTF_8);
         MessageDigest md;
@@ -543,8 +548,8 @@ public final class EgovStringUtil {
             md = MessageDigest.getInstance(algorithm);
             //2017.02.15 장동한 시큐어코딩(ES)-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
         } catch (NoSuchAlgorithmException e) {
-            LOGGER.debug("[{}] EgovStringUtil encodePassword() : {}", e.getClass().getName(), e.getMessage());
-            return password;
+            // 평문을 돌려주면 호출자가 해시로 오인해 그대로 저장한다. 실패는 예외로 알린다.
+            throw new IllegalArgumentException("Unsupported digest algorithm: " + algorithm, e);
         }
 
         md.reset();
