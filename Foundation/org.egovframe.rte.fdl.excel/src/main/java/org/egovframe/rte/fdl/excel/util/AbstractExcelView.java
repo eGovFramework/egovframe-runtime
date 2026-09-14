@@ -23,6 +23,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellType;
+import org.egovframe.rte.fdl.filehandling.EgovContentDispositions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.ObjectUtils;
@@ -85,7 +86,9 @@ public abstract class AbstractExcelView extends AbstractView {
 
         // 응답 설정
         response.setContentType(getContentType());
-        response.setHeader("Content-Disposition", "attachment; filename=\"" + sFilename + ".xls\"");
+        // RFC 6266/5987 준수 파일명 인코딩 — 한글 등 비ASCII 파일명은 filename*=UTF-8'' 로
+        // 인코딩되어 브라우저에서 깨지지 않는다(ASCII 파일명은 기존 filename="..." 형식 유지).
+        response.setHeader("Content-Disposition", buildContentDisposition(sFilename + ".xls"));
 
         // 스트림 처리
         ServletOutputStream out = response.getOutputStream();
@@ -102,6 +105,16 @@ public abstract class AbstractExcelView extends AbstractView {
             HSSFWorkbook workbook,
             HttpServletRequest request,
             HttpServletResponse response);
+
+    /**
+     * Content-Disposition 값 생성 — ASCII 파일명은 기존 {@code filename="..."} 형식을 유지하고,
+     * 비ASCII(한글 등) 파일명은 RFC 5987 {@code filename*=UTF-8''} 인코딩에 구형 에이전트용
+     * ASCII 폴백을 병기한다 ({@link EgovContentDispositions} 공용
+     * API로 승격되어 위임).
+     */
+    static String buildContentDisposition(String filename) {
+        return EgovContentDispositions.attachment(filename);
+    }
 
     protected HSSFCell getCell(HSSFSheet sheet, int row, int col) {
         HSSFRow sheetRow = sheet.getRow(row);

@@ -85,7 +85,9 @@ public abstract class AbstractPOIExcelView extends AbstractView {
 
         // 응답 설정
         response.setContentType(getContentType());
-        response.setHeader("Content-Disposition", "attachment; filename=\"" + sFilename + ".xlsx\"");
+        // RFC 6266/5987 준수 파일명 인코딩 — 한글 등 비ASCII 파일명은 filename*=UTF-8'' 로
+        // 인코딩되어 브라우저에서 깨지지 않는다(ASCII 파일명은 기존 filename="..." 형식 유지).
+        response.setHeader("Content-Disposition", AbstractExcelView.buildContentDisposition(sFilename + ".xlsx"));
 
         // 스트림 처리
         ServletOutputStream out = response.getOutputStream();
