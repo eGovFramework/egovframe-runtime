@@ -15,7 +15,8 @@
  */
 package org.egovframe.rte.ptl.reactive.exception;
 
-import org.json.simple.JSONObject;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
@@ -28,13 +29,17 @@ import org.springframework.web.server.WebExceptionHandler;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * 발생한 오류를 처리하고 동일한 형식으로 응답을 보내기 위한 클래스
  *
  * <p>Desc.: 발생한 오류를 처리하고 동일한 형식으로 응답을 보내기 위한 클래스</p>
+ *
+ * <p>응답 본문은 기본적으로 {@code timestamp}/{@code status}/{@code code}/{@code message} 형식이다.
+ * {@link #setProblemDetailEnabled(boolean)} 로 RFC 9457(Problem Details, {@code application/problem+json})
+ * 형식을 선택할 수 있다.</p>
  *
  * @author 유지보수
  * @version 1.0
@@ -44,6 +49,7 @@ import java.util.Map;
  * 수정일		수정자				수정내용
  * ----------------------------------------------
  * 2023.08.31   유지보수            최초 생성
+ * 2026.09.10   실행환경 개발팀      json-simple 수기 직렬화를 Jackson 으로 교체, RFC 9457 problem+json 선택 옵션 추가
  * </pre>
  * @since 2023.08.31
  */
@@ -51,6 +57,34 @@ import java.util.Map;
 public class EgovExceptionHandler implements WebExceptionHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EgovExceptionHandler.class);
+
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
+    private static final MediaType PROBLEM_JSON_UTF8 = new MediaType("application", "problem+json", StandardCharsets.UTF_8);
+
+    /**
+     * RFC 9457(Problem Details) 응답 형식 사용 여부. 기본값 false 는 기존 형식을 유지한다.
+     */
+    private boolean problemDetailEnabled = false;
+
+    /**
+     * RFC 9457({@code application/problem+json}) 응답 형식을 선택한다.
+     * false(기본)면 기존 {@code timestamp}/{@code status}/{@code code}/{@code message} 형식을 유지한다.
+     *
+     * @param problemDetailEnabled true 면 Problem Details 형식으로 응답
+     */
+    public void setProblemDetailEnabled(boolean problemDetailEnabled) {
+        this.problemDetailEnabled = problemDetailEnabled;
+    }
+
+    /**
+     * RFC 9457 응답 형식 사용 여부
+     *
+     * @return true 면 Problem Details 형식
+     */
+    public boolean isProblemDetailEnabled() {
+        return problemDetailEnabled;
+    }
 
     @Override
     public Mono<Void> handle(ServerWebExchange exchange, Throwable ex) {
@@ -96,15 +130,34 @@ public class EgovExceptionHandler implements WebExceptionHandler {
     }
 
     private Mono<Void> handlerResponse(ServerHttpResponse response, String timestamp, int status, String code, String message) {
-        response.setStatusCode(HttpStatus.valueOf(status));
-        response.getHeaders().setContentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8));
-        Map<String, Object> map = new HashMap<>();
-        map.put("timestamp", timestamp);
-        map.put("status", status);
-        map.put("code", code);
-        map.put("message", message);
-        JSONObject jsonObject = new JSONObject(map);
-        DataBuffer dataBuffer = response.bufferFactory().wrap(JSONObject.toJSONString(jsonObject).getBytes(StandardCharsets.UTF_8));
+        HttpStatus httpStatus = HttpStatus.valueOf(status);
+        response.setStatusCode(httpStatus);
+        Map<String, Object> body = new LinkedHashMap<>();
+        if (problemDetailEnabled) {
+            // RFC 9457 Problem Details — 표준 필드 뒤에 실행환경 확장 필드(code, timestamp)를 둔다
+            response.getHeaders().setContentType(PROBLEM_JSON_UTF8);
+            body.put("type", "about:blank");
+            body.put("title", httpStatus.getReasonPhrase());
+            body.put("status", status);
+            body.put("detail", message);
+            body.put("code", code);
+            body.put("timestamp", timestamp);
+        } else {
+            response.getHeaders().setContentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8));
+            body.put("timestamp", timestamp);
+            body.put("status", status);
+            body.put("code", code);
+            body.put("message", message);
+        }
+        byte[] payload;
+        try {
+            payload = OBJECT_MAPPER.writeValueAsBytes(body);
+        } catch (JsonProcessingException e) {
+            // 문자열과 정수만 담는 맵이라 실제로는 일어나지 않지만, 응답 없이 끝나지 않도록 최소 본문으로 대체한다
+            LOGGER.error("Failed to serialize error response body", e);
+            payload = ("{\"status\":" + status + "}").getBytes(StandardCharsets.UTF_8);
+        }
+        DataBuffer dataBuffer = response.bufferFactory().wrap(payload);
         return response.writeWith(Mono.just(dataBuffer));
     }
 

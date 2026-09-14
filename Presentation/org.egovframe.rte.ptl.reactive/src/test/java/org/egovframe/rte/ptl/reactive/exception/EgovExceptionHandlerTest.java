@@ -10,8 +10,8 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import reactor.core.publisher.Mono;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.nio.charset.StandardCharsets;
 
@@ -49,13 +49,14 @@ public class EgovExceptionHandlerTest {
                 .expectBody()
                 .consumeWith(result -> {
                     String body = new String(result.getResponseBody(), StandardCharsets.UTF_8);
-                    JSONObject json;
+                    JsonNode json;
                     try {
-                        json = (JSONObject) new JSONParser().parse(body);
+                        json = new ObjectMapper().readTree(body);
                     } catch (Exception e) {
                         throw new AssertionError("application/json 으로 선언한 본문이 파싱되지 않는다: " + body, e);
                     }
-                    assertEquals(404L, json.get("status"));
+                    assertTrue(json.get("status").isInt(), "status 는 정수여야 한다: " + body);
+                    assertEquals(404, json.get("status").asInt());
                 });
     }
 
