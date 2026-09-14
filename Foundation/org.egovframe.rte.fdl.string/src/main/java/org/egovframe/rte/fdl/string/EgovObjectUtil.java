@@ -79,11 +79,11 @@ public final class EgovObjectUtil {
         if (allowed != null && !allowed.contains(className)) {
             throw new SecurityException("class '" + className + "' is not in the allowed class list");
         }
-        Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(className);
-        if (clazz == null) {
-            clazz = Class.forName(className);
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        if (classLoader == null) {
+            return Class.forName(className, false, EgovObjectUtil.class.getClassLoader());
         }
-        return clazz;
+        return classLoader.loadClass(className);
     }
 
     /**
