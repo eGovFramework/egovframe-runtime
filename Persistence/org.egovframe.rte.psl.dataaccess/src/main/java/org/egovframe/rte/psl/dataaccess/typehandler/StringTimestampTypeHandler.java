@@ -22,8 +22,12 @@ import com.ibatis.sqlmap.client.extensions.TypeHandlerCallback;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.chrono.IsoEra;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
+import java.time.temporal.ChronoField;
 
 /**
  * String - Timestamp 변환을 지원하는 TypeHandler 확장 클래스
@@ -55,7 +59,11 @@ public class StringTimestampTypeHandler implements TypeHandlerCallback {
     /**
      * DateTimeFormatter - DATE_FORMAT 기반 포맷터
      */
-    private static final DateTimeFormatter DTF = DateTimeFormatter.ofPattern(DATE_FORMAT);
+    private static final DateTimeFormatter DTF = new DateTimeFormatterBuilder()
+            .appendPattern(DATE_FORMAT)
+            .parseDefaulting(ChronoField.ERA, IsoEra.CE.getValue())
+            .toFormatter()
+            .withResolverStyle(ResolverStyle.STRICT);
 
     /**
      * JDBC 의 Timestamp 로 조회된 값을 resultMap 처리 시 결과
@@ -80,6 +88,7 @@ public class StringTimestampTypeHandler implements TypeHandlerCallback {
      * 맞춰진)으로 세팅된 입력 객체(VO 또는 Map)의 특정 Attribute 로 부터
      * parameterMap(inline parameterMap) 처리 시 JDBC 의
      * Timestamp 로 처리한다.
+     * 존재하지 않는 날짜나 시각은 SQLException으로 처리한다.
      *
      * @param setter    - prepared statement 의 현재 바인드 변수에 대한 값 세팅을 지원하는(index 없이) ibatis 의 ParameterSetter
      * @param parameter - 입력 객체
@@ -93,7 +102,7 @@ public class StringTimestampTypeHandler implements TypeHandlerCallback {
                 Timestamp ts = Timestamp.valueOf(LocalDateTime.parse((String) parameter, DTF));
                 setter.setTimestamp(ts);
             } catch (DateTimeParseException e) {
-                throw new SQLException("Error parsing string to timestamp.  Cause: " + e.getMessage());
+                throw new SQLException("Error parsing string to timestamp.  Cause: " + e.getMessage(), e);
             }
         }
     }
