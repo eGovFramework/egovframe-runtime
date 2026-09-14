@@ -90,6 +90,14 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- @EnableJpaAuditing(EgovBaseEntity 감사 필드)은 spring-aspects 의 AnnotationBeanConfigurerAspect 를 요구한다.
+             optional 이므로 감사 기능을 켜는 애플리케이션이 직접 추가한다. -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aspects</artifactId>
+            <version>${spring.framework.version}</version>
+            <optional>true</optional>
+        </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
