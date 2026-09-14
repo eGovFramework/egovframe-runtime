@@ -25,6 +25,8 @@ import org.springframework.util.PathMatcher;
  * 사용자 ExceptionHandleManager 구현시 상속되는 추상클래스이다.
  * ExceptionHandlerService 인터페이스의 메소드를 거의 다 구현해 놓은 추상클래스이기 때문에 사용자가 구현시
  * run(Exception exception) 만 구현을 해주면 된다.
+ * 실행환경은 {@code ExceptionHandlerService#run(Exception, String)} 으로 호출하므로, 싱글톤 빈의 상태 변경 없이
+ * 처리하려면 그 메소드를 재정의한다.
  *
  * @author Judd Cho (horanghi@gmail.com)
  * @version 1.0
@@ -35,6 +37,7 @@ import org.springframework.util.PathMatcher;
  * ----------------------------------------------
  * 2009.05.30	Judd Cho			최초 생성
  * 2015.01.31	Vincent Han			코드 품질 개선
+ * 2026.09.10	실행환경 개발팀		싱글톤 상태 변경 방식(setPackageName·run(Exception)) deprecated
  * </pre>
  * @since 2009.06.01
  */
@@ -83,7 +86,10 @@ public abstract class AbstractExceptionHandleManager {
      * 비교할 클래스 정보
      *
      * @param canonicalName 비교할 클래스명
+     * @deprecated 싱글톤 빈의 필드를 요청마다 바꾸는 방식이라 동시 요청에서 다른 호출의
+     * 발생 위치로 매칭될 수 있다. {@code ExceptionHandlerService#run(Exception, String)} 으로 발생 위치를 직접 전달한다.
      */
+    @Deprecated
     public void setPackageName(String canonicalName) {
         this.thisPackageName = canonicalName;
     }
@@ -129,7 +135,10 @@ public abstract class AbstractExceptionHandleManager {
      *
      * @param exception 발생한 Exception
      * @return boolean 실행성공여부
+     * @deprecated {@link #setPackageName(String)} 으로 미리 넣어 둔 필드에 의존하므로 동시 요청에서
+     * 오동작할 수 있다. {@code ExceptionHandlerService#run(Exception, String)} 으로 대체한다.
      */
+    @Deprecated
     public boolean run(Exception exception) throws Exception {
         if (!enableMatcher()) {
             return false;
