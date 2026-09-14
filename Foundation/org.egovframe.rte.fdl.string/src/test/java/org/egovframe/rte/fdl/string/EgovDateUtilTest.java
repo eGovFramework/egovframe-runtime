@@ -206,18 +206,38 @@ public class EgovDateUtilTest {
     }
 
     /**
-     * [Flow #-4-2] Negative/Boundary Case : getFullAge() 의 0 반환 경로(미인식 세기코드, keyDate null)를 고정한다.
+     * [Flow #-4-2] Positive Case : 외국인등록번호 세대코드 5·6(1900년대)과 7·8(2000년대)도 만 나이가 계산된다.
+     * (이전에는 세기를 정하지 못해 0 을 돌려줬다.)
      */
     @Test
-    public void testGetFullAgeReturnsZero() throws ParseException {
-        // 미인식 세기코드(5,6,7,8) → birthDate=null → 0 반환
-        assertEquals(0, EgovDateUtil.getFullAge("8001015000000", "20200101"));
-        assertEquals(0, EgovDateUtil.getFullAge("8001016000000", "20200101"));
-        assertEquals(0, EgovDateUtil.getFullAge("8001017000000", "20200101"));
-        assertEquals(0, EgovDateUtil.getFullAge("8001018000000", "20200101"));
+    public void testGetFullAgeForeignerGenerationCodes() throws ParseException {
+        // birthDate=19800101, keyDate=20200101 → 0101>=0101 → 2020-1980 = 40
+        assertEquals(40, EgovDateUtil.getFullAge("8001015000000", "20200101"));
+        assertEquals(40, EgovDateUtil.getFullAge("8001016000000", "20200101"));
 
-        // keyDate == null → birthDate 유효해도 0 반환
-        assertEquals(0, EgovDateUtil.getFullAge("7701011234567", null));
+        // birthDate=20050101, keyDate=20200101 → 2020-2005 = 15
+        assertEquals(15, EgovDateUtil.getFullAge("0501017000000", "20200101"));
+
+        // birthDate=20071231, keyDate=20200630 → 0630<1231(생일 전) → 2020-2007-1 = 12
+        assertEquals(12, EgovDateUtil.getFullAge("0712318000000", "20200630"));
+    }
+
+    /**
+     * [Flow #-4-2-1] Negative Case : 해석할 수 없는 입력은 0 대신 IllegalArgumentException 이다.
+     * (이전에는 전부 0 을 돌려줘 "0세"와 "계산 실패"를 구분할 수 없었다.)
+     */
+    @Test
+    public void testGetFullAgeRejectsUnparseableInput() {
+        // keyDate == null
+        assertThrows(IllegalArgumentException.class, () -> EgovDateUtil.getFullAge("7701011234567", null));
+        // socialNo == null / 7자리 미만
+        assertThrows(IllegalArgumentException.class, () -> EgovDateUtil.getFullAge(null, "20200101"));
+        assertThrows(IllegalArgumentException.class, () -> EgovDateUtil.getFullAge("770101", "20200101"));
+        // 세대코드 자리가 숫자가 아님(구분자가 포함된 형식은 원래 지원하지 않았다)
+        assertThrows(IllegalArgumentException.class, () -> EgovDateUtil.getFullAge("770101-1234567", "20200101"));
+        assertThrows(IllegalArgumentException.class, () -> EgovDateUtil.getFullAge("770101a234567", "20200101"));
+        // 생년월일 자리가 숫자가 아님
+        assertThrows(IllegalArgumentException.class, () -> EgovDateUtil.getFullAge("77x1011234567", "20200101"));
     }
 
     /**
@@ -241,9 +261,11 @@ public class EgovDateUtilTest {
      */
     @Test
     public void testGetCurrentFullAgeDelegation() throws ParseException {
-        // 미인식 세기코드(7번째 자리 5)는 출생년도가 정해지지 않아 현재일자 기준에서도 0 을 반환한다.
-        // (현재일자에 의존하지 않는 결정적 단정으로 위임 동작을 검증한다.)
-        assertEquals(0, EgovDateUtil.getCurrentFullAge("8001015000000"));
+        // 현재 일자를 같은 방식으로 만들어 getFullAge() 에 넘긴 값과 같아야 한다.
+        String today = EgovDateUtil.getCurrentYearAsString() + EgovDateUtil.getCurrentMonthAsString() + EgovDateUtil.getCurrentDayAsString();
+        assertEquals(EgovDateUtil.getFullAge("8001015000000", today), EgovDateUtil.getCurrentFullAge("8001015000000"));
+        // 세대코드 5(1900년대 외국인)는 이제 실제 나이가 나온다 — 1980년생은 2020년 이후 40세 이상
+        assertTrue(EgovDateUtil.getCurrentFullAge("8001015000000") >= 40);
     }
 
     /**
