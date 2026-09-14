@@ -19,6 +19,7 @@ import org.egovframe.rte.fdl.cmmn.exception.FdlException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -63,6 +64,7 @@ import java.util.regex.Pattern;
  * 2013.09.04	한성곤				TransactionTemplate을 통해 transaction 처리 분리
  * 2014.08.18	한성곤				명명규칙 클래스 명 변경
  * 2017.02.28	장동한				시큐어코딩(ES)-오류 메시지를 통한 정보노출[CWE-209]
+ * 2026.09.10	실행환경 개발팀		초기 행 동시 INSERT 경합 시 새 트랜잭션에서 재시도, deprecated queryForObject 시그니처 교체
  * </pre>
  * @since 2009.02.01
  */
@@ -71,6 +73,18 @@ public class EgovTableIdGnrServiceImpl extends AbstractDataBlockIdGnrService {
     private static final Logger LOGGER = LoggerFactory.getLogger(EgovTableIdGnrServiceImpl.class);
 
     private static final Pattern SAFE_IDENTIFIER = Pattern.compile("^[a-zA-Z0-9_]+$");
+
+    /**
+     * 초기 행 INSERT 가 중복 키로 실패한 경합 신호. 현재 트랜잭션을 되돌리고 새 트랜잭션에서 한 번 더 시도하게 한다.
+     */
+    private static final class InitialRowRaceException extends RuntimeException {
+
+        private static final long serialVersionUID = 1L;
+
+        private InitialRowRaceException(DataIntegrityViolationException cause) {
+            super(cause);
+        }
+    }
 
     /**
      * ID생성을 위한 테이블 정보 디폴트는 ids임.
@@ -147,10 +161,22 @@ public class EgovTableIdGnrServiceImpl extends AbstractDataBlockIdGnrService {
      * @throws FdlException ID생성을 위한 블럭 할당이 불가능할때
      */
     private Object allocateIdBlock(final int blockSize, final boolean useBigDecimals) throws FdlException {
+        return allocateIdBlock(blockSize, useBigDecimals, true);
+    }
+
+    /**
+     * blockSize 대로 ID 지정. 초기 행 INSERT 가 다른 인스턴스와 경합해 실패하면 새 트랜잭션에서 한 번 더 시도한다.
+     *
+     * @param blockSize      지정되는 blockSize
+     * @param useBigDecimals BigDecimal 사용 여부
+     * @param retryOnRace    초기 행 경합 시 재시도 여부(재시도 호출에서는 false)
+     * @return BigDecimal을 사용하면 BigDecimal 아니면 long 리턴
+     * @throws FdlException ID생성을 위한 블럭 할당이 불가능할때
+     */
+    private Object allocateIdBlock(final int blockSize, final boolean useBigDecimals, final boolean retryOnRace) throws FdlException {
         LOGGER.debug(messageSource.getMessage("debug.idgnr.allocate.idblock", new Object[]{Integer.valueOf(blockSize), tableName}, Locale.getDefault()));
         try {
             return transactionTemplate.execute(new TransactionCallback<Object>() {
-                @SuppressWarnings("deprecation")
                 public Object doInTransaction(TransactionStatus status) {
                     Object nextId;
                     Object newNextId;
@@ -163,24 +189,24 @@ public class EgovTableIdGnrServiceImpl extends AbstractDataBlockIdGnrService {
                         LOGGER.debug("Select Query : {}", selectQuery);
                         if (useBigDecimals) {
                             try {
-                                nextId = jdbcTemplate.queryForObject(selectQuery, new Object[]{tableName}, BigDecimal.class);
+                                nextId = jdbcTemplate.queryForObject(selectQuery, BigDecimal.class, tableName);
                             } catch (EmptyResultDataAccessException erdae) {
                                 nextId = null;
                             }
 
                             if (nextId == null) { // no row
-                                insertInitId(useBigDecimals, blockSize);
+                                insertInitIdOrSignalRace(status, useBigDecimals, blockSize);
                                 return new BigDecimal(0);
                             }
                         } else {
                             try {
-                                nextId = jdbcTemplate.queryForObject(selectQuery, new Object[]{tableName}, Long.class);
+                                nextId = jdbcTemplate.queryForObject(selectQuery, Long.class, tableName);
                             } catch (EmptyResultDataAccessException erdae) {
                                 nextId = -1L;
                             }
 
                             if ((Long) nextId == -1L) { // no row
-                                insertInitId(useBigDecimals, blockSize);
+                                insertInitIdOrSignalRace(status, useBigDecimals, blockSize);
                                 return Long.valueOf(0);
                             }
                         }
@@ -208,12 +234,33 @@ public class EgovTableIdGnrServiceImpl extends AbstractDataBlockIdGnrService {
                     }
                 }
             });
+        } catch (InitialRowRaceException race) {
+            if (!retryOnRace) {
+                throw new FdlException(messageSource, "error.idgnr.select.idblock", new String[]{tableName}, race.getCause());
+            }
+            // 같은 DB를 쓰는 다른 인스턴스가 같은 순간 초기 행을 만들었다. 실패한 트랜잭션은 되돌아갔으므로
+            // 새 트랜잭션에서 이제 존재하는 행을 잠그고(FOR UPDATE) 정상 경로로 다음 블록을 받는다.
+            LOGGER.debug("Initial row for [{}] was created concurrently - retrying in a new transaction", tableName);
+            return allocateIdBlock(blockSize, useBigDecimals, false);
         } catch (RuntimeException re) {
             if (re.getCause() instanceof FdlException) {
                 throw (FdlException) re.getCause();
             } else {
                 throw re;
             }
+        }
+    }
+
+    /**
+     * 초기 행을 INSERT 한다. 중복 키 등 무결성 제약으로 실패하면 다른 인스턴스가 먼저 만든 경합이므로
+     * 트랜잭션을 되돌리고 {@link InitialRowRaceException} 으로 재시도를 요청한다.
+     */
+    private void insertInitIdOrSignalRace(TransactionStatus status, boolean useBigDecimals, int blockSize) {
+        try {
+            insertInitId(useBigDecimals, blockSize);
+        } catch (DataIntegrityViolationException dive) {
+            status.setRollbackOnly();
+            throw new InitialRowRaceException(dive);
         }
     }
 
