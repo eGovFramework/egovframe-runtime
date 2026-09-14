@@ -35,6 +35,10 @@ import java.util.regex.Pattern;
 
 /**
  * 파일 서비스를 제공하기 위해 구현한 클래스이다.
+ *
+ * <p>로컬 파일 처리에는 기준 경로를 인자로 받고 실패를 예외로 알리는 {@link EgovFiles} 를 권장한다.
+ * 이 클래스는 Commons VFS 가 필요한 경우와 기존 코드 호환을 위해 유지한다. {@code rm}/{@code cp}/{@code mv} 는
+ * 실패를 예외로 던지지 않는 기존 계약을 지키되, 실패가 묻히지 않도록 WARN 로그를 남긴다.</p>
  * <p>
  * 수정일		수정자				수정내용
  * ----------------------------------------------
@@ -42,6 +46,7 @@ import java.util.regex.Pattern;
  * 2014.05.14	이기하				vfs -> vfs2로 패키지 변경
  * 2017.02.28	장동한				시큐어코딩(ES)-Null Pointer 역참조[CWE-476]
  * 2017.02.28	장동한				시큐어코딩(ES)-부적절한 자원 해제[CWE-404]
+ * 2026.09.10	실행환경 개발팀		VFS 초기화 실패를 WARN 과 명시 예외로 보고, rm/cp/mv 실패 WARN, cd/pwd/grep/ls deprecated
  */
 public class EgovFileUtil {
 
@@ -55,61 +60,95 @@ public class EgovFileUtil {
             manager = VFS.getManager();
             basefile = manager.resolveFile(System.getProperty("user.dir"));
         } catch (FileSystemException e) {
-            LOGGER.debug("[{}] EogvFileUtil : {}", e.getClass().getName(), e.getMessage());
+            // debug 로 삼키면 이후 모든 호출이 원인을 알 수 없는 NullPointerException 이 된다.
+            // 사용 시점에는 manager()/basefile() 가드가 원인을 담은 IllegalStateException 을 던진다.
+            LOGGER.warn("EgovFileUtil VFS initialization failed - subsequent calls will fail: {}", e.getMessage());
         }
     }
 
     /**
+     * VFS 초기화 실패 시 원인을 알 수 없는 NullPointerException 대신 명확한 예외를 던지기 위한 가드
+     */
+    private static FileSystemManager manager() {
+        if (manager == null) {
+            throw new IllegalStateException(
+                    "Commons VFS is not initialized (see startup WARN log). For local file handling use EgovFiles.");
+        }
+        return manager;
+    }
+
+    private static FileObject basefile() {
+        if (basefile == null) {
+            throw new IllegalStateException(
+                    "Commons VFS base directory is not initialized (see startup WARN log). For local file handling use EgovFiles.");
+        }
+        return basefile;
+    }
+
+    /**
      * 지정한 위치의 파일 및 디렉토리를 삭제한다.
+     *
+     * <p>삭제 범위는 자신과 직계 자식까지({@code SELECT_SELF_AND_CHILDREN})이며, 실패하면 예외 없이 -1 을 돌려주고
+     * WARN 로그를 남긴다. 깊이 제한 없는 삭제와 실패 전파가 필요하면 {@link EgovFiles#deleteRecursively(java.nio.file.Path)} 를 사용한다.</p>
      */
     public static int rm(final String cmd) {
         int result = -1;
         try {
-            final FileObject file = manager.resolveFile(basefile, cmd);
+            final FileObject file = manager().resolveFile(basefile(), cmd);
             result = file.delete(Selectors.SELECT_SELF_AND_CHILDREN);
         } catch (FileSystemException e) {
-            LOGGER.debug("[{}] EogvFileUtil : {}", e.getClass().getName(), e.getMessage());
+            LOGGER.warn("EgovFileUtil.rm failed for [{}]: {}", cmd, e.getMessage());
         }
         return result;
     }
 
     /**
      * 지정한 위치의 파일을 대상 위치로 복사한다.
+     *
+     * <p>실패하면 예외 없이 돌아오고 WARN 로그만 남긴다(기존 계약). 실패를 예외로 받으려면
+     * {@link EgovFiles#copy(java.nio.file.Path, java.nio.file.Path)} 를 사용한다.</p>
      */
     public static void cp(String source, String target) {
         try {
-            final FileObject src = manager.resolveFile(basefile, source);
-            FileObject dest = manager.resolveFile(basefile, target);
+            final FileObject src = manager().resolveFile(basefile(), source);
+            FileObject dest = manager().resolveFile(basefile(), target);
             if (dest.exists() && dest.getType() == FileType.FOLDER) {
                 dest = dest.resolveFile(src.getName().getBaseName());
             }
             dest.copyFrom(src, Selectors.SELECT_ALL);
         } catch (FileSystemException e) {
-            LOGGER.debug("[{}] EogvFileUtil : {}", e.getClass().getName(), e.getMessage());
+            LOGGER.warn("EgovFileUtil.cp failed [{}] -> [{}]: {}", source, target, e.getMessage());
         }
     }
 
     /**
      * 지정한 위치의 파일을 대상 위치로 이동한다.
+     *
+     * <p>실패하면 예외 없이 돌아오고 WARN 로그만 남긴다(기존 계약). 실패를 예외로 받으려면
+     * {@link EgovFiles#move(java.nio.file.Path, java.nio.file.Path)} 를 사용한다.</p>
      */
     public static void mv(String source, String target) {
         try {
-            final FileObject src = manager.resolveFile(basefile, source);
-            FileObject dest = manager.resolveFile(basefile, target);
+            final FileObject src = manager().resolveFile(basefile(), source);
+            FileObject dest = manager().resolveFile(basefile(), target);
             if (dest.exists() && dest.getType() == FileType.FOLDER) {
                 dest = dest.resolveFile(src.getName().getBaseName());
             }
             src.moveTo(dest);
         } catch (FileSystemException e) {
-            LOGGER.debug("[{}] EogvFileUtil : {}", e.getClass().getName(), e.getMessage());
+            LOGGER.warn("EgovFileUtil.mv failed [{}] -> [{}]: {}", source, target, e.getMessage());
         }
     }
 
     /**
      * 현재 작업위치를 리턴한다.
+     *
+     * @deprecated {@link #cd(String)} 가 바꾸는 프로세스 전역 기준 경로를 읽는 API 라 동시 요청 환경에서 안전하지 않다.
+     * 기준 경로를 인자로 받는 {@link EgovFiles} 를 사용한다.
      */
+    @Deprecated
     public static FileName pwd() {
-        return basefile.getName();
+        return basefile().getName();
     }
 
     /**
@@ -117,7 +156,7 @@ public class EgovFileUtil {
      */
     public static long touch(final String filepath) throws FileSystemException {
         long currentTime = 0;
-        final FileObject file = manager.resolveFile(basefile, filepath);
+        final FileObject file = manager().resolveFile(basefile(), filepath);
         if (!file.exists()) {
             file.createFile();
         }
@@ -128,7 +167,12 @@ public class EgovFileUtil {
 
     /**
      * 현재 작업공간의 위치를 지정한 위치로 이동한다.
+     *
+     * @deprecated 프로세스 전역 static 기준 경로를 바꾸므로, 한 요청의 호출이 다른 모든 스레드의
+     * {@code rm}/{@code cp}/{@code mv}/{@code touch} 상대 경로 해석 기준을 바꾼다. 기준 경로를 항상 인자로 받는
+     * {@link EgovFiles} 를 사용한다.
      */
+    @Deprecated
     public static void cd(final String changDirectory) throws FileSystemException {
         final String path;
         if (!EgovStringUtil.isNull(changDirectory)) {
@@ -137,7 +181,7 @@ public class EgovFileUtil {
             path = System.getProperty("user.home");
         }
 
-        FileObject tmp = manager.resolveFile(basefile, path);
+        FileObject tmp = manager().resolveFile(basefile(), path);
         if (tmp.exists()) {
             basefile = tmp;
         } else {
@@ -393,7 +437,11 @@ public class EgovFileUtil {
 
     /**
      * 특정 패턴이 존재하는 파일을 검색한다.
+     *
+     * @deprecated 이름과 달리 패턴에 맞는 줄이 아니라 <b>패턴을 기준으로 나눈 조각</b>을 돌려준다. 기존 호출 호환을 위해
+     * 동작은 그대로 두며, 패턴에 맞는 줄이 필요하면 {@link EgovFiles#grepLines(java.nio.file.Path, String)} 를 사용한다.
      */
+    @Deprecated
     public static List<String> grep(final Object[] search, final String pattern) {
         Pattern searchPattern = Pattern.compile(pattern);
         String[] strings = searchPattern.split(Arrays.toString(search));
@@ -402,7 +450,11 @@ public class EgovFileUtil {
 
     /**
      * 특정 패턴이 존재하는 파일을 검색한다.
+     *
+     * @deprecated 이름과 달리 패턴에 맞는 줄이 아니라 <b>패턴을 기준으로 나눈 조각</b>을 돌려준다. 기존 호출 호환을 위해
+     * 동작은 그대로 두며, 패턴에 맞는 줄이 필요하면 {@link EgovFiles#grepLines(java.nio.file.Path, String)} 를 사용한다.
      */
+    @Deprecated
     public static List<String> grep(final File file, final String pattern) throws IOException {
         Pattern searchPattern = Pattern.compile(pattern);
         List<String> lists = readTextLines(file, "UTF-8");
@@ -423,7 +475,11 @@ public class EgovFileUtil {
 
     /**
      * 지정한 위치의 파일목록을 조회한다.
+     *
+     * @deprecated 목록을 채우지 않고 <b>항상 빈 리스트</b>를 돌려주며 debug 로그만 남긴다. 기존 호출 호환을 위해 동작은
+     * 그대로 두며, 실제 목록이 필요하면 {@link EgovFiles#list(java.nio.file.Path)} 나 {@link EgovFiles#listRecursively(java.nio.file.Path)} 를 사용한다.
      */
+    @Deprecated
     public List<?> ls(final String[] cmd) throws FileSystemException {
         List<Object> list = new ArrayList<Object>();
         int pos = 1;
@@ -437,9 +493,9 @@ public class EgovFileUtil {
 
         final FileObject file;
         if (cmd.length > pos) {
-            file = manager.resolveFile(basefile, cmd[pos]);
+            file = manager().resolveFile(basefile(), cmd[pos]);
         } else {
-            file = basefile;
+            file = basefile();
         }
 
         if (file.getType() == FileType.FOLDER) {

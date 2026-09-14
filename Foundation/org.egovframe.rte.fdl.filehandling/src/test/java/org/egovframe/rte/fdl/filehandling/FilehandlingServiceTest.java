@@ -31,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = VfsFileSystemManagerFactory.class)
+@SuppressWarnings("deprecation")
 public class FilehandlingServiceTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FilehandlingServiceTest.class);
