@@ -30,7 +30,7 @@
         <jakarta.validation.version>3.1.1</jakarta.validation.version>
         <jakarta.el.version>6.0.1</jakarta.el.version>
         <glassfish.jakarta.el.version>4.0.2</glassfish.jakarta.el.version>
-        <jackson.version>2.18.2</jackson.version>
+        <jackson.version>2.18.9</jackson.version>
         <log4j2.version>2.25.3</log4j2.version>
         <slf4j.version>2.0.17</slf4j.version>
         <easymock.version>5.3.0</easymock.version>
