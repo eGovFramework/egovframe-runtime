@@ -279,19 +279,19 @@ public class EgovReflectionSupport<T> {
         Object parsingValue = null;
         if (type == String.class) {
             parsingValue = tokenValue;
-        } else if (type == int.class) {
+        } else if (type == int.class || type == Integer.class) {
             parsingValue = Integer.parseInt(tokenValue);
-        } else if (type == double.class) {
+        } else if (type == double.class || type == Double.class) {
             parsingValue = Double.parseDouble(tokenValue);
-        } else if (type == float.class) {
+        } else if (type == float.class || type == Float.class) {
             parsingValue = Float.parseFloat(tokenValue);
-        } else if (type == long.class) {
+        } else if (type == long.class || type == Long.class) {
             parsingValue = Long.parseLong(tokenValue);
-        } else if (type == char.class) {
+        } else if (type == char.class || type == Character.class) {
             parsingValue = tokenValue.charAt(0);
         } else if (type == byte[].class) {
             parsingValue = tokenValue.getBytes();
-        } else if (type == boolean.class) {
+        } else if (type == boolean.class || type == Boolean.class) {
             parsingValue = Boolean.valueOf(tokenValue);
         } else if (type == BigDecimal.class) {
             parsingValue = new BigDecimal(tokenValue);
