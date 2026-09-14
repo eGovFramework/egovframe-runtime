@@ -18,7 +18,6 @@ package org.egovframe.rte.fdl.xml;
 import org.egovframe.rte.fdl.xml.exception.ValidatorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -58,6 +57,7 @@ import java.util.Set;
  * 수정일		수정자				수정내용
  * ----------------------------------------------
  * 2009.03.17	김종호				최초생성
+ * 2026.09.10	실행환경 개발팀		설정 컨텍스트를 읽은 뒤 즉시 닫도록 수정, 저장 경로 직접 주입 생성자 추가
  * </pre>
  * @since 2009.03.17
  */
@@ -66,21 +66,13 @@ public abstract class AbstractXMLUtility {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractXMLUtility.class);
 
     /**
-     * ApplicationContext
+     * xml 설정 파일 경로(기본 생성자 전용)
      */
-    private final ApplicationContext context;
+    private static final String CONFIG_PATH = "classpath:META-INF/spring/egovxmlCfg.xml";
     /**
-     * XmlConfig class
-     **/
-    private final XmlConfig xmlConfig;
-    /**
-     * xml 설정관리 Class
+     * 기본 저장 경로. 경로를 지정하지 않은 저장 API 가 파일명을 바로 이어 붙인다.
      */
     private final String savedPath;
-    /**
-     * xml 설정 파일 경로
-     */
-    private final String configPath = "classpath:META-INF/spring/egovxmlCfg.xml";
     /**
      * 파일명
      **/
@@ -95,12 +87,24 @@ public abstract class AbstractXMLUtility {
     private String xmlValue = null;
 
     /**
-     * AbstractXMLUtility 생성자
+     * AbstractXMLUtility 생성자 — {@code egovxmlCfg.xml} 의 {@code xmlconfig} 빈에서 기본 저장 경로를 읽는다.
+     *
+     * <p>설정을 읽기 위해 여는 컨텍스트는 값을 읽은 뒤 바로 닫는다. 이전에는 인스턴스마다 만든 컨텍스트를
+     * 닫지 않고 필드로 보관해 유틸 객체를 만든 횟수만큼 컨텍스트가 남았다.</p>
      */
     public AbstractXMLUtility() {
-        context = new FileSystemXmlApplicationContext(configPath);
-        xmlConfig = (XmlConfig) context.getBean("xmlconfig");
-        savedPath = xmlConfig.getXmlpath();
+        try (FileSystemXmlApplicationContext context = new FileSystemXmlApplicationContext(CONFIG_PATH)) {
+            this.savedPath = ((XmlConfig) context.getBean("xmlconfig")).getXmlpath();
+        }
+    }
+
+    /**
+     * 기본 저장 경로를 직접 주입받는 생성자 — 설정 파일({@code egovxmlCfg.xml})과 Spring 컨텍스트 없이 동작한다.
+     *
+     * @param savedPath 경로를 지정하지 않은 저장 API 의 기본 위치. 파일명이 바로 이어 붙으므로 경로 구분자로 끝나야 한다
+     */
+    protected AbstractXMLUtility(String savedPath) {
+        this.savedPath = savedPath;
     }
 
     /**
