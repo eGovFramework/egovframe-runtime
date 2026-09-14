@@ -61,10 +61,14 @@ public final class EgovExcelUtil {
             String stringValue = null;
             String longValue = null;
             try {
-                stringValue = cell.getRichStringCellValue().getString();
-                longValue = doubleToString(cell.getNumericCellValue());
+                CellType cachedType = cell.getCachedFormulaResultType();
+                if (cachedType == CellType.STRING) {
+                    stringValue = cell.getRichStringCellValue().getString();
+                } else if (cachedType == CellType.NUMERIC) {
+                    longValue = doubleToString(cell.getNumericCellValue());
+                }
                 //2017.02.15 장동한 시큐어코딩(ES)-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
-            } catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException | IllegalStateException e) {
                 LOGGER.debug("[{}] EgovExcelUtil getValue() : {}", e.getClass().getName(), e.getMessage());
             }
             if (stringValue != null) {
