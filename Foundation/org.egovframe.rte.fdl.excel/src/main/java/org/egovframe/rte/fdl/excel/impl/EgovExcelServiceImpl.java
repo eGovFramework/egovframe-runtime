@@ -282,7 +282,7 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
         LOGGER.debug("sheet.getPhysicalNumberOfRows() : {}", sheet.getPhysicalNumberOfRows());
 
         Integer rowsAffected = 0;
-        long rowCnt = sheet.getPhysicalNumberOfRows();
+        long rowCnt = sheet.getLastRowNum() + 1L;
         long cnt = (commitCnt == 0) ? rowCnt : commitCnt;
 
         LOGGER.debug("Runtime.getRuntime().totalMemory() : {}", Runtime.getRuntime().totalMemory());
@@ -303,14 +303,21 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
 
             for (i = idx; i < rowCnt && i < (cnt + idx); i++) {
                 Row row = sheet.getRow(i);
+                if (row == null) {
+                    LOGGER.debug("row {} is blank, skipped", i);
+                    continue;
+                }
                 list.add(mapping.mappingColumn(row));
             }
-            if (sqlSessionTemplate != null) {
-                rowsAffected += excelBatchMapper.batchInsert(queryId, list);
-            } else if (sqlMapClient != null) {
-                rowsAffected += dao.batchInsert(queryId, list);
-            } else {
+            if (sqlSessionTemplate == null && sqlMapClient == null) {
                 throw new RuntimeException(getMessageSource().getMessage("error.excel.persistence.error", null, Locale.getDefault()));
+            }
+            if (!list.isEmpty()) {
+                if (sqlSessionTemplate != null) {
+                    rowsAffected += excelBatchMapper.batchInsert(queryId, list);
+                } else {
+                    rowsAffected += dao.batchInsert(queryId, list);
+                }
             }
 
             LOGGER.debug("after Runtime.getRuntime().freeMemory() : {}", Runtime.getRuntime().freeMemory());
