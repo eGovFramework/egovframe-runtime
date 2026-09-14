@@ -17,10 +17,17 @@ package org.egovframe.rte.fdl.string;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * 날짜를 처리하는 유틸 클래스
@@ -34,6 +41,7 @@ import java.util.Locale;
  * 2017.02.28	장동한            시큐어코딩(ES)-Null Pointer 역참조[CWE-476]
  * 2023.08.31   유지보수            코드 리팩토링(addCalendar(), Contribution 반영)
  * 2026.09.10	실행환경 개발팀        getFullAge 외국인 세대코드 5~8 지원, 해석 불가 입력은 예외
+ * 2026.09.14	실행환경 개발팀        영업일(주말·공휴일 제외) 계산 getBusinessDaysBetween 추가
  */
 public class EgovDateUtil {
 
@@ -466,6 +474,90 @@ public class EgovDateUtil {
         count += (betweenDays - first) / 7;
 
         return count;
+    }
+
+    /**
+     * 시작일과 종료일 사이의 영업일 수를 센다. 양 끝 날짜를 포함하며 주말(토·일)과 공휴일을 뺀다.
+     *
+     * <p>공휴일은 호출자가 집합으로 넘긴다. 법정공휴일·대체공휴일·임시공휴일은 해마다 달라지고 기관마다
+     * 쉬는 날이 다르기도 해서, 이 유틸이 달력을 들고 있지 않고 넘겨받는다.</p>
+     *
+     * <pre>
+     * Set&lt;String&gt; holidays = Set.of("20260101", "20260302");
+     * EgovDateUtil.getBusinessDaysBetween("20260101", "20260131", holidays);   // 1월 영업일
+     * EgovDateUtil.getBusinessDaysBetween("2026-01-01", "2026-01-31", null);   // 주말만 제외
+     * </pre>
+     *
+     * <p>날짜는 {@code yyyyMMdd} 또는 {@code yyyy-MM-dd} 형식을 받으며 실제로 있는 날짜여야 한다
+     * (20260230 처럼 없는 날짜는 예외). 공휴일 집합의 원소도 같은 규칙으로 해석하고, 범위 밖이거나 주말인
+     * 공휴일은 이미 빠져 있으므로 무시한다. 같은 날이 여러 번 들어 있어도 한 번만 뺀다.</p>
+     *
+     * @param from     시작일({@code yyyyMMdd} 또는 {@code yyyy-MM-dd})
+     * @param to       종료일({@code yyyyMMdd} 또는 {@code yyyy-MM-dd})
+     * @param holidays 공휴일 집합({@code null} 이면 주말만 제외한다)
+     * @return 주말과 공휴일을 뺀 영업일 수. 시작일이 종료일보다 뒤면 0
+     * @throws IllegalArgumentException 날짜가 {@code null} 이거나 형식이 다르거나 실제로 없는 날짜인 경우
+     */
+    public static int getBusinessDaysBetween(String from, String to, Set<String> holidays) {
+        LocalDate startDate = parseBusinessDate(from, "from");
+        LocalDate endDate = parseBusinessDate(to, "to");
+        if (startDate.isAfter(endDate)) {
+            return 0;
+        }
+
+        // 온전한 주는 시작 요일과 무관하게 평일이 5일이므로, 남는 며칠만 직접 센다.
+        long totalDays = ChronoUnit.DAYS.between(startDate, endDate) + 1;
+        long fullWeeks = totalDays / 7;
+        long businessDays = fullWeeks * 5;
+        for (LocalDate day = startDate.plusWeeks(fullWeeks); !day.isAfter(endDate); day = day.plusDays(1)) {
+            if (!isWeekend(day)) {
+                businessDays++;
+            }
+        }
+
+        if (holidays != null && !holidays.isEmpty()) {
+            Set<LocalDate> excluded = new HashSet<>();
+            for (String holiday : holidays) {
+                LocalDate day = parseBusinessDate(holiday, "holidays");
+                if (day.isBefore(startDate) || day.isAfter(endDate) || isWeekend(day)) {
+                    continue;
+                }
+                if (excluded.add(day)) {
+                    businessDays--;
+                }
+            }
+        }
+
+        return (int) businessDays;
+    }
+
+    /**
+     * yyyyMMdd 또는 yyyy-MM-dd 형식의 날짜를 읽는다. 실제로 없는 날짜는 예외로 알린다.
+     */
+    private static LocalDate parseBusinessDate(String value, String name) {
+        if (value == null) {
+            throw new IllegalArgumentException(name + " 인자는 null 일 수 없습니다.");
+        }
+        String digits = value;
+        if (value.length() == 10 && value.charAt(4) == '-' && value.charAt(7) == '-') {
+            digits = value.substring(0, 4) + value.substring(5, 7) + value.substring(8, 10);
+        }
+        if (digits.length() != 8) {
+            throw new IllegalArgumentException(name + " 인자는 yyyyMMdd 또는 yyyy-MM-dd 형식이어야 합니다. 입력값: " + value);
+        }
+        try {
+            return LocalDate.parse(digits, DateTimeFormatter.BASIC_ISO_DATE);
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException(name + " 인자가 실제로 존재하는 날짜가 아닙니다. 입력값: " + value, e);
+        }
+    }
+
+    /**
+     * 토요일 또는 일요일인지 확인한다.
+     */
+    private static boolean isWeekend(LocalDate date) {
+        DayOfWeek dayOfWeek = date.getDayOfWeek();
+        return dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY;
     }
 
     /**
