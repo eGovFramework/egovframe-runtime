@@ -13,12 +13,12 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * {@link TimeBasedUUIDGenerator} 가 생성하는 값이 UUID version 1 (RFC 9562) 규약을 만족하는지 검증하는
+ * {@link TimeBasedUUIDGenerator} 가 생성하는 값이 UUID version 1 (RFC 9562) 정의를 만족하는지 검증하는
  * Test 클래스.
  *
  * <p>판정 기준: RFC 4.1(variant), 4.2(version), 5.1(UUIDv1 layout, 1582-10-15 UTC 기준
  * 100ns timestamp, 14-bit clock sequence, 48-bit node, clock sequence 초기값 random 요구) 및
- * {@link UUID#timestamp()}, {@link UUID#variant()} 의 javadoc 계약.</p>
+ * {@link UUID#timestamp()}, {@link UUID#variant()} 의 javadoc 정의.</p>
  *
  * <p>절대 timestamp 검증과 cross-JVM 재현은 generator static 상태의 영향을 받지 않도록
  * {@link UuidJvmProbe} 를 fresh child JVM 으로 실행해 격리한다.</p>
