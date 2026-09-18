@@ -234,7 +234,9 @@ public abstract class EgovAbstractServiceImpl {
      * @throws EgovBizException 항상 발생
      */
     protected void throwBizException(String messageKey, Object[] messageArgs, Throwable cause, Locale locale) throws EgovBizException {
-        throw new EgovBizException(EgovErrorMessage.resolve(messageSource, messageKey, messageArgs, locale), cause);
+        EgovBizException ex = new EgovBizException(EgovErrorMessage.resolve(messageSource, messageKey, messageArgs, locale), cause);
+        ex.setMessageParameters(messageArgs);
+        throw ex;
     }
 
     /**
@@ -284,7 +286,9 @@ public abstract class EgovAbstractServiceImpl {
      * @return 만든 unchecked 예외. 호출부에서 바로 던진다
      */
     protected EgovBizRuntimeException newBizRuntimeException(String messageKey, Object[] messageArgs, Throwable cause, Locale locale) {
-        return new EgovBizRuntimeException(EgovErrorMessage.resolve(messageSource, messageKey, messageArgs, locale), cause);
+        EgovBizRuntimeException ex = new EgovBizRuntimeException(EgovErrorMessage.resolve(messageSource, messageKey, messageArgs, locale), cause);
+        ex.setMessageParameters(messageArgs);
+        return ex;
     }
 
     protected interface ExceptionCreator {

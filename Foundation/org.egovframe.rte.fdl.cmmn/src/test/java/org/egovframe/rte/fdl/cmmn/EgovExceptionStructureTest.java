@@ -12,6 +12,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Locale;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -71,6 +72,7 @@ public class EgovExceptionStructureTest {
         assertEquals("수량을 줄여 다시 시도하십시오.", errorMessage.getSolution());
         assertSame(cause, ex.getCause(), "원인 예외가 cause 체인에 연결되어야 한다");
         assertSame(cause, ex.getWrappedException());
+        assertArrayEquals(new Object[] {99}, ex.getMessageParameters(), "messageArgs로 넘긴 치환 인자가 예외에도 남아있어야 한다");
     }
 
     @Test
@@ -94,6 +96,7 @@ public class EgovExceptionStructureTest {
         assertEquals("요청 수량 99이 보유 재고를 초과했습니다.", ex.getErrorMessage().getReason());
         assertSame(cause, ex.getCause());
         assertSame(cause, ex.getWrappedException());
+        assertArrayEquals(new Object[] {99}, ex.getMessageParameters(), "messageArgs로 넘긴 치환 인자가 예외에도 남아있어야 한다");
     }
 
     @Test
