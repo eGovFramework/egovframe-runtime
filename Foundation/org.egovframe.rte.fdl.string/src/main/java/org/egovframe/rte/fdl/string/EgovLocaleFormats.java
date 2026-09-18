@@ -81,6 +81,9 @@ public final class EgovLocaleFormats {
 	 * @return 형식화된 문자열
 	 */
 	public static String number(Number value, Locale locale) {
+		if (value == null) {
+			return "";
+		}
 		return format(value, NumberFormat.getNumberInstance(requireLocale(locale)));
 	}
 
@@ -102,6 +105,9 @@ public final class EgovLocaleFormats {
 	 * @return 형식화된 문자열
 	 */
 	public static String currency(Number value, Locale locale) {
+		if (value == null) {
+			return "";
+		}
 		return format(value, NumberFormat.getCurrencyInstance(requireLocale(locale)));
 	}
 
@@ -125,6 +131,9 @@ public final class EgovLocaleFormats {
 	 * @return 형식화된 문자열
 	 */
 	public static String percent(Number ratio, Locale locale) {
+		if (ratio == null) {
+			return "";
+		}
 		return format(ratio, NumberFormat.getPercentInstance(requireLocale(locale)));
 	}
 
