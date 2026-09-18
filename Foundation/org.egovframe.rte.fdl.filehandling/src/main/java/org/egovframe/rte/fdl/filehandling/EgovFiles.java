@@ -24,6 +24,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
@@ -215,7 +216,9 @@ public final class EgovFiles {
      */
     public static long deleteRecursively(Path path) {
         Objects.requireNonNull(path, "path must not be null");
-        if (!Files.exists(path)) {
+        // 대상 자체가 깨진(가리키는 곳이 없는) 심볼릭 링크이면 Files.exists(path) 는 링크를 따라가
+        // false 를 반환한다 — 링크 파일 자체는 존재하므로 NOFOLLOW_LINKS 로 확인한다.
+        if (!Files.exists(path, LinkOption.NOFOLLOW_LINKS)) {
             return 0;
         }
         try (Stream<Path> walk = Files.walk(path)) {
