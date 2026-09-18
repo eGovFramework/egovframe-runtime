@@ -120,6 +120,28 @@ public class EgovRestExceptionHandlerSecurityTest {
     }
 
     @Test
+    public void 단일_값_형_변환_실패도_바인딩_경로처럼_typeMismatch_코드의_0을_필드명으로_치환한다() throws Exception {
+        // 클래스 javadoc: 단일 값 TypeMismatchException 도 MessageSource 의 typeMismatch 코드를 쓴다.
+        // resolveMessage 가 바인딩 경로에서 쓰는 것과 같은 해석(필드명 인자)이어야 {0} 을 담은 메시지에서
+        // 원문 "{0}" 이 응답에 새지 않는다.
+        StaticMessageSource messageSource = new StaticMessageSource();
+        messageSource.addMessage("typeMismatch", LocaleContextHolder.getLocale(), "{0} 형식이 올바르지 않습니다");
+        handler.setMessageSource(messageSource);
+        try {
+            MethodArgumentTypeMismatchException e = new MethodArgumentTypeMismatchException(
+                    "<script>alert(1)</script>", int.class, "id", null,
+                    new NumberFormatException("For input string: \"<script>alert(1)</script>\""));
+
+            String body = flatten(dispatch(e));
+
+            assertTrue(body.contains("id 형식이 올바르지 않습니다"), "바인딩 경로처럼 {0} 이 필드명으로 치환돼야 한다: " + body);
+            assertFalse(body.contains("{0}"), "원문 {0} 이 새면 안 된다: " + body);
+        } finally {
+            handler.setMessageSource(null);
+        }
+    }
+
+    @Test
     public void 제약_위반의_invalidValue는_응답에_실리지_않는다() throws Exception {
         Set<ConstraintViolation<?>> violations = new LinkedHashSet<>();
         violations.add(violation("selectOne.userId", "must match pattern", "SECRET-VALUE"));
