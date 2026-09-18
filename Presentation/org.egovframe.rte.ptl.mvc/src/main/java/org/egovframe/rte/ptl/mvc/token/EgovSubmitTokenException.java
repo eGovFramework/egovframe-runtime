@@ -72,9 +72,9 @@ public class EgovSubmitTokenException extends RuntimeException {
 		}
 	}
 
-	private final transient Reason reason;
+	private final Reason reason;
 
-	private final transient String tokenKey;
+	private final String tokenKey;
 
 	/**
 	 * 검증 실패 예외를 생성한다.
