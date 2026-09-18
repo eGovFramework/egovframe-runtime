@@ -21,6 +21,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 
@@ -93,6 +95,8 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 public class EgovSessionExpiryCookieFilter implements Filter {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(EgovSessionExpiryCookieFilter.class);
+
 	/** 서버 시각 쿠키의 기본 이름 — 공통컴포넌트와 동일하게 두어 화면 코드를 그대로 쓸 수 있다. */
 	public static final String DEFAULT_SERVER_TIME_COOKIE = "egovLatestServerTime";
 
@@ -164,7 +168,13 @@ public class EgovSessionExpiryCookieFilter implements Filter {
 				// 세션이 없으면 빈 Optional — 쿠키를 발행하지 않고, 세션도 만들지 않는다
 				Optional<EgovSessionExpiry> expiry = EgovSessionExpiry.from(httpRequest);
 				if (expiry.isPresent()) {
-					writeCookies(httpRequest, (HttpServletResponse) response, expiry.get());
+					try {
+						writeCookies(httpRequest, (HttpServletResponse) response, expiry.get());
+					} catch (IllegalArgumentException invalidCookieAttributes) {
+						// 이 쿠키는 부가 기능(만료 안내)이다 — SameSite=None 등 설정이 이번 요청의
+						// 채널(Secure)과 맞지 않아 발급이 거부돼도 본 요청 처리는 막지 않는다
+						LOGGER.warn("세션 만료 쿠키 발행 실패 — 요청은 계속 진행: {}", invalidCookieAttributes.getMessage());
+					}
 				}
 			}
 		}
