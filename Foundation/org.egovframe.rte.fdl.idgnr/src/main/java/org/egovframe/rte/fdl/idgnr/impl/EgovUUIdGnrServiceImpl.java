@@ -42,12 +42,12 @@ import java.util.UUID;
  * <p><b>NOTE</b>: UUID(Universally Unique Identifier) 알고리즘 기반의 유일키를 제공 받을 수 있다.</p>
  *
  * <p><b>보안 주의:</b> {@link #setAddress(String)}로 IP/MAC 주소를 설정하면 {@link #getNextStringId()}는
- * 타임스탬프+호스트ID+순차 증가 clockSequence로만 구성된 <b>결정론적</b>(예측 가능한) 버전1 스타일 UUID를
- * 생성한다(암호학적 난수 요소 없음). 세션ID·비밀번호 재설정 토큰·API 키 등 <b>보안 목적 식별자로
- * 사용하지 말 것</b> — 그런 용도라면 {@code setAddress}를 호출하지 않은 기본 경로
- * ({@link java.util.UUID#randomUUID()}) 또는 별도의 CSPRNG 기반 토큰 생성기를 사용하라. 또한
- * clockSequence는 JVM별 static 상태이므로, 여러 WAS 인스턴스가 동일한 address로 설정되어 같은 밀리초에
- * ID를 생성하면 서로 다른 인스턴스가 동일한 UUID를 생성할 수 있다(다중 인스턴스 배포 시 유일성 미보장).</p>
+ * RFC 9562 UUIDv1(타임스탬프+노드+기동 시 random 초기화된 14-bit clockSequence)로 생성한다. 예측 가능한
+ * 시각 기반 값이므로 세션ID·비밀번호 재설정 토큰·API 키 등 <b>보안 목적 식별자로 사용하지 말 것</b> —
+ * 그런 용도라면 {@code setAddress}를 호출하지 않은 기본 경로({@link java.util.UUID#randomUUID()}) 또는
+ * 별도의 CSPRNG 기반 토큰 생성기를 사용하라. 또한 clockSequence는 JVM 기동 시 random 초기화되므로 여러
+ * WAS 인스턴스가 동일한 address로 설정되어도 고정 초기값 충돌은 없지만, 같은 밀리초·같은 노드 조합에서는
+ * 14-bit 공간(1/16384) 내 확률적 충돌 가능성은 남는다(RFC 9562 UUIDv1 고유 특성).</p>
  *
  * @author 실행환경 개발팀 김태호
  * @version 1.0
@@ -253,8 +253,27 @@ final class TimeBasedUUIDGenerator {
     public static final Object LOCK = new Object();
     private static final Logger LOGGER = LoggerFactory.getLogger(TimeBasedUUIDGenerator.class);
     private static final long HOST_IDENTIFIER = getHostId();
-    private static long lastTime;
-    private static long clockSequence = 0;
+    /**
+     * UUID epoch(1582-10-15 00:00:00 UTC, RFC 5.1)부터 Unix epoch(1970-01-01)까지의
+     * 100ns 간격 수. 141,427일 × 86,400초 × 10,000,000 = 122,192,928,000,000,000
+     * (0x01B21DD213814000).
+     */
+    private static final long UUID_EPOCH_TICKS = 122192928000000000L;
+    /** node 필드 48-bit (RFC 5.1) */
+    private static final long NODE_MASK = 0x0000FFFFFFFFFFFFL;
+    /** IEEE 802 multicast bit: IEEE 주소를 구하지 못한 node 는 관리(로컬) 주소임을 표시 (RFC 6.10) */
+    private static final long MULTICAST_BIT = 0x0000010000000000L;
+    /**
+     * clock sequence 초기화 및 node fallback 용 난수원. RFC 5.1 은 clock sequence 를
+     * 시스템 식별자당 한 번 random 값으로 초기화할 것(Node ID 와 상관되지 않을 것)을 요구한다.
+     */
+    private static final SecureRandom RANDOM = new SecureRandom();
+    /** JVM 기동 시 random 초기화된 14-bit clock sequence */
+    private static final long CLOCK_SEQUENCE = RANDOM.nextInt(1 << 14);
+    /** IEEE 주소를 구하지 못한 인스턴스용 random multicast node (JVM 생애 주기 동안 고정) */
+    private static final long RANDOM_NODE = (RANDOM.nextLong() & NODE_MASK) | MULTICAST_BIT;
+    /** 마지막으로 사용한 UUID timestamp (100ns 단위, 단일 JVM 내 strictly monotonic) */
+    private static long lastTime = Long.MIN_VALUE;
 
     private TimeBasedUUIDGenerator() {
     }
@@ -272,32 +291,35 @@ final class TimeBasedUUIDGenerator {
     }
 
     public static final UUID generateIdFromTimestamp(long currentTimeMillis, long hostId) {
-        long time;
-        long timestamp;
-        long sequence;
-        synchronized (LOCK) {
-            if (currentTimeMillis > lastTime) {
-                lastTime = currentTimeMillis;
-                clockSequence = 0;
-            } else {
-                ++clockSequence;
-            }
-            timestamp = lastTime;
-            sequence = clockSequence;
+        long node = (hostId != 0L ? hostId : HOST_IDENTIFIER) & NODE_MASK;
+        if (node == 0L) {
+            // RFC 5.1: IEEE 주소를 구할 수 없으면 random 으로 생성한 node 를 사용한다
+            node = RANDOM_NODE;
         }
 
-        // low Time
-        time = timestamp << 32;
-        // mid Time
-        time |= ((timestamp & 0xFFFF00000000L) >> 16);
-        // hi Time
-        time |= 0x1000 | ((timestamp >> 48) & 0x0FFF);
+        long timestamp;
+        synchronized (LOCK) {
+            // RFC 5.1: UUIDv1 timestamp = 1582-10-15 UTC 자정부터의 100ns count
+            timestamp = currentTimeMillis * 10_000L + UUID_EPOCH_TICKS;
+            if (timestamp <= lastTime) {
+                // 동일 시각 연속 생성 또는 system clock 후퇴 시 마지막 timestamp 를 재사용해
+                // 100ns 단위로 논리적 증가시켜 단일 JVM 내 유일성을 보장한다 (RFC 6.1, 6.2)
+                timestamp = lastTime + 1;
+            }
+            lastTime = timestamp;
+        }
 
-        long clockSequenceHi = sequence;
-        clockSequenceHi <<= 48;
-        long lsb = (hostId != 0L ? clockSequenceHi | hostId : clockSequenceHi | HOST_IDENTIFIER);
+        // RFC 5.1 Figure 6: time_low / time_mid / ver / time_high
+        long msb = ((timestamp & 0xFFFFFFFFL) << 32)
+                | (((timestamp >>> 32) & 0xFFFFL) << 16)
+                | 0x1000L
+                | ((timestamp >>> 48) & 0x0FFFL);
+        // RFC 4.1/5.1: var = 0b10, 14-bit clock sequence, 48-bit node
+        long lsb = 0x8000000000000000L
+                | ((CLOCK_SEQUENCE & 0x3FFFL) << 48)
+                | node;
 
-        return new UUID(time, lsb);
+        return new UUID(msb, lsb);
     }
 
     private static final long getHostId() {
