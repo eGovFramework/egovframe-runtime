@@ -125,5 +125,13 @@ class EgovLocaleFormatsTest {
 			assertThrows(IllegalArgumentException.class,
 					() -> EgovLocaleFormats.date(LocalDate.now(), null, Locale.KOREA));
 		}
+
+		@Test
+		@DisplayName("값이 null 이면 로케일이 함께 null 이어도 예외 대신 빈 문자열이다 — date 와 같은 순서")
+		void 값_null이면_로케일_null과_무관하게_빈문자열() {
+			assertEquals("", EgovLocaleFormats.number(null, null));
+			assertEquals("", EgovLocaleFormats.currency(null, null));
+			assertEquals("", EgovLocaleFormats.percent(null, null));
+		}
 	}
 }
