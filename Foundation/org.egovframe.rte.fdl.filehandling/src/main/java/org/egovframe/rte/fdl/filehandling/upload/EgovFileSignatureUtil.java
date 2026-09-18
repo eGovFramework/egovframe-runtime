@@ -39,7 +39,7 @@ import java.util.Set;
  * // 업로드 처리 — 이름 검사(정책)와 내용 검사(시그니처)를 함께 둔다
  * policy.validate(fileName, fileSize);
  * if (!EgovFileSignatureUtil.matches(file.getBytes(), fileName)) {
- *     throw new EgovUploadRejectedException(fileName, EgovUploadPolicy.Reason.EXTENSION_NOT_ALLOWED);
+ *     throw new EgovUploadRejectedException(EgovUploadPolicy.Reason.EXTENSION_NOT_ALLOWED, fileName);
  * }
  *
  * EgovFileSignatureUtil.detect(header);   // 내용으로 본 포맷: "pdf"/"jpg"/... 판별 불가면 null
