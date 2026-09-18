@@ -84,7 +84,9 @@ public final class EgovWorkbooks {
             ZipSecureFile.setMinInflateRatio(POI_DEFAULT_MIN_INFLATE_RATIO);
             InputStream streamToUse = in.markSupported() ? in : new BufferedInputStream(in);
             return WorkbookFactory.create(streamToUse);
-        } catch (IOException e) {
+        } catch (IOException | RuntimeException e) {
+            // WorkbookFactory 는 빈 스트림·암호화 문서 등 "읽을 수 없는" 경우를 EmptyFileException·
+            // EncryptedDocumentException(둘 다 unchecked, IOException 이 아님)으로도 던진다.
             throw new BaseRuntimeException("Failed to open workbook from stream (xls/xlsx auto-detect)", e);
         }
     }
