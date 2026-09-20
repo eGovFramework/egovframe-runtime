@@ -271,9 +271,10 @@ public abstract class AbstractXMLUtility {
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node child = childNodes.item(i);
             for (SharedObject sobj : list) {
-                Element newElement = element.getOwnerDocument().createElement(sobj.getKey());
-                newElement.setTextContent(sobj.getValue().toString());
-                child.appendChild(newElement);
+                if (child.getNodeType() == Node.ELEMENT_NODE && child.getTextContent().equals(sobj.getKey())) {
+                    child.setTextContent(sobj.getValue().toString());
+                    break;
+                }
             }
             if (child.getNodeType() == Node.ELEMENT_NODE) {
                 updTextNode((Element) child, list);
