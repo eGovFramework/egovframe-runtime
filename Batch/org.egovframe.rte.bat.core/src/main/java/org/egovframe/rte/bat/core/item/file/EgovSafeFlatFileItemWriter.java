@@ -83,7 +83,6 @@ public class EgovSafeFlatFileItemWriter<T> extends FlatFileItemWriter<T> impleme
     private String encoding = StandardCharsets.UTF_8.name();
     private String lineSeparator = FlatFileItemWriter.DEFAULT_LINE_SEPARATOR;
     private long maxFileSizeBytes = 0L;
-    private long writtenBytes = 0L;
 
     private File finalFile;
     private File tmpFile;
@@ -145,7 +144,6 @@ public class EgovSafeFlatFileItemWriter<T> extends FlatFileItemWriter<T> impleme
         if (tmpFile.exists() && !tmpFile.delete()) {
             throw new ItemStreamException("Failed to delete stale temporary file: " + tmpFile);
         }
-        writtenBytes = 0L;
         super.setResource(new FileSystemResource(tmpFile));
         super.open(executionContext);
         LOGGER.debug("EgovSafeFlatFileItemWriter writing to temporary file: {}", tmpFile);
@@ -155,12 +153,13 @@ public class EgovSafeFlatFileItemWriter<T> extends FlatFileItemWriter<T> impleme
     public void write(Chunk<? extends T> items) throws Exception {
         if (maxFileSizeBytes > 0) {
             long chunkBytes = estimateChunkBytes(items);
-            if (writtenBytes + chunkBytes > maxFileSizeBytes) {
+            // 롤백된 청크는 임시 파일에 쓰이지 않으므로 누적 카운터 대신 임시 파일의 실제 크기로 판정한다
+            long currentSize = tmpFile.length();
+            if (currentSize + chunkBytes > maxFileSizeBytes) {
                 throw new WriteFailedException("Output file size limit exceeded for '" + finalFile.getName()
-                        + "': written=" + writtenBytes + "B, chunk=" + chunkBytes + "B, max=" + maxFileSizeBytes + "B");
+                        + "': written=" + currentSize + "B, chunk=" + chunkBytes + "B, max=" + maxFileSizeBytes + "B");
             }
             super.write(items);
-            writtenBytes += chunkBytes;
         } else {
             super.write(items);
         }
