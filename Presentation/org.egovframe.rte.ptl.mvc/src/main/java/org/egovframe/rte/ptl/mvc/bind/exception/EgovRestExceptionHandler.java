@@ -189,7 +189,7 @@ public class EgovRestExceptionHandler {
         }
         LOGGER.debug("Type mismatch handled for '{}': {}", name, e.getMessage());
         List<Map<String, String>> errors = new ArrayList<>();
-        errors.add(errorEntry(name, BINDING_FAILURE_DETAIL));
+        errors.add(errorEntry(name, resolveTypeMismatchMessage(name, e.getRequiredType())));
         return toResponse(validationProblem(errors));
     }
 
@@ -277,6 +277,24 @@ public class EgovRestExceptionHandler {
         // 형 변환 실패의 기본 메시지는 거부된 입력값과 자바 타입명을 담는다(입력 반사·내부 정보 노출) —
         // 응답에는 일반화 메시지를 싣고 원본은 handleBindException 이 debug 로그로 남긴다
         return bindingFailure ? BINDING_FAILURE_DETAIL : error.getDefaultMessage();
+    }
+
+    /** 단일 값 형 변환 실패 메시지 해석 — 바인딩 경로({@link #resolveMessage(ObjectError)})와 같은 코드 단계·필드명 인자를 쓴다(objectName 단계만 없다). */
+    private String resolveTypeMismatchMessage(String name, Class<?> requiredType) {
+        if (messageSource == null) {
+            return BINDING_FAILURE_DETAIL;
+        }
+        List<String> codes = new ArrayList<>(3);
+        codes.add("typeMismatch." + name);
+        if (requiredType != null) {
+            codes.add("typeMismatch." + requiredType.getName());
+        }
+        codes.add("typeMismatch");
+        MessageSourceResolvable resolvable = new DefaultMessageSourceResolvable(
+                codes.toArray(new String[0]),
+                new Object[]{new DefaultMessageSourceResolvable(new String[]{name}, name)},
+                BINDING_FAILURE_DETAIL);
+        return messageSource.getMessage(resolvable, LocaleContextHolder.getLocale());
     }
 
     private static Map<String, String> errorEntry(String field, String message) {
