@@ -42,7 +42,7 @@ public class EgovUploadRejectedException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
 
-	private final transient EgovUploadPolicy.Reason reason;
+	private final EgovUploadPolicy.Reason reason;
 
 	private final String fileName;
 
