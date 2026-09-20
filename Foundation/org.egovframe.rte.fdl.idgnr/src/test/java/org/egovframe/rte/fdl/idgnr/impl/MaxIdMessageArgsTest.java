@@ -26,6 +26,7 @@ import java.util.Locale;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * MaxIdMessageArgsTest 클래스
@@ -102,6 +103,20 @@ public class MaxIdMessageArgsTest {
         FdlException exception = assertThrows(FdlException.class, service::getNextLongId);
 
         assertMessageIsFormatted(messageSource, exception);
+    }
+
+    /**
+     * debug.idgnr.init.idblock 메시지가 작은따옴표에 {0}이 갇히지 않고 테이블명으로 치환되는지 확인한다.
+     * (EgovTableIdGnrServiceImpl 이 이 키로 로그를 남긴다)
+     */
+    @Test
+    public void testInitIdBlockDebugMessageIsFormatted() {
+        MessageSource messageSource = messageSource();
+        for (Locale locale : new Locale[]{Locale.ROOT, Locale.KOREAN, Locale.ENGLISH}) {
+            String message = messageSource.getMessage("debug.idgnr.init.idblock", new Object[]{"idttest"}, locale);
+            assertFalse(message.contains("{0}"), "[" + locale.toLanguageTag() + "] 메시지에 치환되지 않은 자리표시자가 남아있다: " + message);
+            assertTrue(message.contains("'idttest'"), "[" + locale.toLanguageTag() + "] 메시지에 테이블명이 따옴표와 함께 치환되지 않았다: " + message);
+        }
     }
 
     private static class CounterIdGnrService extends AbstractIdGnrService {
