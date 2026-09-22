@@ -23,8 +23,11 @@ import org.springframework.dao.OptimisticLockingFailureException;
  *
  * @author Juergen Hoeller
  * @since 13.10.2003
+ * @deprecated in favor of {@link org.springframework.orm.ObjectOptimisticLockingFailureException org.springframework.orm.ObjectOptimisticLockingFailureException},
+ * which spring-orm still provides with the same API
  */
 @SuppressWarnings("serial")
+@Deprecated
 public class ObjectOptimisticLockingFailureException extends OptimisticLockingFailureException {
 
     private Object persistentClass;

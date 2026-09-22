@@ -31,6 +31,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -90,6 +91,13 @@ public class StringTimestampTypeHandlerTest {
         AtomicReference<Timestamp> captured = new AtomicReference<>();
         handler.setParameter(capturingSetter(captured), FORMATTED);
         assertEquals(EXPECTED_TS, captured.get());
+    }
+
+    @Test
+    public void getResultReturnsNullWhenColumnIsNull() throws Exception {
+        StringTimestampTypeHandler handler = new StringTimestampTypeHandler();
+        // 대상 컬럼 자체가 null 인 경우다.
+        assertNull(handler.getResult(resultGetter(null)));
     }
 
     @Test

@@ -118,7 +118,7 @@ public abstract class AbstractTraceHandleManager {
      * @return boolean true|false
      */
     public boolean trace(Class<?> clazz, String message) {
-        LOGGER.debug(" DefaultExceptionHandleManager.run() ");
+        LOGGER.debug(" AbstractTraceHandleManager.trace() ");
         // 매칭조건이 false 인 경우
         if (!enableMatcher()) {
             return false;

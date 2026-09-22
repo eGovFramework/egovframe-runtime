@@ -68,7 +68,7 @@ public class ContentHandlerImpl implements ContentHandler {
      * @param name      - 전치수식자를 가지는 XML 1.0 수식명. 수식명을 사용할 수 없는 경우는 공문자열
      */
     public void endElement(String uri, String localName, String name) {
-        LOGGER.debug(name, "{}이 종료하였습니다.");
+        LOGGER.debug("{}이 종료하였습니다.", name);
     }
 
     /**
@@ -129,7 +129,7 @@ public class ContentHandlerImpl implements ContentHandler {
      * @param name      - 전치수식자 첨부의 수식명
      */
     public void startElement(String uri, String localName, String name, Attributes atts) {
-        LOGGER.debug(name, "{}이 시작되었습니다.");
+        LOGGER.debug("{}이 시작되었습니다.", name);
     }
 
     /**

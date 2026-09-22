@@ -51,6 +51,20 @@ public class DbPropertySourceDelegateTest {
         }
     }
 
+    @Test
+    public void initPropertiesIgnoresTypeOfUnusedColumns() {
+        EmbeddedDatabase database = createDatabase();
+        try {
+            DbPropertySourceDelegate delegate = new DbPropertySourceDelegate(database,
+                    "SELECT PKEY, PVALUE, 1 AS SORT_ORDER FROM PROPERTY");
+
+            assertEquals("sample01", delegate.getProperty("egov.test.sample01"));
+            assertEquals("sample02", delegate.getProperty("egov.test.sample02"));
+        } finally {
+            database.shutdown();
+        }
+    }
+
     private EmbeddedDatabase createDatabase() {
         return new EmbeddedDatabaseBuilder()
                 .generateUniqueName(true)

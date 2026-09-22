@@ -365,7 +365,7 @@ public class EgovWebServiceMessageHeader implements EgovIntegrationMessageHeader
      * @param resultCode
      */
     public void setResultCode(ResultCode resultCode) {
-        this.resultCode = resultCode.getValue();
+        this.resultCode = resultCode != null ? resultCode.getValue() : null;
     }
 
     /**

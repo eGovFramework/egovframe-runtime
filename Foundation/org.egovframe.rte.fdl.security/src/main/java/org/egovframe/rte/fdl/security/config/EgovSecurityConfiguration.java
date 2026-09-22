@@ -79,9 +79,6 @@ public class EgovSecurityConfiguration {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EgovSecurityConfiguration.class);
 
-    @Value("${Globals.SecurityConfigPath:}")
-    private String securityConfigPath;
-
     @Autowired
     private ApplicationContext applicationContext;
 

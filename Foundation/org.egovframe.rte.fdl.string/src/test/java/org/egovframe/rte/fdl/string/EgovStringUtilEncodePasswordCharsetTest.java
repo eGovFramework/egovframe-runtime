@@ -35,6 +35,7 @@ class EgovStringUtilEncodePasswordCharsetTest {
 
     @Test
     @DisplayName("encodePassword hashes over UTF-8 bytes, independent of the platform default charset")
+    @SuppressWarnings("deprecation")
     void encodePassword_usesUtf8ForNonAsciiPassword() throws Exception {
         String password = "비밀번호가나다"; // "비밀번호가나다" (non-ASCII)
 

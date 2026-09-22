@@ -5,13 +5,13 @@
     <parent>
         <groupId>org.egovframe.rte</groupId>
         <artifactId>egovframe-rte-root</artifactId>
-        <version>5.0.1</version>
+        <version>5.0.2</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>egovframe-rte-fdl-security</artifactId>
-    <version>5.0.1</version>
+    <version>5.0.2</version>
     <packaging>jar</packaging>
     <name>org.egovframe.rte.fdl.security</name>
     <description>The eGovernment Standard Framework</description>
@@ -25,7 +25,7 @@
     </licenses>
 
     <properties>
-        <org.egovframe.rte.version>5.0.1</org.egovframe.rte.version>
+        <org.egovframe.rte.version>5.0.2</org.egovframe.rte.version>
         <spring.security.version>6.5.5</spring.security.version>
         <jakarta.annotation.version>3.0.0</jakarta.annotation.version>
         <jakarta.servlet.version>6.0.0</jakarta.servlet.version>

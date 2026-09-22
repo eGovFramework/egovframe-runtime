@@ -114,7 +114,6 @@ public class EgovCryptoConfiguration {
     public EgovGeneralCryptoServiceImpl egovGeneralCryptoService(EgovCryptoConfig cryptoConfig) {
         EgovGeneralCryptoServiceImpl egovGeneralCryptoService = new EgovGeneralCryptoServiceImpl();
         egovGeneralCryptoService.setPasswordEncoder(egovPasswordEncoder(cryptoConfig));
-        egovGeneralCryptoService.setAlgorithm(cryptoConfig.getAlgorithm());
         egovGeneralCryptoService.setBlockSize(cryptoConfig.getCryptoBlockSize());
         return egovGeneralCryptoService;
     }

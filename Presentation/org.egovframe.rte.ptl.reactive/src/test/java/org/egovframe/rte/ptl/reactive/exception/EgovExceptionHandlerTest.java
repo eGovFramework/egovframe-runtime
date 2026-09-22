@@ -10,8 +10,12 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import reactor.core.publisher.Mono;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.nio.charset.StandardCharsets;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
@@ -34,6 +38,26 @@ public class EgovExceptionHandlerTest {
                 .exchange()
                 .expectStatus().isNotFound()
                 .expectHeader().contentType(MediaType.parseMediaType("application/json;charset=UTF-8"));
+    }
+
+    @Test
+    public void responseBodyIsParseableJson() {
+        this.webTestClient.get()
+                .uri("/test")
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectBody()
+                .consumeWith(result -> {
+                    String body = new String(result.getResponseBody(), StandardCharsets.UTF_8);
+                    JsonNode json;
+                    try {
+                        json = new ObjectMapper().readTree(body);
+                    } catch (Exception e) {
+                        throw new AssertionError("application/json 으로 선언한 본문이 파싱되지 않는다: " + body, e);
+                    }
+                    assertTrue(json.get("status").isInt(), "status 는 정수여야 한다: " + body);
+                    assertEquals(404, json.get("status").asInt());
+                });
     }
 
     @Test

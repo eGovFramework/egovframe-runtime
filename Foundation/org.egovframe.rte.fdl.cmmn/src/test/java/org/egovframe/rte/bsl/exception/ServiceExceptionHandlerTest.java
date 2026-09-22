@@ -1,13 +1,18 @@
 package org.egovframe.rte.bsl.exception;
 
 import jakarta.annotation.Resource;
+
+import java.util.Locale;
 import org.egovframe.rte.fdl.cmmn.aspect.ExceptionTransfer;
 import org.egovframe.rte.fdl.cmmn.config.CmmnTestConfig;
 import org.egovframe.rte.fdl.cmmn.exception.EgovBizException;
 import org.egovframe.rte.fdl.cmmn.trace.LeaveaTrace;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -16,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = CmmnTestConfig.class)
-public class ServiceExceptionHandlerTests {
+public class ServiceExceptionHandlerTest {
 
     @Resource(name = "helloService")
     private HelloService helloService;
@@ -26,6 +31,21 @@ public class ServiceExceptionHandlerTests {
 
     @Resource
     private ApplicationContext applicationContext;
+
+    /**
+     * processException() 은 LocaleContextHolder.getLocale() 로 메시지를 해석하며,
+     * 미지정 시 JVM 기본 로케일(Locale)로 폴백한다. 아래 단언은 한국어 메시지를 기대하므로
+     * 실행 환경의 기본 로케일에 좌우되지 않도록 스레드 범위로 고정한다.
+     */
+    @BeforeEach
+    public void pinLocale() {
+        LocaleContextHolder.setLocale(Locale.KOREA);
+    }
+
+    @AfterEach
+    public void resetLocale() {
+        LocaleContextHolder.resetLocaleContext();
+    }
 
     @Test
     public void testBizUnCheckedException() throws Exception {

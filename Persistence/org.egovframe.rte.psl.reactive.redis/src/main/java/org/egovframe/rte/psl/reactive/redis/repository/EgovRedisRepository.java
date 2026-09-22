@@ -66,7 +66,7 @@ public class EgovRedisRepository<T> extends ReactiveRedisTemplate<String, T> {
      *
      * @param redisKey Redis 키
      * @param entity 찾을 엔티티
-     * @return 엔티티의 인덱스 (없으면 -1)
+     * @return 엔티티의 인덱스를 내는 Mono, 없으면 빈 Mono
      */
     public Mono<Long> findIndex(String redisKey, T entity) {
         return opsForList().indexOf(redisKey, entity);

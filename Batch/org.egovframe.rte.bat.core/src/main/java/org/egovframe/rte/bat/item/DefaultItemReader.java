@@ -193,9 +193,9 @@ public class DefaultItemReader<T> implements ItemStreamReader<T> {
                 String tempParams = jobParameters.getString(stepName + READER_PARAMS_KEY);
                 String type = jobParameters.getString(stepName + READER_VO_TYPE_KEY);
                 if (this.sql == null || type == null) {
-                    throw new RuntimeException(stepName + "스텝의 Writer 설정에서 sql, type 는 필수입니다. 다음 처럼 설정하세요.\n"
-                            + stepName + ".writer.sql=select ID, NAME, CREDIT from CUSTOMER "
-                            + stepName + ".writer.params=credit,name "
+                    throw new RuntimeException(stepName + "스텝의 Reader 설정에서 sql, type 는 필수입니다. 다음 처럼 설정하세요.\n"
+                            + stepName + READER_SQL_KEY + "=select ID, NAME, CREDIT from CUSTOMER "
+                            + stepName + READER_PARAMS_KEY + "=credit,name "
                             + stepName + READER_VO_TYPE_KEY + "=aa.bb.TestVo");
                 }
                 if (tempParams != null) {

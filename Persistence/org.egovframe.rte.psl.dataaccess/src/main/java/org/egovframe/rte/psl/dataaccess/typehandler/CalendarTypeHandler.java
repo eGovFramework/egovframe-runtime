@@ -52,11 +52,11 @@ public class CalendarTypeHandler implements TypeHandlerCallback {
      * @throws SQLException
      */
     public Object getResult(ResultGetter getter) throws SQLException {
-        if (getter.wasNull()) {
-            return null;
-        }
         java.util.Calendar cal = java.util.Calendar.getInstance();
         java.sql.Timestamp ts = getter.getTimestamp(cal);
+        if (ts == null) {
+            return null;
+        }
         cal.setTime(ts);
         return cal;
     }

@@ -51,12 +51,12 @@ public class EgovLoginFailHandler implements AuthenticationFailureHandler {
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         if (ObjectUtils.isEmpty(config)) {
-            throw new NoSuchBeanDefinitionException("### EgovLoginFailHandler getAccessDeniedUrl not found.");
+            throw new NoSuchBeanDefinitionException("### EgovLoginFailHandler getLoginFailureUrl not found.");
         }
 
         String failureUrl;
-        if (StringUtils.hasText(config.getAccessDeniedUrl())) {
-            failureUrl = config.getAccessDeniedUrl();
+        if (StringUtils.hasText(config.getLoginFailureUrl())) {
+            failureUrl = config.getLoginFailureUrl();
         } else {
             failureUrl = DEFAULT_LOGIN_FAILURE_URL;
         }

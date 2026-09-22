@@ -24,6 +24,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.egovframe.rte.fdl.cmmn.exception.BaseRuntimeException;
 import org.egovframe.rte.fdl.excel.EgovExcelMapping;
@@ -57,6 +58,7 @@ import java.util.Locale;
  * 2017.02.15  장동한				ES-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
  * 2020.08.31  유지보수				ES-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
  * 2024.08.17  이백행				시큐어코딩 Exception 제거
+ * 2026.09.10  실행환경 개발팀		xls·xlsx 자동 감지 업로드(uploadExcelAuto) 추가
  */
 public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContextAware {
 
@@ -282,7 +284,7 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
         LOGGER.debug("sheet.getPhysicalNumberOfRows() : {}", sheet.getPhysicalNumberOfRows());
 
         Integer rowsAffected = 0;
-        long rowCnt = sheet.getPhysicalNumberOfRows();
+        long rowCnt = sheet.getLastRowNum() + 1L;
         long cnt = (commitCnt == 0) ? rowCnt : commitCnt;
 
         LOGGER.debug("Runtime.getRuntime().totalMemory() : {}", Runtime.getRuntime().totalMemory());
@@ -303,14 +305,21 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
 
             for (i = idx; i < rowCnt && i < (cnt + idx); i++) {
                 Row row = sheet.getRow(i);
+                if (row == null) {
+                    LOGGER.debug("row {} is blank, skipped", i);
+                    continue;
+                }
                 list.add(mapping.mappingColumn(row));
             }
-            if (sqlSessionTemplate != null) {
-                rowsAffected += excelBatchMapper.batchInsert(queryId, list);
-            } else if (sqlMapClient != null) {
-                rowsAffected += dao.batchInsert(queryId, list);
-            } else {
+            if (sqlSessionTemplate == null && sqlMapClient == null) {
                 throw new RuntimeException(getMessageSource().getMessage("error.excel.persistence.error", null, Locale.getDefault()));
+            }
+            if (!list.isEmpty()) {
+                if (sqlSessionTemplate != null) {
+                    rowsAffected += excelBatchMapper.batchInsert(queryId, list);
+                } else {
+                    rowsAffected += dao.batchInsert(queryId, list);
+                }
             }
 
             LOGGER.debug("after Runtime.getRuntime().freeMemory() : {}", Runtime.getRuntime().freeMemory());
@@ -321,6 +330,24 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
         LOGGER.debug("uploadExcel result count is {}", rowsAffected);
 
         return rowsAffected;
+    }
+
+    /**
+     * 엑셀 파일을 xls·xlsx 자동 감지로 로딩해 첫 번째 시트를 DB 에 일괄 저장한다.
+     * 형식은 확장자가 아닌 내용으로 감지하며, 워크북은 저장이 끝나면 닫는다.
+     */
+    @Override
+    public Integer uploadExcelAuto(String queryId, InputStream fileIn, int start, long commitCnt) {
+        if (fileIn == null) {
+            throw new IllegalArgumentException("fileIn must not be null");
+        }
+        // xlsx 는 zip 형식이라 zip bomb 방어 비율을 열기 직전에 POI 기본값으로 복원한다(loadWorkbook(InputStream, XSSFWorkbook) 과 동일).
+        ZipSecureFile.setMinInflateRatio(0.01d);
+        try (Workbook wb = WorkbookFactory.create(fileIn)) {
+            return uploadExcel(queryId, wb.getSheetAt(0), start, commitCnt);
+        } catch (IOException e) {
+            throw new BaseRuntimeException("Failed to open workbook for upload (xls/xlsx auto-detect)", e);
+        }
     }
 
     /**

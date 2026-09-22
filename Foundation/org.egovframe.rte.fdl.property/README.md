@@ -2,7 +2,7 @@
 
 **Commons Configuration 2**와 Spring을 이용해 **프로퍼티·설정 소스**를 통합 로딩하고, 필요 시 **DB 기반 PropertySource**를 초기화합니다.
 
-- **Artifact**: `org.egovframe.rte:egovframe-rte-fdl-property:5.0.1`
+- **Artifact**: `org.egovframe.rte:egovframe-rte-fdl-property:5.0.2`
 - **Runtime**: Java 17 / Spring Framework 6.x
 - **의존**: `egovframe-rte-fdl-cmmn`
 
@@ -62,7 +62,7 @@ mvn test
 <dependency>
   <groupId>org.egovframe.rte</groupId>
   <artifactId>egovframe-rte-fdl-property</artifactId>
-  <version>5.0.1</version>
+  <version>5.0.2</version>
 </dependency>
 ```
 

@@ -133,7 +133,7 @@ public abstract class AbstractIdGnrService implements EgovIdGnrService, Applicat
 
             if (bd.compareTo(BIG_DECIMAL_MAX_LONG) > 0) {
                 LOGGER.debug(messageSource.getMessage("error.idgnr.greater.maxid", new String[]{"Long"}, Locale.getDefault()));
-                throw new FdlException(messageSource, "error.idgnr.greater.maxid");
+                throw new FdlException(messageSource, "error.idgnr.greater.maxid", new String[]{"Long"}, null);
             }
 
             nextId = bd.longValue();
@@ -145,7 +145,7 @@ public abstract class AbstractIdGnrService implements EgovIdGnrService, Applicat
 
         if (nextId > maxId) {
             LOGGER.debug(messageSource.getMessage("error.idgnr.greater.maxid", new String[]{"Long"}, Locale.getDefault()));
-            throw new FdlException(messageSource, "error.idgnr.greater.maxid");
+            throw new FdlException(messageSource, "error.idgnr.greater.maxid", new String[]{"Long"}, null);
         }
 
         return nextId;

@@ -12,11 +12,14 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.math.BigDecimal;
+import java.util.Locale;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * UUId Generation Service Test 클래스
@@ -119,6 +122,21 @@ public class EgovUUIdGnrServiceTest {
 
     private long hostId(String uuid) {
         return UUID.fromString(uuid).getLeastSignificantBits() & 0xFFFFFFFFFFFFL;
+    }
+
+    /**
+     * 영문 로케일에서도 지원하지 않는 타입 이름이 메시지에 치환된다.
+     */
+    @Test
+    public void testNotSupportedMessageIsFormattedInEnglish() {
+        Locale saved = Locale.getDefault();
+        Locale.setDefault(Locale.ENGLISH);
+        try {
+            FdlException e = assertThrows(FdlException.class, () -> uUidGenerationService.getNextByteId());
+            assertTrue(e.getMessage().contains("Byte"), "지원하지 않는 타입 이름이 메시지에 치환돼야 한다: " + e.getMessage());
+        } finally {
+            Locale.setDefault(saved);
+        }
     }
 
     /**

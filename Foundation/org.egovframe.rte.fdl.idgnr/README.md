@@ -2,7 +2,7 @@
 
 업무 키·일련번호 등 **고유 ID 채번**을 표준화합니다. DB 시퀀스·채번 테이블·UUID·전략 패턴을 지원합니다.
 
-- **Artifact**: `org.egovframe.rte:egovframe-rte-fdl-idgnr:5.0.1`
+- **Artifact**: `org.egovframe.rte:egovframe-rte-fdl-idgnr:5.0.2`
 - **Runtime**: Java 17 / Spring Framework 6.x
 - **의존**: `egovframe-rte-fdl-cmmn`
 
@@ -67,7 +67,7 @@ mvn test
 <dependency>
   <groupId>org.egovframe.rte</groupId>
   <artifactId>egovframe-rte-fdl-idgnr</artifactId>
-  <version>5.0.1</version>
+  <version>5.0.2</version>
 </dependency>
 ```
 

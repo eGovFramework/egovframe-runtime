@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.egovframe.rte</groupId>
         <artifactId>egovframe-rte-root</artifactId>
-        <version>5.0.1</version>
+        <version>5.0.2</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -24,12 +24,14 @@
     </licenses>
 
     <properties>
-        <org.egovframe.rte.version>5.0.1</org.egovframe.rte.version>
+        <org.egovframe.rte.version>5.0.2</org.egovframe.rte.version>
         <jakarta.annotation.version>3.0.0</jakarta.annotation.version>
+        <jakarta.validation.version>3.1.1</jakarta.validation.version>
         <jakarta.servlet.version>6.0.0</jakarta.servlet.version>
         <jakarta.servlet.jsp.version>4.0.0</jakarta.servlet.jsp.version>
         <log4j2.version>2.25.3</log4j2.version>
         <slf4j.version>2.0.17</slf4j.version>
+        <jsoup.version>1.21.1</jsoup.version>
         <commons.beanutils.version>1.11.0</commons.beanutils.version>
         <commons.validator.version>1.9.0</commons.validator.version>
         <easymock.version>5.3.0</easymock.version>
@@ -57,6 +59,12 @@
             <artifactId>egovframe-rte-fdl-cmmn</artifactId>
             <version>${org.egovframe.rte.version}</version>
         </dependency>
+        <!-- 업로드 검증 정책(EgovUploadPolicy)과 안전 경로 해석(EgovFiles)을 쓴다. -->
+        <dependency>
+            <groupId>org.egovframe.rte</groupId>
+            <artifactId>egovframe-rte-fdl-filehandling</artifactId>
+            <version>${org.egovframe.rte.version}</version>
+        </dependency>
 
         <!-- Spring -->
         <dependency>
@@ -76,6 +84,13 @@
             <groupId>jakarta.annotation</groupId>
             <artifactId>jakarta.annotation-api</artifactId>
             <version>${jakarta.annotation.version}</version>
+        </dependency>
+        <!-- EgovRestExceptionHandler 가 제약 위반(ConstraintViolationException)을 해석하는 데 쓴다.
+             구현체는 애플리케이션이 선택한다(hibernate-validator 등). -->
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+            <version>${jakarta.validation.version}</version>
         </dependency>
         <dependency>
             <groupId>jakarta.servlet</groupId>
@@ -118,6 +133,14 @@
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
             <version>${commons.beanutils.version}</version>
+        </dependency>
+        <!-- EgovHtmlSanitizer 전용 - optional 이므로 전이되지 않는다.
+             정제 기능을 쓰는 애플리케이션만 jsoup 을 직접 선언하면 된다. -->
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>${jsoup.version}</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>commons-validator</groupId>

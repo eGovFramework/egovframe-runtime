@@ -43,7 +43,7 @@ public class EgovBizException extends BaseException {
      * EgovBizException 생성자.
      */
     public EgovBizException() {
-        this("BaseException without message", null, null);
+        this("EgovBizException without message", null, null);
     }
 
     /**

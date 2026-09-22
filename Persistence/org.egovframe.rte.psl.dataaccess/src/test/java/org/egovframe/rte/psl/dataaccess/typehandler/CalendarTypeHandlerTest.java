@@ -94,6 +94,23 @@ public class CalendarTypeHandlerTest {
     }
 
     @Test
+    public void getResultReturnsNullWhenColumnIsNull() throws Exception {
+        CalendarTypeHandler handler = new CalendarTypeHandler();
+        // 직전 컬럼이 non-null 이면 wasNull 은 false 다. 대상 컬럼 자체가 null 인 경우다.
+        assertNull(handler.getResult(resultGetter(false, null)));
+    }
+
+    @Test
+    public void getResultReadsColumnEvenWhenPrecedingColumnWasNull() throws Exception {
+        CalendarTypeHandler handler = new CalendarTypeHandler();
+        // 직전 컬럼이 null 이면 wasNull 은 true 로 남는다. 대상 컬럼에는 값이 있다.
+        Object result = handler.getResult(resultGetter(true, EXPECTED_TS));
+
+        assertInstanceOf(Calendar.class, result);
+        assertEquals(EXPECTED_TS.getTime(), ((Calendar) result).getTimeInMillis());
+    }
+
+    @Test
     public void getResultConvertsTimestampToCalendar() throws Exception {
         CalendarTypeHandler handler = new CalendarTypeHandler();
         Object result = handler.getResult(resultGetter(false, EXPECTED_TS));

@@ -21,6 +21,7 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.util.StringUtils;
 
 import javax.sql.DataSource;
 
@@ -53,7 +54,7 @@ public class DataSourceFactoryBean implements FactoryBean<DataSource>, Applicati
     @Override
     public DataSource getObject() throws Exception {
         EgovAccessConfig config = context.getBean(EgovAccessConfig.class);
-        if (config.getDataSource() != null) {
+        if (StringUtils.hasText(config.getDataSource())) {
             return (DataSource) context.getBean(config.getDataSource());
         } else {
             if (context.containsBean(DEF_DATASOURCE_NAME)) {

@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.egovframe.rte</groupId>
         <artifactId>egovframe-rte-root</artifactId>
-        <version>5.0.1</version>
+        <version>5.0.2</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -24,7 +24,7 @@
     </licenses>
 
     <properties>
-        <org.egovframe.rte.version>5.0.1</org.egovframe.rte.version>
+        <org.egovframe.rte.version>5.0.2</org.egovframe.rte.version>
         <jakarta.annotation.version>3.0.0</jakarta.annotation.version>
         <hibernate.version>6.6.12.Final</hibernate.version>
         <dbunit.version>3.0.0</dbunit.version>
@@ -55,6 +55,13 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
             <version>${spring.framework.version}</version>
+        </dependency>
+        <!-- 연계 메타데이터 JDBC 저장소(EgovJdbcIntegrationMetadataStore)가 직접 쓴다. spring-orm 을 통해 이미 전이되므로 optional -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>${spring.framework.version}</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
