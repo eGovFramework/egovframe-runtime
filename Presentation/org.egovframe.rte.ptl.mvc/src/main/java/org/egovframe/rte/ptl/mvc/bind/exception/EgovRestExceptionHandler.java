@@ -28,21 +28,36 @@ import org.springframework.context.MessageSourceResolvable;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.core.MethodParameter;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
+import org.springframework.validation.method.ParameterErrors;
+import org.springframework.validation.method.ParameterValidationResult;
+import org.springframework.web.ErrorResponse;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.MatrixVariable;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.lang.annotation.Annotation;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * REST 응답용 기본 예외 핸들러 — <b>동작하는 기본 구현</b> + RFC 9457(ProblemDetail) 정렬.
@@ -63,6 +78,16 @@ import java.util.Map;
  *       <b>읽을 수 없는 본문</b>({@link HttpMessageNotReadableException}) → <b>400</b> + 일반화 메시지.
  *       Spring 의 기본 메시지는 거부된 입력값과 자바 타입명(또는 파서 상세)을 담으므로 응답에
  *       싣지 않는다 — {@link MessageSource} 에 {@code typeMismatch} 코드가 있으면 그 메시지를 쓴다</li>
+ *   <li><b>프레임워크 내장 메서드 파라미터 검증</b>({@link HandlerMethodValidationException} — 클래스 수준
+ *       {@code @Validated} 없이 파라미터 제약이 위반된 경우) → 제약 위반과 같은 400 필드 오류 형식</li>
+ *   <li><b>자기 HTTP 상태를 가진 Spring 표준 예외</b>({@link ErrorResponse} 구현 — 405 메서드 불허·415 미디어
+ *       타입·400 필수 파라미터 누락·404 매핑 없는 경로·413 업로드 크기 초과 등) → <b>그 상태와 헤더</b>(예: 405 의
+ *       {@code Allow})를 그대로 쓰고 detail 은 상태별 일반화 문구. 종전에는 {@code Exception} 폴백으로 500 이
+ *       되던 정합성 결함의 수정이다(고지). Spring 기본 detail 은 요청 경로 등
+ *       입력을 되비출 수 있어 싣지 않는다</li>
+ *   <li><b>인증·인가 예외</b>(Spring Security {@code AccessDeniedException}·{@code AuthenticationException} 계열)
+ *       → 응답을 쓰지 않고 <b>같은 예외를 다시 던져</b> 보안 계층({@code ExceptionTranslationFilter})이 401·403·로그인
+ *       유도로 처리하게 한다. 판별은 클래스 이름으로 하므로 본 모듈은 Spring Security 에 의존하지 않는다</li>
  *   <li>{@link FdlException}/{@link BaseException}/그 외 → 500 + <b>일반화 메시지</b>
  *       (내부 정보 노출 방지 — CWE-209, 원본은 서버 로그)</li>
  * </ul>
@@ -87,6 +112,7 @@ import java.util.Map;
  * 2026.08.16  실행환경 개발팀    최초 생성 (검증·응답 표준화)
  * 2026.09.02  실행환경 개발팀    제약 위반 400 응답·메시지 해석 추가(종전 500 폴백은 정합성 결함)
  * 2026.09.07  실행환경 개발팀    형 변환 실패·읽을 수 없는 본문을 400 으로 매핑, 거부된 입력값·타입명 미노출
+ * 2026.09.29  실행환경 개발팀    표준 예외 상태 보존(ErrorResponse)·메서드 파라미터 검증 400·인증·인가 예외 위임(종전 500 폴백은 정합성 결함)
  * </pre>
  */
 public class EgovRestExceptionHandler {
@@ -107,6 +133,20 @@ public class EgovRestExceptionHandler {
 
     /** 읽을 수 없는 요청 본문 응답의 detail(파서 상세는 싣지 않는다) */
     private static final String UNREADABLE_BODY_DETAIL = "Request body could not be read.";
+
+    /**
+     * 보안 계층에 넘길 예외 타입(클래스 계층의 이름으로 판별 — 본 모듈은 Spring Security 에 의존하지 않는다).
+     * 두 타입 모두 {@link RuntimeException} 이라 시그니처 변경 없이 그대로 다시 던질 수 있다.
+     */
+    private static final String[] SECURITY_EXCEPTION_TYPES = {
+            "org.springframework.security.access.AccessDeniedException",
+            "org.springframework.security.core.AuthenticationException"
+    };
+
+    /** 요청 쪽 이름을 가진 파라미터 애너테이션 — 메서드 검증 필드 오류의 이름으로 쓴다 */
+    private static final Set<Class<? extends Annotation>> NAMED_VALUE_ANNOTATIONS = Set.of(
+            RequestParam.class, PathVariable.class, RequestHeader.class,
+            CookieValue.class, MatrixVariable.class, RequestPart.class);
 
     private MessageSource messageSource;
 
@@ -207,6 +247,42 @@ public class EgovRestExceptionHandler {
     }
 
     /**
+     * 프레임워크 내장 메서드 파라미터 검증 실패(클래스 수준 {@code @Validated} 없이 파라미터 제약 위반) —
+     * 제약 위반과 같은 400 필드 오류 형식. 반환값 검증 실패(프레임워크가 500 으로 분류)는 서버 결함이라
+     * 내부 오류로 일반화한다. 거부된 값은 싣지 않는다.
+     *
+     * @since 5.1
+     */
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    public ResponseEntity<ProblemDetail> handleMethodValidation(HandlerMethodValidationException e) {
+        if (e.getStatusCode().is5xxServerError()) {
+            return internalError(e);
+        }
+        List<Map<String, String>> errors = new ArrayList<>();
+        for (ParameterValidationResult result : e.getParameterValidationResults()) {
+            if (result instanceof ParameterErrors parameterErrors) {
+                // @Valid 객체 파라미터 — 필드 단위 오류
+                for (FieldError fieldError : parameterErrors.getFieldErrors()) {
+                    errors.add(errorEntry(fieldError.getField(), resolveMessage(fieldError)));
+                }
+                for (ObjectError globalError : parameterErrors.getGlobalErrors()) {
+                    errors.add(errorEntry(globalError.getObjectName(), resolveMessage(globalError)));
+                }
+            } else {
+                String name = parameterName(result.getMethodParameter());
+                for (MessageSourceResolvable error : result.getResolvableErrors()) {
+                    errors.add(errorEntry(name, resolveResolvable(error)));
+                }
+            }
+        }
+        for (MessageSourceResolvable error : e.getCrossParameterValidationResults()) {
+            errors.add(errorEntry(e.getMethod().getName(), resolveResolvable(error)));
+        }
+        LOGGER.debug("Method validation failure handled: {} error(s)", errors.size());
+        return toResponse(validationProblem(errors));
+    }
+
+    /**
      * 실행환경 확장모듈 예외 — 내부 오류로 일반화한다.
      */
     @ExceptionHandler(FdlException.class)
@@ -224,10 +300,41 @@ public class EgovRestExceptionHandler {
 
     /**
      * 미분류 예외 — 내부 오류로 일반화한다(원본 메시지·스택은 서버 로그로만).
+     *
+     * <p>단 다음 두 부류는 미분류가 아니다. ① 인증·인가 예외는 응답을 쓰지 않고 같은 예외를 다시 던져 보안 계층에
+     * 넘긴다(리졸버는 같은 예외를 미처리로 보고 원래 예외를 필터 체인으로 전파한다). ② 자기 HTTP 상태를 가진
+     * Spring 표준 예외({@link ErrorResponse})는 {@link #standardError(ErrorResponse, Exception)} 로 그 상태를 지킨다.</p>
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ProblemDetail> handleException(Exception e) {
+        if (isSecurityException(e)) {
+            LOGGER.debug("Security exception delegated to the security layer: {}", e.getClass().getName());
+            throw (RuntimeException) e;
+        }
+        if (e instanceof ErrorResponse errorResponse) {
+            return standardError(errorResponse, e);
+        }
         return internalError(e);
+    }
+
+    /**
+     * Spring 표준 예외 공통 처리 — 예외가 지닌 HTTP 상태와 헤더(405 의 {@code Allow} 등)를 그대로 쓰고,
+     * detail 은 상태별 일반화 문구로 둔다(Spring 기본 detail 은 요청 경로 등 입력을 되비출 수 있다).
+     * 5xx 는 서버 쪽 원인이라 ERROR, 4xx 는 클라이언트 오류라 debug 로 남긴다.
+     *
+     * @since 5.1
+     */
+    protected ResponseEntity<ProblemDetail> standardError(ErrorResponse errorResponse, Exception e) {
+        HttpStatusCode status = errorResponse.getStatusCode();
+        if (status.is5xxServerError()) {
+            LOGGER.error("Standard exception mapped to status {}", status.value(), e);
+        } else {
+            LOGGER.debug("Standard exception mapped to status {}: {}", status.value(), e.getMessage());
+        }
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(status, standardDetail(status));
+        problem.setTitle(standardTitle(errorResponse, status));
+        problem.setProperty("timestamp", OffsetDateTime.now().toString());
+        return ResponseEntity.status(status).headers(errorResponse.getHeaders()).body(problem);
     }
 
     /**
@@ -295,6 +402,87 @@ public class EgovRestExceptionHandler {
                 new Object[]{new DefaultMessageSourceResolvable(new String[]{name}, name)},
                 BINDING_FAILURE_DETAIL);
         return messageSource.getMessage(resolvable, LocaleContextHolder.getLocale());
+    }
+
+    /** 메서드 검증 오류(코드·기본 메시지만 가진 해석 대상)의 메시지 해석 — 코드 우선, 미연동·미정의면 기본 메시지. */
+    private String resolveResolvable(MessageSourceResolvable error) {
+        if (messageSource != null) {
+            try {
+                return messageSource.getMessage(error, LocaleContextHolder.getLocale());
+            } catch (NoSuchMessageException noMessage) {
+                // 코드·기본 메시지 모두 없음 — 아래 기본 메시지로 폴백
+            }
+        }
+        return error.getDefaultMessage();
+    }
+
+    /**
+     * 요청 쪽 이름 — 이름 있는 값 애너테이션({@code @RequestParam}·{@code @PathVariable} 등)의 이름이 우선이고,
+     * 없으면 파라미터 이름({@code -parameters} 컴파일), 그것도 없으면 {@code arg}+인덱스다.
+     */
+    private static String parameterName(MethodParameter parameter) {
+        for (Annotation annotation : parameter.getParameterAnnotations()) {
+            if (NAMED_VALUE_ANNOTATIONS.contains(annotation.annotationType())) {
+                String name = namedValue(annotation);
+                if (name != null && !name.isEmpty()) {
+                    return name;
+                }
+            }
+        }
+        String name = parameter.getParameterName();
+        return (name != null) ? name : "arg" + parameter.getParameterIndex();
+    }
+
+    /** 애너테이션의 name 속성, 비어 있으면 value 속성(두 속성은 별칭이라 한쪽만 채워진다). */
+    private static String namedValue(Annotation annotation) {
+        Object name = AnnotationUtils.getValue(annotation, "name");
+        if (name instanceof String text && !text.isEmpty()) {
+            return text;
+        }
+        Object value = AnnotationUtils.getValue(annotation);
+        return (value instanceof String text) ? text : null;
+    }
+
+    /** 표준 예외의 title — 예외가 준 표준 title(보통 상태 사유구), 없으면 상태 사유구·{@code Error}. */
+    private static String standardTitle(ErrorResponse errorResponse, HttpStatusCode status) {
+        String title = errorResponse.getBody().getTitle();
+        if (title != null) {
+            return title;
+        }
+        HttpStatus resolved = HttpStatus.resolve(status.value());
+        return (resolved != null) ? resolved.getReasonPhrase() : "Error";
+    }
+
+    /** 표준 예외의 상태별 일반화 detail — 요청 경로·요청 값 같은 입력을 담지 않는 고정 문구다. */
+    private static String standardDetail(HttpStatusCode status) {
+        switch (status.value()) {
+            case 400: return "The request is invalid.";
+            case 401: return "Authentication is required.";
+            case 403: return "Access is denied.";
+            case 404: return "The requested resource was not found.";
+            case 405: return "The request method is not supported for this resource.";
+            case 406: return "The requested representation is not available.";
+            case 413: return "The request payload is too large.";
+            case 415: return "The request media type is not supported.";
+            case 503: return "The service is temporarily unavailable.";
+            default:
+                return status.is5xxServerError() ? INTERNAL_ERROR_DETAIL : "The request could not be processed.";
+        }
+    }
+
+    /** 예외 클래스 계층에 보안 계층이 처리할 타입이 있는지 — 이름으로만 비교하므로 보안 프레임워크를 로드하지 않는다. */
+    private static boolean isSecurityException(Throwable e) {
+        if (!(e instanceof RuntimeException)) {
+            return false;
+        }
+        for (Class<?> type = e.getClass(); type != null && type != Object.class; type = type.getSuperclass()) {
+            for (String securityType : SECURITY_EXCEPTION_TYPES) {
+                if (securityType.equals(type.getName())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private static Map<String, String> errorEntry(String field, String message) {
