@@ -37,6 +37,11 @@
         <easymock.version>5.3.0</easymock.version>
         <antlr.version>4.13.2</antlr.version>
         <hamcrest.version>3.0</hamcrest.version>
+        <!-- 오류 처리기 통합 테스트 전용(test scope) -->
+        <jackson.version>2.18.2</jackson.version>
+        <hibernate.validator.version>8.0.2.Final</hibernate.validator.version>
+        <glassfish.jakarta.el.version>4.0.2</glassfish.jakarta.el.version>
+        <spring.security.version>6.5.5</spring.security.version>
     </properties>
 
     <repositories>
@@ -178,6 +183,33 @@
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest</artifactId>
             <version>${hamcrest.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- 오류 처리기 MockMvc 통합 테스트 전용(test scope - main 의존 변화 없음).
+             JSON 변환기(깨진 본문 400)·메서드 파라미터 검증(Bean Validation 구현체)·인가 거부 예외 위임 검증에 쓴다. -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>${hibernate.validator.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>jakarta.el</artifactId>
+            <version>${glassfish.jakarta.el.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <version>${spring.security.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
