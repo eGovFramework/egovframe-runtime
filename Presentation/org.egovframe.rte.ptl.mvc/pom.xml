@@ -38,7 +38,7 @@
         <antlr.version>4.13.2</antlr.version>
         <hamcrest.version>3.0</hamcrest.version>
         <!-- 오류 처리기 통합 테스트 전용(test scope) -->
-        <jackson.version>2.18.2</jackson.version>
+        <jackson.version>2.18.11</jackson.version>
         <hibernate.validator.version>8.0.2.Final</hibernate.validator.version>
         <glassfish.jakarta.el.version>4.0.2</glassfish.jakarta.el.version>
         <spring.security.version>6.5.5</spring.security.version>
