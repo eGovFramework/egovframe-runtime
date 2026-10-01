@@ -28,6 +28,7 @@ package org.egovframe.rte.ptl.reactive.exception;
  * 수정일		수정자				수정내용
  * ----------------------------------------------
  * 2023.08.31   유지보수            최초 생성
+ * 2026.09.30   실행환경 개발팀      415(E012)·413(E013) 오류 코드 추가
  * </pre>
  * @since 2023.08.31
  */
@@ -55,6 +56,12 @@ public class EgovErrorCode {
             new EgovErrorCode(412, "E010", "There are no registered users.");
     public static final EgovErrorCode UNPROCESSABLE_ENTITY =
             new EgovErrorCode(422, "E011", "Unable to follow requested instructions.");
+    /** 지원하지 않는 요청 미디어 타입(415) — 표준 예외 상태 보존용 */
+    public static final EgovErrorCode UNSUPPORTED_MEDIA_TYPE =
+            new EgovErrorCode(415, "E012", "The media type of the request is not supported.");
+    /** 요청 본문 크기 초과(413) — 표준 예외 상태 보존용 */
+    public static final EgovErrorCode PAYLOAD_TOO_LARGE =
+            new EgovErrorCode(413, "E013", "The request payload is too large.");
     public static final EgovErrorCode INTERNAL_SERVER_ERROR =
             new EgovErrorCode(500, "E021", "Internal Server Error.");
     public static final EgovErrorCode SERVICE_UNAVAILABLE =

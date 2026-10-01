@@ -31,6 +31,7 @@ import java.time.format.DateTimeFormatter;
  * 수정일		수정자				수정내용
  * ----------------------------------------------
  * 2023.08.31   유지보수            최초 생성
+ * 2026.09.30   실행환경 개발팀      상태 지정 팩터리 추가
  * </pre>
  * @since 2023.08.31
  */
@@ -48,8 +49,33 @@ public class EgovExceptionResponse {
         this.message = message;
     }
 
+    private EgovExceptionResponse(int status, EgovErrorCode egovErrorCode, String message) {
+        this.timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        this.status = status;
+        this.code = egovErrorCode.getCode();
+        this.message = message;
+    }
+
     public static EgovExceptionResponse of(EgovErrorCode egovErrorCode, String message) {
         return new EgovExceptionResponse(egovErrorCode, message);
+    }
+
+    /**
+     * 상태를 지정해 응답을 만든다. 상태에 대응하는 오류 코드가 없어 계열 대표 코드(4xx 는 E001, 5xx 는 E021)를
+     * 쓰면서 status 는 실제 값을 유지할 때 쓴다.
+     *
+     * @param status 실제 HTTP 상태 코드(세 자리)
+     * @param egovErrorCode 응답 code 로 쓸 오류 코드
+     * @param message 응답 메시지
+     * @return 응답
+     * @throws IllegalArgumentException 상태 코드가 세 자리(100~999)가 아닌 경우
+     * @since 5.1
+     */
+    public static EgovExceptionResponse of(int status, EgovErrorCode egovErrorCode, String message) {
+        if (status < 100 || status > 999) {
+            throw new IllegalArgumentException("HTTP status code must be a 3-digit value: " + status);
+        }
+        return new EgovExceptionResponse(status, egovErrorCode, message);
     }
 
     public String getTimestamp() {
