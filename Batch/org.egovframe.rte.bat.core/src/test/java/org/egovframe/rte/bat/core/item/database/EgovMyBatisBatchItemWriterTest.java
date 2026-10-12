@@ -7,6 +7,7 @@ import org.egovframe.rte.bat.support.EgovStepVariableListener;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -101,6 +102,71 @@ class EgovMyBatisBatchItemWriterTest {
         Map<String, Object> map = (Map<String, Object>) writer.mergeSharedVariables(item);
 
         assertEquals("from-step", map.get("region"));
+    }
+
+    @Test
+    void mergeSharedVariables_mergesSharedVariableIntoMapItemEntries() {
+        EgovMyBatisBatchItemWriter<Map<String, Object>> writer = new EgovMyBatisBatchItemWriter<>();
+        EgovResourceVariable resourceVariable = new EgovResourceVariable();
+        resourceVariable.setVariable("batchDate", "20260717");
+        writer.setResourceVariable(resourceVariable);
+
+        Map<String, Object> item = new HashMap<>();
+        item.put("isin", "ISIN001");
+        item.put("qty", 100);
+
+        Object parameter = writer.mergeSharedVariables(item);
+
+        assertInstanceOf(Map.class, parameter);
+        @SuppressWarnings("unchecked")
+        Map<String, Object> map = (Map<String, Object>) parameter;
+        assertEquals("20260717", map.get("batchDate"));
+        assertEquals("ISIN001", map.get("isin"));
+        assertEquals(100, map.get("qty"));
+    }
+
+    @Test
+    void mergeSharedVariables_mapItemEntryTakesPriorityOverSharedVariableOnKeyCollision() {
+        EgovMyBatisBatchItemWriter<Map<String, Object>> writer = new EgovMyBatisBatchItemWriter<>();
+        EgovResourceVariable resourceVariable = new EgovResourceVariable();
+        resourceVariable.setVariable("customer", "shared-customer");
+        writer.setResourceVariable(resourceVariable);
+
+        Map<String, Object> item = new HashMap<>();
+        item.put("customer", "item-customer");
+
+        @SuppressWarnings("unchecked")
+        Map<String, Object> map = (Map<String, Object>) writer.mergeSharedVariables(item);
+
+        assertEquals("item-customer", map.get("customer"));
+    }
+
+    @Test
+    void mergeSharedVariables_doesNotAddBeanPropertiesOfMapItem() {
+        EgovMyBatisBatchItemWriter<Map<String, Object>> writer = new EgovMyBatisBatchItemWriter<>();
+        EgovResourceVariable resourceVariable = new EgovResourceVariable();
+        resourceVariable.setVariable("batchDate", "20260717");
+        writer.setResourceVariable(resourceVariable);
+
+        Map<String, Object> item = new HashMap<>();
+        item.put("isin", "ISIN001");
+
+        @SuppressWarnings("unchecked")
+        Map<String, Object> map = (Map<String, Object>) writer.mergeSharedVariables(item);
+
+        assertFalse(map.containsKey("class"));
+        assertFalse(map.containsKey("empty"));
+    }
+
+    @Test
+    void mergeSharedVariables_returnsMapItemUnchanged_whenNoSharedVariableConfigured() {
+        EgovMyBatisBatchItemWriter<Map<String, Object>> writer = new EgovMyBatisBatchItemWriter<>();
+        Map<String, Object> item = new HashMap<>();
+        item.put("isin", "ISIN001");
+
+        Object parameter = writer.mergeSharedVariables(item);
+
+        assertSame(item, parameter);
     }
 
 }
