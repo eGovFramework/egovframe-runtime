@@ -46,11 +46,16 @@ public interface EgovCryptoService {
 
     /**
      * BigDecimal 암호화 처리.
+     * 
+     * [제거 예정]
+     * 암호화 된 데이터의 반환 타입은 byte[]가 일반적이며, BigDecimal로 반환하는 것은 현실적이지 않음.
+     * 또한 구현체인 EgovARIACryptoService에서 구현되지 않으므로, 추후 전자정부프레임워크 6에서 제거 고려
      *
      * @param number
      * @return
      * @throws Exception
      */
+    @Deprecated(since = "v5.0.3 FINAL", forRemoval=true)
     BigDecimal encrypt(BigDecimal number, String password);
 
     /**
@@ -59,7 +64,7 @@ public interface EgovCryptoService {
      * @param srcFile
      * @param trgtFile
      * @param password
-     * @throws Exception
+     * @throws IOException
      */
     void encrypt(File srcFile, String password, File trgtFile) throws IOException;
 
@@ -74,13 +79,18 @@ public interface EgovCryptoService {
     byte[] decrypt(byte[] encryptedData, String password);
 
     /**
-     * BigDecimal 복호화 처리.
+     * BigDecimal 복호화 처리. 
+     * 
+     * [제거 예정]
+     * 암호화 된 데이터의 반환 타입은 byte[]가 일반적이며, BigDecimal로 입력받는 것은 현실적이지 않음.
+     * 또한 구현체인 EgovARIACryptoService에서 구현되지 않으므로, 추후 전자정부프레임워크 6에서 제거 고려
      *
      * @param encryptedNumber
      * @param password
      * @return
      * @throws Exception
      */
+    @Deprecated(since = "v5.0.3 FINAL", forRemoval=true)
     BigDecimal decrypt(BigDecimal encryptedNumber, String password);
 
     /**
@@ -89,7 +99,7 @@ public interface EgovCryptoService {
      * @param encryptedFile
      * @param password
      * @param trgtFile
-     * @throws Exception
+     * @throws IOException
      */
     void decrypt(File encryptedFile, String password, File trgtFile) throws IOException;
 
