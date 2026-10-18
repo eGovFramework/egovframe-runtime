@@ -49,7 +49,7 @@ public interface EgovCryptoService {
      * 
      * [제거 예정]
      * 암호화 된 데이터의 반환 타입은 byte[]가 일반적이며, BigDecimal로 반환하는 것은 현실적이지 않음.
-     * 또한 구현체인 EgovARIACryptoService에서 구현되지 않으므로, 추후 전자정부프레임워크 6에서 제거 고려
+     * 또한 구현체인 EgovARIACryptoService에서도 구현되지 않으므로, 추후 전자정부프레임워크 6에서 제거 고려
      *
      * @param number
      * @return
@@ -83,7 +83,7 @@ public interface EgovCryptoService {
      * 
      * [제거 예정]
      * 암호화 된 데이터의 반환 타입은 byte[]가 일반적이며, BigDecimal로 입력받는 것은 현실적이지 않음.
-     * 또한 구현체인 EgovARIACryptoService에서 구현되지 않으므로, 추후 전자정부프레임워크 6에서 제거 고려
+     * 또한 구현체인 EgovARIACryptoService에서도 구현되지 않으므로, 추후 전자정부프레임워크 6에서 제거 고려
      *
      * @param encryptedNumber
      * @param password

@@ -55,6 +55,16 @@ public class EgovARIACryptoServiceImpl implements EgovARIACryptoService {
         this.blockSize = blockSize;
     }
 
+    /**
+     * BigDecimal 암호화 처리.
+     * 
+     * [제거 예정]
+     * 암호화 된 데이터의 반환 타입은 byte[]가 일반적이며, BigDecimal로 반환하는 것은 현실적이지 않음.
+     *
+     * @param number
+     * @return
+     * @throws Exception
+     */
     public BigDecimal encrypt(BigDecimal number, String password) {
         throw new UnsupportedOperationException("Unsupported method.. (ARIA Cryptography service doesn't support BigDecimal en/decryption)");
     }
@@ -104,6 +114,17 @@ public class EgovARIACryptoServiceImpl implements EgovARIACryptoService {
         }
     }
 
+    /**
+     * BigDecimal 복호화 처리. 
+     * 
+     * [제거 예정]
+     * 암호화 된 데이터의 반환 타입은 byte[]가 일반적이며, BigDecimal로 입력받는 것은 현실적이지 않음.
+     *
+     * @param encryptedNumber
+     * @param password
+     * @return
+     * @throws Exception
+     */
     public BigDecimal decrypt(BigDecimal encryptedNumber, String password) {
         throw new UnsupportedOperationException("Unsupported method.. (ARIA Cryptography service doesn't support BigDecimal en/decryption)");
     }
