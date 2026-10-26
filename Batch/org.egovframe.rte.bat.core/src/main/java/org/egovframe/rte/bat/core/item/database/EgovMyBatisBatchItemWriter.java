@@ -114,6 +114,16 @@ public class EgovMyBatisBatchItemWriter<T> extends MyBatisBatchItemWriter<T> {
         if (stepVariable != null)
             map.putAll(stepVariable.getVariableMap());
 
+        if (item instanceof Map<?, ?> itemMap) {
+            // Map item(예: resultType="hashmap")은 BeanInfo 로 class, empty 만 나오므로 엔트리를 그대로 덮어쓴다
+            // MyBatis 는 Map 파라미터를 String 이름으로 조회하므로 String 키 엔트리만 병합한다
+            for (Map.Entry<?, ?> entry : itemMap.entrySet()) {
+                if (entry.getKey() instanceof String key)
+                    map.put(key, entry.getValue());
+            }
+            return map;
+        }
+
         try {
             BeanInfo beanInfo = Introspector.getBeanInfo(item.getClass());
             // item 프로퍼티가 공유 변수보다 우선하도록 이후에 덮어쓴다 (공유 변수는 보충 용도)
