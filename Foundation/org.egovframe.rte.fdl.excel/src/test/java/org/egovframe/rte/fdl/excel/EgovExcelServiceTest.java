@@ -7,6 +7,7 @@ import org.egovframe.rte.fdl.excel.config.ExcelTestConfig;
 import org.egovframe.rte.fdl.excel.util.EgovExcelUtil;
 import org.egovframe.rte.fdl.excel.vo.PersonHourVO;
 import org.egovframe.rte.fdl.filehandling.EgovFileUtil;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.jxls.builder.JxlsOutputFile;
@@ -30,6 +31,13 @@ public class EgovExcelServiceTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EgovExcelServiceTest.class);
     private final String fileLocation = "testdata";
+    private final String outputLocation = "target/test-outputs";
+
+    @BeforeAll
+    static void createOutputDir() throws IOException {
+        java.nio.file.Files.createDirectories(java.nio.file.Paths.get("target/test-outputs"));
+    }
+
     @Resource(name = "excelService")
     private EgovExcelService excelService;
 
@@ -44,7 +52,7 @@ public class EgovExcelServiceTest {
         String sheetName2 = "second sheet";
 
         StringBuilder sb = new StringBuilder();
-        sb.append(fileLocation).append("/").append("testWriteExcelFile.xls");
+        sb.append(outputLocation).append("/").append("testWriteExcelFile.xls");
         if (EgovFileUtil.isExistsFile(sb.toString())) {
             EgovFileUtil.delete(new File(sb.toString()));
         }
@@ -77,7 +85,7 @@ public class EgovExcelServiceTest {
         int cellnum = 2;
 
         StringBuilder sb = new StringBuilder();
-        sb.append(fileLocation).append("/").append("testModifyCellContents.xls");
+        sb.append(outputLocation).append("/").append("testModifyCellContents.xls");
         if (EgovFileUtil.isExistsFile(sb.toString())) {
             EgovFileUtil.delete(new File(sb.toString()));
         }
@@ -124,7 +132,7 @@ public class EgovExcelServiceTest {
         int columnwidth = 30;
 
         StringBuilder sb = new StringBuilder();
-        sb.append(fileLocation).append("/").append("testWriteExcelFileAttribute.xls");
+        sb.append(outputLocation).append("/").append("testWriteExcelFileAttribute.xls");
         if (EgovFileUtil.isExistsFile(sb.toString())) {
             EgovFileUtil.delete(new File(sb.toString()));
         }
@@ -165,7 +173,7 @@ public class EgovExcelServiceTest {
         LOGGER.debug("### EgovExcelServiceTest testModifyDocAttribute() Start ");
 
         StringBuilder sb = new StringBuilder();
-        sb.append(fileLocation).append("/").append("testModifyDocAttribute.xls");
+        sb.append(outputLocation).append("/").append("testModifyDocAttribute.xls");
         if (EgovFileUtil.isExistsFile(sb.toString())) {
             EgovFileUtil.delete(new File(sb.toString()));
         }
@@ -218,7 +226,7 @@ public class EgovExcelServiceTest {
         LOGGER.debug("### EgovExcelServiceTest testGetCellContents() Start ");
 
         StringBuilder sb = new StringBuilder();
-        sb.append(fileLocation).append("/").append("testGetCellContents.xls");
+        sb.append(outputLocation).append("/").append("testGetCellContents.xls");
         if (EgovFileUtil.isExistsFile(sb.toString())) {
             EgovFileUtil.delete(new File(sb.toString()));
         }
@@ -262,7 +270,7 @@ public class EgovExcelServiceTest {
         LOGGER.debug("### EgovExcelServiceTest testModifyCellAttribute() Start ");
 
         StringBuilder sb = new StringBuilder();
-        sb.append(fileLocation).append("/").append("testModifyCellAttribute.xls");
+        sb.append(outputLocation).append("/").append("testModifyCellAttribute.xls");
         if (EgovFileUtil.isExistsFile(sb.toString())) {
             EgovFileUtil.delete(new File(sb.toString()));
             LOGGER.debug("### EgovExcelServiceTest testModifyCellAttribute() Delete File : {}", sb);
@@ -319,7 +327,7 @@ public class EgovExcelServiceTest {
         LOGGER.debug("### EgovExcelServiceTest testUseTemplate1() Start ");
 
         StringBuilder sb = new StringBuilder().append(fileLocation).append("/template/").append("template1.xls");
-        StringBuilder sbResult = new StringBuilder().append(fileLocation).append("/").append("testUseTemplate1.xls");
+        StringBuilder sbResult = new StringBuilder().append(outputLocation).append("/").append("testUseTemplate1.xls");
 
         Object[][] sample_data = {
                 {"Yegor Kozlov", "YK", 5.0, 8.0, 10.0, 5.0, 5.0, 7.0, 6.0},
@@ -378,7 +386,7 @@ public class EgovExcelServiceTest {
         LOGGER.debug("### EgovExcelServiceTest testUseTemplate2() Start ");
 
         StringBuilder sb = new StringBuilder().append(fileLocation).append("/template/").append("template2.xls");
-        StringBuilder sbResult = new StringBuilder().append(fileLocation).append("/").append("testUseTemplate2.xls");
+        StringBuilder sbResult = new StringBuilder().append(outputLocation).append("/").append("testUseTemplate2.xls");
 
         Double[][] value = {{5.0, 8.0, 10.0, 5.0, 5.0, 7.0, 6.0}, {4.0, 3.0, 1.0, 3.5, null, null, 4.0}};
 

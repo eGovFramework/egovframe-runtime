@@ -22,7 +22,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -71,7 +70,9 @@ public class EgovExcelBatchUploadTest {
     }
 
     private static int rowsIn(String path) throws IOException {
-        try (Workbook wb = WorkbookFactory.create(new File(path))) {
+        // File로 열면 POI가 OPCPackage를 read-write로 열어 close 시 파일을 다시 써서
+        // tracked testdata가 수정된다. InputStream 경유로 읽기 전용 오픈한다.
+        try (InputStream in = new FileInputStream(path); Workbook wb = WorkbookFactory.create(in)) {
             return wb.getSheetAt(0).getPhysicalNumberOfRows();
         }
     }
