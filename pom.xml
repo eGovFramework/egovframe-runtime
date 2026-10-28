@@ -142,6 +142,8 @@
                     </excludes>
                     <includes>
                         <include>**/*Test.java</include>
+                        <include>**/*Tests.java</include>
+                        <include>**/*FunctionalTests.java</include>
                     </includes>
                 </configuration>
             </plugin>
