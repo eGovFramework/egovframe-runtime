@@ -8,6 +8,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.egovframe.rte.fdl.excel.config.ExcelTestConfig;
 import org.egovframe.rte.fdl.filehandling.EgovFileUtil;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -33,7 +34,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ContextConfiguration(classes = ExcelTestConfig.class)
 public class EgovExcelLoadThenWriteTest {
 
-    private final String fileLocation = "testdata";
+    private final String fileLocation = "target/test-outputs";
+
+    @BeforeAll
+    static void createOutputDir() throws IOException {
+        java.nio.file.Files.createDirectories(java.nio.file.Paths.get("target/test-outputs"));
+    }
 
     @Resource(name = "excelService")
     private EgovExcelService excelService;
