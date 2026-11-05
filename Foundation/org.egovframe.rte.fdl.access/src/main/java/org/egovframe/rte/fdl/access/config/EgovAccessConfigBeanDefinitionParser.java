@@ -35,7 +35,6 @@ import java.nio.charset.StandardCharsets;
  * <p>Desc.: 설정 간소화 처리에 사용되는 bean definition parser</p>
  *
  * @author ESFC
- * @since 2019.10.01
  * @version 3.9
  * <pre>
  * 개정이력(Modification Information)
@@ -46,6 +45,7 @@ import java.nio.charset.StandardCharsets;
  * 2019.12.30	신용호                mappingPath 추가
  * 2024.03.29   ESFC            	intercpetor 생성 조건 수정
  * </pre>
+ * @since 2019.10.01
  */
 public class EgovAccessConfigBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
@@ -137,11 +137,11 @@ public class EgovAccessConfigBeanDefinitionParser extends AbstractSingleBeanDefi
                     LOGGER.debug("EgovAccessConfigBeanDefinitionParser httpd load end...");
                     parserContext.getReaderContext().getReader().setValidationMode(XmlBeanDefinitionReader.VALIDATION_AUTO);
                 } catch (IllegalArgumentException iae) {
-                    LOGGER.error("[["+iae.getClass()+"/IllegalArgumentException] Try/Catch... Runing : "+ iae.getMessage());
-                    throw new RuntimeException("[["+iae.getClass()+"/IllegalArgumentException] Try/Catch... Runing : "+ iae.getMessage());
+                    LOGGER.error("[[" + iae.getClass() + "/IllegalArgumentException] Try/Catch... Runing : " + iae.getMessage());
+                    throw new RuntimeException("[[" + iae.getClass() + "/IllegalArgumentException] Try/Catch... Runing : " + iae.getMessage());
                 } catch (Exception e) {
-                    LOGGER.error("["+e.getClass()+"] Exception Try/Catch... Runing : " + e.getMessage());
-                    throw new RuntimeException("["+e.getClass()+"] Exception Try/Catch... Runing : " + e.getMessage());
+                    LOGGER.error("[" + e.getClass() + "] Exception Try/Catch... Runing : " + e.getMessage());
+                    throw new RuntimeException("[" + e.getClass() + "] Exception Try/Catch... Runing : " + e.getMessage());
                 }
                 parserContext.getReaderContext().getReader().loadBeanDefinitions("classpath:/META-INF/spring/access/access-config.xml");
             }

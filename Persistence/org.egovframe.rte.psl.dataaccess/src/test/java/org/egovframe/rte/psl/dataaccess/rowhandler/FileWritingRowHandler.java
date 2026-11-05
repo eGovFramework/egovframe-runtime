@@ -17,56 +17,56 @@ import java.util.Properties;
 @Component("fileWritingRowHandler")
 public class FileWritingRowHandler implements RowHandler {
 
-	private File file;
+    private File file;
 
-	private BufferedOutputStream bufferedOutput = null;
+    private BufferedOutputStream bufferedOutput = null;
 
-	@Resource(name = "schemaProperties")
-	private Properties schemaProperties;
+    @Resource(name = "schemaProperties")
+    private Properties schemaProperties;
 
-	private int totalCount = 0;
+    private int totalCount = 0;
 
-	@PostConstruct
-	public void init() throws IOException {
+    @PostConstruct
+    public void init() throws IOException {
 
-		this.file = new File("./src/test/resources/META-INF/testdata/" + schemaProperties.getProperty("outResultFile"));
-		if (this.file.exists()) {
-			this.file.delete();
-			this.file.createNewFile();
-		} else {
-			this.file.createNewFile();
-		}
+        this.file = new File("./src/test/resources/META-INF/testdata/" + schemaProperties.getProperty("outResultFile"));
+        if (this.file.exists()) {
+            this.file.delete();
+            this.file.createNewFile();
+        } else {
+            this.file.createNewFile();
+        }
 
-		this.bufferedOutput = new BufferedOutputStream(new FileOutputStream(this.file));
-	}
+        this.bufferedOutput = new BufferedOutputStream(new FileOutputStream(this.file));
+    }
 
-	public void handleRow(Object rowObject) {
-		try {
-			// FileUtils.writeStringToFile(this.file,
-			// ToStringBuilder
-			// .reflectionToString(rowObject));
-			bufferedOutput.write(ToStringBuilder.reflectionToString(rowObject).getBytes());
-			bufferedOutput.write("\n".getBytes());
-			totalCount++;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+    public void handleRow(Object rowObject) {
+        try {
+            // FileUtils.writeStringToFile(this.file,
+            // ToStringBuilder
+            // .reflectionToString(rowObject));
+            bufferedOutput.write(ToStringBuilder.reflectionToString(rowObject).getBytes());
+            bufferedOutput.write("\n".getBytes());
+            totalCount++;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-	public int getTotalCount() {
-		return totalCount;
-	}
+    public int getTotalCount() {
+        return totalCount;
+    }
 
-	public void releaseResource() {
-		// Close the BufferedOutputStream
-		try {
-			if (bufferedOutput != null) {
-				bufferedOutput.flush();
-				bufferedOutput.close();
-			}
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		}
-	}
+    public void releaseResource() {
+        // Close the BufferedOutputStream
+        try {
+            if (bufferedOutput != null) {
+                bufferedOutput.flush();
+                bufferedOutput.close();
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
 
 }

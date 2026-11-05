@@ -58,9 +58,8 @@ import java.util.Set;
  *   &lt;/property&gt;
  * &lt;/bean&gt;
  * </pre>
- * 
+ *
  * @author 실행환경 개발팀 함철
- * @since 2009.06.01
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -69,51 +68,53 @@ import java.util.Set;
  * ----------------------------------------------
  * 2009.05.30	함철				최초 생성
  * </pre>
+ * @since 2009.06.01
  * @deprecated This class has been deprecated.
  */
 @Deprecated
 public class SimpleUrlAnnotationHandlerMapping extends AbstractUrlHandlerMapping {
 
-	private Set<String> urls;
+    private Set<String> urls;
 
-	public void setUrls(Set<String> urls) {
-		this.urls = urls;
-	}
+    public void setUrls(Set<String> urls) {
+        this.urls = urls;
+    }
 
-	/**
-	 * <code>@RequestMapping</code>로 선언된 url중에 ApplicationContext에 정의된 url로 remapping해 return
-	 * url mapping시에는 PathMatcher를 사용하는데, 별도로 등록한 PathMatcher가 없다면 AntPathMatcher를 사용한다.
-	 * @param urlsArray - <code>@RequestMapping</code>로 선언된 url list
-	 * @return urlsArray중에 설정된 url을 필터링해서 return.
-	 */
-	protected String[] remappingUrls(String[] urlsArray) {
-		if (urlsArray == null) {
-			return null;
-		}
+    /**
+     * <code>@RequestMapping</code>로 선언된 url중에 ApplicationContext에 정의된 url로 remapping해 return
+     * url mapping시에는 PathMatcher를 사용하는데, 별도로 등록한 PathMatcher가 없다면 AntPathMatcher를 사용한다.
+     *
+     * @param urlsArray - <code>@RequestMapping</code>로 선언된 url list
+     * @return urlsArray중에 설정된 url을 필터링해서 return.
+     */
+    protected String[] remappingUrls(String[] urlsArray) {
+        if (urlsArray == null) {
+            return null;
+        }
 
-		ArrayList<String> remappedUrls = new ArrayList<String>();
-		for (Iterator<String> it = this.urls.iterator(); it.hasNext();) {
-			String urlPattern = (String) it.next();
-			for (int i = 0; i < urlsArray.length; i++) {
-				if (getPathMatcher().matchStart(urlPattern, urlsArray[i])) {
-					remappedUrls.add(urlsArray[i]);
-				}
-			}
-		}
+        ArrayList<String> remappedUrls = new ArrayList<String>();
+        for (Iterator<String> it = this.urls.iterator(); it.hasNext(); ) {
+            String urlPattern = (String) it.next();
+            for (int i = 0; i < urlsArray.length; i++) {
+                if (getPathMatcher().matchStart(urlPattern, urlsArray[i])) {
+                    remappedUrls.add(urlsArray[i]);
+                }
+            }
+        }
 
-		return (String[]) remappedUrls.toArray(new String[remappedUrls.size()]);
-	}
+        return (String[]) remappedUrls.toArray(new String[remappedUrls.size()]);
+    }
 
-	/**
-	 * <code>@RequestMapping</code>로 선언된 url을 재정의하기 위해
-	 * org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping의 
-	 * 메소드 protected String[] determineUrlsForHandler(String beanName)를 override.
-	 * 
-	 * @param beanName - the name of the candidate bean
-	 * @return 빈에 해당하는 URL list
-	 */
-	protected String[] determineUrlsForHandler(String beanName) {
-		return remappingUrls(determineUrlsForHandler(beanName));
-	}
+    /**
+     * <code>@RequestMapping</code>로 선언된 url을 재정의하기 위해
+     * org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping의
+     * 메소드 protected String[] determineUrlsForHandler(String beanName)를 override.
+     *
+     * @param beanName - the name of the candidate bean
+     * @return 빈에 해당하는 URL list
+     */
+    protected String[] determineUrlsForHandler(String beanName) {
+        return remappingUrls(determineUrlsForHandler(beanName));
+    }
 
 }

@@ -44,12 +44,10 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * DB를 gridSize 만큼 나누어 파티셔닝으로 처리하는 내용을 테스트
- * @author 배치실행개발팀
- * @since 2012. 07.30
- * @version 1.0
- * @see
  *
- * <pre>
+ * @author 배치실행개발팀
+ * @version 1.0
+ * @see <pre>
  * == 개정이력(Modification Information) ==
  *
  *   수정일               수정자               수정내용
@@ -57,123 +55,126 @@ import static org.junit.Assert.assertTrue;
  *  2012. 07.30  배치실행개발팀    최초 생성
  *
  * </pre>
-*/
+ * @since 2012. 07.30
+ */
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"/org/egovframe/batch/simple-job-launcher-context.xml"
-		, "/org/egovframe/batch/jobs/partitionJdbcJob.xml"
-		, "/org/egovframe/batch/job-runner-context.xml"})
+@ContextConfiguration(locations = {"/org/egovframe/batch/simple-job-launcher-context.xml"
+        , "/org/egovframe/batch/jobs/partitionJdbcJob.xml"
+        , "/org/egovframe/batch/job-runner-context.xml"})
 public class EgovPartitionJdbcFunctionalTests implements ApplicationContextAware {
 
-	//ItemReader
-	@Autowired
-	@Qualifier("inputTestReader")
-	private ItemReader<CustomerCredit> inputReader;
+    //ItemReader
+    @Autowired
+    @Qualifier("inputTestReader")
+    private ItemReader<CustomerCredit> inputReader;
 
-	//배치작업을  test하기 위한 JobLauncherTestUtils
-	@Autowired
-	private JobLauncherTestUtils jobLauncherTestUtils;
+    //배치작업을  test하기 위한 JobLauncherTestUtils
+    @Autowired
+    private JobLauncherTestUtils jobLauncherTestUtils;
 
-	//ApplicationContext
-	private ApplicationContext applicationContext;
+    //ApplicationContext
+    private ApplicationContext applicationContext;
+    private JdbcTemplate jdbcTemplate;
 
-	//ApplicationContext 설정
-	@Override
-	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		this.applicationContext = applicationContext;
-	}
+    //ApplicationContext 설정
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
 
-	private JdbcTemplate jdbcTemplate;
+    /**
+     * datasource 설정
+     *
+     * @param dataSource
+     */
+    @Autowired
+    public void setDataSource(DataSource dataSource) {
+        this.jdbcTemplate = new JdbcTemplate(dataSource);
+    }
 
-	/**
-	 * datasource 설정
-	 *
-	 * @param dataSource
-	 */
-	@Autowired
-	public void setDataSource(DataSource dataSource) {
-		this.jdbcTemplate = new JdbcTemplate(dataSource);
-	}
+    /**
+     * 배치작업 테스트 전에 DB관련 작업
+     */
+    @Before
+    public void setUp() {
+        jdbcTemplate.update("DELETE from CUSTOMER");
 
-	/**
-	 * 배치작업 테스트 전에 DB관련 작업
-	 */
-	@Before
-	public void setUp() {
-		jdbcTemplate.update("DELETE from CUSTOMER");
+        jdbcTemplate.update("INSERT INTO CUSTOMER (ID, VERSION, NAME, CREDIT) VALUES  (1, 0, 'customer1', 100000)");
+        jdbcTemplate.update("INSERT INTO CUSTOMER (ID, VERSION, NAME, CREDIT) VALUES  (2, 0, 'customer2', 100000)");
+        jdbcTemplate.update("INSERT INTO CUSTOMER (ID, VERSION, NAME, CREDIT) VALUES  (3, 0, 'customer3', 100000)");
+        jdbcTemplate.update("INSERT INTO CUSTOMER (ID, VERSION, NAME, CREDIT) VALUES  (4, 0, 'customer4', 100000)");
 
-		jdbcTemplate.update("INSERT INTO CUSTOMER (ID, VERSION, NAME, CREDIT) VALUES  (1, 0, 'customer1', 100000)");
-		jdbcTemplate.update("INSERT INTO CUSTOMER (ID, VERSION, NAME, CREDIT) VALUES  (2, 0, 'customer2', 100000)");
-		jdbcTemplate.update("INSERT INTO CUSTOMER (ID, VERSION, NAME, CREDIT) VALUES  (3, 0, 'customer3', 100000)");
-		jdbcTemplate.update("INSERT INTO CUSTOMER (ID, VERSION, NAME, CREDIT) VALUES  (4, 0, 'customer4', 100000)");
+    }
 
-	}
+    /**
+     * 배치작업 테스트
+     */
+    @Test
+    public void testUpdateCredit() throws Exception {
 
-	/**
-	 * 배치작업 테스트
-	 */
-	@Test
-	public void testUpdateCredit() throws Exception {
+        assertTrue("Define a prototype bean called 'outputTestReader' to check the output", applicationContext.containsBeanDefinition("outputTestReader"));
 
-		assertTrue("Define a prototype bean called 'outputTestReader' to check the output", applicationContext.containsBeanDefinition("outputTestReader"));
+        open(inputReader);
+        List<CustomerCredit> inputs = new ArrayList<CustomerCredit>(getCredits(inputReader));
+        close(inputReader);
 
-		open(inputReader);
-		List<CustomerCredit> inputs = new ArrayList<CustomerCredit>(getCredits(inputReader));
-		close(inputReader);
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob();
+        assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
 
-		JobExecution jobExecution = jobLauncherTestUtils.launchJob();
-		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
+        @SuppressWarnings("unchecked")
+        ItemReader<CustomerCredit> outputReader = (ItemReader<CustomerCredit>) applicationContext.getBean("outputTestReader");
+        open(outputReader);
+        List<CustomerCredit> outputs = new ArrayList<CustomerCredit>(getCredits(outputReader));
+        close(outputReader);
 
-		@SuppressWarnings("unchecked")
-		ItemReader<CustomerCredit> outputReader = (ItemReader<CustomerCredit>) applicationContext.getBean("outputTestReader");
-		open(outputReader);
-		List<CustomerCredit> outputs = new ArrayList<CustomerCredit>(getCredits(outputReader));
-		close(outputReader);
+        assertEquals(inputs.size(), outputs.size());
+        int itemCount = inputs.size();
+        assertTrue(itemCount > 0);
 
-		assertEquals(inputs.size(), outputs.size());
-		int itemCount = inputs.size();
-		assertTrue(itemCount > 0);
+        inputs.iterator();
+        for (int i = 0; i < itemCount; i++) {
+            assertEquals(inputs.get(i).getCredit().intValue(), outputs.get(i).getCredit().intValue());
+        }
+    }
 
-		inputs.iterator();
-		for (int i = 0; i < itemCount; i++) {
-			assertEquals(inputs.get(i).getCredit().intValue(), outputs.get(i).getCredit().intValue());
-		}
-	}
+    /**
+     * 배치작업의 결과값을 set로 만드는 메소드
+     *
+     * @param reader
+     * @return Set<CustomerCredit>
+     * @throws Exception
+     */
+    private Set<CustomerCredit> getCredits(ItemReader<CustomerCredit> reader) throws Exception {
+        CustomerCredit credit;
+        Set<CustomerCredit> result = new LinkedHashSet<CustomerCredit>();
+        while ((credit = reader.read()) != null) {
+            result.add(credit);
+        }
+        return result;
 
-	/**
-	  * 배치작업의 결과값을 set로 만드는 메소드
-	  * @param reader
-	  * @return Set<CustomerCredit>
-	  * @throws Exception
-	  */
-	private Set<CustomerCredit> getCredits(ItemReader<CustomerCredit> reader) throws Exception {
-		CustomerCredit credit;
-		Set<CustomerCredit> result = new LinkedHashSet<CustomerCredit>();
-		while ((credit = reader.read()) != null) {
-			result.add(credit);
-		}
-		return result;
+    }
 
-	}
+    /**
+     * reader를 open하는 메소드
+     *
+     * @param reader
+     */
+    private void open(ItemReader<?> reader) {
+        if (reader instanceof ItemStream) {
+            ((ItemStream) reader).open(new ExecutionContext());
+        }
+    }
 
-	/**
-	 * reader를 open하는 메소드
-	 * @param reader
-	 */
-	private void open(ItemReader<?> reader) {
-		if (reader instanceof ItemStream) {
-			((ItemStream) reader).open(new ExecutionContext());
-		}
-	}
-
-	/**
-	 * reader를 close하는 메소드
-	 * @param reader
-	 */
-	private void close(ItemReader<?> reader) {
-		if (reader instanceof ItemStream) {
-			((ItemStream) reader).close();
-		}
-	}
+    /**
+     * reader를 close하는 메소드
+     *
+     * @param reader
+     */
+    private void close(ItemReader<?> reader) {
+        if (reader instanceof ItemStream) {
+            ((ItemStream) reader).close();
+        }
+    }
 
 }

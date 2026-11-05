@@ -12,8 +12,7 @@ public class SampleRepository extends EgovRedisRepository<Sample> {
 
     public SampleRepository(
             @Qualifier("reactiveRedisConnectionFactory") ReactiveRedisConnectionFactory connectionFactory,
-            @Qualifier("sampleSerializationContext") RedisSerializationContext serializationContext)
-    {
+            @Qualifier("sampleSerializationContext") RedisSerializationContext serializationContext) {
         super(connectionFactory, serializationContext);
     }
 
@@ -22,7 +21,7 @@ public class SampleRepository extends EgovRedisRepository<Sample> {
     }
 
     public Mono<Sample> selectOneSample(String id) {
-        return this.selectAllSample().filter(v->v.getId().equals(id)).last();
+        return this.selectAllSample().filter(v -> v.getId().equals(id)).last();
     }
 
     public Mono<Long> countSample() {
@@ -34,7 +33,7 @@ public class SampleRepository extends EgovRedisRepository<Sample> {
     }
 
     public Mono<Sample> updateSample(Sample sample) {
-        return findIndex("sample", sample).flatMap(idx->updateData("sample", idx, sample));
+        return findIndex("sample", sample).flatMap(idx -> updateData("sample", idx, sample));
     }
 
     public Mono<Boolean> deleteAllSample() {

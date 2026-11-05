@@ -18,11 +18,10 @@ package org.egovframe.rte.fdl.security.config;
 
 /**
  * egov-security schema namespace 처리를 담당하는 bean 클래스
- * 
- *<p>Desc.: 설정 간소화 처리에 사용되는 bean으로 설정에 대한 정보를 보관</p>
+ *
+ * <p>Desc.: 설정 간소화 처리에 사용되는 bean으로 설정에 대한 정보를 보관</p>
  *
  * @author Vincent Han
- * @since 2014.03.12
  * @version 3.0
  * <pre>
  * 개정이력(Modification Information)
@@ -31,62 +30,63 @@ package org.egovframe.rte.fdl.security.config;
  * ----------------------------------------------
  * 2014.03.12	한성곤				Spring Security 설정 간소화 기능 추가
  * </pre>
+ * @since 2014.03.12
  */
 public class SecuredObjectConfig {
-    
+
     private String sqlRolesAndUrl;
     private String sqlRolesAndMethod;
     private String sqlRolesAndPointcut;
     private String sqlRegexMatchedRequestMapping;
     private String sqlHierarchicalRoles;
-	private String roleHierarchyString;
+    private String roleHierarchyString;
 
-	public String getSqlRolesAndUrl() {
-		return sqlRolesAndUrl;
-	}
+    public String getSqlRolesAndUrl() {
+        return sqlRolesAndUrl;
+    }
 
-	public void setSqlRolesAndUrl(String sqlRolesAndUrl) {
-		this.sqlRolesAndUrl = sqlRolesAndUrl;
-	}
+    public void setSqlRolesAndUrl(String sqlRolesAndUrl) {
+        this.sqlRolesAndUrl = sqlRolesAndUrl;
+    }
 
-	public String getSqlRolesAndMethod() {
-		return sqlRolesAndMethod;
-	}
+    public String getSqlRolesAndMethod() {
+        return sqlRolesAndMethod;
+    }
 
-	public void setSqlRolesAndMethod(String sqlRolesAndMethod) {
-		this.sqlRolesAndMethod = sqlRolesAndMethod;
-	}
+    public void setSqlRolesAndMethod(String sqlRolesAndMethod) {
+        this.sqlRolesAndMethod = sqlRolesAndMethod;
+    }
 
-	public String getSqlRolesAndPointcut() {
-		return sqlRolesAndPointcut;
-	}
+    public String getSqlRolesAndPointcut() {
+        return sqlRolesAndPointcut;
+    }
 
-	public void setSqlRolesAndPointcut(String sqlRolesAndPointcut) {
-		this.sqlRolesAndPointcut = sqlRolesAndPointcut;
-	}
+    public void setSqlRolesAndPointcut(String sqlRolesAndPointcut) {
+        this.sqlRolesAndPointcut = sqlRolesAndPointcut;
+    }
 
-	public String getSqlRegexMatchedRequestMapping() {
-		return sqlRegexMatchedRequestMapping;
-	}
+    public String getSqlRegexMatchedRequestMapping() {
+        return sqlRegexMatchedRequestMapping;
+    }
 
-	public void setSqlRegexMatchedRequestMapping(String sqlRegexMatchedRequestMapping) {
-		this.sqlRegexMatchedRequestMapping = sqlRegexMatchedRequestMapping;
-	}
+    public void setSqlRegexMatchedRequestMapping(String sqlRegexMatchedRequestMapping) {
+        this.sqlRegexMatchedRequestMapping = sqlRegexMatchedRequestMapping;
+    }
 
-	public String getSqlHierarchicalRoles() {
-		return sqlHierarchicalRoles;
-	}
+    public String getSqlHierarchicalRoles() {
+        return sqlHierarchicalRoles;
+    }
 
-	public void setSqlHierarchicalRoles(String sqlHierarchicalRoles) {
-		this.sqlHierarchicalRoles = sqlHierarchicalRoles;
-	}
+    public void setSqlHierarchicalRoles(String sqlHierarchicalRoles) {
+        this.sqlHierarchicalRoles = sqlHierarchicalRoles;
+    }
 
-	public String getRoleHierarchyString() {
-		return roleHierarchyString;
-	}
+    public String getRoleHierarchyString() {
+        return roleHierarchyString;
+    }
 
-	public void setRoleHierarchyString(String roleHierarchyString) {
-		this.roleHierarchyString = roleHierarchyString;
-	}
+    public void setRoleHierarchyString(String roleHierarchyString) {
+        this.roleHierarchyString = roleHierarchyString;
+    }
 
 }

@@ -23,7 +23,6 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
  * <p>Desc.: 설정 간소화 처리에 사용되는 namespace handler</p>
  *
  * @author ESFC
- * @since 2019.10.01
  * @version 3.9
  * <pre>
  * 개정이력(Modification Information)
@@ -32,11 +31,12 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
  * ----------------------------------------------
  * 2019.10.01	ESFC            최초 생성
  * </pre>
+ * @since 2019.10.01
  */
 public class EgovAccessConfigNameHandler extends NamespaceHandlerSupport {
 
     public void init() {
-       registerBeanDefinitionParser("config", new EgovAccessConfigBeanDefinitionParser());
+        registerBeanDefinitionParser("config", new EgovAccessConfigBeanDefinitionParser());
     }
 
 }

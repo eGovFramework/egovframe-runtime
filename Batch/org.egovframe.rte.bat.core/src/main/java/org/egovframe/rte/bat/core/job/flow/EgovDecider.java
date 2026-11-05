@@ -1,6 +1,6 @@
 /*
- * Copyright 2012-2014 MOSPA(Ministry of Security and Public Administration).
- *  
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,8 +22,8 @@ import org.springframework.batch.core.job.flow.JobExecutionDecider;
 
 /**
  * stepExecution의 exitCode를 변경 없이 return 하는 클래스
+ *
  * @author 실행환경 개발팀
- * @since 2012.07.20
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -32,14 +32,15 @@ import org.springframework.batch.core.job.flow.JobExecutionDecider;
  * ----------------------------------------------
  * 2012.07.20	실행환경개발팀		최초 생성
  * </pre>
-*/
+ * @since 2012.07.20
+ */
 public class EgovDecider implements JobExecutionDecider {
 
-	/**
-	 * stepExecution의 exitCode를 변경 없이 return
-	 */
-	public FlowExecutionStatus decide(JobExecution jobExecution, StepExecution stepExecution) {
-		return new FlowExecutionStatus(stepExecution.getExitStatus().getExitCode());
-	}
+    /**
+     * stepExecution의 exitCode를 변경 없이 return
+     */
+    public FlowExecutionStatus decide(JobExecution jobExecution, StepExecution stepExecution) {
+        return new FlowExecutionStatus(stepExecution.getExitStatus().getExitCode());
+    }
 
 }

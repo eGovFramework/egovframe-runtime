@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 MOPAS(Ministry of Public Administration and Security).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,8 @@ package org.egovframe.rte.itl.integration;
  * 전자정부 연계 서비스 Exception 구현 클래스
  * <p>
  * <b>NOTE:</b> 전자정부 연계 서비스 Exception Class이다. </p>
- * 
+ *
  * @author 실행환경 개발팀 심상호
- * @since 2009.06.01
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -30,28 +29,29 @@ package org.egovframe.rte.itl.integration;
  * ----------------------------------------------
  * 2009.06.01	심상호				최초 생성
  * </pre>
+ * @since 2009.06.01
  */
 public class EgovIntegrationNoSuchServiceException extends EgovIntegrationException {
 
-	/**
-	 * serialVersion UID
-	 */
-	private static final long serialVersionUID = 901444084642853859L;
+    /**
+     * serialVersion UID
+     */
+    private static final long serialVersionUID = 901444084642853859L;
 
-	public EgovIntegrationNoSuchServiceException() {
-		super();
-	}
+    public EgovIntegrationNoSuchServiceException() {
+        super();
+    }
 
-	public EgovIntegrationNoSuchServiceException(String arg0, Throwable arg1) {
-		super(arg0, arg1);
-	}
+    public EgovIntegrationNoSuchServiceException(String arg0, Throwable arg1) {
+        super(arg0, arg1);
+    }
 
-	public EgovIntegrationNoSuchServiceException(String arg0) {
-		super(arg0);
-	}
+    public EgovIntegrationNoSuchServiceException(String arg0) {
+        super(arg0);
+    }
 
-	public EgovIntegrationNoSuchServiceException(Throwable arg0) {
-		super(arg0);
-	}
+    public EgovIntegrationNoSuchServiceException(Throwable arg0) {
+        super(arg0);
+    }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 MOPAS(Ministry of Public Administration and Security).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,10 @@ import reactor.util.context.Context;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -32,8 +35,12 @@ import java.util.stream.Collectors;
  *
  * <p>Desc.: MDC 서비스를 위한 Sequence 구현 클래스</p>
  *
+ * <p><b>보안 주의:</b> Reactor {@link Context}에 담긴 key-value를 MDC(로그)에 복사한다. 세션ID·인증 토큰·
+ * 개인정보 등 민감한 값을 Reactor Context에 저장한다면 로그에 그대로 노출될 수 있다(CWE-532).
+ * 민감한 키를 로그에서 제외하려면 {@link #setExcludedKeys(Set)}으로 지정하라(기본값은 빈 집합=제외 없음,
+ * 기존 동작과 동일).</p>
+ *
  * @author ESFC
- * @since 2023.08.31
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -41,9 +48,26 @@ import java.util.stream.Collectors;
  * 수정일		수정자				수정내용
  * ----------------------------------------------
  * 2023.08.31   ESFC            최초 생성
+ * 2026.10.25   실행환경 개발팀      MDC 복사 제외 키(setExcludedKeys) 추가 - CWE-532
  * </pre>
+ * @since 2023.08.31
  */
 public class EgovMdcContextConfig {
+
+    /** MDC로 복사하지 않을 Reactor Context 키 집합. 기본값은 빈 집합(제외 없음, 기존 동작과 동일). */
+    private static volatile Set<String> excludedKeys = Collections.emptySet();
+
+    /**
+     * 민감정보가 담길 수 있는 Reactor Context 키를 MDC(로그) 복사 대상에서 제외하려면 이 메서드로
+     * 지정한다. null 또는 빈 집합을 넘기면 제외 목록이 해제된다(기본값).
+     *
+     * @param keys 로그에서 제외할 Context 키 집합
+     */
+    public static void setExcludedKeys(Set<String> keys) {
+        excludedKeys = (keys == null || keys.isEmpty())
+                ? Collections.<String>emptySet()
+                : Collections.unmodifiableSet(new HashSet<String>(keys));
+    }
 
     public static final String MDC_CONTEXT_KEY = EgovMdcContextConfig.class.getName();
 
@@ -100,7 +124,10 @@ public class EgovMdcContextConfig {
          */
         private void copyToMdc(Context context) {
             if (context != null && !context.isEmpty()) {
-                Map<String, String> map = context.stream().collect(Collectors.toMap(e -> e.getKey().toString(), e -> e.getValue().toString()));
+                Set<String> excluded = excludedKeys;
+                Map<String, String> map = context.stream()
+                        .filter(e -> !excluded.contains(e.getKey().toString()))
+                        .collect(Collectors.toMap(e -> e.getKey().toString(), e -> e.getValue().toString()));
                 MDC.setContextMap(map);
             } else {
                 MDC.clear();

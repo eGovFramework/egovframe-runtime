@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 MOPAS(Ministry of Public Administration and Security).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import java.util.*;
  * <b>NOTE:</b> 전자정부 연계 서비스의 표준 메시지를 정의하기 위한 Class 이다. Primitive Type을 정의하기 위한
  * Class로 Java의 Primitive Type 및 기본 Type을 제공한다.
  * </p>
- * 
+ *
  * <ul>
  * <li><code>BOOLEAN</code> : <code>boolean</code>,
  * <code>java.lang.Boolean</code>
@@ -41,9 +41,8 @@ import java.util.*;
  * <li><code>CALENDAR</code> : <code>java.util.Calendar</code>,
  * <code>java.util.Date</code> (일자 + 시각)
  * </ul>
- * 
+ *
  * @author 실행환경 개발팀 심상호
- * @since 2009.06.01
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -52,66 +51,9 @@ import java.util.*;
  * ----------------------------------------------
  * 2009.06.01	심상호				최초 생성
  * </pre>
+ * @since 2009.06.01
  */
 public abstract class PrimitiveType extends AbstractType {
-
-    /**
-     * Default Constructor
-     */
-    protected PrimitiveType() {
-        super();
-    }
-
-    /**
-     * Argument <code>id</code>를 id로 가진 PrimitiveType을
-     * 생성한다.
-     * @param id
-     *        id
-     * @param name
-     *        name
-     * @param assignableClasses
-     *        Assign 할 수 있는 Java 객체의 Class들
-     * @throws IllegalArgumentException
-     *         1. Argument <code>id</code> 값이
-     *         <code>null</code>이거나, 공백 문자로만 이루어진 경우 2.
-     *         Argument <code>name</code> 값이
-     *         <code>null</code>이거나, 공백 문자로만 이루어진 경우 3.
-     *         Argument <code>assignableClasses</code>가
-     *         <code>null</code>이거나 빈 Array인 경우
-     */
-    protected PrimitiveType(final String id, final String name,
-            final Class<?>[] assignableClasses) {
-        super(id, name, assignableClasses);
-    }
-
-    /**
-     * Argument <code>id</code>를 id로 가진 PrimitiveType을
-     * 생성한다.
-     * @param id
-     *        id
-     * @param name
-     *        name
-     * @param assignableClasses
-     *        Assign 할 수 있는 Java 객체의 Class들
-     * @throws IllegalArgumentException
-     *         1. Argument <code>id</code> 값이
-     *         <code>null</code>이거나, 공백 문자로만 이루어진 경우 2.
-     *         Argument <code>name</code> 값이
-     *         <code>null</code>이거나, 공백 문자로만 이루어진 경우 3.
-     *         Argument <code>assignableClasses</code>가
-     *         <code>null</code>이거나 빈 List인 경우
-     */
-    protected PrimitiveType(final String id, final String name,
-            final List<Class<?>> assignableClasses) {
-        super(id, name, assignableClasses);
-    }
-
-    public boolean isAssignableValue(Object source) {
-        if (source == null) {
-            return true;
-        }
-        return isAssignableFrom(source.getClass());
-    }
 
     /**
      * <code>BOOLEAN</code> Type
@@ -123,19 +65,18 @@ public abstract class PrimitiveType extends AbstractType {
      * </ul>
      */
     public static final PrimitiveType BOOLEAN =
-        new PrimitiveType("boolean", "boolean", new Class<?>[] {boolean.class,
-            Boolean.class }) {
-            public Object convertToTypedObject(final Object source) {
-                if (source == null) {
-                    return null;
+            new PrimitiveType("boolean", "boolean", new Class<?>[]{boolean.class,
+                    Boolean.class}) {
+                public Object convertToTypedObject(final Object source) {
+                    if (source == null) {
+                        return null;
+                    }
+                    if (isAssignableFrom(source.getClass()) == false) {
+                        throw new UnassignableValueException();
+                    }
+                    return (Boolean) source;
                 }
-                if (isAssignableFrom(source.getClass()) == false) {
-                    throw new UnassignableValueException();
-                }
-                return (Boolean) source;
-            }
-        };
-
+            };
     /**
      * <code>STRING</code> Type
      * <p>
@@ -145,18 +86,17 @@ public abstract class PrimitiveType extends AbstractType {
      * </ul>
      */
     public static final PrimitiveType STRING =
-        new PrimitiveType("string", "string", new Class<?>[] {String.class }) {
-            public Object convertToTypedObject(final Object source) {
-                if (source == null) {
-                    return null;
+            new PrimitiveType("string", "string", new Class<?>[]{String.class}) {
+                public Object convertToTypedObject(final Object source) {
+                    if (source == null) {
+                        return null;
+                    }
+                    if (isAssignableFrom(source.getClass()) == false) {
+                        throw new UnassignableValueException();
+                    }
+                    return (String) source;
                 }
-                if (isAssignableFrom(source.getClass()) == false) {
-                    throw new UnassignableValueException();
-                }
-                return (String) source;
-            }
-        };
-
+            };
     /**
      * <code>BYTE</code> Type
      * <p>
@@ -167,19 +107,18 @@ public abstract class PrimitiveType extends AbstractType {
      * </ul>
      */
     public static final PrimitiveType BYTE =
-        new PrimitiveType("byte", "byte", new Class<?>[] {byte.class,
-            Byte.class }) {
-            public Object convertToTypedObject(final Object source) {
-                if (source == null) {
-                    return null;
+            new PrimitiveType("byte", "byte", new Class<?>[]{byte.class,
+                    Byte.class}) {
+                public Object convertToTypedObject(final Object source) {
+                    if (source == null) {
+                        return null;
+                    }
+                    if (isAssignableFrom(source.getClass()) == false) {
+                        throw new UnassignableValueException();
+                    }
+                    return ((Number) source).byteValue();
                 }
-                if (isAssignableFrom(source.getClass()) == false) {
-                    throw new UnassignableValueException();
-                }
-                return ((Number) source).byteValue();
-            }
-        };
-
+            };
     /**
      * <code>SHORT</code> Type
      * <p>
@@ -192,19 +131,18 @@ public abstract class PrimitiveType extends AbstractType {
      * </ul>
      */
     public static final PrimitiveType SHORT =
-        new PrimitiveType("short", "short", new Class<?>[] {byte.class,
-            Byte.class, short.class, Short.class }) {
-            public Object convertToTypedObject(final Object source) {
-                if (source == null) {
-                    return null;
+            new PrimitiveType("short", "short", new Class<?>[]{byte.class,
+                    Byte.class, short.class, Short.class}) {
+                public Object convertToTypedObject(final Object source) {
+                    if (source == null) {
+                        return null;
+                    }
+                    if (isAssignableFrom(source.getClass()) == false) {
+                        throw new UnassignableValueException();
+                    }
+                    return ((Number) source).shortValue();
                 }
-                if (isAssignableFrom(source.getClass()) == false) {
-                    throw new UnassignableValueException();
-                }
-                return ((Number) source).shortValue();
-            }
-        };
-
+            };
     /**
      * <code>INTEGER</code> Type
      * <p>
@@ -219,19 +157,18 @@ public abstract class PrimitiveType extends AbstractType {
      * </ul>
      */
     public static final PrimitiveType INTEGER =
-        new PrimitiveType("integer", "integer", new Class<?>[] {byte.class,
-            Byte.class, short.class, Short.class, int.class, Integer.class }) {
-            public Object convertToTypedObject(final Object source) {
-                if (source == null) {
-                    return null;
+            new PrimitiveType("integer", "integer", new Class<?>[]{byte.class,
+                    Byte.class, short.class, Short.class, int.class, Integer.class}) {
+                public Object convertToTypedObject(final Object source) {
+                    if (source == null) {
+                        return null;
+                    }
+                    if (isAssignableFrom(source.getClass()) == false) {
+                        throw new UnassignableValueException();
+                    }
+                    return ((Number) source).intValue();
                 }
-                if (isAssignableFrom(source.getClass()) == false) {
-                    throw new UnassignableValueException();
-                }
-                return ((Number) source).intValue();
-            }
-        };
-
+            };
     /**
      * <code>LONG</code> Type
      * <p>
@@ -248,20 +185,19 @@ public abstract class PrimitiveType extends AbstractType {
      * </ul>
      */
     public static final PrimitiveType LONG =
-        new PrimitiveType("long", "long", new Class<?>[] {byte.class,
-            Byte.class, short.class, Short.class, int.class, Integer.class,
-            long.class, Long.class }) {
-            public Object convertToTypedObject(final Object source) {
-                if (source == null) {
-                    return null;
+            new PrimitiveType("long", "long", new Class<?>[]{byte.class,
+                    Byte.class, short.class, Short.class, int.class, Integer.class,
+                    long.class, Long.class}) {
+                public Object convertToTypedObject(final Object source) {
+                    if (source == null) {
+                        return null;
+                    }
+                    if (isAssignableFrom(source.getClass()) == false) {
+                        throw new UnassignableValueException();
+                    }
+                    return ((Number) source).longValue();
                 }
-                if (isAssignableFrom(source.getClass()) == false) {
-                    throw new UnassignableValueException();
-                }
-                return ((Number) source).longValue();
-            }
-        };
-
+            };
     /**
      * <code>BIGINTEGER</code> Type
      * <p>
@@ -279,23 +215,22 @@ public abstract class PrimitiveType extends AbstractType {
      * </ul>
      */
     public static final PrimitiveType BIGINTEGER =
-        new PrimitiveType("biginteger", "biginteger", new Class<?>[] {
-            byte.class, Byte.class, short.class, Short.class, int.class,
-            Integer.class, long.class, Long.class, BigInteger.class }) {
-            public Object convertToTypedObject(final Object source) {
-                if (source == null) {
-                    return null;
+            new PrimitiveType("biginteger", "biginteger", new Class<?>[]{
+                    byte.class, Byte.class, short.class, Short.class, int.class,
+                    Integer.class, long.class, Long.class, BigInteger.class}) {
+                public Object convertToTypedObject(final Object source) {
+                    if (source == null) {
+                        return null;
+                    }
+                    if (isAssignableFrom(source.getClass()) == false) {
+                        throw new UnassignableValueException();
+                    }
+                    if (source instanceof BigInteger) {
+                        return source;
+                    }
+                    return BigInteger.valueOf(((Number) source).longValue());
                 }
-                if (isAssignableFrom(source.getClass()) == false) {
-                    throw new UnassignableValueException();
-                }
-                if (source instanceof BigInteger) {
-                    return source;
-                }
-                return BigInteger.valueOf(((Number) source).longValue());
-            }
-        };
-
+            };
     /**
      * <code>FLOAT</code> Type
      * <p>
@@ -310,19 +245,18 @@ public abstract class PrimitiveType extends AbstractType {
      * </ul>
      */
     public static final PrimitiveType FLOAT =
-        new PrimitiveType("float", "float", new Class<?>[] {byte.class,
-            Byte.class, short.class, Short.class, float.class, Float.class }) {
-            public Object convertToTypedObject(final Object source) {
-                if (source == null) {
-                    return null;
+            new PrimitiveType("float", "float", new Class<?>[]{byte.class,
+                    Byte.class, short.class, Short.class, float.class, Float.class}) {
+                public Object convertToTypedObject(final Object source) {
+                    if (source == null) {
+                        return null;
+                    }
+                    if (isAssignableFrom(source.getClass()) == false) {
+                        throw new UnassignableValueException();
+                    }
+                    return ((Number) source).floatValue();
                 }
-                if (isAssignableFrom(source.getClass()) == false) {
-                    throw new UnassignableValueException();
-                }
-                return ((Number) source).floatValue();
-            }
-        };
-
+            };
     /**
      * <code>DOUBLE</code> Type
      * <p>
@@ -341,20 +275,19 @@ public abstract class PrimitiveType extends AbstractType {
      * </ul>
      */
     public static final PrimitiveType DOUBLE =
-        new PrimitiveType("double", "double", new Class<?>[] {byte.class,
-            Byte.class, short.class, Short.class, int.class, Integer.class,
-            float.class, Float.class, double.class, Double.class }) {
-            public Object convertToTypedObject(final Object source) {
-                if (source == null) {
-                    return null;
+            new PrimitiveType("double", "double", new Class<?>[]{byte.class,
+                    Byte.class, short.class, Short.class, int.class, Integer.class,
+                    float.class, Float.class, double.class, Double.class}) {
+                public Object convertToTypedObject(final Object source) {
+                    if (source == null) {
+                        return null;
+                    }
+                    if (isAssignableFrom(source.getClass()) == false) {
+                        throw new UnassignableValueException();
+                    }
+                    return ((Number) source).doubleValue();
                 }
-                if (isAssignableFrom(source.getClass()) == false) {
-                    throw new UnassignableValueException();
-                }
-                return ((Number) source).doubleValue();
-            }
-        };
-
+            };
     /**
      * <code>BIGDECIMAL</code> Type
      * <p>
@@ -377,30 +310,29 @@ public abstract class PrimitiveType extends AbstractType {
      * </ul>
      */
     public static final PrimitiveType BIGDECIMAL =
-        new PrimitiveType("bigdecimal", "bigdecimal", new Class<?>[] {
-            byte.class, Byte.class, short.class, Short.class, int.class,
-            Integer.class, long.class, Long.class, BigInteger.class,
-            float.class, Float.class, double.class, Double.class,
-            BigDecimal.class }) {
-            public Object convertToTypedObject(final Object source) {
-                if (source == null) {
-                    return null;
+            new PrimitiveType("bigdecimal", "bigdecimal", new Class<?>[]{
+                    byte.class, Byte.class, short.class, Short.class, int.class,
+                    Integer.class, long.class, Long.class, BigInteger.class,
+                    float.class, Float.class, double.class, Double.class,
+                    BigDecimal.class}) {
+                public Object convertToTypedObject(final Object source) {
+                    if (source == null) {
+                        return null;
+                    }
+                    if (isAssignableFrom(source.getClass()) == false) {
+                        throw new UnassignableValueException();
+                    }
+                    if (source instanceof BigDecimal) {
+                        return source;
+                    } else if (source instanceof BigInteger) {
+                        return new BigDecimal((BigInteger) source);
+                    } else if (BIGINTEGER.isAssignableValue(source)) {
+                        return new BigDecimal((BigInteger) BIGINTEGER
+                                .convertToTypedObject(source));
+                    }
+                    return BigDecimal.valueOf(((Number) source).doubleValue());
                 }
-                if (isAssignableFrom(source.getClass()) == false) {
-                    throw new UnassignableValueException();
-                }
-                if (source instanceof BigDecimal) {
-                    return source;
-                } else if (source instanceof BigInteger) {
-                    return new BigDecimal((BigInteger) source);
-                } else if (BIGINTEGER.isAssignableValue(source)) {
-                    return new BigDecimal((BigInteger) BIGINTEGER
-                        .convertToTypedObject(source));
-                }
-                return BigDecimal.valueOf(((Number) source).doubleValue());
-            }
-        };
-
+            };
     /**
      * <code>CALENDAR</code> Type
      * <p>
@@ -411,61 +343,112 @@ public abstract class PrimitiveType extends AbstractType {
      * </ul>
      */
     public static final PrimitiveType CALENDAR =
-        new PrimitiveType("calendar", "calendar", new Class<?>[] {Date.class,
-            Calendar.class }) {
-            public Object convertToTypedObject(final Object source) {
-                if (source == null) {
-                    return null;
+            new PrimitiveType("calendar", "calendar", new Class<?>[]{Date.class,
+                    Calendar.class}) {
+                public Object convertToTypedObject(final Object source) {
+                    if (source == null) {
+                        return null;
+                    }
+                    if (isAssignableFrom(source.getClass()) == false) {
+                        throw new UnassignableValueException();
+                    }
+                    if (source instanceof Date) {
+                        Calendar value = Calendar.getInstance();
+                        value.setTime((Date) source);
+                        return value;
+                    } else {
+                        // Calendar
+                        return source;
+                    }
                 }
-                if (isAssignableFrom(source.getClass()) == false) {
-                    throw new UnassignableValueException();
-                }
-                if (source instanceof Date) {
-                    Calendar value = Calendar.getInstance();
-                    value.setTime((Date) source);
-                    return value;
-                } else {
-                    // Calendar
-                    return source;
-                }
-            }
-        };
-
+            };
     protected static final Map<String, PrimitiveType> primitiveTypes =
-        new HashMap<String, PrimitiveType>() {
-            /**
-			 *  serialVersion UID
-			 */
-			private static final long serialVersionUID = -5126785475742494349L;
+            new HashMap<String, PrimitiveType>() {
+                /**
+                 *  serialVersion UID
+                 */
+                private static final long serialVersionUID = -5126785475742494349L;
 
-			private void putType(final PrimitiveType type) {
-                put(type.getId(), type);
-            }
+                {
+                    putType(BOOLEAN);
+                    putType(STRING);
+                    putType(BYTE);
+                    putType(SHORT);
+                    putType(INTEGER);
+                    putType(LONG);
+                    putType(BIGINTEGER);
+                    putType(FLOAT);
+                    putType(DOUBLE);
+                    putType(BIGDECIMAL);
+                    putType(CALENDAR);
+                }
 
-            {
-                putType(BOOLEAN);
-                putType(STRING);
-                putType(BYTE);
-                putType(SHORT);
-                putType(INTEGER);
-                putType(LONG);
-                putType(BIGINTEGER);
-                putType(FLOAT);
-                putType(DOUBLE);
-                putType(BIGDECIMAL);
-                putType(CALENDAR);
-            }
-        };
+                private void putType(final PrimitiveType type) {
+                    put(type.getId(), type);
+                }
+            };
+
+    /**
+     * Default Constructor
+     */
+    protected PrimitiveType() {
+        super();
+    }
+
+    /**
+     * Argument <code>id</code>를 id로 가진 PrimitiveType을
+     * 생성한다.
+     *
+     * @param id                id
+     * @param name              name
+     * @param assignableClasses Assign 할 수 있는 Java 객체의 Class들
+     * @throws IllegalArgumentException 1. Argument <code>id</code> 값이
+     *                                  <code>null</code>이거나, 공백 문자로만 이루어진 경우 2.
+     *                                  Argument <code>name</code> 값이
+     *                                  <code>null</code>이거나, 공백 문자로만 이루어진 경우 3.
+     *                                  Argument <code>assignableClasses</code>가
+     *                                  <code>null</code>이거나 빈 Array인 경우
+     */
+    protected PrimitiveType(final String id, final String name,
+                            final Class<?>[] assignableClasses) {
+        super(id, name, assignableClasses);
+    }
+
+    /**
+     * Argument <code>id</code>를 id로 가진 PrimitiveType을
+     * 생성한다.
+     *
+     * @param id                id
+     * @param name              name
+     * @param assignableClasses Assign 할 수 있는 Java 객체의 Class들
+     * @throws IllegalArgumentException 1. Argument <code>id</code> 값이
+     *                                  <code>null</code>이거나, 공백 문자로만 이루어진 경우 2.
+     *                                  Argument <code>name</code> 값이
+     *                                  <code>null</code>이거나, 공백 문자로만 이루어진 경우 3.
+     *                                  Argument <code>assignableClasses</code>가
+     *                                  <code>null</code>이거나 빈 List인 경우
+     */
+    protected PrimitiveType(final String id, final String name,
+                            final List<Class<?>> assignableClasses) {
+        super(id, name, assignableClasses);
+    }
 
     /**
      * PrimitiveType instance를 얻어온다.
-     * @param id
-     *        type id
+     *
+     * @param id type id
      * @return PrimitiveType이 있을 경우 PrimitiveType
-     *         instance, 없으면 <code>null</code>
+     * instance, 없으면 <code>null</code>
      */
     public static PrimitiveType getPrimitiveType(final String id) {
         return primitiveTypes.get(id);
+    }
+
+    public boolean isAssignableValue(Object source) {
+        if (source == null) {
+            return true;
+        }
+        return isAssignableFrom(source.getClass());
     }
 
 }

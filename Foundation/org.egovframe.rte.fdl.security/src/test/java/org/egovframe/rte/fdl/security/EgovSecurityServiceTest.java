@@ -49,15 +49,15 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
-    "classpath*:META-INF/spring/context-common.xml",
-    "classpath*:META-INF/spring/context-datasource-jdbc.xml"
-    })
+        "classpath*:META-INF/spring/context-common.xml",
+        "classpath*:META-INF/spring/context-datasource-jdbc.xml"
+})
 public class EgovSecurityServiceTest {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(EgovSecurityServiceTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EgovSecurityServiceTest.class);
 
-	@Autowired
-	private ApplicationContext context;
+    @Autowired
+    private ApplicationContext context;
 
     @Resource(name = "dataSource")
     private DataSource dataSource;
@@ -70,189 +70,198 @@ public class EgovSecurityServiceTest {
 
     @Before
     public void onSetUp() throws Exception {
-    	LOGGER.debug("###### EgovSecurityServiceTest.onSetUp START ######");
+        LOGGER.debug("###### EgovSecurityServiceTest.onSetUp START ######");
 
-    	isHsql = "hsql".equals(jdbcProperties.getProperty("usingDBMS"));
+        isHsql = "hsql".equals(jdbcProperties.getProperty("usingDBMS"));
 
-    	if (isHsql) {
-			ScriptUtils.executeSqlScript(dataSource.getConnection(), new ClassPathResource("META-INF/testdata/sample_schema_hsql.sql"));
+        if (isHsql) {
+            try (java.sql.Connection scriptConn = dataSource.getConnection()) {
+                ScriptUtils.executeSqlScript(scriptConn, new ClassPathResource("META-INF/testdata/sample_schema_hsql.sql"));
+            }
         }
 
-    	// 테이블 생성 후 테스트를 위하여 여기서 처리
-		context = new ClassPathXmlApplicationContext("classpath*:META-INF/spring/context-*.xml");
+        // 테이블 생성 후 테스트를 위하여 여기서 처리
+        context = new ClassPathXmlApplicationContext("classpath*:META-INF/spring/context-*.xml");
 
-		LOGGER.debug("###### EgovSecurityServiceTest.onSetUp END ######");
+        LOGGER.debug("###### EgovSecurityServiceTest.onSetUp END ######");
 
     }
 
     @After
     public void onTearDown() throws Exception {
 
-    	LOGGER.debug("###### EgovSecurityServiceTest.onTearDown START ######");
+        LOGGER.debug("###### EgovSecurityServiceTest.onTearDown START ######");
 
         isHsql = "hsql".equals(jdbcProperties.getProperty("usingDBMS"));
 
         if (isHsql) {
-			ScriptUtils.executeSqlScript(dataSource.getConnection(), new ClassPathResource("META-INF/testdata/sample_schema_hsql_drop.sql"));
+            try (java.sql.Connection scriptConn = dataSource.getConnection()) {
+                ScriptUtils.executeSqlScript(scriptConn, new ClassPathResource("META-INF/testdata/sample_schema_hsql_drop.sql"));
+            }
         }
 
         LOGGER.debug("###### EgovSecurityServiceTest.onTearDown END ######");
 
-    	SecurityContextHolder.clearContext();
+        SecurityContextHolder.clearContext();
     }
 
-	private <T extends Filter> T getSecurityFilter(Class<T> type) {
+    private <T extends Filter> T getSecurityFilter(Class<T> type) {
 
-		Map<String, DefaultSecurityFilterChain> filterChainMap = context.getBeansOfType(DefaultSecurityFilterChain.class);
+        Map<String, DefaultSecurityFilterChain> filterChainMap = context.getBeansOfType(DefaultSecurityFilterChain.class);
 
-		for (DefaultSecurityFilterChain filterChain : filterChainMap.values()) {
-			for (Filter filter : filterChain.getFilters()) {
-				if (type.isInstance(filter)) {
-					return type.cast(filter);
-				}
-			}
-		}
+        for (DefaultSecurityFilterChain filterChain : filterChainMap.values()) {
+            for (Filter filter : filterChain.getFilters()) {
+                if (type.isInstance(filter)) {
+                    return type.cast(filter);
+                }
+            }
+        }
 
-		throw new NoSuchBeanDefinitionException("No bean of type [" + type.getName() + "] is defined.");
-	}
+        throw new NoSuchBeanDefinitionException("No bean of type [" + type.getName() + "] is defined.");
+    }
 
     @Test
     public void testBeanList() {
-    	String[] list = context.getBeanDefinitionNames();
+        String[] list = context.getBeanDefinitionNames();
 
-    	for (String bean : list) {
-    		System.out.println("===> " + bean + " : " + context.getBean(bean).getClass());
+        for (String bean : list) {
+            System.out.println("===> " + bean + " : " + context.getBean(bean).getClass());
 
-    		if (context.getBean(bean) instanceof DefaultSecurityFilterChain) {
-    			DefaultSecurityFilterChain filterChain = (DefaultSecurityFilterChain) context.getBean(bean);
+            if (context.getBean(bean) instanceof DefaultSecurityFilterChain) {
+                DefaultSecurityFilterChain filterChain = (DefaultSecurityFilterChain) context.getBean(bean);
 
-    			List<Filter> filters = filterChain.getFilters();
+                List<Filter> filters = filterChain.getFilters();
 
-    			for (Filter filter : filters) {
+                for (Filter filter : filters) {
 
-    				System.out.println("======> " + filter + " : ");
-    			}
-    		}
-    	}
+                    System.out.println("======> " + filter + " : ");
+                }
+            }
+        }
     }
 
     @Test
     public void testGetSecurityFilter() {
-    		LogoutFilter logout  = getSecurityFilter(LogoutFilter.class);
+        LogoutFilter logout = getSecurityFilter(LogoutFilter.class);
 
-    		assertNotNull(logout);
+        assertNotNull(logout);
     }
 
     /**
      * DB에 사용자 정보(id/password)를 유지하여 인증처리 함.
      * DB에 등록된 사용자의 인증 확인 테스트
+     *
      * @throws Exception
      */
     @Test
     public void testAllowAccessForAuthorizedUser() throws Exception {
 
-		UsernamePasswordAuthenticationToken login = new UsernamePasswordAuthenticationToken("jimi", "jimi");
-		AuthenticationManager authManager = (AuthenticationManager) context.getBean(BeanIds.AUTHENTICATION_MANAGER);
+        UsernamePasswordAuthenticationToken login = new UsernamePasswordAuthenticationToken("jimi", "jimi");
+        AuthenticationManager authManager = (AuthenticationManager) context.getBean(BeanIds.AUTHENTICATION_MANAGER);
 
-		SecurityContextHolder.getContext().setAuthentication(authManager.authenticate(login));
-		LOGGER.debug("### jimi's password is right!!");
+        SecurityContextHolder.getContext().setAuthentication(authManager.authenticate(login));
+        LOGGER.debug("### jimi's password is right!!");
 
-		///////////
-		login = new UsernamePasswordAuthenticationToken("test", "test");
-		authManager = (AuthenticationManager) context.getBean(BeanIds.AUTHENTICATION_MANAGER);
+        ///////////
+        login = new UsernamePasswordAuthenticationToken("test", "test");
+        authManager = (AuthenticationManager) context.getBean(BeanIds.AUTHENTICATION_MANAGER);
 
-		SecurityContextHolder.getContext().setAuthentication(authManager.authenticate(login));
-		LOGGER.debug("### test's password is right!!");
+        SecurityContextHolder.getContext().setAuthentication(authManager.authenticate(login));
+        LOGGER.debug("### test's password is right!!");
 
-		///////////
-		login = new UsernamePasswordAuthenticationToken("user", "user");
-		authManager = (AuthenticationManager) context.getBean(BeanIds.AUTHENTICATION_MANAGER);
+        ///////////
+        login = new UsernamePasswordAuthenticationToken("user", "user");
+        authManager = (AuthenticationManager) context.getBean(BeanIds.AUTHENTICATION_MANAGER);
 
-		SecurityContextHolder.getContext().setAuthentication(authManager.authenticate(login));
-		LOGGER.debug("### user's password is right!!");
+        SecurityContextHolder.getContext().setAuthentication(authManager.authenticate(login));
+        LOGGER.debug("### user's password is right!!");
 
-		///////////
-		login = new UsernamePasswordAuthenticationToken("buyer", "buyer");
-		authManager = (AuthenticationManager) context.getBean(BeanIds.AUTHENTICATION_MANAGER);
+        ///////////
+        login = new UsernamePasswordAuthenticationToken("buyer", "buyer");
+        authManager = (AuthenticationManager) context.getBean(BeanIds.AUTHENTICATION_MANAGER);
 
-		SecurityContextHolder.getContext().setAuthentication(authManager.authenticate(login));
-		LOGGER.debug("### buyer's password is right!!");
+        SecurityContextHolder.getContext().setAuthentication(authManager.authenticate(login));
+        LOGGER.debug("### buyer's password is right!!");
 
     }
 
     /**
      * DB에 등록된 사용자의 인증 실패 테스트
+     *
      * @throws Exception
      */
-    @Test(expected=BadCredentialsException.class)
+    @Test(expected = BadCredentialsException.class)
     public void testRejectAccessForUnauthorizedUser() throws Exception {
 
-       UsernamePasswordAuthenticationToken login = new UsernamePasswordAuthenticationToken("jimi", "wrongpw");
-		AuthenticationManager authManager = (AuthenticationManager) context.getBean(BeanIds.AUTHENTICATION_MANAGER);
+        UsernamePasswordAuthenticationToken login = new UsernamePasswordAuthenticationToken("jimi", "wrongpw");
+        AuthenticationManager authManager = (AuthenticationManager) context.getBean(BeanIds.AUTHENTICATION_MANAGER);
 
-		LOGGER.debug("### jimi's password is wrong!!");
-       SecurityContextHolder.getContext().setAuthentication(authManager.authenticate(login));
+        LOGGER.debug("### jimi's password is wrong!!");
+        SecurityContextHolder.getContext().setAuthentication(authManager.authenticate(login));
 
     }
 
     /**
      * 메소드 수행이 허용된 메소드 실행 시 성공 테스트
+     *
      * @throws Exception
      */
     @Test
     public void testMethodAndRoleMapping() throws Exception {
 
-    	DelegatingMethodSecurityMetadataSource definitionsource = (DelegatingMethodSecurityMetadataSource) context.getBean("delegatingMethodSecurityMetadataSource");
-    	Method method = null;
-    	Collection<ConfigAttribute> role = null;
+        DelegatingMethodSecurityMetadataSource definitionsource = (DelegatingMethodSecurityMetadataSource) context.getBean("delegatingMethodSecurityMetadataSource");
+        Method method = null;
+        Collection<ConfigAttribute> role = null;
 
-    	// test1 : matched role
-    	try {
-    		method = CategoryController.class.getMethod("selectCategoryList", (Class<?>[])null);
-    	} catch (NoSuchMethodException nsme) {
-    		LOGGER.error("## testMethodAndRoleMapping : {}", nsme);
-    	}
+        // test1 : matched role
+        try {
+            method = CategoryController.class.getMethod("selectCategoryList", (Class<?>[]) null);
+        } catch (NoSuchMethodException nsme) {
+            LOGGER.error("## testMethodAndRoleMapping : {}", nsme);
+        }
 
-   		role = definitionsource.getAttributes(method, CategoryController.class);
+        role = definitionsource.getAttributes(method, CategoryController.class);
 
-   		assertEquals("ROLE_USER", role.toArray()[0].toString());
-   		LOGGER.debug("## testMethodAndRoleMapping : {} is {}", method.getName(), role.toArray()[0].toString());
+        assertEquals("ROLE_USER", role.toArray()[0].toString());
+        LOGGER.debug("## testMethodAndRoleMapping : {} is {}", method.getName(), role.toArray()[0].toString());
 
     }
 
     /**
      * 메소드 수행이 허용되지 않은 메소드 실행 시 실패 테스트
+     *
      * @throws Exception
      */
     @Test
     public void testFailedMethodAndRoleMapping() throws Exception {
 
-    	DelegatingMethodSecurityMetadataSource definitionsource = (DelegatingMethodSecurityMetadataSource) context.getBean("delegatingMethodSecurityMetadataSource");
-    	Method method = null;
-    	Collection<ConfigAttribute> role = null;
+        DelegatingMethodSecurityMetadataSource definitionsource = (DelegatingMethodSecurityMetadataSource) context.getBean("delegatingMethodSecurityMetadataSource");
+        Method method = null;
+        Collection<ConfigAttribute> role = null;
 
-    	// test1 : no matched role
-    	try {
-    		method = CategoryController.class.getMethod("addCategoryView", (Class<?>[])null);
-    	} catch (NoSuchMethodException nsme) {
-    		LOGGER.error("## testMethodAndRoleMapping : {}", nsme);
-    	}
+        // test1 : no matched role
+        try {
+            method = CategoryController.class.getMethod("addCategoryView", (Class<?>[]) null);
+        } catch (NoSuchMethodException nsme) {
+            LOGGER.error("## testMethodAndRoleMapping : {}", nsme);
+        }
 
-   		role = definitionsource.getAttributes(method, CategoryController.class);
+        role = definitionsource.getAttributes(method, CategoryController.class);
 
-   		assertEquals(0, role.size());
-   		LOGGER.debug("## testMethodAndRoleMapping : {} is no roles", method.getName());
+        assertEquals(0, role.size());
+        LOGGER.debug("## testMethodAndRoleMapping : {} is no roles", method.getName());
     }
 
     /**
      * 웹 URL 접근 제어 권한에 따른 Role 맵핑을 처리함.
      * 웹 접근이 허용된 URL로 접근 시 성공 테스트
+     *
      * @throws Exception
      */
     @Test
     public void testURLAndRoleMapping() throws Exception {
 
-    	FilterSecurityInterceptor interceptor = (FilterSecurityInterceptor) context.getBean("filterSecurityInterceptor");
+        FilterSecurityInterceptor interceptor = (FilterSecurityInterceptor) context.getBean("filterSecurityInterceptor");
         FilterInvocationSecurityMetadataSource definitionsource = interceptor.getSecurityMetadataSource();
 
         // "/test.do" ROLE_USER
@@ -262,7 +271,7 @@ public class EgovSecurityServiceTest {
 
         request.setServletPath("/test.do");
 
-		FilterInvocation filterInvocation = new FilterInvocation(request, new MockHttpServletResponse(), new MockFilterChain());
+        FilterInvocation filterInvocation = new FilterInvocation(request, new MockHttpServletResponse(), new MockFilterChain());
 
         Collection<ConfigAttribute> attrs = definitionsource.getAttributes(filterInvocation);
 
@@ -276,7 +285,7 @@ public class EgovSecurityServiceTest {
 
         request.setServletPath("/sale/index.do");
 
-		filterInvocation = new FilterInvocation(request, new MockHttpServletResponse(), new MockFilterChain());
+        filterInvocation = new FilterInvocation(request, new MockHttpServletResponse(), new MockFilterChain());
 
         attrs = definitionsource.getAttributes(filterInvocation);
 
@@ -287,6 +296,7 @@ public class EgovSecurityServiceTest {
 
     /**
      * 웹 접근이 허용되지 않은 URL로 접근 시 실패 테스트
+     *
      * @throws Exception
      */
     @Test
@@ -302,11 +312,11 @@ public class EgovSecurityServiceTest {
 
         request.setServletPath("/index.do");
 
-		FilterInvocation filterInvocation = new FilterInvocation(request, new MockHttpServletResponse(), new MockFilterChain());
+        FilterInvocation filterInvocation = new FilterInvocation(request, new MockHttpServletResponse(), new MockFilterChain());
 
-		Collection<ConfigAttribute> attrs = definitionsource.getAttributes(filterInvocation);
+        Collection<ConfigAttribute> attrs = definitionsource.getAttributes(filterInvocation);
 
-		LOGGER.debug("### Pattern Matched url is none");
+        LOGGER.debug("### Pattern Matched url is none");
         assertNull(attrs);
 
     }
@@ -314,123 +324,126 @@ public class EgovSecurityServiceTest {
 
     /**
      * 웹 접근이 허용된 URL로 접근 시 Context 에서 지정한 로그인 화면으로 이동됨 검사
+     *
      * @throws Exception
      */
     @Test
     public void testSuccessfulUrlInvocation() throws Exception {
 
-    	final String loginPage = "/cvpl/EgovCvplLogin.do";
+        final String loginPage = "/cvpl/EgovCvplLogin.do";
 
-    	FilterChainProxy filterChainProxy = (FilterChainProxy) context.getBean(BeanIds.SPRING_SECURITY_FILTER_CHAIN);
-    	//FilterChainProxy filterChainProxy = (FilterChainProxy) context.getBean(BeanIds.FILTER_CHAIN_PROXY);
+        FilterChainProxy filterChainProxy = (FilterChainProxy) context.getBean(BeanIds.SPRING_SECURITY_FILTER_CHAIN);
+        //FilterChainProxy filterChainProxy = (FilterChainProxy) context.getBean(BeanIds.FILTER_CHAIN_PROXY);
 
-    	////////////////
+        ////////////////
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setMethod("GET");
         request.setServletPath("/test.do");
 
-    	MockHttpServletResponse response = new MockHttpServletResponse();
-    	MockFilterChain chain = new MockFilterChain();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        MockFilterChain chain = new MockFilterChain();
 
-    	filterChainProxy.doFilter(request, response, chain);
+        filterChainProxy.doFilter(request, response, chain);
 
-    	assertTrue(response.getRedirectedUrl().indexOf(loginPage) >= 0);
-    	LOGGER.debug("### getRedirectedUrl {}", response.getRedirectedUrl());
-    	LOGGER.debug("### getForwardedUrl {}", response.getForwardedUrl());
-    	LOGGER.debug("### getIncludedUrl {}", response.getIncludedUrl());
-    	LOGGER.debug("### getErrorMessage {}", response.getErrorMessage());
-    	LOGGER.debug("### getContentAsString {}", response.getContentAsString());
+        assertTrue(response.getRedirectedUrl().indexOf(loginPage) >= 0);
+        LOGGER.debug("### getRedirectedUrl {}", response.getRedirectedUrl());
+        LOGGER.debug("### getForwardedUrl {}", response.getForwardedUrl());
+        LOGGER.debug("### getIncludedUrl {}", response.getIncludedUrl());
+        LOGGER.debug("### getErrorMessage {}", response.getErrorMessage());
+        LOGGER.debug("### getContentAsString {}", response.getContentAsString());
 
 
-    	/////////////
-    	request = new MockHttpServletRequest();
+        /////////////
+        request = new MockHttpServletRequest();
         request.setMethod("GET");
         request.setServletPath("/sale/index.do");
 
-    	response = new MockHttpServletResponse();
+        response = new MockHttpServletResponse();
 
-    	filterChainProxy.doFilter(request, response, chain);
+        filterChainProxy.doFilter(request, response, chain);
 
-    	assertTrue(response.getRedirectedUrl().indexOf(loginPage) >= 0);
-    	LOGGER.debug("### getRedirectedUrl {}", response.getRedirectedUrl());
-    	LOGGER.debug("### getForwardedUrl {}", response.getForwardedUrl());
-    	LOGGER.debug("### getIncludedUrl {}", response.getIncludedUrl());
-    	LOGGER.debug("### getErrorMessage {}", response.getErrorMessage());
-    	LOGGER.debug("### getContentAsString {}", response.getContentAsString());
+        assertTrue(response.getRedirectedUrl().indexOf(loginPage) >= 0);
+        LOGGER.debug("### getRedirectedUrl {}", response.getRedirectedUrl());
+        LOGGER.debug("### getForwardedUrl {}", response.getForwardedUrl());
+        LOGGER.debug("### getIncludedUrl {}", response.getIncludedUrl());
+        LOGGER.debug("### getErrorMessage {}", response.getErrorMessage());
+        LOGGER.debug("### getContentAsString {}", response.getContentAsString());
 
     }
 
     /**
      * 웹 접근이 허용되지 않은 URL로 접근 시 Context 에서 지정한 로그인 화면으로 이동되지 않음 검사
+     *
      * @throws Exception
      */
     @Test
     public void testFailureUrlInvocation() throws Exception {
 
-    	//final String loginPage = "/cvpl/EgovCvplLogin.do";
+        //final String loginPage = "/cvpl/EgovCvplLogin.do";
 
-    	FilterChainProxy filterChainProxy = (FilterChainProxy) context.getBean(BeanIds.FILTER_CHAIN_PROXY);
+        FilterChainProxy filterChainProxy = (FilterChainProxy) context.getBean(BeanIds.FILTER_CHAIN_PROXY);
 
 
-    	////////////////
+        ////////////////
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setMethod("GET");
         request.setServletPath("/index.do");
 
-    	MockHttpServletResponse response = new MockHttpServletResponse();
-    	MockFilterChain chain = new MockFilterChain();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        MockFilterChain chain = new MockFilterChain();
 
-    	filterChainProxy.doFilter(request, response, chain);
+        filterChainProxy.doFilter(request, response, chain);
 
-    	assertNull(response.getRedirectedUrl());
-    	LOGGER.debug("### getRedirectedUrl is null");
+        assertNull(response.getRedirectedUrl());
+        LOGGER.debug("### getRedirectedUrl is null");
 
 
-    	////////////////
+        ////////////////
         request = new MockHttpServletRequest();
         request.setMethod("GET");
         request.setServletPath("/sale/index.doit");
 
-    	response = new MockHttpServletResponse();
-    	chain = new MockFilterChain();
+        response = new MockHttpServletResponse();
+        chain = new MockFilterChain();
 
-    	filterChainProxy.doFilter(request, response, chain);
+        filterChainProxy.doFilter(request, response, chain);
 
-    	assertNull(response.getRedirectedUrl());
-    	LOGGER.debug("### getRedirectedUrl is null");
+        assertNull(response.getRedirectedUrl());
+        LOGGER.debug("### getRedirectedUrl is null");
 
     }
 
     /**
      * 세션처리를 위한 UserDetails 확장 테스트
+     *
      * @throws Exception
      */
     @Test
     public void testUserDetailsExt() throws Exception {
 
         // 인증되지 않은 사용자 체크
-    	Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
-    	assertFalse(isAuthenticated.booleanValue());
-    	LOGGER.debug("### testUserDetailsExt 인증 : {}", isAuthenticated.booleanValue());
+        Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+        assertFalse(isAuthenticated.booleanValue());
+        LOGGER.debug("### testUserDetailsExt 인증 : {}", isAuthenticated.booleanValue());
 
-    	EgovUserDetailsVO user = (EgovUserDetailsVO)EgovUserDetailsHelper.getAuthenticatedUser();
-    	assertNull(user);
-    	LOGGER.debug("### testUserDetailsExt 사용자정보 : {}", user);
+        EgovUserDetailsVO user = (EgovUserDetailsVO) EgovUserDetailsHelper.getAuthenticatedUser();
+        assertNull(user);
+        LOGGER.debug("### testUserDetailsExt 사용자정보 : {}", user);
 
-    	// 로그인 jimi
-    	UsernamePasswordAuthenticationToken login = new UsernamePasswordAuthenticationToken("jimi", "jimi");
-		AuthenticationManager authManager = (AuthenticationManager) context.getBean(BeanIds.AUTHENTICATION_MANAGER);
+        // 로그인 jimi
+        UsernamePasswordAuthenticationToken login = new UsernamePasswordAuthenticationToken("jimi", "jimi");
+        AuthenticationManager authManager = (AuthenticationManager) context.getBean(BeanIds.AUTHENTICATION_MANAGER);
 
         SecurityContextHolder.getContext().setAuthentication(authManager.authenticate(login));
 
         // 인증된 사용자 검증
-    	isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
-    	assertTrue(isAuthenticated.booleanValue());
-    	LOGGER.debug("### testUserDetailsExt 인증 : {}", isAuthenticated.booleanValue());
+        isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+        assertTrue(isAuthenticated.booleanValue());
+        LOGGER.debug("### testUserDetailsExt 인증 : {}", isAuthenticated.booleanValue());
 
         // 검증
         // ID : jimi
-        user = (EgovUserDetailsVO)EgovUserDetailsHelper.getAuthenticatedUser();
+        user = (EgovUserDetailsVO) EgovUserDetailsHelper.getAuthenticatedUser();
 
         assertNotNull(user);
         assertEquals("jimi", user.getUserId());
@@ -439,19 +452,19 @@ public class EgovSecurityServiceTest {
         assertEquals("1234567890123", user.getSsn());
         LOGGER.debug("### testUserDetailsExt 사용자 : {}", user.getUserId());
 
-    	// 로그인
+        // 로그인
         login = new UsernamePasswordAuthenticationToken("test", "test");
-		authManager = (AuthenticationManager) context.getBean(BeanIds.AUTHENTICATION_MANAGER);
+        authManager = (AuthenticationManager) context.getBean(BeanIds.AUTHENTICATION_MANAGER);
 
         SecurityContextHolder.getContext().setAuthentication(authManager.authenticate(login));
 
         // 인증된 사용자 검증
-    	isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
-    	assertTrue(isAuthenticated.booleanValue());
+        isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+        assertTrue(isAuthenticated.booleanValue());
 
 
         // ID : test
-        user = (EgovUserDetailsVO)EgovUserDetailsHelper.getAuthenticatedUser();
+        user = (EgovUserDetailsVO) EgovUserDetailsHelper.getAuthenticatedUser();
 
         assertNotNull(user);
         assertEquals("test", user.getUserId());
@@ -460,19 +473,19 @@ public class EgovSecurityServiceTest {
         assertEquals("1234567890123", user.getSsn());
         LOGGER.debug("### testUserDetailsExt 사용자 : {}", user.getUserId());
 
-    	// 로그인
-    	login = new UsernamePasswordAuthenticationToken("user", "user");
-		authManager = (AuthenticationManager) context.getBean(BeanIds.AUTHENTICATION_MANAGER);
+        // 로그인
+        login = new UsernamePasswordAuthenticationToken("user", "user");
+        authManager = (AuthenticationManager) context.getBean(BeanIds.AUTHENTICATION_MANAGER);
 
         SecurityContextHolder.getContext().setAuthentication(authManager.authenticate(login));
 
         // 인증된 사용자 검증
-    	isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
-    	assertTrue(isAuthenticated.booleanValue());
+        isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+        assertTrue(isAuthenticated.booleanValue());
 
 
         // ID : test
-        user = (EgovUserDetailsVO)EgovUserDetailsHelper.getAuthenticatedUser();
+        user = (EgovUserDetailsVO) EgovUserDetailsHelper.getAuthenticatedUser();
 
         assertNotNull(user);
         assertEquals("user", user.getUserId());
@@ -481,18 +494,18 @@ public class EgovSecurityServiceTest {
         assertEquals("8006041227717", user.getSsn());
         LOGGER.debug("### testUserDetailsExt 사용자 : {}", user.getUserId());
 
-    	// 로그인
-    	login = new UsernamePasswordAuthenticationToken("buyer", "buyer");
-		authManager = (AuthenticationManager) context.getBean(BeanIds.AUTHENTICATION_MANAGER);
+        // 로그인
+        login = new UsernamePasswordAuthenticationToken("buyer", "buyer");
+        authManager = (AuthenticationManager) context.getBean(BeanIds.AUTHENTICATION_MANAGER);
 
         SecurityContextHolder.getContext().setAuthentication(authManager.authenticate(login));
 
         // 인증된 사용자 검증
-    	isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
-    	assertTrue(isAuthenticated.booleanValue());
+        isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+        assertTrue(isAuthenticated.booleanValue());
 
         // ID : buyer
-        user = (EgovUserDetailsVO)EgovUserDetailsHelper.getAuthenticatedUser();
+        user = (EgovUserDetailsVO) EgovUserDetailsHelper.getAuthenticatedUser();
 
         assertEquals("buyer", user.getUserId());
         assertEquals("Lee, Man-hong", user.getUserName());
@@ -504,77 +517,78 @@ public class EgovSecurityServiceTest {
 
     /**
      * 지정된 Role 조회 테스트
+     *
      * @throws Exception
      */
     @Test
     public void testAuthoritiesAndRoleHierarchy() throws Exception {
-    	// user User : ROLE_USER
-    	UsernamePasswordAuthenticationToken login = new UsernamePasswordAuthenticationToken("user", "user");
-		AuthenticationManager authManager = (AuthenticationManager) context.getBean(BeanIds.AUTHENTICATION_MANAGER);
+        // user User : ROLE_USER
+        UsernamePasswordAuthenticationToken login = new UsernamePasswordAuthenticationToken("user", "user");
+        AuthenticationManager authManager = (AuthenticationManager) context.getBean(BeanIds.AUTHENTICATION_MANAGER);
 
         SecurityContextHolder.getContext().setAuthentication(authManager.authenticate(login));
 
         LOGGER.debug("DEBUG : {}", EgovUserDetailsHelper.getAuthorities());
 
-    	List<String> authorities = EgovUserDetailsHelper.getAuthorities();
+        List<String> authorities = EgovUserDetailsHelper.getAuthorities();
 
-    	// 1. authorites 에  ROLE_USER 권한이 있는지 체크 TRUE/FALSE
-    	LOGGER.debug("########### user ROLES are {}", authorities);
-    	assertTrue(authorities.contains("ROLE_USER"));
-    	assertTrue(authorities.contains("ROLE_RESTRICTED"));
-    	assertTrue(authorities.contains("IS_AUTHENTICATED_ANONYMOUSLY"));
-    	assertTrue(authorities.contains("IS_AUTHENTICATED_FULLY"));
-    	assertTrue(authorities.contains("IS_AUTHENTICATED_REMEMBERED"));
-
-
-    	// 2. authorites 에  ROLE 이 여러개 설정된 경우
-    	for (Iterator<String> it = authorities.iterator(); it.hasNext();) {
-    		String auth = it.next();
-    		LOGGER.debug("########### user ROLE is {}", auth);
-    	}
-
-    	// 3. authorites 에  ROLE 이 하나만 설정된 경우
-    	String auth = (String) authorities.toArray()[0];
-    	LOGGER.debug("########### user ROLE is {}", auth);
+        // 1. authorites 에  ROLE_USER 권한이 있는지 체크 TRUE/FALSE
+        LOGGER.debug("########### user ROLES are {}", authorities);
+        assertTrue(authorities.contains("ROLE_USER"));
+        assertTrue(authorities.contains("ROLE_RESTRICTED"));
+        assertTrue(authorities.contains("IS_AUTHENTICATED_ANONYMOUSLY"));
+        assertTrue(authorities.contains("IS_AUTHENTICATED_FULLY"));
+        assertTrue(authorities.contains("IS_AUTHENTICATED_REMEMBERED"));
 
 
-    	// buyer USER : ROLE_RESTRICTED
-    	login = new UsernamePasswordAuthenticationToken("buyer", "buyer");
-		authManager = (AuthenticationManager) context.getBean(BeanIds.AUTHENTICATION_MANAGER);
+        // 2. authorites 에  ROLE 이 여러개 설정된 경우
+        for (Iterator<String> it = authorities.iterator(); it.hasNext(); ) {
+            String auth = it.next();
+            LOGGER.debug("########### user ROLE is {}", auth);
+        }
 
-        SecurityContextHolder.getContext().setAuthentication(authManager.authenticate(login));
+        // 3. authorites 에  ROLE 이 하나만 설정된 경우
+        String auth = (String) authorities.toArray()[0];
+        LOGGER.debug("########### user ROLE is {}", auth);
 
-        LOGGER.debug("DEBUG : {}", EgovUserDetailsHelper.getAuthorities());
 
-    	authorities = EgovUserDetailsHelper.getAuthorities();
-
-    	LOGGER.debug("########### buyer ROLES are {}", authorities);
-
-    	assertFalse(authorities.contains("ROLE_USER"));
-    	assertFalse(authorities.contains("ROLE_ADMIN"));
-    	assertTrue(authorities.contains("ROLE_RESTRICTED"));
-    	assertTrue(authorities.contains("IS_AUTHENTICATED_ANONYMOUSLY"));
-    	assertTrue(authorities.contains("IS_AUTHENTICATED_FULLY"));
-    	assertTrue(authorities.contains("IS_AUTHENTICATED_REMEMBERED"));
-
-    	// test USER : ROLE_ADMIN
-    	login = new UsernamePasswordAuthenticationToken("test", "test");
-		authManager = (AuthenticationManager) context.getBean(BeanIds.AUTHENTICATION_MANAGER);
+        // buyer USER : ROLE_RESTRICTED
+        login = new UsernamePasswordAuthenticationToken("buyer", "buyer");
+        authManager = (AuthenticationManager) context.getBean(BeanIds.AUTHENTICATION_MANAGER);
 
         SecurityContextHolder.getContext().setAuthentication(authManager.authenticate(login));
 
         LOGGER.debug("DEBUG : {}", EgovUserDetailsHelper.getAuthorities());
 
-    	authorities = EgovUserDetailsHelper.getAuthorities();
+        authorities = EgovUserDetailsHelper.getAuthorities();
 
-    	LOGGER.debug("########### test ROLES are {}", authorities);
+        LOGGER.debug("########### buyer ROLES are {}", authorities);
 
-    	assertTrue(authorities.contains("ROLE_USER"));
-    	assertTrue(authorities.contains("ROLE_ADMIN"));
-    	assertTrue(authorities.contains("ROLE_RESTRICTED"));
-    	assertTrue(authorities.contains("IS_AUTHENTICATED_ANONYMOUSLY"));
-    	assertTrue(authorities.contains("IS_AUTHENTICATED_FULLY"));
-    	assertTrue(authorities.contains("IS_AUTHENTICATED_REMEMBERED"));
+        assertFalse(authorities.contains("ROLE_USER"));
+        assertFalse(authorities.contains("ROLE_ADMIN"));
+        assertTrue(authorities.contains("ROLE_RESTRICTED"));
+        assertTrue(authorities.contains("IS_AUTHENTICATED_ANONYMOUSLY"));
+        assertTrue(authorities.contains("IS_AUTHENTICATED_FULLY"));
+        assertTrue(authorities.contains("IS_AUTHENTICATED_REMEMBERED"));
+
+        // test USER : ROLE_ADMIN
+        login = new UsernamePasswordAuthenticationToken("test", "test");
+        authManager = (AuthenticationManager) context.getBean(BeanIds.AUTHENTICATION_MANAGER);
+
+        SecurityContextHolder.getContext().setAuthentication(authManager.authenticate(login));
+
+        LOGGER.debug("DEBUG : {}", EgovUserDetailsHelper.getAuthorities());
+
+        authorities = EgovUserDetailsHelper.getAuthorities();
+
+        LOGGER.debug("########### test ROLES are {}", authorities);
+
+        assertTrue(authorities.contains("ROLE_USER"));
+        assertTrue(authorities.contains("ROLE_ADMIN"));
+        assertTrue(authorities.contains("ROLE_RESTRICTED"));
+        assertTrue(authorities.contains("IS_AUTHENTICATED_ANONYMOUSLY"));
+        assertTrue(authorities.contains("IS_AUTHENTICATED_FULLY"));
+        assertTrue(authorities.contains("IS_AUTHENTICATED_REMEMBERED"));
     }
 
 }

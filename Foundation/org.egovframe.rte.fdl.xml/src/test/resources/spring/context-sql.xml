@@ -1,74 +1,72 @@
 <?xml version="1.0" encoding="euc-kr"?>
 <root>
-        <sql id="getList"><![CDATA[
+    <sql id="getList"><![CDATA[
                 SELECT * FROM SIBBOARD WHERE BOARDNAME=?
                         ORDER BY PARENT DESC,REPLYSTEP
                 ]]>
-        </sql>
+    </sql>
 
-        <sql id="insert1"><![CDATA[
+    <sql id="insert1"><![CDATA[
                 INSERT INTO SIBBOARD(BOARDNAME,TITLE,CONTENT,AUTHOR,EMAIL,HOMEPAGE,PASSWD,WRITEDATE) 
                         VALUES(?,?,?,?,?,?,PASSWORD(?),CURRENT_TIMESTAMP)
                 ]]>
-        </sql>
+    </sql>
 
-        <sql id="insert2"><![CDATA[
+    <sql id="insert2"><![CDATA[
                 UPDATE SIBBOARD SET PARENT=LAST_INSERT_ID() 
                         WHERE SEQ=LAST_INSERT_ID()
                 ]]>
-        </sql>
+    </sql>
 
-        <sql id="insertReply1"><![CDATA[
+    <sql id="insertReply1"><![CDATA[
                 UPDATE SIBBOARD SET REPLYSTEP=? 
                         WHERE PARENT=? AND REPLYSTEP=?
                 ]]>
-        </sql>
+    </sql>
 
-        <sql id="insertReply2"><![CDATA[
+    <sql id="insertReply2"><![CDATA[
                 INSERT INTO SIBBOARD(TITLE,PARENT,REPLYSTEP,DEPTH,BOARDNAME,CONTENT,AUTHOR,PASSWD,EMAIL,HOMEPAGE,WRITEDATE) 
                         VALUES(?,?,?,?,?,?,?,PASSWORD(?),?,?,CURRENT_TIMESTAMP )
                 ]]>
-        </sql>
+    </sql>
 
 
-        <sql id="getReplyNum"><![CDATA[
+    <sql id="getReplyNum"><![CDATA[
                 SELECT COUNT(*) FROM SIBBOARD WHERE PARENT=?
                 ]]>
-        </sql>
+    </sql>
 
-        <sql id="update"><![CDATA[
+    <sql id="update"><![CDATA[
                 UPDATE SIBBOARD SET TITLE=?,CONTENT=? WHERE SEQ=?
                 ]]>
-        </sql>
+    </sql>
 
 
-
-        <sql id="delete1"><![CDATA[
+    <sql id="delete1"><![CDATA[
                 DELETE FROM SIBBOARD WHERE SEQ=?
                 ]]>
-        </sql>
+    </sql>
 
-        <sql id="delete2"><![CDATA[
+    <sql id="delete2"><![CDATA[
                 UPDATE SIBBOARD SET REPLYSTEP=? 
                         WHERE PARENT=? AND REPLYSTEP=?
                 ]]>
-        </sql>
+    </sql>
 
 
-
-        <sql id="getContent"><![CDATA[
+    <sql id="getContent"><![CDATA[
                 SELECT AUTHOR,BOARDNAME,CONTENT,COUNT,WRITEDATE,DEPTH,IFNULL(EMAIL,"") EMAIL 
                         ,IFNULL(HOMEPAGE,"") HOMEPAGE ,PARENT,PASSWD,RECOMMEND,REPLYSTEP,SEQ,TITLE 
                     FROM SIBBOARD 
                         WHERE SEQ=?
                 ]]>
-        </sql>
+    </sql>
 
 
-        <sql id="getCount"><![CDATA[
+    <sql id="getCount"><![CDATA[
                 SELECT COUNT(*) COUNT FROM SIBBOARD WHERE BOARDNAME=?
                 ]]>
-        </sql>
+    </sql>
 
 
 </root>

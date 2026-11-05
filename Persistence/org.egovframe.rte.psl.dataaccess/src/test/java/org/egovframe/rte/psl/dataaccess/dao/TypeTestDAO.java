@@ -8,12 +8,12 @@ import org.springframework.stereotype.Repository;
 @SuppressWarnings("deprecation")
 public class TypeTestDAO extends EgovAbstractDAO {
 
-	public void insertTypeTest(String queryId, TypeTestVO vo) {
-		getSqlMapClientTemplate().insert(queryId, vo);
-	}
+    public void insertTypeTest(String queryId, TypeTestVO vo) {
+        getSqlMapClientTemplate().insert(queryId, vo);
+    }
 
-	public TypeTestVO selectTypeTest(String queryId, TypeTestVO vo) {
-		return (TypeTestVO) getSqlMapClientTemplate().queryForObject(queryId, vo);
-	}
+    public TypeTestVO selectTypeTest(String queryId, TypeTestVO vo) {
+        return (TypeTestVO) getSqlMapClientTemplate().queryForObject(queryId, vo);
+    }
 
 }

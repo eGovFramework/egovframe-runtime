@@ -18,28 +18,28 @@ import javax.sql.DataSource;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader=AnnotationConfigContextLoader.class)
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class)
 @ActiveProfiles("annotationProfile")
 public class SpringAnnotationProfileTest {
 
-	@Configuration
-	@Profile("annotationProfile")
-	static class EmbeddedDataSource {
-		@Bean
-		public DataSource annotationDataSource() {
-			return new EmbeddedDatabaseBuilder()
-			.setType(EmbeddedDatabaseType.HSQL)
-			.addScript("classpath:/spring/schema.sql")
-			.addScript("classpath:/spring/test-data.sql")
-			.build();
-		}
-	}
+    @Resource(name = "annotationDataSource")
+    private DataSource dataSource;
 
-	@Resource(name="annotationDataSource")
-	private DataSource dataSource;
+    @Test
+    public void testAnnotationProfile() {
+        assertNotNull(dataSource instanceof EmbeddedDatabaseBuilder);
+    }
 
-	@Test
-	public void testAnnotationProfile() {
-		assertNotNull(dataSource instanceof EmbeddedDatabaseBuilder);
-	}
+    @Configuration
+    @Profile("annotationProfile")
+    static class EmbeddedDataSource {
+        @Bean
+        public DataSource annotationDataSource() {
+            return new EmbeddedDatabaseBuilder()
+                    .setType(EmbeddedDatabaseType.HSQL)
+                    .addScript("classpath:/spring/schema.sql")
+                    .addScript("classpath:/spring/test-data.sql")
+                    .build();
+        }
+    }
 }

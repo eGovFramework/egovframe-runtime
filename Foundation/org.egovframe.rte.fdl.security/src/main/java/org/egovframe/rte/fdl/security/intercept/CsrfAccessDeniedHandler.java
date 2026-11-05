@@ -19,7 +19,6 @@ import java.io.IOException;
  * <p>Desc.: CSRF 사용 시 token 이 없거나(InvalidCsrfTokenException) 잘못된 경우(MissingCsrfTokenException) Access Denied URL 로 넘김</p>
  *
  * @author ESFC
- * @since 2020.05.27
  * @version 3.10
  * <pre>
  * 개정이력(Modification Information)
@@ -28,6 +27,7 @@ import java.io.IOException;
  * ----------------------------------------------
  * 2020.05.27	ESFC            최초 생성
  * </pre>
+ * @since 2020.05.27
  */
 public class CsrfAccessDeniedHandler implements AccessDeniedHandler {
 

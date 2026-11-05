@@ -14,17 +14,17 @@ import org.springframework.data.cassandra.core.mapping.Table;
 @Table("sample")
 public class Sample {
 
-    @PrimaryKeyColumn(name="id", ordinal=0, type=PrimaryKeyType.PARTITIONED)
+    @PrimaryKeyColumn(name = "id", ordinal = 0, type = PrimaryKeyType.PARTITIONED)
     private String id;
-    @PrimaryKeyColumn(name="sample_id", ordinal=1, type=PrimaryKeyType.CLUSTERED)
+    @PrimaryKeyColumn(name = "sample_id", ordinal = 1, type = PrimaryKeyType.CLUSTERED)
     private String sampleId;
-    @Column(value="name")
+    @Column(value = "name")
     private String name;
-    @Column(value="description")
+    @Column(value = "description")
     private String description;
-    @Column(value="use_yn")
+    @Column(value = "use_yn")
     private String useYn;
-    @Column(value="reg_user")
+    @Column(value = "reg_user")
     private String regUser;
 
 }

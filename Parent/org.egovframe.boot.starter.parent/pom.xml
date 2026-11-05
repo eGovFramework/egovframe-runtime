@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!-- relativePath 비움 : 부모를 ../pom.xml이 아닌 저장소에서 조회 -->
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>2.7.18</version>
+    <relativePath/>
+  </parent>
+
+  <groupId>org.egovframe.boot</groupId>
+  <artifactId>org.egovframe.boot.starter.parent</artifactId>
+  <version>4.3.1</version>
+  <packaging>pom</packaging>
+  <name>org.egovframe.boot.starter.parent</name>
+  <description>eGovFramework Boot Dependencies</description>
+  <url>https://www.egovframe.go.kr</url>
+
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+    </license>
+  </licenses>
+
+  <properties>
+    <java.version>1.8</java.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+    <!-- eGovFrame -->
+    <egovframe.rte.version>4.3.1</egovframe.rte.version>
+
+    <!-- 관리 라이브러리는 Java 8 동작 버전(class 52 이하)으로 지정 -->
+    <!-- aspectjtools : 1.9.8+는 Java 11+ 필요 → 1.9.7 별도 지정 (aspectj.version과 분리) -->
+    <aspectjtools.version>1.9.7</aspectjtools.version>
+
+    <!-- Spring Cloud -->
+    <spring.cloud.version>2021.0.9</spring.cloud.version>
+
+    <!-- QueryDSL -->
+    <com.querydsl.version>5.0.0</com.querydsl.version>
+
+    <!-- Spring Boot 속성 재정의 : Boot 관리 항목이 실행환경 BOM보다 우선하므로 실행환경 루트 POM 버전으로 맞춤 -->
+    <aspectj.version>1.9.23</aspectj.version>
+    <assertj.version>3.27.7</assertj.version>
+    <cassandra-driver.version>4.17.0</cassandra-driver.version>
+    <commons-codec.version>1.18.0</commons-codec.version>
+    <commons-dbcp2.version>2.13.0</commons-dbcp2.version>
+    <commons-lang3.version>3.20.0</commons-lang3.version>
+    <h2.version>2.2.220</h2.version>
+    <jaxen.version>2.0.0</jaxen.version>
+    <lettuce.version>6.5.5.RELEASE</lettuce.version>
+    <lombok.version>1.18.36</lombok.version>
+    <mongodb.version>4.11.5</mongodb.version>
+    <mysql.version>8.4.0</mysql.version>
+    <postgresql.version>42.7.12</postgresql.version>
+    <!-- MariaDB : web.config.parent와 동일 버전 (Boot 기본 3.0.11) -->
+    <mariadb.version>3.4.0</mariadb.version>
+    <!-- slf4j.version 재정의 금지 (Boot 기본 1.7.36 유지)
+         2.x로 올리면 log4j-slf4j2-impl과 log4j-to-slf4j가 충돌하여 기동 시 LoggingException 발생 -->
+    <log4j2.version>2.25.5</log4j2.version>
+    <logback.version>1.2.13</logback.version>
+    <commons-pool2.version>2.12.0</commons-pool2.version>
+    <!-- commons-logging : Boot·실행환경 모두 미관리 (commons-configuration2 경유) -->
+    <commons-logging.version>1.3.6</commons-logging.version>
+    <!-- log4j-api : 실행환경 루트 POM이 고정한 log4j-core/log4j-slf4j2-impl(2.25.5)과 같은 버전
+         (log4j2.version과 분리 : 프로젝트가 log4j2.version을 바꿔도 core와 api가 어긋나지 않도록) -->
+    <log4j-api.version>2.25.5</log4j-api.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <!-- eGovFrame RTE BOM : 실행환경 모듈과 관리 라이브러리 버전 적용
+           Boot가 가져오는 BOM보다 우선, Boot 직접 선언 항목보다는 후순위 (위 속성으로 재정의) -->
+      <dependency>
+        <groupId>org.egovframe.rte</groupId>
+        <artifactId>org.egovframe.rte.root</artifactId>
+        <version>${egovframe.rte.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <!-- Spring Cloud -->
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-dependencies</artifactId>
+        <version>${spring.cloud.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <!-- QueryDSL -->
+      <dependency>
+        <groupId>com.querydsl</groupId>
+        <artifactId>querydsl-jpa</artifactId>
+        <version>${com.querydsl.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.querydsl</groupId>
+        <artifactId>querydsl-apt</artifactId>
+        <version>${com.querydsl.version}</version>
+      </dependency>
+      <!-- AspectJ 컴파일러 : Java 8 동작 버전 -->
+      <dependency>
+        <groupId>org.aspectj</groupId>
+        <artifactId>aspectjtools</artifactId>
+        <version>${aspectjtools.version}</version>
+      </dependency>
+
+      <!-- 실행환경 전이 의존성 (Boot·실행환경 미관리) -->
+      <dependency>
+        <groupId>commons-logging</groupId>
+        <artifactId>commons-logging</artifactId>
+        <version>${commons-logging.version}</version>
+      </dependency>
+      <!-- log4j-api : 실행환경 루트 POM은 log4j-core/log4j-slf4j2-impl만 관리 (log4j-core는 Boot log4j-bom보다 우선)
+           Boot log4j-bom의 log4j-api는 log4j2.version을 따르므로 별도 고정 → xmlbeans 5.3.0(2.24.x) 등 전이 버전과 core 불일치 방지 -->
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-api</artifactId>
+        <version>${log4j-api.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <!-- maven-deploy-plugin : Boot 기본 2.8.2 대신 실행환경과 같은 3.1.4 사용 (-DaltDeploymentRepository 형식 통일) -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-deploy-plugin</artifactId>
+          <version>3.1.4</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+</project>

@@ -7,9 +7,9 @@ import org.springframework.stereotype.Component;
 @Component("logLevelDebug")
 public class LogLevelDebug {
 
-	private static Logger logger = LogManager.getLogger(LogLevelDebug.class.getName());
+    private static Logger logger = LogManager.getLogger(LogLevelDebug.class.getName());
 
-	public void executeSomeLogic() {
-		logger.debug("DEBUG - LogLevelDebug.executeSomeLogic executed");
-	}
+    public void executeSomeLogic() {
+        logger.debug("DEBUG - LogLevelDebug.executeSomeLogic executed");
+    }
 }

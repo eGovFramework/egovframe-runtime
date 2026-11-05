@@ -7,9 +7,9 @@ import org.springframework.stereotype.Component;
 @Component("logLevelError")
 public class LogLevelError {
 
-	private static Logger logger = LogManager.getLogger(LogLevelError.class.getName());
-	
-	public void executeSomeLogic() {
-		logger.error("ERROR - LogLevelError.executeSomeLogic executed");
-	}
+    private static Logger logger = LogManager.getLogger(LogLevelError.class.getName());
+
+    public void executeSomeLogic() {
+        logger.error("ERROR - LogLevelError.executeSomeLogic executed");
+    }
 }

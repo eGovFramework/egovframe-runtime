@@ -24,8 +24,8 @@ import java.lang.annotation.Target;
  * CommandMap.java
  *
  * <p><b>NOTE:</b> <pre>Map기반 Argument를 처리하기 위한 Annotation class</pre>
+ *
  * @author 유지보수 이영지
- * @since 2014.04.23
  * @version 3.0
  * <pre>
  * 개정이력(Modification Information)
@@ -35,6 +35,7 @@ import java.lang.annotation.Target;
  * 2014.04.23   이영지		        최초생성
  * 2014.12.11   이기하		        @RequestParam으로 대체
  * </pre>
+ * @since 2014.04.23
  * @deprecated This class has been deprecated.
  */
 @Deprecated

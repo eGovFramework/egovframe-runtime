@@ -8,29 +8,28 @@ import org.springframework.beans.factory.InitializingBean;
 
 public class DummyTasklet implements Tasklet, InitializingBean {
 
-		
-	  @Override
-	  public void afterPropertiesSet() throws Exception {
-		//Assert.notNull(directory, "directory must be set");
-	  }
 
-	  @Override
-	  public RepeatStatus execute(StepContribution contribution,
-	               ChunkContext chunkContext) throws Exception {
-		  
-			System.out.println("TaskletStep execute START ===");
-			System.out.println("TaskletStep execute START ===");
-			System.out.println("TaskletStep execute START ===");
-			System.out.println("TaskletStep execute START ===");
-			System.out.println("TaskletStep execute START ===");
-			System.out.println("TaskletStep execute START ===");
-			
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        //Assert.notNull(directory, "directory must be set");
+    }
 
-			//System.out.println("@Value jobVariable2>>>"+vJobVariable2);
+    @Override
+    public RepeatStatus execute(StepContribution contribution,
+                                ChunkContext chunkContext) throws Exception {
 
-		return RepeatStatus.FINISHED;
-	  }
+        System.out.println("TaskletStep execute START ===");
+        System.out.println("TaskletStep execute START ===");
+        System.out.println("TaskletStep execute START ===");
+        System.out.println("TaskletStep execute START ===");
+        System.out.println("TaskletStep execute START ===");
+        System.out.println("TaskletStep execute START ===");
 
 
-	  
+        //System.out.println("@Value jobVariable2>>>"+vJobVariable2);
+
+        return RepeatStatus.FINISHED;
+    }
+
+
 }

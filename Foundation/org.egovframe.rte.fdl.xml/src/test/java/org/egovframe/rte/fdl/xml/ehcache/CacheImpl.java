@@ -24,9 +24,9 @@ public class CacheImpl {
         try {
             URL url = getClass().getResource("xml/ehcache.xml");
             manager = CacheManager.create(url);
-			LOGGER.debug("##### CacheImpl etCacheManager() Cache Name : {}", manager.getName());
+            LOGGER.debug("##### CacheImpl etCacheManager() Cache Name : {}", manager.getName());
         } catch (CacheException e) {
-			LOGGER.debug("##### CacheImpl getCacheManager() Exception >>> {}", e.getMessage());
+            LOGGER.debug("##### CacheImpl getCacheManager() Exception >>> {}", e.getMessage());
         }
         return manager;
     }
@@ -36,7 +36,7 @@ public class CacheImpl {
             manager = CacheManager.create(configFilePath);
             LOGGER.debug("##### CacheImpl etCacheManager(String configFilePath) Cache Name : {}", manager.getName());
         } catch (CacheException e) {
-			LOGGER.debug("##### CacheImpl etCacheManager(String configFilePath) Exception >>> {}", e.getMessage());
+            LOGGER.debug("##### CacheImpl etCacheManager(String configFilePath) Exception >>> {}", e.getMessage());
         }
         return manager;
     }

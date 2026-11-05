@@ -31,12 +31,11 @@ import java.nio.charset.StandardCharsets;
 /**
  * EgovEnvCryptoImpl 클래스
  * <Notice>
- * 	    데이터베이스 연결시 대한 항목을 암호화, 복호화
+ * 데이터베이스 연결시 대한 항목을 암호화, 복호화
  * <Disclaimer>
- *		N/A
+ * N/A
  *
  * @author 장동한
- * @since 2018.08.09
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -46,306 +45,332 @@ import java.nio.charset.StandardCharsets;
  * 2018.08.09	장동한			최초 생성
  * 2024.08.22   kiboomhan		URL Safe 암호화 방식 적용
  * </pre>
+ * @since 2018.08.09
  */
 public class EgovEnvCryptoServiceImpl implements EgovEnvCryptoService {
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(EgovEnvCryptoServiceImpl.class);
-	
-	/* EgovPasswordEncoder 클래스 */
-	private EgovPasswordEncoder passwordEncoder;
-	
-	/* EgovCryptoService 클래스 */
-	private EgovCryptoService cryptoService;
-	
-	/* EgovPropertyService 클래스 */
-	private EgovPropertyService propertyService;
 
-	/* 데이터베이스 접속 계정명 */
-	private String username = "";
-	
-	/* 데이터베이스 접속 패드워드 */
-	private String password = "";
-	
-	/* 데이터베이스 접속 URL */
-	private String url = "";
-	
-	/* crypto 사용여부 */
-	private boolean crypto = false;
-	
-	/* crypto 알고리즘 */
-	private String cryptoAlgorithm = "";
-	
-	/* crypto 알고리즘 키 */
-	private String cyptoAlgorithmKey = "";
-	
-	/* crypto 알고리즘 키 Hash */
-	private String cyptoAlgorithmKeyHash = "";
-	
-	/* crypto 알고리즘 블럭 사이즈 */
-	private int cryptoBlockSize = 0;
+    private static final Logger LOGGER = LoggerFactory.getLogger(EgovEnvCryptoServiceImpl.class);
 
-	/**
-	 * 클래스 초기화 메소드.
-	 */
-	public void init(){
-		String sDbTyps = propertyService.getString("Globals.DbType");
-		this.username = propertyService.getString("Globals."+sDbTyps+".UserName");
-		this.password = propertyService.getString("Globals."+sDbTyps+".Password");
-		this.url = propertyService.getString("Globals."+sDbTyps+".Url");
-	}
+    /* EgovPasswordEncoder 클래스 */
+    private EgovPasswordEncoder passwordEncoder;
 
-	/**
-	 * EgovPasswordEncoder 클래스 setter
-	 * @return EgovPasswordEncoder
-	 */
-	public EgovPasswordEncoder getPasswordEncoder() {
-		return passwordEncoder;
-	}
+    /* EgovCryptoService 클래스 */
+    private EgovCryptoService cryptoService;
 
-	/**
-	 * EgovPasswordEncoder 클래스 setter
-	 * @param passwordEncoder EgovPasswordEncoder클래스
+    /* EgovPropertyService 클래스 */
+    private EgovPropertyService propertyService;
+
+    /* 데이터베이스 접속 계정명 */
+    private String username = "";
+
+    /* 데이터베이스 접속 패드워드 */
+    private String password = "";
+
+    /* 데이터베이스 접속 URL */
+    private String url = "";
+
+    /* crypto 사용여부 */
+    private boolean crypto = false;
+
+    /* crypto 알고리즘 */
+    private String cryptoAlgorithm = "";
+
+    /* crypto 알고리즘 키 */
+    private String cyptoAlgorithmKey = "";
+
+    /* crypto 알고리즘 키 Hash */
+    private String cyptoAlgorithmKeyHash = "";
+
+    /* crypto 알고리즘 블럭 사이즈 */
+    private int cryptoBlockSize = 0;
+
+    /**
+     * 클래스 초기화 메소드.
      */
-	public void setPasswordEncoder(EgovPasswordEncoder passwordEncoder) {
-		this.passwordEncoder = passwordEncoder;
-	}
+    public void init() {
+        String sDbTyps = propertyService.getString("Globals.DbType");
+        this.username = propertyService.getString("Globals." + sDbTyps + ".UserName");
+        this.password = propertyService.getString("Globals." + sDbTyps + ".Password");
+        this.url = propertyService.getString("Globals." + sDbTyps + ".Url");
+    }
 
-	/**
-	 * EgovPasswordEncoder 클래스 getter
-	 * @return EgovCryptoService
-	 */
-	public EgovCryptoService getCryptoService() {
-		return cryptoService;
-	}
-
-	/**
-	 * EgovCryptoService 클래스 setter
-	 * @param cryptoService EgovCryptoService
+    /**
+     * EgovPasswordEncoder 클래스 setter
+     *
+     * @return EgovPasswordEncoder
      */
-	public void setCryptoService(EgovCryptoService cryptoService) {
-		this.cryptoService = cryptoService;
-	}
-	
-	/**
-	 * EgovPropertyService 클래스 getter
-	 * @return EgovPropertyService
-	 */
-	public EgovPropertyService getCryptoConfigurer() {
-		return propertyService;
-	}
+    public EgovPasswordEncoder getPasswordEncoder() {
+        return passwordEncoder;
+    }
 
-	/**
-	 * EgovPropertyService 클래스 setter
-	 * @param cryptoConfigurer EgovPropertyService클래스
+    /**
+     * EgovPasswordEncoder 클래스 setter
+     *
+     * @param passwordEncoder EgovPasswordEncoder클래스
      */
-	public void setCryptoConfigurer(EgovPropertyService cryptoConfigurer) {
-		this.propertyService = cryptoConfigurer;
-	}
-	
-	/**
-	 * 환경설정 파일의 키값(항목)을 암호화
-	 * @param encrypt 암호화값
-	 * @return String
-	 */
-	public String encrypt(String encrypt){
-		try {
-			return URLEncoder.encode(new String(Base64.encodeBase64(cryptoService.encrypt(encrypt.getBytes(StandardCharsets.UTF_8), this.getCyptoAlgorithmKey()), false, true)), "UTF-8");
-		} catch(IllegalArgumentException | UnsupportedEncodingException e) {
-			LOGGER.error("[IllegalArgumentException] Try/Catch...usingParameters Runing : "+ e.getMessage());
-		}
-		return encrypt;
-	}
+    public void setPasswordEncoder(EgovPasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
 
-	/**
-	 * 환경설정 파일의 키값(항목)을 복호화
-	 * @param decrypt 복호화값
-	 * @return String
-	 */
-	public String decrypt(String decrypt){
-		try {
-			return new String(cryptoService.decrypt(Base64.decodeBase64(URLDecoder.decode(decrypt,"UTF-8").getBytes(StandardCharsets.UTF_8)), this.cyptoAlgorithmKey));
-		} catch(IllegalArgumentException | UnsupportedEncodingException e) {
-			LOGGER.error("[IllegalArgumentException] Try/Catch...usingParameters Runing : "+ e.getMessage());
-		}
-		return decrypt;
-	}
-
-	/**
-	 * 환경설정 파일의 키값(항목)을 URLEncoder를 사용하지 않고 암호화
-	 * @param encrypt 암호화값
-	 * @return String
-	 */
-	public String encryptNone(String encrypt){
-		try {
-			return new String(Base64.encodeBase64(cryptoService.encrypt(encrypt.getBytes(StandardCharsets.UTF_8), this.getCyptoAlgorithmKey()), false, true), StandardCharsets.UTF_8);
-		} catch(IllegalArgumentException e) {
-			LOGGER.error("[IllegalArgumentException] Try/Catch...usingParameters Runing : "+ e.getMessage());
-		}
-		return encrypt;
-	}
-
-	/**
-	 * 환경설정 파일의 키값(항목)을 URLEncoder를 사용하지 않고 복호화
-	 * @param decrypt 복호화값
-	 * @return String
-	 */
-	public String decryptNone(String decrypt){
-		try {
-			return new String(cryptoService.decrypt(Base64.decodeBase64(decrypt.getBytes(StandardCharsets.UTF_8)), this.cyptoAlgorithmKey));
-		} catch(IllegalArgumentException e) {
-			LOGGER.error("[IllegalArgumentException] Try/Catch...usingParameters Runing : "+ e.getMessage());
-		}
-		return decrypt;
-	}
-
-	/**
-	 * 데이터베이스 접속 항목(계정명)에 대한 setter
-	 * @param username 계정명
+    /**
+     * EgovPasswordEncoder 클래스 getter
+     *
+     * @return EgovCryptoService
      */
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    public EgovCryptoService getCryptoService() {
+        return cryptoService;
+    }
 
-	/**
-	 * 데이터베이스 접속 항목(계정명)에 대한 getter
-	 * @return String
-	 */
-	public String getUsername() {
-		if(this.isCrypto()){
-			try {
-				return this.decrypt(this.username);
-			} catch(IllegalArgumentException e) {
-				LOGGER.error("[IllegalArgumentException] Try/Catch...usingParameters Runing : "+ e.getMessage());
-			}
-		}
-		return username;
-	}
-
-	/**
-	 * 데이터베이스 접속 항목(비밀번호)에 대한 setter
-	 * @param password 비밀번호
+    /**
+     * EgovCryptoService 클래스 setter
+     *
+     * @param cryptoService EgovCryptoService
      */
-	public void setPassword(String password) {
-		this.password = password;
-	}
-	
-	/**
-	 * 데이터베이스 접속 항목(비밀번호)에 대한 getter
-	 * @return String
-	 */
-	public String getPassword() {
-		if(this.isCrypto()){
-			try {
-				return this.decrypt(this.password);
-			} catch(IllegalArgumentException e) {
-				LOGGER.error("[IllegalArgumentException] Try/Catch...usingParameters Runing : "+ e.getMessage());
-			}
-		}
-		return password;
-	}
+    public void setCryptoService(EgovCryptoService cryptoService) {
+        this.cryptoService = cryptoService;
+    }
 
-	/**
-	 * 데이터베이스 접속 항목(URL)에 대한 getter
-	 * @param url 접속경로
+    /**
+     * EgovPropertyService 클래스 getter
+     *
+     * @return EgovPropertyService
      */
-	public void setUrl(String url) {
-		this.url = url;
-	}
+    public EgovPropertyService getCryptoConfigurer() {
+        return propertyService;
+    }
 
-	/**
-	 * 데이터베이스 접속 항목(URL)에 대한 setter
-	 * @return String
-	 */
-	public String getUrl() {
-		if(this.isCrypto()){
-			try {
-				return this.decrypt(this.url);
-			} catch(IllegalArgumentException e) {
-				LOGGER.error("[IllegalArgumentException] Try/Catch...usingParameters Runing : "+ e.getMessage());
-			}
-		}
-		return url;
-	}
-
-	/**
-	 * Crypto 사용여부에 대한 getter
-	 * @return boolean
-	 */
-	public boolean isCrypto() {
-		return crypto;
-	}
-
-	/**
-	 * Crypto 사용여부에 대한 setter
-	 * @param crypto Crypto사용여부
+    /**
+     * EgovPropertyService 클래스 setter
+     *
+     * @param cryptoConfigurer EgovPropertyService클래스
      */
-	public void setCrypto(boolean crypto) {
-		this.crypto = crypto;
-	}
+    public void setCryptoConfigurer(EgovPropertyService cryptoConfigurer) {
+        this.propertyService = cryptoConfigurer;
+    }
 
-	/**
-	 * Crypto 계정 알고리즘 지정에 대한 setter
-	 * @return String
-	 */
-	public String getCryptoAlgorithm() {
-		return cryptoAlgorithm;
-	}
-
-	/**
-	 * Crypto 계정 알고리즘 지정에 대한 getter
-	 * @param cryptoAlgorithm 계정 암호화 알고리즘(MD5, SHA-1, SHA-256)
+    /**
+     * 환경설정 파일의 키값(항목)을 암호화
+     *
+     * @param encrypt 암호화값
+     * @return String
      */
-	public void setCryptoAlgorithm(String cryptoAlgorithm) {
-		this.cryptoAlgorithm = cryptoAlgorithm;
-	}
+    public String encrypt(String encrypt) {
+        try {
+            return URLEncoder.encode(new String(Base64.encodeBase64(cryptoService.encrypt(encrypt.getBytes(StandardCharsets.UTF_8), this.getCyptoAlgorithmKey()), false, true)), "UTF-8");
+        } catch (IllegalArgumentException | UnsupportedEncodingException e) {
+            LOGGER.error("[IllegalArgumentException] Try/Catch...usingParameters Runing : " + e.getMessage());
+        }
+        return encrypt;
+    }
 
-	/**
-	 * Crypto 계정 알고리즘키에 대한 getter
-	 * @return String
-	 */
-	public String getCyptoAlgorithmKey() {
-		return cyptoAlgorithmKey;
-	}
-
-	/**
-	 * Crypto 알고리즘 키에 대한 setter
-	 * @param cyptoAlgorithmKey 알고리즘키
+    /**
+     * 환경설정 파일의 키값(항목)을 복호화
+     *
+     * @param decrypt 복호화값
+     * @return String
      */
-	public void setCyptoAlgorithmKey(String cyptoAlgorithmKey) {
-		this.cyptoAlgorithmKey = cyptoAlgorithmKey;
-	}
+    public String decrypt(String decrypt) {
+        try {
+            return new String(cryptoService.decrypt(Base64.decodeBase64(URLDecoder.decode(decrypt, "UTF-8").getBytes(StandardCharsets.UTF_8)), this.cyptoAlgorithmKey));
+        } catch (IllegalArgumentException | UnsupportedEncodingException e) {
+            LOGGER.error("[IllegalArgumentException] Try/Catch...usingParameters Runing : " + e.getMessage());
+        }
+        return decrypt;
+    }
 
-	/**
-	 * Crypto 알고리즘 키 Hash에 대한 getter
-	 * @return String
-	 */
-	public String getCyptoAlgorithmKeyHash() {
-		return cyptoAlgorithmKeyHash;
-	}
-
-	/**
-	 * Crypto 알고리즘 키 Hash에 대한 setter
-	 * @param cyptoAlgorithmKeyHash 알고리즘키Hash코드
+    /**
+     * 환경설정 파일의 키값(항목)을 URLEncoder를 사용하지 않고 암호화
+     *
+     * @param encrypt 암호화값
+     * @return String
      */
-	public void setCyptoAlgorithmKeyHash(String cyptoAlgorithmKeyHash) {
-		this.cyptoAlgorithmKeyHash = cyptoAlgorithmKeyHash;
-	}
+    public String encryptNone(String encrypt) {
+        try {
+            return new String(Base64.encodeBase64(cryptoService.encrypt(encrypt.getBytes(StandardCharsets.UTF_8), this.getCyptoAlgorithmKey()), false, true), StandardCharsets.UTF_8);
+        } catch (IllegalArgumentException e) {
+            LOGGER.error("[IllegalArgumentException] Try/Catch...usingParameters Runing : " + e.getMessage());
+        }
+        return encrypt;
+    }
 
-	/**
-	 * Crypto 블럭 사이즈에 대한 getter
-	 * @return int
-	 */
-	public int getCryptoBlockSize() {
-		return cryptoBlockSize;
-	}
-
-	/**
-	 * Crypto 블럭 사이즈에 대한 setter
-	 * 
-	 * @param cryptoBlockSize 블럭사이즈
+    /**
+     * 환경설정 파일의 키값(항목)을 URLEncoder를 사용하지 않고 복호화
+     *
+     * @param decrypt 복호화값
+     * @return String
      */
-	public void setCryptoBlockSize(int cryptoBlockSize) {
-		this.cryptoBlockSize = cryptoBlockSize;
-	}
+    public String decryptNone(String decrypt) {
+        try {
+            return new String(cryptoService.decrypt(Base64.decodeBase64(decrypt.getBytes(StandardCharsets.UTF_8)), this.cyptoAlgorithmKey));
+        } catch (IllegalArgumentException e) {
+            LOGGER.error("[IllegalArgumentException] Try/Catch...usingParameters Runing : " + e.getMessage());
+        }
+        return decrypt;
+    }
+
+    /**
+     * 데이터베이스 접속 항목(계정명)에 대한 getter
+     *
+     * @return String
+     */
+    public String getUsername() {
+        if (this.isCrypto()) {
+            try {
+                return this.decrypt(this.username);
+            } catch (IllegalArgumentException e) {
+                LOGGER.error("[IllegalArgumentException] Try/Catch...usingParameters Runing : " + e.getMessage());
+            }
+        }
+        return username;
+    }
+
+    /**
+     * 데이터베이스 접속 항목(계정명)에 대한 setter
+     *
+     * @param username 계정명
+     */
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    /**
+     * 데이터베이스 접속 항목(비밀번호)에 대한 getter
+     *
+     * @return String
+     */
+    public String getPassword() {
+        if (this.isCrypto()) {
+            try {
+                return this.decrypt(this.password);
+            } catch (IllegalArgumentException e) {
+                LOGGER.error("[IllegalArgumentException] Try/Catch...usingParameters Runing : " + e.getMessage());
+            }
+        }
+        return password;
+    }
+
+    /**
+     * 데이터베이스 접속 항목(비밀번호)에 대한 setter
+     *
+     * @param password 비밀번호
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    /**
+     * 데이터베이스 접속 항목(URL)에 대한 setter
+     *
+     * @return String
+     */
+    public String getUrl() {
+        if (this.isCrypto()) {
+            try {
+                return this.decrypt(this.url);
+            } catch (IllegalArgumentException e) {
+                LOGGER.error("[IllegalArgumentException] Try/Catch...usingParameters Runing : " + e.getMessage());
+            }
+        }
+        return url;
+    }
+
+    /**
+     * 데이터베이스 접속 항목(URL)에 대한 getter
+     *
+     * @param url 접속경로
+     */
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    /**
+     * Crypto 사용여부에 대한 getter
+     *
+     * @return boolean
+     */
+    public boolean isCrypto() {
+        return crypto;
+    }
+
+    /**
+     * Crypto 사용여부에 대한 setter
+     *
+     * @param crypto Crypto사용여부
+     */
+    public void setCrypto(boolean crypto) {
+        this.crypto = crypto;
+    }
+
+    /**
+     * Crypto 계정 알고리즘 지정에 대한 setter
+     *
+     * @return String
+     */
+    public String getCryptoAlgorithm() {
+        return cryptoAlgorithm;
+    }
+
+    /**
+     * Crypto 계정 알고리즘 지정에 대한 getter
+     *
+     * @param cryptoAlgorithm 계정 암호화 알고리즘(MD5, SHA-1, SHA-256)
+     */
+    public void setCryptoAlgorithm(String cryptoAlgorithm) {
+        this.cryptoAlgorithm = cryptoAlgorithm;
+    }
+
+    /**
+     * Crypto 계정 알고리즘키에 대한 getter
+     *
+     * @return String
+     */
+    public String getCyptoAlgorithmKey() {
+        return cyptoAlgorithmKey;
+    }
+
+    /**
+     * Crypto 알고리즘 키에 대한 setter
+     *
+     * @param cyptoAlgorithmKey 알고리즘키
+     */
+    public void setCyptoAlgorithmKey(String cyptoAlgorithmKey) {
+        this.cyptoAlgorithmKey = cyptoAlgorithmKey;
+    }
+
+    /**
+     * Crypto 알고리즘 키 Hash에 대한 getter
+     *
+     * @return String
+     */
+    public String getCyptoAlgorithmKeyHash() {
+        return cyptoAlgorithmKeyHash;
+    }
+
+    /**
+     * Crypto 알고리즘 키 Hash에 대한 setter
+     *
+     * @param cyptoAlgorithmKeyHash 알고리즘키Hash코드
+     */
+    public void setCyptoAlgorithmKeyHash(String cyptoAlgorithmKeyHash) {
+        this.cyptoAlgorithmKeyHash = cyptoAlgorithmKeyHash;
+    }
+
+    /**
+     * Crypto 블럭 사이즈에 대한 getter
+     *
+     * @return int
+     */
+    public int getCryptoBlockSize() {
+        return cryptoBlockSize;
+    }
+
+    /**
+     * Crypto 블럭 사이즈에 대한 setter
+     *
+     * @param cryptoBlockSize 블럭사이즈
+     */
+    public void setCryptoBlockSize(int cryptoBlockSize) {
+        this.cryptoBlockSize = cryptoBlockSize;
+    }
 
 }

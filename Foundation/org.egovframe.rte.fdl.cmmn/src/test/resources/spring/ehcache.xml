@@ -16,7 +16,7 @@
             diskPersistent="false"
             diskExpiryThreadIntervalSeconds="120"
             memoryStoreEvictionPolicy="LRU"
-            statistics="false" />
+            statistics="false"/>
 
     <cache name="ehcache"
            maxElementsInMemory="10000"
@@ -27,13 +27,13 @@
            timeToIdleSeconds="300"
            timeToLiveSeconds="600"
            memoryStoreEvictionPolicy="LFU"
-           transactionalMode="off" />
+           transactionalMode="off"/>
 
     <cache name="sampleCache2"
            maxElementsInMemory="1000"
            eternal="true"
            overflowToDisk="false"
-           memoryStoreEvictionPolicy="FIFO" />
+           memoryStoreEvictionPolicy="FIFO"/>
 
     <cache name="sampleCache3"
            maxElementsInMemory="500"
@@ -43,6 +43,6 @@
            timeToLiveSeconds="600"
            diskPersistent="true"
            diskExpiryThreadIntervalSeconds="1"
-           memoryStoreEvictionPolicy="LFU" />
+           memoryStoreEvictionPolicy="LFU"/>
 
 </ehcache>

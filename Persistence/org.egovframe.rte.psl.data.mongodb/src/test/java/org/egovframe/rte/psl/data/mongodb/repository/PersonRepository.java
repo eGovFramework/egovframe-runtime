@@ -13,19 +13,19 @@ import java.util.List;
 
 public interface PersonRepository extends MongoRepository<Person, String> {
 
-	List<Person> findByName(String name);
+    List<Person> findByName(String name);
 
-	Page<Person> findByName(String name, Pageable pageable);
+    Page<Person> findByName(String name, Pageable pageable);
 
-	Person findByAddress(Address address);
+    Person findByAddress(Address address);
 
-	List<Person> deleteByName(String name);
+    List<Person> deleteByName(String name);
 
-	Long deletePersonByName(String lastname);
+    Long deletePersonByName(String lastname);
 
-	List<Person> findByLocationNear(Point location, Distance distance);
+    List<Person> findByLocationNear(Point location, Distance distance);
 
-	@Query("{ 'name' : ?0 }")
-	List<Person> findByPersonName(String name);
+    @Query("{ 'name' : ?0 }")
+    List<Person> findByPersonName(String name);
 
 }

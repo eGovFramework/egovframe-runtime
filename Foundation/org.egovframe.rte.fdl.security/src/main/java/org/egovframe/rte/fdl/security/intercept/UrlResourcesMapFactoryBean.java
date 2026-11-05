@@ -25,12 +25,11 @@ import java.util.List;
 
 /**
  * Bean의 초기화 데이터 제공 기능을 구현 클래스
- * 
+ *
  * <p><b>NOTE:</b> DB 기반의 보호자원 맵핑 정보를 얻어 이를 참조하는 Bean 의 초기화 데이터로 제공한다.</p>
- * 
+ *
  * @author marcos.sousa - reference http://forum.springframework.org/showthread.php?t=56615&highlight=database&page=2
  * @author ByungHun Woo
- * @since 2009.06.01
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -40,19 +39,19 @@ import java.util.List;
  * 2009.06.01   윤성종             최초 생성
  * 2014.01.22   한성곤             Spring Security 3.2.X 업그레이드 적용
  * </pre>
+ * @since 2009.06.01
  */
 public class UrlResourcesMapFactoryBean implements FactoryBean<LinkedHashMap<RequestMatcher, List<ConfigAttribute>>> {
 
-	private EgovSecuredObjectService securedObjectService;
+    private EgovSecuredObjectService securedObjectService;
+    private LinkedHashMap<RequestMatcher, List<ConfigAttribute>> resourcesMap;
 
     public void setSecuredObjectService(EgovSecuredObjectService securedObjectService) {
         this.securedObjectService = securedObjectService;
     }
 
-    private LinkedHashMap<RequestMatcher, List<ConfigAttribute>> resourcesMap;
-
     public void init() throws Exception {
-    	resourcesMap = securedObjectService.getRolesAndUrl();
+        resourcesMap = securedObjectService.getRolesAndUrl();
     }
 
     public LinkedHashMap<RequestMatcher, List<ConfigAttribute>> getObject() throws Exception {
@@ -63,7 +62,7 @@ public class UrlResourcesMapFactoryBean implements FactoryBean<LinkedHashMap<Req
     }
 
     @SuppressWarnings("rawtypes")
-	public Class<LinkedHashMap> getObjectType() {
+    public Class<LinkedHashMap> getObjectType() {
         return LinkedHashMap.class;
     }
 

@@ -22,51 +22,51 @@ import javax.servlet.http.HttpServletRequest;
 
 public class SelfRegexRequestMatcher implements RequestMatcher {
 
-	private String pattern = null;
-	private String httpMethod = null;
-	private RegexRequestMatcher requestMatcher = null;
+    private String pattern = null;
+    private String httpMethod = null;
+    private RegexRequestMatcher requestMatcher = null;
 
-	public SelfRegexRequestMatcher(String pattern, String httpMethod) {
-		this(pattern, httpMethod, false);
-	}
+    public SelfRegexRequestMatcher(String pattern, String httpMethod) {
+        this(pattern, httpMethod, false);
+    }
 
-	public SelfRegexRequestMatcher(String pattern, String httpMethod, boolean caseInsensitive) {
-		this.requestMatcher = new RegexRequestMatcher(pattern, httpMethod, caseInsensitive);
-		this.pattern = pattern;
-		this.httpMethod = httpMethod;
-	}
+    public SelfRegexRequestMatcher(String pattern, String httpMethod, boolean caseInsensitive) {
+        this.requestMatcher = new RegexRequestMatcher(pattern, httpMethod, caseInsensitive);
+        this.pattern = pattern;
+        this.httpMethod = httpMethod;
+    }
 
-	@Override
-	public boolean matches(HttpServletRequest request) {
-		return requestMatcher.matches(request);
-	}
+    @Override
+    public boolean matches(HttpServletRequest request) {
+        return requestMatcher.matches(request);
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (!(obj instanceof SelfRegexRequestMatcher)) {
-			return false;
-		}
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof SelfRegexRequestMatcher)) {
+            return false;
+        }
 
-		SelfRegexRequestMatcher key = (SelfRegexRequestMatcher) obj;
-		if (!pattern.equals(key.pattern)) {
-			return false;
-		}
+        SelfRegexRequestMatcher key = (SelfRegexRequestMatcher) obj;
+        if (!pattern.equals(key.pattern)) {
+            return false;
+        }
 
-		if (httpMethod == null) {
-			return key.httpMethod == null;
-		}
+        if (httpMethod == null) {
+            return key.httpMethod == null;
+        }
 
-		return httpMethod.equals(key.httpMethod);
-	}
-	
-	@Override
-	public int hashCode() {
-		int code = 31 ^ pattern.hashCode();
+        return httpMethod.equals(key.httpMethod);
+    }
 
-		if (httpMethod != null) {
+    @Override
+    public int hashCode() {
+        int code = 31 ^ pattern.hashCode();
+
+        if (httpMethod != null) {
             code ^= httpMethod.hashCode();
         }
-        
+
         return code;
     }
 

@@ -26,11 +26,10 @@ import javax.sql.DataSource;
 
 /**
  * dataSource 지정을 처리하는 factory bean 클래스
- * 
- *<p>Desc.: 설정 간소화 처리에 사용되는 내부 factory bean</p>
+ *
+ * <p>Desc.: 설정 간소화 처리에 사용되는 내부 factory bean</p>
  *
  * @author Vincent Han
- * @since 2014.03.12
  * @version 3.0
  * <pre>
  * 개정이력(Modification Information)
@@ -39,42 +38,43 @@ import javax.sql.DataSource;
  * ----------------------------------------------
  * 2014.03.12	한성곤				Spring Security 설정 간소화 기능 추가
  * </pre>
+ * @since 2014.03.12
  */
 public class DataSourceFactoryBean implements FactoryBean<DataSource>, ApplicationContextAware {
 
-	private static final String DEF_DATASOURCE_NAME = "dataSource";
+    private static final String DEF_DATASOURCE_NAME = "dataSource";
 
-	private ApplicationContext context = null;
-	
-	public void setApplicationContext(ApplicationContext context) throws BeansException {
-		this.context = context;
-	}
+    private ApplicationContext context = null;
 
-	public DataSource getObject() throws Exception {
-		SecurityConfig config = context.getBean(SecurityConfig.class);
-		
-		if (config == null) {
-			throw new NoSuchBeanDefinitionException("No bean of type [SecurityConfig.class] is defined.");
-		}
+    public void setApplicationContext(ApplicationContext context) throws BeansException {
+        this.context = context;
+    }
 
-		if (config.getDataSource() != null) {
-			return config.getDataSource();
-		} else {
-			if (context.containsBean(DEF_DATASOURCE_NAME)) {
-				
-				return (DataSource) context.getBean(DEF_DATASOURCE_NAME);
-			} else {
-				throw new NoSuchBeanDefinitionException("No bean of name [dataSource] is defined.");
-			}
-		}
-	}
+    public DataSource getObject() throws Exception {
+        SecurityConfig config = context.getBean(SecurityConfig.class);
 
-	public Class<DataSource> getObjectType() {
-		return DataSource.class;
-	}
+        if (config == null) {
+            throw new NoSuchBeanDefinitionException("No bean of type [SecurityConfig.class] is defined.");
+        }
 
-	public boolean isSingleton() {
-		return true;
-	}
+        if (config.getDataSource() != null) {
+            return config.getDataSource();
+        } else {
+            if (context.containsBean(DEF_DATASOURCE_NAME)) {
+
+                return (DataSource) context.getBean(DEF_DATASOURCE_NAME);
+            } else {
+                throw new NoSuchBeanDefinitionException("No bean of name [dataSource] is defined.");
+            }
+        }
+    }
+
+    public Class<DataSource> getObjectType() {
+        return DataSource.class;
+    }
+
+    public boolean isSingleton() {
+        return true;
+    }
 
 }

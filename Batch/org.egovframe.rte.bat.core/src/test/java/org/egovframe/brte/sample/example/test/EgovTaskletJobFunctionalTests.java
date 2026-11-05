@@ -32,70 +32,70 @@ import java.util.Date;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Job의 실행중 배치작업 외 단순 처리가 필요한 작업의 처리 기능을 테스트 
- * 
+ * Job의 실행중 배치작업 외 단순 처리가 필요한 작업의 처리 기능을 테스트
+ *
  * @author 배치실행개발팀
- * @since 2012. 07.31
  * @version 1.0
  * @see <pre>
  *      개정이력(Modification Information)
- *   
+ *
  *   수정일      수정자           수정내용
  *  ------- -------- ---------------------------
  *  2012.07.31  배치실행개발팀     최초 생성
  *  </pre>
+ * @since 2012. 07.31
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"/org/egovframe/batch/simple-job-launcher-context.xml"
-		, "/org/egovframe/batch/jobs/taskletJob.xml"
-		, "/org/egovframe/batch/job-runner-context.xml"})
+@ContextConfiguration(locations = {"/org/egovframe/batch/simple-job-launcher-context.xml"
+        , "/org/egovframe/batch/jobs/taskletJob.xml"
+        , "/org/egovframe/batch/job-runner-context.xml"})
 public class EgovTaskletJobFunctionalTests {
 
-	//배치작업을  test하기 위한 JobLauncherTestUtils
-	@Autowired
-	private JobLauncherTestUtils jobLauncherTestUtils;
+    //배치작업을  test하기 위한 JobLauncherTestUtils
+    @Autowired
+    private JobLauncherTestUtils jobLauncherTestUtils;
 
-	/**
-	 * 배치작업 테스트
-	 */
-	@Test
-	public void testLaunchJob() throws Exception {
-		JobExecution jobExecution = jobLauncherTestUtils.launchJob(new JobParametersBuilder().addString("value", "foo")
-				.addParameter("timestamp", new JobParameter(new Date().getTime())).toJobParameters());
-		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
-	}
+    /**
+     * 배치작업 테스트
+     */
+    @Test
+    public void testLaunchJob() throws Exception {
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob(new JobParametersBuilder().addString("value", "foo")
+                .addParameter("timestamp", new JobParameter(new Date().getTime())).toJobParameters());
+        assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
+    }
 
-	/**
-	 *  단순 처리가 필요한 작업 클래스
-	 * 
-	 * @author 배치실행개발팀
-	 * @since 2012. 07.31
-	 * @version 1.0
-	 * @see <pre>
-	 *      개정이력(Modification Information)
-	 *   
-	 *   수정일      수정자           수정내용
-	 *  ------- -------- ---------------------------
-	 *  2012.07.31  배치실행개발팀     최초 생성
-	 *  </pre>
-	 */
-	public static class TestBean {
-		//String value
-		private String value;
+    /**
+     * 단순 처리가 필요한 작업 클래스
+     *
+     * @author 배치실행개발팀
+     * @version 1.0
+     * @see <pre>
+     *      개정이력(Modification Information)
+     *
+     *   수정일      수정자           수정내용
+     *  ------- -------- ---------------------------
+     *  2012.07.31  배치실행개발팀     최초 생성
+     *  </pre>
+     * @since 2012. 07.31
+     */
+    public static class TestBean {
+        //String value
+        private String value;
 
-		/**
-		 * value 설정
-		 */
-		public void setValue(String value) {
-			this.value = value;
-		}
+        /**
+         * value 설정
+         */
+        public void setValue(String value) {
+            this.value = value;
+        }
 
-		/**
-		 * value의 값과 "foo" 값 비교
-		 */
-		public void execute() {
-			assertEquals("foo", value);
-		}
-	}
+        /**
+         * value의 값과 "foo" 값 비교
+         */
+        public void execute() {
+            assertEquals("foo", value);
+        }
+    }
 
 }

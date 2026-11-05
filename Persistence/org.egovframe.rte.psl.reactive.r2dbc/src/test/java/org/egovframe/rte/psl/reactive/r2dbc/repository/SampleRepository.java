@@ -13,7 +13,7 @@ import static org.springframework.data.r2dbc.query.Criteria.where;
 @Repository
 public class SampleRepository extends EgovR2dbcRepository<Sample> {
 
-    @Resource(name="connectionFactory")
+    @Resource(name = "connectionFactory")
     private ConnectionFactory connectionFactory;
 
     public SampleRepository(ConnectionFactory connectionFactory) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2019 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,9 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.util.UrlPathHelper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,7 +42,6 @@ import java.util.stream.Collectors;
  * <p>Desc.: 인증 및 접근제한 인터셉터</p>
  *
  * @author ESFC
- * @since 2019.10.01
  * @version 3.9
  * <pre>
  * 개정이력(Modification Information)
@@ -49,11 +50,18 @@ import java.util.stream.Collectors;
  * ----------------------------------------------
  * 2019.10.01	ESFC            최초 생성
  * 2024.03.29   ESFC            권한별 접근 제한 수정
+ * 2026.10.25   실행환경 개발팀      요청 경로 디코딩·정규화 후 인가 패턴 매칭(경로 조작 우회 차단)
  * </pre>
+ * @since 2019.10.01
  */
 public class EgovAccessInterceptor implements HandlerInterceptor, ApplicationContextAware {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EgovAccessInterceptor.class);
+
+    // getPathWithinApplication()이 요청 경로를 디코딩하고 contextPath 접두사만 정확히 제거해준다.
+    // (기존의 String.replace(contextPath, "")는 문자열 내 모든 occurrence를 치환해 경로가 왜곡될 수 있었음)
+    private static final UrlPathHelper URL_PATH_HELPER = new UrlPathHelper();
+
     private ApplicationContext context;
 
     @Override
@@ -63,18 +71,22 @@ public class EgovAccessInterceptor implements HandlerInterceptor, ApplicationCon
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
-        String requestUrl = request.getRequestURI().replace(request.getContextPath(),"");
+        // 1) UrlPathHelper: 요청 경로를 디코딩(%2e%2e 등)하고 contextPath는 접두사 위치에서만 제거.
+        // 2) 중복 슬래시를 하나로 줄이고 StringUtils.cleanPath 로 "." / ".." 세그먼트를 정규화해, 인코딩·경로
+        //    조작으로 Ant/정규식 인가 패턴을 우회하려는 시도가 정규화 전 원문 그대로 매칭되지 않도록 함.
+        String requestUrl = StringUtils.cleanPath(
+                URL_PATH_HELPER.getPathWithinApplication(request).replaceAll("/{2,}", "/"));
 
         // 인증 체크
         if (!EgovUserDetailsHelper.isAuthenticated()) {
-            LOGGER.debug("##### EgovAccessInterceptor Authentication not authorized... ");
+            LOGGER.debug("### EgovAccessInterceptor Authentication not authorized... ");
             response.sendRedirect(request.getContextPath() + EgovAccessConfigShare.DEF_LOGIN_URL);
             return false;
         }
 
         // 권한별 접근 제한
         if (authCheck(requestUrl)) {
-            LOGGER.debug("##### EgovAccessInterceptor URL pattern matched... ");
+            LOGGER.debug("### EgovAccessInterceptor URL pattern matched... ");
             return true;
         }
 

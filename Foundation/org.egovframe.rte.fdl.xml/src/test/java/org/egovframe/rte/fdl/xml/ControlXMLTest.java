@@ -115,27 +115,27 @@ public class ControlXMLTest {
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = null;
-		Document doc = null;
-		Document doc1 = null;
+        Document doc = null;
+        Document doc1 = null;
 
-		builder = factory.newDocumentBuilder();
-		File xmlFile = new File(fileName);
-		doc = builder.parse(xmlFile);
+        builder = factory.newDocumentBuilder();
+        File xmlFile = new File(fileName);
+        doc = builder.parse(xmlFile);
 
-		// XPath 조회 모듈
-		XPathResult(xpath, service, doc);
-		// Element 삽입
-		addElement(addEle, service, doc, "person1", insertObject(sobject), tmp_str);
-		// Text Element 삽입
-		addTextElement(textEle, service, doc, "name", insertObject(sobject1), tmp_str);
-		// update TextElement
-		updTextElement(updText, service, doc, updTextObject(sobject2), tmp_str);
-		// XML 생성
-		createNewXML(createXml, service, doc1, "myfamily", insertObject(sobject3), tmp_str);
-		// Element 삭제
-		delElement(delEle, service, doc, "person1", tmp_str);
-		// update Element
-		updElement(updEle, service, doc, "person1", "사람1", tmp_str);
+        // XPath 조회 모듈
+        XPathResult(xpath, service, doc);
+        // Element 삽입
+        addElement(addEle, service, doc, "person1", insertObject(sobject), tmp_str);
+        // Text Element 삽입
+        addTextElement(textEle, service, doc, "name", insertObject(sobject1), tmp_str);
+        // update TextElement
+        updTextElement(updText, service, doc, updTextObject(sobject2), tmp_str);
+        // XML 생성
+        createNewXML(createXml, service, doc1, "myfamily", insertObject(sobject3), tmp_str);
+        // Element 삭제
+        delElement(delEle, service, doc, "person1", tmp_str);
+        // update Element
+        updElement(updEle, service, doc, "person1", "사람1", tmp_str);
     }
 
     /**
@@ -147,15 +147,15 @@ public class ControlXMLTest {
      */
     public void WellformedValidate(boolean used, boolean isvalid, AbstractXMLUtility service)
             throws ValidatorException, IOException, SAXException {
-		if (used) {
-			if (service.parse(isvalid)) {
-				if (isvalid) {
-					LOGGER.debug("Validation 문서입니다.");
-				} else {
-					LOGGER.debug("well-formed 문서입니다.");
-				}
-			}
-		}
+        if (used) {
+            if (service.parse(isvalid)) {
+                if (isvalid) {
+                    LOGGER.debug("Validation 문서입니다.");
+                } else {
+                    LOGGER.debug("well-formed 문서입니다.");
+                }
+            }
+        }
     }
 
     /**
@@ -167,11 +167,11 @@ public class ControlXMLTest {
      */
     public void XPathResult(boolean used, AbstractXMLUtility service, Document doc)
             throws XPathExpressionException {
-		if (used) {
-			List<?> list = null;
-			list = service.getResult(doc, "//*[@*]");
-			viewElement((Element) list);
-		}
+        if (used) {
+            List<?> list = null;
+            list = service.getResult(doc, "//*[@*]");
+            viewElement((Element) list);
+        }
     }
 
     /**

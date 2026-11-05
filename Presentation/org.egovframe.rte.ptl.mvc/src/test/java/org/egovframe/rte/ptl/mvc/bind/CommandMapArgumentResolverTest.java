@@ -25,68 +25,69 @@ import static org.junit.Assert.assertEquals;
 @ContextConfiguration(locations = "classpath*:META-INF/spring/bind/test_servlet.xml")
 public class CommandMapArgumentResolverTest {
 
-	@Autowired
-	private ApplicationContext ctx;
+    @Autowired
+    private ApplicationContext ctx;
 
-	private DispatcherServlet dispatcher;
+    private DispatcherServlet dispatcher;
 
-	/**
-	 * org.springframework.web.servlet.mvc.annotation.ServletAnnotationControllerTests 를 참조했다.
-	 * @throws ServletException
-	 */
-	@Before
-	public void setUp() throws ServletException {
-		this.dispatcher = new DispatcherServlet() {
-			/**
-			 *  serialVersion UID
-			 */
-			private static final long serialVersionUID = 8396656162228611544L;
+    /**
+     * org.springframework.web.servlet.mvc.annotation.ServletAnnotationControllerTests 를 참조했다.
+     *
+     * @throws ServletException
+     */
+    @Before
+    public void setUp() throws ServletException {
+        this.dispatcher = new DispatcherServlet() {
+            /**
+             *  serialVersion UID
+             */
+            private static final long serialVersionUID = 8396656162228611544L;
 
-			@Override
-			protected WebApplicationContext createWebApplicationContext(WebApplicationContext parent) throws BeansException {
-				GenericWebApplicationContext genericCtx = new GenericWebApplicationContext();
-				genericCtx.setParent(ctx);
-				genericCtx.refresh();
-				return genericCtx;
-			}
-		};
-		dispatcher.init(new MockServletConfig());
-	}
+            @Override
+            protected WebApplicationContext createWebApplicationContext(WebApplicationContext parent) throws BeansException {
+                GenericWebApplicationContext genericCtx = new GenericWebApplicationContext();
+                genericCtx.setParent(ctx);
+                genericCtx.refresh();
+                return genericCtx;
+            }
+        };
+        dispatcher.init(new MockServletConfig());
+    }
 
-	@Test
-	public void testCommandMapWithHttpRequest() throws ServletException, IOException {
+    @Test
+    public void testCommandMapWithHttpRequest() throws ServletException, IOException {
 
-		MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-		MockHttpServletResponse mockResponse = new MockHttpServletResponse();
-		mockRequest.setMethod("POST");
-		mockRequest.setRequestURI("/test.do");
-		mockRequest.addParameter("USA", "washington");
-		mockRequest.addParameter("japan", "tokyo");
-		mockRequest.addParameter("korea", "seoul");
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        MockHttpServletResponse mockResponse = new MockHttpServletResponse();
+        mockRequest.setMethod("POST");
+        mockRequest.setRequestURI("/test.do");
+        mockRequest.addParameter("USA", "washington");
+        mockRequest.addParameter("japan", "tokyo");
+        mockRequest.addParameter("korea", "seoul");
 
-		dispatcher.service(mockRequest, mockResponse);
+        dispatcher.service(mockRequest, mockResponse);
 
-		assertEquals("washington", mockRequest.getAttribute("USA"));
-		assertEquals("tokyo", mockRequest.getAttribute("japan"));
-		assertEquals("seoul", mockRequest.getAttribute("korea"));
-	}
+        assertEquals("washington", mockRequest.getAttribute("USA"));
+        assertEquals("tokyo", mockRequest.getAttribute("japan"));
+        assertEquals("seoul", mockRequest.getAttribute("korea"));
+    }
 
-	@Test
-	public void testCommandMapWithHttpMultiparRequest() throws ServletException, IOException {
+    @Test
+    public void testCommandMapWithHttpMultiparRequest() throws ServletException, IOException {
 
-		MockMultipartHttpServletRequest mockRequest = new MockMultipartHttpServletRequest();
-		MockHttpServletResponse mockResponse = new MockHttpServletResponse();
-		mockRequest.setMethod("POST");
-		mockRequest.setRequestURI("/test.do");
-		mockRequest.addParameter("USA", "washington");
-		mockRequest.addParameter("japan", "tokyo");
-		mockRequest.addParameter("korea", "seoul");
+        MockMultipartHttpServletRequest mockRequest = new MockMultipartHttpServletRequest();
+        MockHttpServletResponse mockResponse = new MockHttpServletResponse();
+        mockRequest.setMethod("POST");
+        mockRequest.setRequestURI("/test.do");
+        mockRequest.addParameter("USA", "washington");
+        mockRequest.addParameter("japan", "tokyo");
+        mockRequest.addParameter("korea", "seoul");
 
-		dispatcher.service(mockRequest, mockResponse);
+        dispatcher.service(mockRequest, mockResponse);
 
-		assertEquals("washington", mockRequest.getAttribute("USA"));
-		assertEquals("tokyo", mockRequest.getAttribute("japan"));
-		assertEquals("seoul", mockRequest.getAttribute("korea"));
-	}
+        assertEquals("washington", mockRequest.getAttribute("USA"));
+        assertEquals("tokyo", mockRequest.getAttribute("japan"));
+        assertEquals("seoul", mockRequest.getAttribute("korea"));
+    }
 
 }

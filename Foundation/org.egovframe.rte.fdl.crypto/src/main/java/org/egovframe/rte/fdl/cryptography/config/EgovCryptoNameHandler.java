@@ -18,14 +18,13 @@ package org.egovframe.rte.fdl.cryptography.config;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 
 /**
- * EgovCryptoConfig 클래스  
+ * EgovCryptoConfig 클래스
  * <Notice>
- * 	    Crypto Namespace Handler 
+ * Crypto Namespace Handler
  * <Disclaimer>
- *		N/A
+ * N/A
  *
  * @author 장동한
- * @since 2018.08.09
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -34,17 +33,18 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
  * ----------------------------------------------
  * 2018.08.09	장동한				최초 생성
  * </pre>
+ * @since 2018.08.09
  */
 public class EgovCryptoNameHandler extends NamespaceHandlerSupport {
 
-	/**
-	 * 초기화-Crypto 설정간소화 Definition Parser 등록
-	 * 
-	 * @param
-	 * @return void
-	 */
+    /**
+     * 초기화-Crypto 설정간소화 Definition Parser 등록
+     *
+     * @param
+     * @return void
+     */
     public void init() {
-    	   registerBeanDefinitionParser("config", new EgovCryptoConfigBeanDefinitionParser());	
+        registerBeanDefinitionParser("config", new EgovCryptoConfigBeanDefinitionParser());
     }
 
 }

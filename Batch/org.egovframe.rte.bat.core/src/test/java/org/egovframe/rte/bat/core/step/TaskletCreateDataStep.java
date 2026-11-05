@@ -21,61 +21,61 @@ import java.util.Random;
 
 public class TaskletCreateDataStep implements Tasklet, InitializingBean {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(TaskletCreateDataStep.class);
-	
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		// Assert.notNull(directory, "directory must be set");
-	}
+    private static final Logger LOGGER = LoggerFactory.getLogger(TaskletCreateDataStep.class);
 
-	@Override
-	public RepeatStatus execute(StepContribution contribution,
-			ChunkContext chunkContext) throws Exception {
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        // Assert.notNull(directory, "directory must be set");
+    }
 
-		LOGGER.debug("TaskletCreateDataStep execute START ===");
+    @Override
+    public RepeatStatus execute(StepContribution contribution,
+                                ChunkContext chunkContext) throws Exception {
 
-		ExecutionContext executionContext = new ExecutionContext();
-		FlatFileItemWriter<CustomerCredit> writer = ApplicationContextProvider.getBean("delimitedToDelimitedJob-CreateData-delimitedItemWriter",FlatFileItemWriter.class);
-		List<CustomerCredit> listDataInfo = new ArrayList<CustomerCredit>();
-		writer.open(executionContext);
+        LOGGER.debug("TaskletCreateDataStep execute START ===");
 
-		Random random = new Random();
-		SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//dd/MM/yyyy
-	    Date now = new Date();
-	    int commitInterval = 10000;
-	    int commitCount = 0;
-	    
-		// 테스트 데이타를 생성한다.
-		int createCount = 1*10000;
-		for ( int ii=0; ii<createCount; ii++) {
-			
-			now = new Date();
-			CustomerCredit customerCredit = new CustomerCredit();
-			
-			customerCredit.setId(createCount+ii);
-			customerCredit.setName("name"+(createCount+ii));
-			customerCredit.setCredit(new BigDecimal(createCount));
-			//customerCreditMore.setSerial("ABCD\"TEST\"\"1,000\"\"\""+(createCount+ii));
-			//customerCreditMore.setTax(new BigDecimal(random.nextInt()));
-			//customerCreditMore.setAmount(random.nextInt());
-			//customerCreditMore.setCreateDate(sdfDate.format(now));
-			//customerCreditMore.setChangeDate(sdfDate.format(now));
-			listDataInfo.add(customerCredit);
-			commitCount++;
-			if (commitInterval == commitCount) {
-				writer.write(listDataInfo);
-				commitCount = 0;
-				//for(int dd=0;dd<listDataInfo.size(); dd++) listDataInfo.set(dd, null);
-				listDataInfo.clear();
-				//listDataInfo = null;
-				//listDataInfo = new ArrayList<CustomerCreditMore>();
-			}
-			
-		}
-		
-		writer.close();
+        ExecutionContext executionContext = new ExecutionContext();
+        FlatFileItemWriter<CustomerCredit> writer = ApplicationContextProvider.getBean("delimitedToDelimitedJob-CreateData-delimitedItemWriter", FlatFileItemWriter.class);
+        List<CustomerCredit> listDataInfo = new ArrayList<CustomerCredit>();
+        writer.open(executionContext);
 
-		return RepeatStatus.FINISHED;
-	}
+        Random random = new Random();
+        SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//dd/MM/yyyy
+        Date now = new Date();
+        int commitInterval = 10000;
+        int commitCount = 0;
+
+        // 테스트 데이타를 생성한다.
+        int createCount = 1 * 10000;
+        for (int ii = 0; ii < createCount; ii++) {
+
+            now = new Date();
+            CustomerCredit customerCredit = new CustomerCredit();
+
+            customerCredit.setId(createCount + ii);
+            customerCredit.setName("name" + (createCount + ii));
+            customerCredit.setCredit(new BigDecimal(createCount));
+            //customerCreditMore.setSerial("ABCD\"TEST\"\"1,000\"\"\""+(createCount+ii));
+            //customerCreditMore.setTax(new BigDecimal(random.nextInt()));
+            //customerCreditMore.setAmount(random.nextInt());
+            //customerCreditMore.setCreateDate(sdfDate.format(now));
+            //customerCreditMore.setChangeDate(sdfDate.format(now));
+            listDataInfo.add(customerCredit);
+            commitCount++;
+            if (commitInterval == commitCount) {
+                writer.write(listDataInfo);
+                commitCount = 0;
+                //for(int dd=0;dd<listDataInfo.size(); dd++) listDataInfo.set(dd, null);
+                listDataInfo.clear();
+                //listDataInfo = null;
+                //listDataInfo = new ArrayList<CustomerCreditMore>();
+            }
+
+        }
+
+        writer.close();
+
+        return RepeatStatus.FINISHED;
+    }
 
 }

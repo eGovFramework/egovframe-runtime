@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 MOPAS(Ministry of Public Administration and Security).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
  * 별도의 특정 로직이 없다면 그냥 재정의 없이 사용가능하다. </p>
  *
  * @author Judd Cho (horanghi@gmail.com)
- * @since 2009.06.01
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -37,36 +36,38 @@ import org.slf4j.LoggerFactory;
  * 2009.05.30	Judd Cho			최초 생성
  * 2015.01.31	Vincent Han			코드 품질 개선
  * </pre>
+ * @since 2009.06.01
  */
 public class DefaultTraceHandleManager extends AbstractTraceHandleManager implements TraceHandlerService {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(DefaultTraceHandleManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultTraceHandleManager.class);
 
-	/**
-	 * trace 메소드.
-	 * @param clazz 클래스정보
-	 * @param message 보여주고자하는 메세지
-	 * @return boolean true|false
-	 */
-	@Override
-	public boolean trace(Class<?> clazz, String message) {
-		LOGGER.debug(" DefaultExceptionHandleManager.run() ");
-		// 매칭조건이 false 인 경우
-		if (!enableMatcher()) {
-			return false;
-		}
-		for (String pattern : patterns) {
-			LOGGER.debug("pattern = {}, thisPackageName = {}", pattern, getPackageName());
-			LOGGER.debug("pm.match(pattern, getPackageName()) = {}", pm.match(pattern, getPackageName()));
-			if (pm.match(pattern, getPackageName())) {
-				for (TraceHandler eh : handlers) {
-					eh.todo(clazz, message);
-					LOGGER.debug("trace end?");
-				}
-				break;
-			}
-		}
-		return true;
-	}
+    /**
+     * trace 메소드.
+     *
+     * @param clazz   클래스정보
+     * @param message 보여주고자하는 메세지
+     * @return boolean true|false
+     */
+    @Override
+    public boolean trace(Class<?> clazz, String message) {
+        LOGGER.debug(" DefaultExceptionHandleManager.run() ");
+        // 매칭조건이 false 인 경우
+        if (!enableMatcher()) {
+            return false;
+        }
+        for (String pattern : patterns) {
+            LOGGER.debug("pattern = {}, thisPackageName = {}", pattern, getPackageName());
+            LOGGER.debug("pm.match(pattern, getPackageName()) = {}", pm.match(pattern, getPackageName()));
+            if (pm.match(pattern, getPackageName())) {
+                for (TraceHandler eh : handlers) {
+                    eh.todo(clazz, message);
+                    LOGGER.debug("trace end?");
+                }
+                break;
+            }
+        }
+        return true;
+    }
 
 }

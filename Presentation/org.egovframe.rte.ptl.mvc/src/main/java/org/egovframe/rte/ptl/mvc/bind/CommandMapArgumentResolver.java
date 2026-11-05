@@ -33,8 +33,8 @@ import java.util.Map;
  * CommandMapArgumentResolver는 Controller 메소드의 argument중에 commandMap이라는 Map 객체가 있다면
  * HTTP request 객체에 있는 파라미터이름과 값을 commandMap에 담는다.
  * </pre>
+ *
  * @author 실행환경 개발팀 함철
- * @since 2009.06.01
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -44,38 +44,39 @@ import java.util.Map;
  * 2009.05.30	함철				최초 생성
  * 2014.04.23	이영지				deprecated
  * </pre>
+ * @since 2009.06.01
  * @deprecated This class has been deprecated.
  */
 @Deprecated
 public class CommandMapArgumentResolver implements WebArgumentResolver {
 
-	/**
-	 * Controller의 메소드 argument에 commandMap이라는 Map 객체가 있다면 
-	 * HTTP request 객체에 있는 파라미터이름과 값을 commandMap에 담아 returng한다.
-	 * 배열인 파라미터 값은 배열로 Map에 저장한다.
-	 * 
-	 * @param methodParameter - 메소드 파라미터의 타입,인덱스등의 정보 
-	 * @param webRequest - web request 객체
-	 * @return argument에 commandMap(java.util.Map)이 있으면 commandMap, 없으면<code>UNRESOLVED</code>.
-	 * @exception Exception
-	 */
-	public Object resolveArgument(MethodParameter methodParameter, NativeWebRequest webRequest) throws Exception {
-		Class<?> clazz = methodParameter.getParameterType();
-		String paramName = methodParameter.getParameterName();
-		if (clazz.equals(Map.class) && paramName.equals("commandMap")) {
-			Map<String, Object> commandMap = new HashMap<String, Object>();
-			HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
-			Enumeration<?> enumeration = request.getParameterNames();
-			while (enumeration.hasMoreElements()) {
-				String key = (String) enumeration.nextElement();
-				String[] values = request.getParameterValues(key);
-				if (values != null) {
-					commandMap.put(key, (values.length > 1) ? values : values[0]);
-				}
-			}
-			return commandMap;
-		}
-		return UNRESOLVED;
-	}
+    /**
+     * Controller의 메소드 argument에 commandMap이라는 Map 객체가 있다면
+     * HTTP request 객체에 있는 파라미터이름과 값을 commandMap에 담아 returng한다.
+     * 배열인 파라미터 값은 배열로 Map에 저장한다.
+     *
+     * @param methodParameter - 메소드 파라미터의 타입,인덱스등의 정보
+     * @param webRequest      - web request 객체
+     * @return argument에 commandMap(java.util.Map)이 있으면 commandMap, 없으면<code>UNRESOLVED</code>.
+     * @throws Exception
+     */
+    public Object resolveArgument(MethodParameter methodParameter, NativeWebRequest webRequest) throws Exception {
+        Class<?> clazz = methodParameter.getParameterType();
+        String paramName = methodParameter.getParameterName();
+        if (clazz.equals(Map.class) && paramName.equals("commandMap")) {
+            Map<String, Object> commandMap = new HashMap<String, Object>();
+            HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
+            Enumeration<?> enumeration = request.getParameterNames();
+            while (enumeration.hasMoreElements()) {
+                String key = (String) enumeration.nextElement();
+                String[] values = request.getParameterValues(key);
+                if (values != null) {
+                    commandMap.put(key, (values.length > 1) ? values : values[0]);
+                }
+            }
+            return commandMap;
+        }
+        return UNRESOLVED;
+    }
 
 }

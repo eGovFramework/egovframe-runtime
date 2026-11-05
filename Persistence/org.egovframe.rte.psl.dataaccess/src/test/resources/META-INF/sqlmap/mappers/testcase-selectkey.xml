@@ -3,18 +3,18 @@
 
 <mapper namespace="org.egovframe.rte.psl.dataaccess.EmpMapper">
 
-	<!-- resultMap EmpResult.empResult 참고 -->
-	<!-- select 쿼리 EmpResult.selectEmpUsingResultMap 참고 -->
+    <!-- resultMap EmpResult.empResult 참고 -->
+    <!-- select 쿼리 EmpResult.selectEmpUsingResultMap 참고 -->
 
-	<insert id="insertEmpUsingSelectKey" parameterType="org.egovframe.rte.psl.dataaccess.vo.EmpVO">
-	     <selectKey resultType="decimal" keyProperty="empNo" order="BEFORE">
-			select	case when MAX_EMP_NO is null then 1000 
-						 else (MAX_EMP_NO + 1) 
-					end
-			from (select MAX(EMP_NO) MAX_EMP_NO from EMP) MAX_EMP
-	     </selectKey>
-	     
-		<![CDATA[
+    <insert id="insertEmpUsingSelectKey" parameterType="org.egovframe.rte.psl.dataaccess.vo.EmpVO">
+        <selectKey resultType="decimal" keyProperty="empNo" order="BEFORE">
+            select case when MAX_EMP_NO is null then 1000
+            else (MAX_EMP_NO + 1)
+            end
+            from (select MAX(EMP_NO) MAX_EMP_NO from EMP) MAX_EMP
+        </selectKey>
+
+        <![CDATA[
 			insert into EMP
 					   (EMP_NO,
 						EMP_NAME,
@@ -33,12 +33,13 @@
 						#{comm,jdbcType=NUMERIC},
 						#{deptNo})
 		]]>
-	</insert>
-	
-	<delete id="deleteEmpAll">
+    </insert>
+
+    <delete id="deleteEmpAll">
 		<![CDATA[
-			delete from EMP
-		]]>
+        delete
+        from EMP
+        ]]>
 	</delete>
 
 </mapper>

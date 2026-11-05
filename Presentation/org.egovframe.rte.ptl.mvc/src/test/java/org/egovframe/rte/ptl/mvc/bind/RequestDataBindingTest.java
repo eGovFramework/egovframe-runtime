@@ -25,77 +25,77 @@ import static org.junit.Assert.assertNotNull;
 
 public class RequestDataBindingTest {
 
-	@Test
-	public void testDataBinding() throws ParseException {
+    @Test
+    public void testDataBinding() throws ParseException {
 
-		Employee employee = new Employee();
-		ServletRequestDataBinder binder = new ServletRequestDataBinder(employee, "employee");
-		MockHttpServletRequest request = new MockHttpServletRequest();
+        Employee employee = new Employee();
+        ServletRequestDataBinder binder = new ServletRequestDataBinder(employee, "employee");
+        MockHttpServletRequest request = new MockHttpServletRequest();
 
-		request.addParameter("empId", "AA1001");
-		request.addParameter("empName", "Hong Kil Dong");
-		request.addParameter("empAge", "8");
-		request.addParameter("birthDate", "2000/10/31");
+        request.addParameter("empId", "AA1001");
+        request.addParameter("empName", "Hong Kil Dong");
+        request.addParameter("empAge", "8");
+        request.addParameter("birthDate", "2000/10/31");
 
-		SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
-		CustomDateEditor dateEditor = new CustomDateEditor(format, true);
-		Date expected = format.parse("2000/10/31");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
+        CustomDateEditor dateEditor = new CustomDateEditor(format, true);
+        Date expected = format.parse("2000/10/31");
 
-		binder.registerCustomEditor(Date.class, dateEditor);
+        binder.registerCustomEditor(Date.class, dateEditor);
 
-		binder.bind(request);
+        binder.bind(request);
 
-		assertNotNull(employee);
+        assertNotNull(employee);
 
-		assertEquals("AA1001", employee.getEmpId());
-		assertEquals("Hong Kil Dong", employee.getEmpName());
-		assertEquals(8, employee.getEmpAge());
-		assertEquals(expected, employee.getBirthDate());
+        assertEquals("AA1001", employee.getEmpId());
+        assertEquals("Hong Kil Dong", employee.getEmpName());
+        assertEquals(8, employee.getEmpAge());
+        assertEquals(expected, employee.getBirthDate());
 
-	}
+    }
 
-	private class Employee {
+    private class Employee {
 
-		private String empId;
-		private String empName;
-		private int empAge;
-		private Date birthDate;
+        private String empId;
+        private String empName;
+        private int empAge;
+        private Date birthDate;
 
-		public String getEmpId() {
-			return empId;
-		}
+        public String getEmpId() {
+            return empId;
+        }
 
-		@SuppressWarnings("unused")
-		public void setEmpId(String empId) {
-			this.empId = empId;
-		}
+        @SuppressWarnings("unused")
+        public void setEmpId(String empId) {
+            this.empId = empId;
+        }
 
-		public String getEmpName() {
-			return empName;
-		}
+        public String getEmpName() {
+            return empName;
+        }
 
-		@SuppressWarnings("unused")
-		public void setEmpName(String empName) {
-			this.empName = empName;
-		}
+        @SuppressWarnings("unused")
+        public void setEmpName(String empName) {
+            this.empName = empName;
+        }
 
-		public int getEmpAge() {
-			return empAge;
-		}
+        public int getEmpAge() {
+            return empAge;
+        }
 
-		@SuppressWarnings("unused")
-		public void setEmpAge(int empAge) {
-			this.empAge = empAge;
-		}
+        @SuppressWarnings("unused")
+        public void setEmpAge(int empAge) {
+            this.empAge = empAge;
+        }
 
-		public Date getBirthDate() {
-			return birthDate;
-		}
+        public Date getBirthDate() {
+            return birthDate;
+        }
 
-		@SuppressWarnings("unused")
-		public void setBirthDate(Date birthDate) {
-			this.birthDate = birthDate;
-		}
-	}
+        @SuppressWarnings("unused")
+        public void setBirthDate(Date birthDate) {
+            this.birthDate = birthDate;
+        }
+    }
 
 }

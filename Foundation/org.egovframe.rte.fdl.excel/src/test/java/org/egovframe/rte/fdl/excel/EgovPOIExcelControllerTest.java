@@ -24,28 +24,29 @@ import static org.junit.Assert.assertEquals;
 
 /**
  * FileServiceTest is TestCase of File Handling Service
+ *
  * @author Seongjong Yoon
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:/META-INF/spring/*.xml"})
 public class EgovPOIExcelControllerTest extends AbstractJUnit4SpringContextTests {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(EgovPOIExcelControllerTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EgovPOIExcelControllerTest.class);
 
     @Autowired
     ApplicationContext applicationContext;
 
     DispatcherServlet dispatcher;
 
-	@Before
+    @Before
     public void init() {
         this.dispatcher = new DispatcherServlet() {
             /**
-			 *  serialVersion UID
-			 */
-			private static final long serialVersionUID = -1645563296360811037L;
+             *  serialVersion UID
+             */
+            private static final long serialVersionUID = -1645563296360811037L;
 
-			protected WebApplicationContext createWebApplicationContext(WebApplicationContext parent) {
+            protected WebApplicationContext createWebApplicationContext(WebApplicationContext parent) {
                 GenericWebApplicationContext wac = new GenericWebApplicationContext();
                 wac.setParent(applicationContext);
                 wac.refresh();
@@ -64,38 +65,38 @@ public class EgovPOIExcelControllerTest extends AbstractJUnit4SpringContextTests
     /**
      * [Flow #-6] 엑셀 파일 생성 : 멥으로 데이터를 전송하여 엑셀로 다운로드
      */
-	@Test
-	public void testExcelDownloadMap() throws ServletException, IOException {
-		LOGGER.debug("################################################");
+    @Test
+    public void testExcelDownloadMap() throws ServletException, IOException {
+        LOGGER.debug("################################################");
 
-		MockHttpServletRequest request = new MockHttpServletRequest("GET","/sale/listPOIExcelCategory.do");
-		MockHttpServletResponse response = new MockHttpServletResponse();
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/sale/listPOIExcelCategory.do");
+        MockHttpServletResponse response = new MockHttpServletResponse();
 
-		dispatcher.service(request, response);
+        dispatcher.service(request, response);
 
-		LOGGER.debug("## status : {}", response.getStatus());
-		assertEquals(200, response.getStatus());
+        LOGGER.debug("## status : {}", response.getStatus());
+        assertEquals(200, response.getStatus());
 
-		LOGGER.debug("response.getContentType() : {}", response.getContentType());
-		assertEquals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", response.getContentType());
-	}
+        LOGGER.debug("response.getContentType() : {}", response.getContentType());
+        assertEquals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", response.getContentType());
+    }
 
     /**
      * [Flow #-7] 엑셀 파일 생성 :  VO로 데이터를 전송하여 엑셀로 다운로드
      */
-	@Test
-	public void testExcelDownloadVO() throws ServletException, IOException {
-		LOGGER.debug("################################################");
+    @Test
+    public void testExcelDownloadVO() throws ServletException, IOException {
+        LOGGER.debug("################################################");
 
-		MockHttpServletRequest request = new MockHttpServletRequest("GET","/sale/listPOIExcelVOCategory.do");
-		MockHttpServletResponse response = new MockHttpServletResponse();
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/sale/listPOIExcelVOCategory.do");
+        MockHttpServletResponse response = new MockHttpServletResponse();
 
-		dispatcher.service(request, response);
+        dispatcher.service(request, response);
 
-		LOGGER.debug("## status : {}", response.getStatus());
-		assertEquals(200, response.getStatus());
+        LOGGER.debug("## status : {}", response.getStatus());
+        assertEquals(200, response.getStatus());
 
-		LOGGER.debug("response.getContentType() : {}", response.getContentType());
-		assertEquals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", response.getContentType());
-	}
+        LOGGER.debug("response.getContentType() : {}", response.getContentType());
+        assertEquals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", response.getContentType());
+    }
 }

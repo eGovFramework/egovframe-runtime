@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2019 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ package org.egovframe.rte.fdl.access.config;
  * <p>Desc.: 설정 간소화 처리에 사용되는 config 공유 변수 클래스s</p>
  *
  * @author ESFC
- * @since 2019.10.01
  * @version 3.9
  * <pre>
  * 개정이력(Modification Information)
@@ -30,6 +29,7 @@ package org.egovframe.rte.fdl.access.config;
  * ----------------------------------------------
  * 2019.10.01	ESFC            최초 생성
  * </pre>
+ * @since 2019.10.01
  */
 public class EgovAccessConfigShare {
 

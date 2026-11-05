@@ -18,20 +18,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(locations = "classpath*:META-INF/spring/mvcTest/test-servlet.xml")
 public class ApplicationContextSetupTest {
 
-	@Test
-	public void responseBodyHandler() throws Exception {
-		MockMvc mockMvc = MockMvcBuilders.standaloneSetup(new TestController()).build();
-		mockMvc.perform(get("/form")).andExpect(status().isOk()).andExpect(content().string("hello"));
+    @Test
+    public void responseBodyHandler() throws Exception {
+        MockMvc mockMvc = MockMvcBuilders.standaloneSetup(new TestController()).build();
+        mockMvc.perform(get("/form")).andExpect(status().isOk()).andExpect(content().string("hello"));
 
-		mockMvc.perform(get("/wrong")).andExpect(status().isNotFound());
-	}
+        mockMvc.perform(get("/wrong")).andExpect(status().isNotFound());
+    }
 
-	@Controller
-	static class TestController {
-		@RequestMapping("/form")
-		public @ResponseBody String form() {
-			return "hello";
-		}
-	}
+    @Controller
+    static class TestController {
+        @RequestMapping("/form")
+        public @ResponseBody String form() {
+            return "hello";
+        }
+    }
 
 }

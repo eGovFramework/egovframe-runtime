@@ -1,6 +1,6 @@
 /*
- * Copyright 2012-2014 MOSPA(Ministry of Security and Public Administration).
- *  
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,9 +22,8 @@ import java.io.UnsupportedEncodingException;
 
 /**
  * Resource와 Encoding을 입력받아 EgovReader를 Factory Pattern으로 생성함
- * 
+ *
  * @author 배치실행개발팀
- * @since 2012.07.30
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -33,19 +32,15 @@ import java.io.UnsupportedEncodingException;
  * ----------------------------------------------
  * 2012.10.20	배치실행개발팀		최초 생성
  * </pre>
+ * @since 2012.07.30
  */
 public class EgovByteReaderFactory {
 
-	/**
-	 * Resource와 encoding을 입력받아 Reader를 생성하는 예제
-	 * @param resource
-	 * @param encoding
-	 * @return
-	 * @throws UnsupportedEncodingException
-	 * @throws IOException
-	 */
-	public EgovByteReader create(Resource resource, String encoding) throws UnsupportedEncodingException, IOException {
-		return new EgovByteReader(resource.getInputStream(), encoding);
-	}
+    /**
+     * Resource와 encoding을 입력받아 Reader를 생성하는 예제
+     */
+    public EgovByteReader create(Resource resource, String encoding) throws UnsupportedEncodingException, IOException {
+        return new EgovByteReader(resource.getInputStream(), encoding);
+    }
 
 }

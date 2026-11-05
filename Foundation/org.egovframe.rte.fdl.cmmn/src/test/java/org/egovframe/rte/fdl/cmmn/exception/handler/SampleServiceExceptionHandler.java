@@ -28,21 +28,21 @@ import javax.annotation.Resource;
  */
 public class SampleServiceExceptionHandler implements ExceptionHandler {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(SampleServiceExceptionHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SampleServiceExceptionHandler.class);
 
-	@Resource(name = "egovSampleSSLMailSender")
-	private SimpleSSLMail mailSender;
+    @Resource(name = "egovSampleSSLMailSender")
+    private SimpleSSLMail mailSender;
 
-	public void occur(Exception ex, String packageName) {
+    public void occur(Exception ex, String packageName) {
 
-		LOGGER.debug(" SampleServiceExceptionHandler run...............");
-		try {
-			mailSender.send("[Exception Handler Subject]" , ex.getMessage() +" occur !!! find the exception problem ");
-			LOGGER.debug(" sending a alert mail  is completed ");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+        LOGGER.debug(" SampleServiceExceptionHandler run...............");
+        try {
+            mailSender.send("[Exception Handler Subject]", ex.getMessage() + " occur !!! find the exception problem ");
+            LOGGER.debug(" sending a alert mail  is completed ");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-	}
+    }
 
 }

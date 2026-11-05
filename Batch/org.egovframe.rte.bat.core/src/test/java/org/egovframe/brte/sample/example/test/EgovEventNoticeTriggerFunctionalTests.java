@@ -33,60 +33,62 @@ import static org.junit.Assert.assertEquals;
 
 /**
  * 이벤트 알림 템플릿 관리를 수행하는 테스트
- * 결과는 실제 이메일 수신여부로 확인할 것 
+ * 결과는 실제 이메일 수신여부로 확인할 것
+ *
  * @author 배치실행개발팀
- * @since 2012. 06.27
  * @version 1.0
  * @see <pre>
  *      개정이력(Modification Information)
- *   
+ *
  *   수정일      수정자           수정내용
  *  ------- -------- ---------------------------
  *  2012.06.27  배치실행개발팀     최초 생성
  *  </pre>
+ * @since 2012. 06.27
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"/org/egovframe/batch/jobs/eventNoticeTriggerJob.xml"})
+@ContextConfiguration(locations = {"/org/egovframe/batch/jobs/eventNoticeTriggerJob.xml"})
 public class EgovEventNoticeTriggerFunctionalTests extends EgovAbstractIoSampleTests {
 
-	//배치작업을  test하기 위한 JobLauncherTestUtils
-	@Autowired
-	@Qualifier("jobLauncherTestUtils")
-	private JobLauncherTestUtils jobLauncherTestUtils;
+    //배치작업을  test하기 위한 JobLauncherTestUtils
+    @Autowired
+    @Qualifier("jobLauncherTestUtils")
+    private JobLauncherTestUtils jobLauncherTestUtils;
 
-	/**
-	 * 배치 작업 테스트 
-	 */
-	@Override
-	@Test
-	public void testUpdateCredit() throws Exception {
+    /**
+     * 배치 작업 테스트
+     */
+    @Override
+    @Test
+    public void testUpdateCredit() throws Exception {
 
-		JobExecution jobExecution = jobLauncherTestUtils.launchJob(getUniqueJobParameters());
-		/*
-		 * 테스트의 결과가 아닌 
-		 * 실제 웹페이지에서 메일 수신여부로 성공여부 판단 할 것
-		 */
-		assertEquals("COMPLETED", jobExecution.getExitStatus().getExitCode());
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob(getUniqueJobParameters());
+        /*
+         * 테스트의 결과가 아닌
+         * 실제 웹페이지에서 메일 수신여부로 성공여부 판단 할 것
+         */
+        assertEquals("COMPLETED", jobExecution.getExitStatus().getExitCode());
 
-	}
+    }
 
-	/**
-	 * 배치결과를 다시 읽을 때  reader 설정하는 메소드
-	 */
-	@Override
-	protected void pointReaderToOutput(ItemReader<CustomerCredit> reader) {
-	}
+    /**
+     * 배치결과를 다시 읽을 때  reader 설정하는 메소드
+     */
+    @Override
+    protected void pointReaderToOutput(ItemReader<CustomerCredit> reader) {
+    }
 
-	/**
-	 * 잡파라미터를 설정하기 위한 메소드 
-	 * @return jobParameters
-	 */
-	@Override
-	protected JobParameters getUniqueJobParameters() {
-		return new JobParametersBuilder(super.getUniqueJobParameters())
-				.addString("inputFile", "/org/egovframe/data/input/delimited.csv")
-				.addString("outputFile", "file:./target/test-outputs/delimitedOutput.csv")
-				.toJobParameters();
-	}
+    /**
+     * 잡파라미터를 설정하기 위한 메소드
+     *
+     * @return jobParameters
+     */
+    @Override
+    protected JobParameters getUniqueJobParameters() {
+        return new JobParametersBuilder(super.getUniqueJobParameters())
+                .addString("inputFile", "/org/egovframe/data/input/delimited.csv")
+                .addString("outputFile", "file:./target/test-outputs/delimitedOutput.csv")
+                .toJobParameters();
+    }
 
 }

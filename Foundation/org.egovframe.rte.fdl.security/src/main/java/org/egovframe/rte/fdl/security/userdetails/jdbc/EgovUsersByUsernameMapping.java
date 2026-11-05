@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 MOPAS(Ministry of Public Administration and Security).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,11 +26,10 @@ import java.sql.Types;
 
 /**
  * 사용자 계정 정보를 DB에서 관리할 수 있도록 구현한 클래스
- * 
+ *
  * <p><b>NOTE:</b>org.springframework.jdbc.object.MappingSqlQuery 를 확장하여 사용자 계정 정보를 DB에서 관리할 수 있도록 구현한 클래스이다.</p>
- * 
+ *
  * @author 실행환경 개발팀 윤성종
- * @since 2009.06.01
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -40,11 +39,13 @@ import java.sql.Types;
  * 2009.06.01   윤성종		        최초 생성
  * 2014.01.22   한성곤		        Spring Security 3.2.X 업그레이드 적용
  * </pre>
+ * @since 2009.06.01
  */
 public abstract class EgovUsersByUsernameMapping extends MappingSqlQuery<EgovUserDetails> {
 
     /**
      * 사용자정보를 테이블에서 조회하여 사용자객체에 매핑한다.
+     *
      * @param ds
      * @param usersByUsernameQuery
      */

@@ -20,49 +20,49 @@ import org.jasypt.digest.StandardByteDigester;
 
 public class EgovDigestServiceImpl implements EgovDigestService {
 
-	private static final int DEFAULT_STRONG_ITERATIONS = 1000;
-	private static final int DEFAULT_STRONG_SALT_SIZE = 8;
+    private static final int DEFAULT_STRONG_ITERATIONS = 1000;
+    private static final int DEFAULT_STRONG_SALT_SIZE = 8;
 
-	private String algorithm = "SHA-256";
-	private boolean plainDigest = false;
+    private String algorithm = "SHA-256";
+    private boolean plainDigest = false;
 
-	public void setAlgorithm(String algorithm) {
-		this.algorithm = algorithm;
-	}
+    public String getAlgorithm() {
+        return algorithm;
+    }
 
-	public String getAlgorithm() {
-		return algorithm;
-	}
+    public void setAlgorithm(String algorithm) {
+        this.algorithm = algorithm;
+    }
 
-	public void setPlainDigest(boolean plainDigest) {
-		this.plainDigest = plainDigest;
-	}
+    public boolean isPlainDigest() {
+        return plainDigest;
+    }
 
-	public boolean isPlainDigest() {
-		return plainDigest;
-	}
+    public void setPlainDigest(boolean plainDigest) {
+        this.plainDigest = plainDigest;
+    }
 
-	private StandardByteDigester byteDigester() {
-		StandardByteDigester digester = new StandardByteDigester();
-		digester.setAlgorithm(algorithm);
-		if (plainDigest) {
-			digester.setIterations(1);
-			digester.setSaltSizeBytes(0);
-		} else {
-			digester.setIterations(DEFAULT_STRONG_ITERATIONS);
-			digester.setSaltSizeBytes(DEFAULT_STRONG_SALT_SIZE);
-		}
-		return digester;
-	}
+    private StandardByteDigester byteDigester() {
+        StandardByteDigester digester = new StandardByteDigester();
+        digester.setAlgorithm(algorithm);
+        if (plainDigest) {
+            digester.setIterations(1); // 반복 해싱 (1회)
+            digester.setSaltSizeBytes(0); // Salt의 바이트 크기 지정 (사용 안함)
+        } else {
+            digester.setIterations(DEFAULT_STRONG_ITERATIONS); // 반복 해싱 (1000회, 보안 강화)
+            digester.setSaltSizeBytes(DEFAULT_STRONG_SALT_SIZE); // Salt의 바이트 크기 지정
+        }
+        return digester;
+    }
 
-	public byte[] digest(byte[] data) {
-		StandardByteDigester digester = byteDigester();
-		return digester.digest(data);
-	}
+    public byte[] digest(byte[] data) {
+        StandardByteDigester digester = byteDigester();
+        return digester.digest(data);
+    }
 
-	public boolean matches(byte[] messageByte, byte[] digestByte) {
-		StandardByteDigester digester = byteDigester();
-		return digester.matches(messageByte, digestByte);
-	}
+    public boolean matches(byte[] messageByte, byte[] digestByte) {
+        StandardByteDigester digester = byteDigester();
+        return digester.matches(messageByte, digestByte);
+    }
 
 }

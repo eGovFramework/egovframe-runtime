@@ -24,69 +24,69 @@ import static org.junit.Assert.assertTrue;
 @Transactional
 public class RelationshipTest {
 
-	@Autowired
-	DepartmentRepository repository;
-	
-	@Autowired
-	EmployeeRepository employeeRepository;
+    @Autowired
+    DepartmentRepository repository;
 
-	@Before
-	public void setUp() {
-		// no-op
-	}
+    @Autowired
+    EmployeeRepository employeeRepository;
 
-	@Test
-	public void testSelectList() {
-		
-		Employee manager = getManager();
-		
-		manager = employeeRepository.save(manager);
-		
-		Department[] departments = getDepartmentList();
-		
-		for (int i = 0; i < departments.length; i++) {
-			departments[i].setManager(manager);
-			
-			departments[i] = repository.save(departments[i]);
-		}
+    @Before
+    public void setUp() {
+        // no-op
+    }
 
-		assertEquals(departments.length, repository.count());
-		
-		List<Department> list = (List<Department>) repository.findByDeptNameContaining("Department");
-		
-		for (Department department : departments) {
-			assertTrue(list.contains(department));
-		}
-		
-		for (Department department : list) {
-			assertEquals(manager, department.getManager());
-		}
-	}
+    @Test
+    public void testSelectList() {
 
-	private Employee getManager() {
-		Employee manager = new Employee();
-		
-		manager.setEmployeeName("Manager");
-		manager.setHireDate(new Date());
-		manager.setJob("Manager");
-		
-		return manager;
-	}
-	
-	private Department[] getDepartmentList() {
-		
-		List<Department> departments = new ArrayList<Department>();
-		
-		Department department = null;
-		for (int i = 0; i < 10; i++) {
-			department = new Department();
-			
-			department.setDeptName("Department " + (i+1));
-			
-			departments.add(department);
-		}
-		
-		return departments.toArray(new Department[0]);
-	}
-	
+        Employee manager = getManager();
+
+        manager = employeeRepository.save(manager);
+
+        Department[] departments = getDepartmentList();
+
+        for (int i = 0; i < departments.length; i++) {
+            departments[i].setManager(manager);
+
+            departments[i] = repository.save(departments[i]);
+        }
+
+        assertEquals(departments.length, repository.count());
+
+        List<Department> list = (List<Department>) repository.findByDeptNameContaining("Department");
+
+        for (Department department : departments) {
+            assertTrue(list.contains(department));
+        }
+
+        for (Department department : list) {
+            assertEquals(manager, department.getManager());
+        }
+    }
+
+    private Employee getManager() {
+        Employee manager = new Employee();
+
+        manager.setEmployeeName("Manager");
+        manager.setHireDate(new Date());
+        manager.setJob("Manager");
+
+        return manager;
+    }
+
+    private Department[] getDepartmentList() {
+
+        List<Department> departments = new ArrayList<Department>();
+
+        Department department = null;
+        for (int i = 0; i < 10; i++) {
+            department = new Department();
+
+            department.setDeptName("Department " + (i + 1));
+
+            departments.add(department);
+        }
+
+        return departments.toArray(new Department[0]);
+    }
+
 }

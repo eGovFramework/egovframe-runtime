@@ -24,44 +24,42 @@ import static org.junit.Assert.assertEquals;
 @ContextConfiguration(locations = "classpath*:META-INF/spring/context-*.xml")
 @Transactional
 public class PagingAndSortingTest {
-	private static final Logger LOGGER = LoggerFactory.getLogger(PagingAndSortingTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PagingAndSortingTest.class);
+    private static final String[] NAME = {"Alice", "Bob", "Charles", "Dennis", "Emily", "Frank ", "George", "Henry"};
+    @Autowired
+    EmployeeRepository repository;
 
-	@Autowired
-	EmployeeRepository repository;
+    @Test
+    public void testSelectList() {
+        Employee[] employees = getEmployeeList();
+        for (int i = 0; i < employees.length; i++) {
+            employees[i] = repository.save(employees[i]);
+        }
 
-	private static final String[] NAME = {"Alice", "Bob", "Charles", "Dennis", "Emily", "Frank ", "George", "Henry"};
+        Page<Employee> list;
+        int size = 3;
+        int totalIndex = 0;
+        for (int i = 0; i < (NAME.length + (size - 1)) / size; i++) {    // 올림 처리
+            list = repository.findAll(PageRequest.of(i, size, Sort.by(Sort.Direction.ASC, "employeeName")));
+            LOGGER.debug("Number of current page's element :  {}", list.getNumberOfElements());
+            for (Employee employee : list) {
+                LOGGER.debug("Selected employee name : {}", employee.getEmployeeName());
+                assertEquals(NAME[totalIndex++], employee.getEmployeeName());
+            }
+            assertEquals((i == NAME.length / size ? NAME.length % size : size), list.getNumberOfElements());
+        }
+    }
 
-	@Test
-	public void testSelectList() {
-		Employee[] employees = getEmployeeList();
-		for (int i = 0; i < employees.length; i++) {
-			employees[i] = repository.save(employees[i]);
-		}
-
-		Page<Employee> list;
-		int size = 3;
-		int totalIndex = 0;
-		for (int i = 0; i < (NAME.length + (size - 1)) / size ; i++) {	// 올림 처리
-			list = repository.findAll(PageRequest.of(i, size, Sort.by(Sort.Direction.ASC, "employeeName")));
-			LOGGER.debug("Number of current page's element :  {}", list.getNumberOfElements());
-			for (Employee employee : list) {
-				LOGGER.debug("Selected employee name : {}", employee.getEmployeeName());
-				assertEquals(NAME[totalIndex++], employee.getEmployeeName());
-			}
-			assertEquals((i == NAME.length / size ? NAME.length % size : size), list.getNumberOfElements());
-		}
-	}
-
-	private Employee[] getEmployeeList() {
-		Employee employee;
-		List<Employee> employees = new ArrayList<>();
-		for (String s : NAME) {
-			employee = new Employee();
-			employee.setEmployeeName(s);
-			employee.setHireDate(new Date());
-			employees.add(employee);
-		}
-		return employees.toArray(new Employee[0]);
-	}
+    private Employee[] getEmployeeList() {
+        Employee employee;
+        List<Employee> employees = new ArrayList<>();
+        for (String s : NAME) {
+            employee = new Employee();
+            employee.setEmployeeName(s);
+            employee.setHireDate(new Date());
+            employees.add(employee);
+        }
+        return employees.toArray(new Employee[0]);
+    }
 
 }

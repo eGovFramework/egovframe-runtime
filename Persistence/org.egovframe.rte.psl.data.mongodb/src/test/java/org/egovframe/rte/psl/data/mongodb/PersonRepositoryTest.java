@@ -65,6 +65,8 @@ public class PersonRepositoryTest {
     @Before
     public void setUp() {
         Person person = makePerson();
+        // makePerson()에서 컬렉션을 재생성하므로 2d 인덱스를 다시 생성
+        mongoTemplate.getCollection("person").createIndex(new BasicDBObject("location", "2d"));
         person = personRepository.save(person);
         LOGGER.info("##### PersonRepositoryTest Persion ID : " + person.getId());
     }

@@ -24,11 +24,10 @@ import org.springframework.context.ApplicationContextAware;
 
 /**
  * Login url 지정을 처리하는 factory bean 클래스
- * 
- *<p>Desc.: 설정 간소화 처리에 사용되는 내부 factory bean</p>
+ *
+ * <p>Desc.: 설정 간소화 처리에 사용되는 내부 factory bean</p>
  *
  * @author Vincent Han
- * @since 2014.03.12
  * @version 3.0
  * <pre>
  * 개정이력(Modification Information)
@@ -37,29 +36,30 @@ import org.springframework.context.ApplicationContextAware;
  * ----------------------------------------------
  * 2014.03.12	한성곤				Spring Security 설정 간소화 기능 추가
  * </pre>
+ * @since 2014.03.12
  */
 public class LoginFormUrlFactoryBean implements FactoryBean<String>, ApplicationContextAware {
 
-	private ApplicationContext context = null;
-	
-	public void setApplicationContext(ApplicationContext context) throws BeansException {
-		this.context = context;
-	}
+    private ApplicationContext context = null;
 
-	public String getObject() throws Exception {
-		SecurityConfig config = context.getBean(SecurityConfig.class);
-		if (config == null) {
-			throw new NoSuchBeanDefinitionException("No bean of type [SecurityConfig.class] is defined.");
-		}
-		return config.getLoginUrl();
-	}
+    public void setApplicationContext(ApplicationContext context) throws BeansException {
+        this.context = context;
+    }
 
-	public Class<String> getObjectType() {
-		return String.class;
-	}
+    public String getObject() throws Exception {
+        SecurityConfig config = context.getBean(SecurityConfig.class);
+        if (config == null) {
+            throw new NoSuchBeanDefinitionException("No bean of type [SecurityConfig.class] is defined.");
+        }
+        return config.getLoginUrl();
+    }
 
-	public boolean isSingleton() {
-		return true;
-	}
+    public Class<String> getObjectType() {
+        return String.class;
+    }
+
+    public boolean isSingleton() {
+        return true;
+    }
 
 }

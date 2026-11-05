@@ -30,7 +30,6 @@ import java.util.Properties;
  * 이벤트 알림을 위한 전자우편을 발송하는 클래스
  *
  * @author 배치실행개발팀
- * @since 2012.06.27
  * @version 1.0
  * @see <pre>
  *      개정이력(Modification Information)
@@ -39,139 +38,140 @@ import java.util.Properties;
  *  ------- -------- ---------------------------
  * 2012.06.27  배치실행개발팀     최초 생성
  * </pre>
+ * @since 2012.06.27
  */
 
 public class EgovEmailEventNoticeTrigger extends EgovEventNoticeTrigger {
 
-	protected Log logger = LogFactory.getLog(this.getClass());
+    protected Log logger = LogFactory.getLog(this.getClass());
 
-	// 전자우편 수신자 셋팅(배열형태로 입력)
-	String[] emailList = { "****@*****" };
-	// 전자우편 송신자 셋팅
-	String emailFromAddress = "****@*****";
+    // 전자우편 수신자 셋팅(배열형태로 입력)
+    String[] emailList = {"****@*****"};
+    // 전자우편 송신자 셋팅
+    String emailFromAddress = "****@*****";
 
-	/**
-	 * JobExecution 을 넘겨주는 invoke
-	 */
-	@Override
-	public void invoke(JobExecution jobExecution) {
+    /**
+     * JobExecution 을 넘겨주는 invoke
+     */
+    @Override
+    public void invoke(JobExecution jobExecution) {
 
-		try {
+        try {
 
-			// 전자우편 제목
-			String emailSubjectTxt = jobExecution.getJobInstance().getJobName() + " 의 실행 결과 보고서";
+            // 전자우편 제목
+            String emailSubjectTxt = jobExecution.getJobInstance().getJobName() + " 의 실행 결과 보고서";
 
-			// 전자우편 내용
-			String emailMsgTxt = "============ Notice ============" + "\nJobName : " + jobExecution.getJobInstance().getJobName() + "\nExitStatus : "
-					+ jobExecution.getExitStatus().getExitCode();
+            // 전자우편 내용
+            String emailMsgTxt = "============ Notice ============" + "\nJobName : " + jobExecution.getJobInstance().getJobName() + "\nExitStatus : "
+                    + jobExecution.getExitStatus().getExitCode();
 
-			postMail(emailList, emailSubjectTxt, emailMsgTxt, emailFromAddress);
+            postMail(emailList, emailSubjectTxt, emailMsgTxt, emailFromAddress);
 
-		} catch (Exception e) { // 전자우편 전송 과정에서 에러발생
-			logger.info(e);
-		}
-	}
+        } catch (Exception e) { // 전자우편 전송 과정에서 에러발생
+            logger.info(e);
+        }
+    }
 
-	/**
-	 * StepExecution 을 넘겨주는 invoke
-	 */
-	@Override
-	public void invoke(StepExecution stepExecution) {
+    /**
+     * StepExecution 을 넘겨주는 invoke
+     */
+    @Override
+    public void invoke(StepExecution stepExecution) {
 
-		try {
-			// 전자우편 제목
-			String emailSubjectTxt = stepExecution.getStepName() + " 의 실행 결과 보고서";
+        try {
+            // 전자우편 제목
+            String emailSubjectTxt = stepExecution.getStepName() + " 의 실행 결과 보고서";
 
-			// 전자우편 내용
-			String emailMsgTxt = "============ Notice ============" + "\nJobName : " + stepExecution.getJobExecution().getJobInstance().getJobName() // 내용
-					+ "\nStepName : " + stepExecution.getStepName() + "\nExitStatus : " + stepExecution.getExitStatus().getExitCode();
+            // 전자우편 내용
+            String emailMsgTxt = "============ Notice ============" + "\nJobName : " + stepExecution.getJobExecution().getJobInstance().getJobName() // 내용
+                    + "\nStepName : " + stepExecution.getStepName() + "\nExitStatus : " + stepExecution.getExitStatus().getExitCode();
 
-			postMail(emailList, emailSubjectTxt, emailMsgTxt, emailFromAddress);
+            postMail(emailList, emailSubjectTxt, emailMsgTxt, emailFromAddress);
 
-		} catch (Exception e) { // 전자우편 전송 과정에서 에러발생
-			logger.info(e);
-		}
-	}
+        } catch (Exception e) { // 전자우편 전송 과정에서 에러발생
+            logger.info(e);
+        }
+    }
 
-	/**
-	 *  Exception 을 넘겨주는 invoke
-	 */
-	@Override
-	public void invoke(Exception inError) {
+    /**
+     * Exception 을 넘겨주는 invoke
+     */
+    @Override
+    public void invoke(Exception inError) {
 
-		try {
+        try {
 
-			// 전자우편 제목
-			String emailSubjectTxt = "배치 실행 결과 보고서";
+            // 전자우편 제목
+            String emailSubjectTxt = "배치 실행 결과 보고서";
 
-			// 전자우편 내용
-			String emailMsgTxt = "============ Notice ============\n" + "에러메세지 : " + inError.getMessage();
+            // 전자우편 내용
+            String emailMsgTxt = "============ Notice ============\n" + "에러메세지 : " + inError.getMessage();
 
-			postMail(emailList, emailSubjectTxt, emailMsgTxt, emailFromAddress);
+            postMail(emailList, emailSubjectTxt, emailMsgTxt, emailFromAddress);
 
-		} catch (Exception e) { // 전자우편 전송 과정에서 에러발생
-			logger.info(e);
-		}
-	}
+        } catch (Exception e) { // 전자우편 전송 과정에서 에러발생
+            logger.info(e);
+        }
+    }
 
-	/**
-	 * 전자우편 전송에서 사용한 메일서버에 대한 정보 설정
-	 * SMTPAuthenticator 메서드에 송신자의 계정정보 등록 필요
-	 */
-	@SuppressWarnings("restriction")
-	private void postMail(String recipients[], String subject, String message, String from) throws MessagingException {
+    /**
+     * 전자우편 전송에서 사용한 메일서버에 대한 정보 설정
+     * SMTPAuthenticator 메서드에 송신자의 계정정보 등록 필요
+     */
+    @SuppressWarnings("restriction")
+    private void postMail(String recipients[], String subject, String message, String from) throws MessagingException {
 
-		boolean debug = false;
+        boolean debug = false;
 
-		Security.addProvider(Security.getProvider("SunJSSE"));
-		String SMTP_HOST_NAME = "gmail-smtp.l.google.com";
+        Security.addProvider(Security.getProvider("SunJSSE"));
+        String SMTP_HOST_NAME = "gmail-smtp.l.google.com";
 
-		// Properties 설정
-		Properties props = new Properties();
-		props.put("mail.transport.protocol", "smtp");
-		props.put("mail.smtp.starttls.enable", "true");
-		props.put("mail.smtp.host", SMTP_HOST_NAME);
-		props.put("mail.smtp.auth", "true");
-		Authenticator auth = new SMTPAuthenticator();
-		Session session = Session.getDefaultInstance(props, auth);
-		session.setDebug(debug);
+        // Properties 설정
+        Properties props = new Properties();
+        props.put("mail.transport.protocol", "smtp");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.host", SMTP_HOST_NAME);
+        props.put("mail.smtp.auth", "true");
+        Authenticator auth = new SMTPAuthenticator();
+        Session session = Session.getDefaultInstance(props, auth);
+        session.setDebug(debug);
 
-		// message 생성
-		Message msg = new MimeMessage(session);
+        // message 생성
+        Message msg = new MimeMessage(session);
 
-		// 보내는 주소 등록
-		InternetAddress addressFrom = new InternetAddress(from);
-		msg.setFrom(addressFrom);
-		InternetAddress[] addressTo = new InternetAddress[recipients.length];
+        // 보내는 주소 등록
+        InternetAddress addressFrom = new InternetAddress(from);
+        msg.setFrom(addressFrom);
+        InternetAddress[] addressTo = new InternetAddress[recipients.length];
 
-		// 받는 주소 등록
-		for (int i = 0; i < recipients.length; i++) {
-			addressTo[i] = new InternetAddress(recipients[i]);
-		}
+        // 받는 주소 등록
+        for (int i = 0; i < recipients.length; i++) {
+            addressTo[i] = new InternetAddress(recipients[i]);
+        }
 
-		msg.setRecipients(Message.RecipientType.TO, addressTo);
+        msg.setRecipients(Message.RecipientType.TO, addressTo);
 
-		// Setting the Subject and Content Type
-		msg.setSubject(subject);
-		msg.setContent(message, "text/plain");
-		Transport.send(msg);
+        // Setting the Subject and Content Type
+        msg.setSubject(subject);
+        msg.setContent(message, "text/plain");
+        Transport.send(msg);
 
-	}
+    }
 
-	/**
-	 * 전자우편 송신을 위해 postMail 에서 이용하는 메일서버에 관한 계정 등록
-	 */
-	private class SMTPAuthenticator extends javax.mail.Authenticator {
+    /**
+     * 전자우편 송신을 위해 postMail 에서 이용하는 메일서버에 관한 계정 등록
+     */
+    private class SMTPAuthenticator extends javax.mail.Authenticator {
 
-		@Override
-		public PasswordAuthentication getPasswordAuthentication() {
-			// gmail계정
-			String username = "****@****";
-			// 패스워드
-			String password = "********";
-			return new PasswordAuthentication(username, password);
+        @Override
+        public PasswordAuthentication getPasswordAuthentication() {
+            // gmail계정
+            String username = "****@****";
+            // 패스워드
+            String password = "********";
+            return new PasswordAuthentication(username, password);
 
-		}
+        }
 
-	}
+    }
 }

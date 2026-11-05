@@ -21,10 +21,9 @@ import javax.sql.DataSource;
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations="/org/egovframe/rte/itl/integration/metadata/dao/hibernate/context.xml")
-@Transactional(readOnly=false)
-public class HibernateOrganizationDefinitionDaoTest
-{
+@ContextConfiguration(locations = "/org/egovframe/rte/itl/integration/metadata/dao/hibernate/context.xml")
+@Transactional(readOnly = false)
+public class HibernateOrganizationDefinitionDaoTest {
 
     @Autowired
     private HibernateOrganizationDefinitionDao dao;
@@ -33,23 +32,21 @@ public class HibernateOrganizationDefinitionDaoTest
     private DataSource dataSource;
 
     @SuppressWarnings("deprecation")
-	@Before
-    public void before() throws Exception
-    {
+    @Before
+    public void before() throws Exception {
         ReplacementDataSet dataSet = new ReplacementDataSet(new FlatXmlDataSet(
                 ResourceUtils.getFile("classpath:org/egovframe/rte/itl/integration/metadata/dao/hibernate/dataset.xml")));
         dataSet.addReplacementObject("[null]", null);
-        
+
         IDatabaseConnection connection = new SpringDatabaseDataSourceConnection(dataSource);
-        
+
         DatabaseOperation.CLEAN_INSERT.execute(connection, dataSet);
     }
 
     @Test
-    public void testReadSucceeds() throws Exception
-    {
+    public void testReadSucceeds() throws Exception {
         OrganizationDefinition organization00000000 =
-            dao.getOrganizationDefinition("00000000");
+                dao.getOrganizationDefinition("00000000");
 
         assertNotNull(organization00000000);
         assertTrue(organization00000000.isValid());
@@ -57,7 +54,7 @@ public class HibernateOrganizationDefinitionDaoTest
         assertEquals("00000000", organization00000000.getId());
         assertEquals("Organization A", organization00000000.getName());
         assertEquals(2, organization00000000.getSystems().size());
-        
+
         SystemDefinition systemA0 = organization00000000.getSystemDefinition("00000000");
         assertNotNull(systemA0);
         assertTrue(systemA0.isValid());
@@ -76,10 +73,10 @@ public class HibernateOrganizationDefinitionDaoTest
         assertEquals("M2", serviceA0_0.getResponseMessageTypeId());
         assertNull(serviceA0_0.getServiceProviderBeanId());
         assertEquals(systemA0, serviceA0_0.getSystem());
-        
+
         OrganizationDefinition organization00000001 =
-            dao.getOrganizationDefinition("00000001");
-        
+                dao.getOrganizationDefinition("00000001");
+
         assertNotNull(organization00000001);
         assertTrue(organization00000001.isValid());
         assertEquals("00000001", organization00000001.getId());
@@ -88,11 +85,10 @@ public class HibernateOrganizationDefinitionDaoTest
     }
 
     @Test
-    public void testReadFails() throws Exception
-    {
+    public void testReadFails() throws Exception {
         OrganizationDefinition organization00000002 =
-            dao.getOrganizationDefinition("00000002");
-        
+                dao.getOrganizationDefinition("00000002");
+
         assertNull(organization00000002);
     }
 }

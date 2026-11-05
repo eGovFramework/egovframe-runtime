@@ -36,7 +36,6 @@ import static org.junit.Assert.assertEquals;
  * 멀티쓰레드로 실행하는 배치작업 테스트
  *
  * @author 배치실행개발팀
- * @since 2012. 07.31
  * @version 1.0
  * @see <pre>
  *      개정이력(Modification Information)
@@ -45,49 +44,51 @@ import static org.junit.Assert.assertEquals;
  *  ------- -------- ---------------------------
  *  2012.07.31  배치실행개발팀     최초 생성
  *  </pre>
+ * @since 2012. 07.31
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={
-		"/org/egovframe/batch/simple-job-launcher-context.xml"
-		, "/org/egovframe/batch/jobs/parallelJob.xml"
-		, "/org/egovframe/batch/job-runner-context.xml"})
+@ContextConfiguration(locations = {
+        "/org/egovframe/batch/simple-job-launcher-context.xml"
+        , "/org/egovframe/batch/jobs/parallelJob.xml"
+        , "/org/egovframe/batch/job-runner-context.xml"})
 public class EgovParallelJobFunctionalTests {
 
-	//배치작업을  test하기 위한 JobLauncherTestUtils
-	@Autowired
-	private JobLauncherTestUtils jobLauncherTestUtils;
+    //배치작업을  test하기 위한 JobLauncherTestUtils
+    @Autowired
+    private JobLauncherTestUtils jobLauncherTestUtils;
 
-	//DB 사용을 위한  SimpleJdbcTemplate
-	private JdbcTemplate jdbcTemplate;
+    //DB 사용을 위한  SimpleJdbcTemplate
+    private JdbcTemplate jdbcTemplate;
 
-	/**
-	 * 데이터소스 세팅
-	 * @param dataSource
-	 */
-	@Autowired
-	public void setDataSource(DataSource dataSource) {
-		jdbcTemplate = new JdbcTemplate(dataSource);
-	}
+    /**
+     * 데이터소스 세팅
+     *
+     * @param dataSource
+     */
+    @Autowired
+    public void setDataSource(DataSource dataSource) {
+        jdbcTemplate = new JdbcTemplate(dataSource);
+    }
 
-	/**
-	* 배치작업 테스트 전에 DB관련 작업
-	*/
-	@Before
-	public void setUp() {
-		jdbcTemplate.update("DELETE from TRADE");
-		jdbcTemplate.update("DELETE from BATCH_STAGING");
-	}
+    /**
+     * 배치작업 테스트 전에 DB관련 작업
+     */
+    @Before
+    public void setUp() {
+        jdbcTemplate.update("DELETE from TRADE");
+        jdbcTemplate.update("DELETE from BATCH_STAGING");
+    }
 
-	/**
-	 * 배치작업 테스트
-	 */
-	@Test
-	public void testLaunchJob() throws Exception {
-		int before = JdbcTestUtils.countRowsInTable(jdbcTemplate, "BATCH_STAGING");
-		JobExecution execution = jobLauncherTestUtils.launchJob();
-		int after = JdbcTestUtils.countRowsInTable(jdbcTemplate, "BATCH_STAGING");
-		assertEquals(BatchStatus.COMPLETED, execution.getStatus());
-		assertEquals(after - before, execution.getStepExecutions().iterator().next().getReadCount());
-	}
+    /**
+     * 배치작업 테스트
+     */
+    @Test
+    public void testLaunchJob() throws Exception {
+        int before = JdbcTestUtils.countRowsInTable(jdbcTemplate, "BATCH_STAGING");
+        JobExecution execution = jobLauncherTestUtils.launchJob();
+        int after = JdbcTestUtils.countRowsInTable(jdbcTemplate, "BATCH_STAGING");
+        assertEquals(BatchStatus.COMPLETED, execution.getStatus());
+        assertEquals(after - before, execution.getStepExecutions().iterator().next().getReadCount());
+    }
 
 }

@@ -25,35 +25,34 @@ import org.springframework.context.ApplicationContextAware;
 
 public class MaximumSessionsFactoryBean implements FactoryBean<Integer>, ApplicationContextAware {
 
-	private ApplicationContext context;
-	
-	public static final int DEFAULT_MAX_SESSIONS = -1;
+    public static final int DEFAULT_MAX_SESSIONS = -1;
+    private ApplicationContext context;
 
-	public Integer getObject() throws Exception {
-		try {
-			SecurityConfig config = context.getBean(SecurityConfig.class);
-			
-			if (config.getConcurrentMaxSessons() > 0) {
-				return config.getConcurrentMaxSessons();
-			}
-		} catch (NoSuchBeanDefinitionException nsbde) {
-			// no-op
-			EgovJdkLogger.ignore("There is no SecurityConfig.class.");
-		}
-		
-		return DEFAULT_MAX_SESSIONS;
-	}
+    public Integer getObject() throws Exception {
+        try {
+            SecurityConfig config = context.getBean(SecurityConfig.class);
 
-	public Class<Integer> getObjectType() {
-		return Integer.class;
-	}
+            if (config.getConcurrentMaxSessons() > 0) {
+                return config.getConcurrentMaxSessons();
+            }
+        } catch (NoSuchBeanDefinitionException nsbde) {
+            // no-op
+            EgovJdkLogger.ignore("There is no SecurityConfig.class.");
+        }
 
-	public boolean isSingleton() {
-		return true;
-	}
-	
-	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		this.context = applicationContext;
-	}
+        return DEFAULT_MAX_SESSIONS;
+    }
+
+    public Class<Integer> getObjectType() {
+        return Integer.class;
+    }
+
+    public boolean isSingleton() {
+        return true;
+    }
+
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.context = applicationContext;
+    }
 
 }

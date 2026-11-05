@@ -17,47 +17,45 @@ import static org.junit.Assert.assertEquals;
  * EgovBatchException JUnit Test 클래스
  *
  * @author 신용호
- * @since 2017.11.29
  * @version 1.0
- * @see
- *
- * <pre>
+ * @see <pre>
  * == 개정이력(Modification Information) ==
  *
  *   수정일        수정자           수정내용
  *  -------      -------------  ----------------------
  *   2017.11.29  신용호           최초 생성
  * </pre>
+ * @since 2017.11.29
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "/org/egovframe/batch/batch-runner-context.xml", "/org/egovframe/batch/jobs/delimitedToDelimitedJob-EscapeCharacterJob.xml" })
+@ContextConfiguration(locations = {"/org/egovframe/batch/batch-runner-context.xml", "/org/egovframe/batch/jobs/delimitedToDelimitedJob-EscapeCharacterJob.xml"})
 public class EgovEscapableDelimitedLineTokenizerTest {
-	
-	@Autowired
-	private EgovBatchRunner egovBatchRunner;
-	
-	@Test
-	public void testJobRun() throws Exception {
 
-		String jobName = "delimitedToDelimitedJob-EscapeCharacterJob";
+    @Autowired
+    private EgovBatchRunner egovBatchRunner;
 
-		JobParametersBuilder jobParametersBuilder = new JobParametersBuilder();
-		jobParametersBuilder.addString("inputFile", "org/egovframe/data/input/delimited.csv");
-		jobParametersBuilder.addLong("timestamp", new Date().getTime());
-		
-		String jobParameters = egovBatchRunner.convertJobParametersToString(jobParametersBuilder.toJobParameters());
-		
-		long executionId = egovBatchRunner.start(jobName, jobParameters);
+    @Test
+    public void testJobRun() throws Exception {
 
-		//Job Name 확인
-		assertEquals(jobName, egovBatchRunner.getJobInstance(executionId).getJobName());
-		
-		//Job Parameters 확인
-		//assertEquals(jobParameters.toString().replaceAll(" ", ""), egovBatchRunner.getJobOperator().getParameters(executionId).toString());
-		
-		//Job 실행 결과 확인
-		assertEquals(BatchStatus.COMPLETED, egovBatchRunner.getJobExecution(executionId).getStatus());
-		
-	}
-	
+        String jobName = "delimitedToDelimitedJob-EscapeCharacterJob";
+
+        JobParametersBuilder jobParametersBuilder = new JobParametersBuilder();
+        jobParametersBuilder.addString("inputFile", "org/egovframe/data/input/delimited.csv");
+        jobParametersBuilder.addLong("timestamp", new Date().getTime());
+
+        String jobParameters = egovBatchRunner.convertJobParametersToString(jobParametersBuilder.toJobParameters());
+
+        long executionId = egovBatchRunner.start(jobName, jobParameters);
+
+        //Job Name 확인
+        assertEquals(jobName, egovBatchRunner.getJobInstance(executionId).getJobName());
+
+        //Job Parameters 확인
+        //assertEquals(jobParameters.toString().replaceAll(" ", ""), egovBatchRunner.getJobOperator().getParameters(executionId).toString());
+
+        //Job 실행 결과 확인
+        assertEquals(BatchStatus.COMPLETED, egovBatchRunner.getJobExecution(executionId).getStatus());
+
+    }
+
 }

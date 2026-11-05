@@ -4,7 +4,7 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.regex.Pattern;
 
-public class EgovIPCheckValidation implements ConstraintValidator<EgovIPCheck, String>  {
+public class EgovIPCheckValidation implements ConstraintValidator<EgovIPCheck, String> {
 
     private static final String IPV4_REGEX =
             "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$";

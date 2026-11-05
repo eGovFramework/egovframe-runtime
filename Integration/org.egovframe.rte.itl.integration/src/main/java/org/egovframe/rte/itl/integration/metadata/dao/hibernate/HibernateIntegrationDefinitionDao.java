@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 MOPAS(Ministry of Public Administration and Security).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,73 +29,73 @@ import java.util.List;
  * <b>NOTE:</b> 전자정부 연계 서비스 IntegrationDefinitionDao interface 를 Hibernate를 이용하여
  * 구현한 DAO class이다.
  * </p>
- * 
+ *
  * @author 실행환경 개발팀 심상호
- * @since 2009.06.01
  * @version 1.0
  * @see <pre>
  *  == 개정이력(Modification Information) ==
- * 
+ *
  *   수정일      수정자           수정내용
  *  -------    --------    ---------------------------
  *   2009.06.01  심상호           최초 생성
  *
  * </pre>
+ * @since 2009.06.01
  */
 public class HibernateIntegrationDefinitionDao extends HibernateDaoSupport implements IntegrationDefinitionDao {
-	// CHECKSTYLE:OFF
-	private static final Logger LOGGER = LoggerFactory.getLogger(HibernateIntegrationDefinitionDao.class);
+    // CHECKSTYLE:OFF
+    private static final Logger LOGGER = LoggerFactory.getLogger(HibernateIntegrationDefinitionDao.class);
 
-	public IntegrationDefinition getIntegrationDefinition(String id) {
-		LOGGER.debug("get IntegrationDefinition (id = \"{}\")", id);
+    public IntegrationDefinition getIntegrationDefinition(String id) {
+        LOGGER.debug("get IntegrationDefinition (id = \"{}\")", id);
 
-		IntegrationDefinition integrationDefinition = (IntegrationDefinition) getHibernateTemplate().get(IntegrationDefinition.class, id);
-		// CHECKSTYLE:ON
-		LOGGER.debug("get IntegrationDefinition (id = \"{}\") = {}", id, integrationDefinition);
+        IntegrationDefinition integrationDefinition = (IntegrationDefinition) getHibernateTemplate().get(IntegrationDefinition.class, id);
+        // CHECKSTYLE:ON
+        LOGGER.debug("get IntegrationDefinition (id = \"{}\") = {}", id, integrationDefinition);
 
-		return integrationDefinition;
-	}
+        return integrationDefinition;
+    }
 
-	@SuppressWarnings("unchecked")
-	public List<IntegrationDefinition> getIntegrationDefinitionOfConsumer(String consumerOrganizationId, String consumerSystemId) {
-		LOGGER.debug("get IntegrationDefinition of Consumer(organizationId = \"{}\", systemId = \"{}\")", consumerOrganizationId, consumerSystemId);
-		// CHECKSTYLE:OFF
-		List<IntegrationDefinition> list = (List<IntegrationDefinition>) getHibernateTemplate().find(
-				"from IntegrationDefinition as integrationDefinition " + "where integrationDefinition.consumer.organization.id = ?0 "
-						+ "and integrationDefinition.consumer.id = ?1 ", new Object[] { consumerOrganizationId, consumerSystemId });
-		//	CHECKSTYLE:ON
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("get IntegrationDefinition of Consumer(organizationId = \"{}\", systemId = \"{}\")'s size = {}", consumerOrganizationId, consumerSystemId, list.size());
+    @SuppressWarnings("unchecked")
+    public List<IntegrationDefinition> getIntegrationDefinitionOfConsumer(String consumerOrganizationId, String consumerSystemId) {
+        LOGGER.debug("get IntegrationDefinition of Consumer(organizationId = \"{}\", systemId = \"{}\")", consumerOrganizationId, consumerSystemId);
+        // CHECKSTYLE:OFF
+        List<IntegrationDefinition> list = (List<IntegrationDefinition>) getHibernateTemplate().find(
+                "from IntegrationDefinition as integrationDefinition " + "where integrationDefinition.consumer.organization.id = ?0 "
+                        + "and integrationDefinition.consumer.id = ?1 ", new Object[]{consumerOrganizationId, consumerSystemId});
+        //	CHECKSTYLE:ON
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("get IntegrationDefinition of Consumer(organizationId = \"{}\", systemId = \"{}\")'s size = {}", consumerOrganizationId, consumerSystemId, list.size());
 
-			int i = 0;
-			for (IntegrationDefinition integrationDefinition : list) {
-				LOGGER.debug("[{}] : {}", i, integrationDefinition);
-				i++;
-			}
-		}
+            int i = 0;
+            for (IntegrationDefinition integrationDefinition : list) {
+                LOGGER.debug("[{}] : {}", i, integrationDefinition);
+                i++;
+            }
+        }
 
-		return list;
-	}
+        return list;
+    }
 
-	@SuppressWarnings("unchecked")
-	public List<IntegrationDefinition> getIntegrationDefinitionOfProvider(String providerOrganizationId, String providerSystemId) {
-		LOGGER.debug("get IntegrationDefinition of Provider(organizationId = \"{}\", systemId = \"{}\")", providerOrganizationId, providerSystemId);
-		//		CHECKSTYLE:OFF
-		List<IntegrationDefinition> list = (List<IntegrationDefinition>)getHibernateTemplate().find(
-				"from IntegrationDefinition as integrationDefinition " + "where integrationDefinition.provider.system.organization.id = ?0 "
-						+ "and integrationDefinition.provider.system.id = ?1 ", new Object[] { providerOrganizationId, providerSystemId });
-		//		CHECKSTYLE:ON
+    @SuppressWarnings("unchecked")
+    public List<IntegrationDefinition> getIntegrationDefinitionOfProvider(String providerOrganizationId, String providerSystemId) {
+        LOGGER.debug("get IntegrationDefinition of Provider(organizationId = \"{}\", systemId = \"{}\")", providerOrganizationId, providerSystemId);
+        //		CHECKSTYLE:OFF
+        List<IntegrationDefinition> list = (List<IntegrationDefinition>) getHibernateTemplate().find(
+                "from IntegrationDefinition as integrationDefinition " + "where integrationDefinition.provider.system.organization.id = ?0 "
+                        + "and integrationDefinition.provider.system.id = ?1 ", new Object[]{providerOrganizationId, providerSystemId});
+        //		CHECKSTYLE:ON
 
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("get IntegrationDefinition of Provider(organizationId = \"{}\", systemId = \"{}\")'s size = {}", providerOrganizationId, providerSystemId, list.size());
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("get IntegrationDefinition of Provider(organizationId = \"{}\", systemId = \"{}\")'s size = {}", providerOrganizationId, providerSystemId, list.size());
 
-			int i = 0;
-			for (IntegrationDefinition integrationDefinition : list) {
-				LOGGER.debug("[{}] : {}", i, integrationDefinition);
-				i++;
-			}
-		}
+            int i = 0;
+            for (IntegrationDefinition integrationDefinition : list) {
+                LOGGER.debug("[{}] : {}", i, integrationDefinition);
+                i++;
+            }
+        }
 
-		return list;
-	}
+        return list;
+    }
 }

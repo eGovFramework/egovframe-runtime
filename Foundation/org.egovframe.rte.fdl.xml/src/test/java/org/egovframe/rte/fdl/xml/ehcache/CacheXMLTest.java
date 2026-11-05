@@ -69,65 +69,65 @@ public class CacheXMLTest {
     }
 
     public void sendCacheServer(List<?> list) {
-		SharedObject sObject = null;
+        SharedObject sObject = null;
 
-		try (Socket socket = new Socket(cacheServerIP, cacheServerPort);
-			 ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-			 ObjectInputStream ooi = new ObjectInputStream(socket.getInputStream())) {
+        try (Socket socket = new Socket(cacheServerIP, cacheServerPort);
+             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+             ObjectInputStream ooi = new ObjectInputStream(socket.getInputStream())) {
 
-			// 서버로 보낼 객체 생성
-			sObject = new SharedObject(Storekey, list);
-			oos.writeObject(sObject);
-			oos.flush();
+            // 서버로 보낼 객체 생성
+            sObject = new SharedObject(Storekey, list);
+            oos.writeObject(sObject);
+            oos.flush();
 
-			// 서버로부터 응답 수신
-			sObject = (SharedObject) ooi.readObject();
+            // 서버로부터 응답 수신
+            sObject = (SharedObject) ooi.readObject();
 
-			LOGGER.debug("서버로부터 받은 메시지: {}", sObject.getValue());
-		} catch (IOException | ClassNotFoundException e) {
-			LOGGER.debug("##### CacheXMLTest sendCacheServer(List<?> list) Exeption >>> {}", e.getMessage());
-		}
+            LOGGER.debug("서버로부터 받은 메시지: {}", sObject.getValue());
+        } catch (IOException | ClassNotFoundException e) {
+            LOGGER.debug("##### CacheXMLTest sendCacheServer(List<?> list) Exeption >>> {}", e.getMessage());
+        }
     }
 
     public SharedObject getCacheServer() {
-		SharedObject sObject = null;
+        SharedObject sObject = null;
 
-		try (Socket socket = new Socket(cacheServerIP, cacheServerPort);
-			 ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-			 ObjectInputStream ooi = new ObjectInputStream(socket.getInputStream())) {
+        try (Socket socket = new Socket(cacheServerIP, cacheServerPort);
+             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+             ObjectInputStream ooi = new ObjectInputStream(socket.getInputStream())) {
 
-			// 서버로 보낼 객체 생성
-			sObject = new SharedObject("*", Retrievekey);
-			oos.writeObject(sObject);
-			oos.flush();
+            // 서버로 보낼 객체 생성
+            sObject = new SharedObject("*", Retrievekey);
+            oos.writeObject(sObject);
+            oos.flush();
 
-			// 서버로부터 응답 수신
-			sObject = (SharedObject) ooi.readObject();
+            // 서버로부터 응답 수신
+            sObject = (SharedObject) ooi.readObject();
 
-		} catch (IOException | ClassNotFoundException e) {
-			LOGGER.debug("##### CacheXMLTest getCacheServer() Exeption >>> {}", e.getMessage());
-		}
+        } catch (IOException | ClassNotFoundException e) {
+            LOGGER.debug("##### CacheXMLTest getCacheServer() Exeption >>> {}", e.getMessage());
+        }
 
-		return sObject;
+        return sObject;
     }
 
     public void viewElement(Element element) {
-		NamedNodeMap attributes = element.getAttributes();
-		if (attributes.getLength() > 0) {
-			for (int i = 0; i < attributes.getLength(); i++) {
-				Attr attr = (Attr) attributes.item(i);
-				LOGGER.info(String.format("Attribute : %s, Attribute value : %s", attr.getName(), attr.getValue()));
-			}
-			LOGGER.info(String.format("Element Name: %s, Element Value: %s", element.getNodeName(), element.getTextContent()));
-		}
+        NamedNodeMap attributes = element.getAttributes();
+        if (attributes.getLength() > 0) {
+            for (int i = 0; i < attributes.getLength(); i++) {
+                Attr attr = (Attr) attributes.item(i);
+                LOGGER.info(String.format("Attribute : %s, Attribute value : %s", attr.getName(), attr.getValue()));
+            }
+            LOGGER.info(String.format("Element Name: %s, Element Value: %s", element.getNodeName(), element.getTextContent()));
+        }
 
-		NodeList children = element.getChildNodes();
-		for (int i = 0; i < children.getLength(); i++) {
-			Node childNode = children.item(i);
-			if (childNode instanceof Element) {
-				viewElement((Element) childNode);
-			}
-		}
+        NodeList children = element.getChildNodes();
+        for (int i = 0; i < children.getLength(); i++) {
+            Node childNode = children.item(i);
+            if (childNode instanceof Element) {
+                viewElement((Element) childNode);
+            }
+        }
     }
 
     @Test
@@ -142,14 +142,14 @@ public class CacheXMLTest {
         cxa.setStorekey(Storekey);
         cxa.setXMLFileName(XMLFileName1);
 
-		File xmlFile = new File(fileName);
-		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-		Document doc = dBuilder.parse(xmlFile);
-		doc.getDocumentElement().normalize();
+        File xmlFile = new File(fileName);
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+        Document doc = dBuilder.parse(xmlFile);
+        doc.getDocumentElement().normalize();
 
-		saxValidator = saxconcrete.createSAXValidator();
-		List<?> list = saxValidator.getResult(doc,"//*[@*]");
+        saxValidator = saxconcrete.createSAXValidator();
+        List<?> list = saxValidator.getResult(doc, "//*[@*]");
 
         // 1. 캐쉬에 저장
         cxa.sendCacheServer(list);

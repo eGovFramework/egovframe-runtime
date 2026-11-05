@@ -24,41 +24,39 @@ import static org.junit.Assert.assertEquals;
 
 public class ExceptionResolverTest {
 
-	/**
-	 *
-	 *
-	 * @throws Exception
-	 */
-	@Test
-	public void testExceptionViewNameMapping() throws Exception {
+    /**
+     * @throws Exception
+     */
+    @Test
+    public void testExceptionViewNameMapping() throws Exception {
 
-		MockHttpServletRequest request = new MockHttpServletRequest();
-		MockHttpServletResponse response = new MockHttpServletResponse();
-		SimpleMappingExceptionResolver exceptionResolver = new SimpleMappingExceptionResolver();
-		Object handler = new Object();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        SimpleMappingExceptionResolver exceptionResolver = new SimpleMappingExceptionResolver();
+        Object handler = new Object();
 
-		Properties props = new Properties();
-		props.setProperty("java.lang.Exception", "genericErrorView");
-		props.setProperty("java.lang.NumberFormatException", "numberFormatErrorView");
-		exceptionResolver.setExceptionMappings(props);
-		ModelAndView mav = exceptionResolver.resolveException(request, response, handler, new Exception());
-		assertEquals("genericErrorView", mav.getViewName());
-		ModelAndView mav2 = exceptionResolver.resolveException(request, response, handler, new NumberFormatException());
-		assertEquals("numberFormatErrorView", mav2.getViewName());
-	}
+        Properties props = new Properties();
+        props.setProperty("java.lang.Exception", "genericErrorView");
+        props.setProperty("java.lang.NumberFormatException", "numberFormatErrorView");
+        exceptionResolver.setExceptionMappings(props);
+        ModelAndView mav = exceptionResolver.resolveException(request, response, handler, new Exception());
+        assertEquals("genericErrorView", mav.getViewName());
+        ModelAndView mav2 = exceptionResolver.resolveException(request, response, handler, new NumberFormatException());
+        assertEquals("numberFormatErrorView", mav2.getViewName());
+    }
 
-	@SuppressWarnings("unused")
-	@Test
-	public void testErrorStatusViewNameMapping() {
+    @SuppressWarnings("unused")
+    @Test
+    public void testErrorStatusViewNameMapping() {
 
-		MockHttpServletRequest request = new MockHttpServletRequest();
-		MockHttpServletResponse response = new MockHttpServletResponse();
-		SimpleMappingExceptionResolver exceptionResolver = new SimpleMappingExceptionResolver();
-		Object handler = new Object();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        SimpleMappingExceptionResolver exceptionResolver = new SimpleMappingExceptionResolver();
+        Object handler = new Object();
 
-		exceptionResolver.setDefaultErrorView("genericErrorView");
-		exceptionResolver.setDefaultStatusCode(HttpServletResponse.SC_BAD_REQUEST);
-		ModelAndView mav = exceptionResolver.resolveException(request, response, handler, new Exception());
-		assertEquals(HttpServletResponse.SC_BAD_REQUEST, response.getStatus());
-	}
+        exceptionResolver.setDefaultErrorView("genericErrorView");
+        exceptionResolver.setDefaultStatusCode(HttpServletResponse.SC_BAD_REQUEST);
+        ModelAndView mav = exceptionResolver.resolveException(request, response, handler, new Exception());
+        assertEquals(HttpServletResponse.SC_BAD_REQUEST, response.getStatus());
+    }
 }

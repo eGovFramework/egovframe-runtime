@@ -19,34 +19,31 @@ import javax.sql.DataSource;
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations="/org/egovframe/rte/itl/integration/metadata/dao/hibernate/context.xml")
-@Transactional(readOnly=false)
-public class HibernateServiceDefinitionDaoTest
-{
+@ContextConfiguration(locations = "/org/egovframe/rte/itl/integration/metadata/dao/hibernate/context.xml")
+@Transactional(readOnly = false)
+public class HibernateServiceDefinitionDaoTest {
     @Autowired
     private HibernateServiceDefinitionDao dao;
 
     @Autowired
     private DataSource dataSource;
-    
+
     @SuppressWarnings("deprecation")
-	@Before
-    public void before() throws Exception
-    {
+    @Before
+    public void before() throws Exception {
         ReplacementDataSet dataSet = new ReplacementDataSet(new FlatXmlDataSet(
                 ResourceUtils.getFile("classpath:org/egovframe/rte/itl/integration/metadata/dao/hibernate/dataset.xml")));
         dataSet.addReplacementObject("[null]", null);
-        
+
         IDatabaseConnection connection = new SpringDatabaseDataSourceConnection(dataSource);
-        
+
         DatabaseOperation.CLEAN_INSERT.execute(connection, dataSet);
     }
-    
+
     @Test
-    public void testReadSucceeds() throws Exception
-    {
+    public void testReadSucceeds() throws Exception {
         ServiceDefinition serviceA0_0 =
-            dao.getServiceDefinition("00000000", "00000000", "00000000");
+                dao.getServiceDefinition("00000000", "00000000", "00000000");
         assertNotNull(serviceA0_0);
         assertTrue(serviceA0_0.isValid());
         assertEquals("00000000", serviceA0_0.getId());
@@ -58,11 +55,10 @@ public class HibernateServiceDefinitionDaoTest
     }
 
     @Test
-    public void testReadFails() throws Exception
-    {
+    public void testReadFails() throws Exception {
         ServiceDefinition service =
-            dao.getServiceDefinition("00000000", "00000000", "00000003");
-        
+                dao.getServiceDefinition("00000000", "00000000", "00000003");
+
         assertNull(service);
     }
 }

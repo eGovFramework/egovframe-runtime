@@ -12,14 +12,14 @@ import java.util.Map;
 @Controller
 public class CommandMapTestController {
 
-	@RequestMapping("/test.do")
-	public void test(HttpServletRequest request, @CommandMap Map<String, String> commandMap){
+    @RequestMapping("/test.do")
+    public void test(HttpServletRequest request, @CommandMap Map<String, String> commandMap) {
 
-		for(Iterator<String> it=commandMap.keySet().iterator();it.hasNext();){
-			String key = it.next();
-			String value = commandMap.get(key);
-			request.setAttribute(key, value);
-		}
-	}
+        for (Iterator<String> it = commandMap.keySet().iterator(); it.hasNext(); ) {
+            String key = it.next();
+            String value = commandMap.get(key);
+            request.setAttribute(key, value);
+        }
+    }
 
 }

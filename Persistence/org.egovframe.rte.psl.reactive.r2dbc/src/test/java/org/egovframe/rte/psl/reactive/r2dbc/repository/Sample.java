@@ -10,20 +10,20 @@ import org.springframework.data.relational.core.mapping.Table;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name="sample")
+@Table(name = "sample")
 public class Sample {
 
     @Id
     private Integer id;
-    @Column(value="sample_id")
+    @Column(value = "sample_id")
     private String sampleId;
-    @Column(value="name")
+    @Column(value = "name")
     private String name;
-    @Column(value="description")
+    @Column(value = "description")
     private String description;
-    @Column(value="use_yn")
+    @Column(value = "use_yn")
     private String useYn;
-    @Column(value="reg_user")
+    @Column(value = "reg_user")
     private String regUser;
 
 }

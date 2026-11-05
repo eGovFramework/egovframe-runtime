@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 MOPAS(Ministry of Public Administration and Security).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,9 +26,8 @@ import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
  * WebServiceServerDefinitionDao를 hibernate를 이용하여 구현한 DAO 클래스
  * <p>
  * <b>NOTE:</b> WebServiceServerDefinitionDao를 hibernate를 이용하여 구현한 DAO class이다. </p>
- * 
+ *
  * @author 실행환경 개발팀 심상호
- * @since 2009.06.01
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -37,23 +36,24 @@ import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
  * ----------------------------------------------
  * 2009.06.01	심상호				최초 생성
  * </pre>
+ * @since 2009.06.01
  */
 public class HibernateWebServiceServerDefinitionDao extends HibernateDaoSupport implements WebServiceServerDefinitionDao {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(HibernateWebServiceServerDefinitionDao.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HibernateWebServiceServerDefinitionDao.class);
 
-	public WebServiceServerDefinition getWebServiceServerDefinition(ServiceDefinition serviceDefinition) {
-		LOGGER.debug("get WebServiceServerDefinition(serviceDefinition = {})", serviceDefinition);
-		WebServiceServerDefinition webServiceServerDefinition = getWebServiceServerDefinition(serviceDefinition.getKey());
-		LOGGER.debug("get WebServiceServerDefinition(serviceDefinition = {}) = {}", serviceDefinition, webServiceServerDefinition);
-		return webServiceServerDefinition;
-	}
+    public WebServiceServerDefinition getWebServiceServerDefinition(ServiceDefinition serviceDefinition) {
+        LOGGER.debug("get WebServiceServerDefinition(serviceDefinition = {})", serviceDefinition);
+        WebServiceServerDefinition webServiceServerDefinition = getWebServiceServerDefinition(serviceDefinition.getKey());
+        LOGGER.debug("get WebServiceServerDefinition(serviceDefinition = {}) = {}", serviceDefinition, webServiceServerDefinition);
+        return webServiceServerDefinition;
+    }
 
-	public WebServiceServerDefinition getWebServiceServerDefinition(String key) {
-		LOGGER.debug("get WebServiceServerDefinition(key = \"{}\"", key);
-		WebServiceServerDefinition webServiceServerDefinition = (WebServiceServerDefinition) getHibernateTemplate().get(WebServiceServerDefinition.class, key);
-		LOGGER.debug("get WebServiceServerDefinition(key = \"{}\") = {}", key, webServiceServerDefinition);
-		return webServiceServerDefinition;
-	}
+    public WebServiceServerDefinition getWebServiceServerDefinition(String key) {
+        LOGGER.debug("get WebServiceServerDefinition(key = \"{}\"", key);
+        WebServiceServerDefinition webServiceServerDefinition = (WebServiceServerDefinition) getHibernateTemplate().get(WebServiceServerDefinition.class, key);
+        LOGGER.debug("get WebServiceServerDefinition(key = \"{}\") = {}", key, webServiceServerDefinition);
+        return webServiceServerDefinition;
+    }
 
 }

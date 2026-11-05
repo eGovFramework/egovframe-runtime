@@ -11,21 +11,21 @@ import javax.annotation.Resource;
 
 public class TaskletStepResource2 implements Tasklet, InitializingBean {
 
-		
-	@Resource(name="egovResourceVariable")
-	private EgovResourceVariable egovResourceVariable;
-	
-	  @Override
-	  public void afterPropertiesSet() throws Exception {
-		//Assert.notNull(directory, "directory must be set");
-	  }
 
-	  @Override
-	  public RepeatStatus execute(StepContribution contribution,
-	               ChunkContext chunkContext) throws Exception {
+    @Resource(name = "egovResourceVariable")
+    private EgovResourceVariable egovResourceVariable;
 
-		return RepeatStatus.FINISHED;
-	  }
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        //Assert.notNull(directory, "directory must be set");
+    }
 
-	  
+    @Override
+    public RepeatStatus execute(StepContribution contribution,
+                                ChunkContext chunkContext) throws Exception {
+
+        return RepeatStatus.FINISHED;
+    }
+
+
 }

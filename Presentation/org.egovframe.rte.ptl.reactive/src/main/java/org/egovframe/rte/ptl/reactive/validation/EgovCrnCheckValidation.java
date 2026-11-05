@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 MOPAS(Ministry of Public Administration and Security).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,16 +25,16 @@ import java.util.regex.Pattern;
  *
  * <p>Desc.: 사업자등록번호 유효성을 검증하기 위한 클래스</p>
  *
- * @author ESFC
- * @since 2023.08.31
+ * @author 유지보수
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
  *
  * 수정일		수정자				수정내용
  * ----------------------------------------------
- * 2023.08.31   ESFC            최초 생성
+ * 2023.08.31   유지보수            최초 생성
  * </pre>
+ * @since 2023.08.31
  */
 public class EgovCrnCheckValidation implements ConstraintValidator<EgovCrnCheck, String> {
 
@@ -52,9 +52,9 @@ public class EgovCrnCheckValidation implements ConstraintValidator<EgovCrnCheck,
         int sum = 0;
         int[] weightArray = {1, 3, 7, 1, 3, 7, 1, 3, 5, 1};
         for (int i = 0; i < weightArray.length; i++) {
-            sum += weightArray[i] * Integer.parseInt(mValue.substring(i,i+1));
+            sum += weightArray[i] * Integer.parseInt(mValue.substring(i, i + 1));
         }
-        sum += Integer.parseInt(mValue.substring(8,9)) * 5 / 10;
+        sum += Integer.parseInt(mValue.substring(8, 9)) * 5 / 10;
         int total = (10 - sum % 10) % 10;
         return total == Integer.parseInt(mValue.substring(9));
     }

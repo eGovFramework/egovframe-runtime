@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2014 MOSPA(Ministry of Security and Public Administration).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,9 +29,8 @@ import static org.springframework.util.ClassUtils.getShortName;
  * EgovMyBatisPagingItemReader 클래스
  * 표준프레임워크 베치에서 MyBatisPagingItemReader 클래스를 확장하여
  * EgovResourceVariable,EgovJobVariableListener,EgovStepVariableListener 클래스를 이용한 변수 공유 기능 제공
- *      
+ *
  * @author 장동한
- * @since 2017.09.06
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -41,62 +40,69 @@ import static org.springframework.util.ClassUtils.getShortName;
  * 2017.09.06	장동한				최초 생성
  * 2018.01.15	장동한				EgovJobVariable, EgovStepVariable 적용
  * </pre>
+ * @since 2017.09.06
  */
 public class EgovMyBatisPagingItemReader<T> extends MyBatisPagingItemReader<T> {
 
-	private Map<String, Object> map = new HashMap<String, Object>();
+    private Map<String, Object> map = new HashMap<String, Object>();
 
-	/** egovframework EgovResourceVariable */
-	private EgovResourceVariable resourceVariable = null;
+    /**
+     * egovframework EgovResourceVariable
+     */
+    private EgovResourceVariable resourceVariable = null;
 
-	/** egovframework EgovJobVariableListener */
-	private EgovJobVariableListener jobVariable = null;
+    /**
+     * egovframework EgovJobVariableListener
+     */
+    private EgovJobVariableListener jobVariable = null;
 
-	/** egovframework EgovStepVariableListener */
-	private EgovStepVariableListener stepVariable = null;
+    /**
+     * egovframework EgovStepVariableListener
+     */
+    private EgovStepVariableListener stepVariable = null;
 
-	public EgovResourceVariable getResourceVariable() {
-		return resourceVariable;
-	}
+    public EgovMyBatisPagingItemReader() {
+        setName(getShortName(EgovMyBatisPagingItemReader.class));
+    }
 
-	public void setResourceVariable(EgovResourceVariable resourceVariable) {
-		this.resourceVariable = resourceVariable;
-		processVariable();
-	}
+    public EgovResourceVariable getResourceVariable() {
+        return resourceVariable;
+    }
 
-	public EgovJobVariableListener getJobVariable() {
-		return jobVariable;
-	}
+    public void setResourceVariable(EgovResourceVariable resourceVariable) {
+        this.resourceVariable = resourceVariable;
+        processVariable();
+    }
 
-	public void setJobVariable(EgovJobVariableListener jobVariable) {
-		this.jobVariable = jobVariable;
-		processVariable();
-	}
+    public EgovJobVariableListener getJobVariable() {
+        return jobVariable;
+    }
 
-	public EgovStepVariableListener getStepVariable() {
-		return stepVariable;
-	}
+    public void setJobVariable(EgovJobVariableListener jobVariable) {
+        this.jobVariable = jobVariable;
+        processVariable();
+    }
 
-	public void setStepVariable(EgovStepVariableListener stepVariable) {
-		this.stepVariable = stepVariable;
-		processVariable();
-	}
+    public EgovStepVariableListener getStepVariable() {
+        return stepVariable;
+    }
 
-	public void processVariable() {
-		map.clear();
+    public void setStepVariable(EgovStepVariableListener stepVariable) {
+        this.stepVariable = stepVariable;
+        processVariable();
+    }
 
-		if(resourceVariable != null)
-	    	map.putAll(resourceVariable.getVariableMap());
-	    if(jobVariable != null)
-	    	map.putAll(jobVariable.getVariableMap());
-	    if(stepVariable != null)
-	    	map.putAll(stepVariable.getVariableMap());
+    public void processVariable() {
+        map.clear();
 
-	    setParameterValues(this.map);
-	}
+        if (resourceVariable != null)
+            map.putAll(resourceVariable.getVariableMap());
+        if (jobVariable != null)
+            map.putAll(jobVariable.getVariableMap());
+        if (stepVariable != null)
+            map.putAll(stepVariable.getVariableMap());
 
-	public EgovMyBatisPagingItemReader() {
-		setName(getShortName(EgovMyBatisPagingItemReader.class));
-	}
+        setParameterValues(this.map);
+    }
 
 }

@@ -20,28 +20,27 @@ import org.egovframe.rte.bat.core.listener.EgovChunkPreProcessor;
 
 /**
  * 청크단계 이전에 호출되는 리스너 클래스
- * 
+ *
  * @author 배치실행개발팀
- * @since 2012.06.27
  * @version 1.0
- * @see
- *  <pre>
+ * @see <pre>
  *      개정이력(Modification Information)
- *   
+ *
  *   수정일      수정자           수정내용
  *  ------- -------- ---------------------------
  *  2012.06.27  배치실행개발팀     최초 생성
  * </pre>
+ * @since 2012.06.27
  */
 public class EgovSampleChunkPreProcessor extends EgovChunkPreProcessor {
 
-	protected Log log = LogFactory.getLog(this.getClass());
+    protected Log log = LogFactory.getLog(this.getClass());
 
-	/**
-	 *  chunk 수행 이전에 호출되는 부분
-	 */
-	public void beforeChunk() {
-		log.info(">>>>>>>> beforeChunk :::");
-	}
+    /**
+     * chunk 수행 이전에 호출되는 부분
+     */
+    public void beforeChunk() {
+        log.info(">>>>>>>> beforeChunk :::");
+    }
 
 }

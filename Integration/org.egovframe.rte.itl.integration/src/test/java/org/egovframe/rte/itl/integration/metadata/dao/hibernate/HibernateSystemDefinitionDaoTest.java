@@ -21,31 +21,28 @@ import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/org/egovframe/rte/itl/integration/metadata/dao/hibernate/context.xml")
-@Transactional(readOnly=false)
-public class HibernateSystemDefinitionDaoTest
-{
+@Transactional(readOnly = false)
+public class HibernateSystemDefinitionDaoTest {
     @Autowired
     private HibernateSystemDefinitionDao dao;
 
     @Autowired
     private DataSource dataSource;
-    
+
     @SuppressWarnings("deprecation")
-	@Before
-    public void before() throws Exception
-    {
+    @Before
+    public void before() throws Exception {
         ReplacementDataSet dataSet = new ReplacementDataSet(new FlatXmlDataSet(
                 ResourceUtils.getFile("classpath:org/egovframe/rte/itl/integration/metadata/dao/hibernate/dataset.xml")));
         dataSet.addReplacementObject("[null]", null);
-        
+
         IDatabaseConnection connection = new SpringDatabaseDataSourceConnection(dataSource);
-        
+
         DatabaseOperation.CLEAN_INSERT.execute(connection, dataSet);
     }
-    
+
     @Test
-    public void testReadSucceeds() throws Exception
-    {
+    public void testReadSucceeds() throws Exception {
         SystemDefinition systemA0 = dao.getSystemDefinition("00000000", "00000000");
         assertNotNull(systemA0);
         assertTrue(systemA0.isValid());
@@ -67,10 +64,9 @@ public class HibernateSystemDefinitionDaoTest
     }
 
     @Test
-    public void testReadFails() throws Exception
-    {
+    public void testReadFails() throws Exception {
         SystemDefinition system = dao.getSystemDefinition("00000000", "00000003");
-        
+
         assertNull(system);
     }
 }

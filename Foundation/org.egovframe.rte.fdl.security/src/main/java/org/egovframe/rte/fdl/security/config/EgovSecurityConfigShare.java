@@ -17,11 +17,10 @@ package org.egovframe.rte.fdl.security.config;
 
 /**
  * config와 initializer간의 공유 변수 클래스
- * 
- *<p>Desc.: config와 initializer간의 공유 변수 </p>
+ *
+ * <p>Desc.: config와 initializer간의 공유 변수 </p>
  *
  * @author 장동한
- * @since 2016.07.03
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -31,21 +30,22 @@ package org.egovframe.rte.fdl.security.config;
  * 2014.03.12	장동한			SpringSecurity 4.x 업그레이드 추가
  * 2023.08.31	ESFC			Spring 표현 언어(SpEL) 설정 옵션 추가
  * </pre>
+ * @since 2016.07.03
  */
 public class EgovSecurityConfigShare {
 
-	public static boolean alwaysUseDefaultTargetUrl = true;
+    public static boolean alwaysUseDefaultTargetUrl = true;
 
-	public static boolean useExpressions = false;
+    public static boolean useExpressions = false;
 
-	public static boolean sniff = true;
+    public static boolean sniff = true;
 
-	public static String xFrameOptions = "SAMEORIGIN";
+    public static String xFrameOptions = "SAMEORIGIN";
 
-	public static boolean xssProtection = true;
+    public static boolean xssProtection = true;
 
-	public static boolean cacheControl = false;
+    public static boolean cacheControl = false;
 
-	public static boolean csrf = false;
+    public static boolean csrf = false;
 
 }

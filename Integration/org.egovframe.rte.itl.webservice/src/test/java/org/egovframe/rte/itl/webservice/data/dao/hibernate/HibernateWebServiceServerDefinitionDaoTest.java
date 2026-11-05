@@ -19,43 +19,39 @@ import javax.sql.DataSource;
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations="/org/egovframe/rte/itl/webservice/data/dao/hibernate/context.xml")
-@Transactional(readOnly=false)
-public class HibernateWebServiceServerDefinitionDaoTest
-{
+@ContextConfiguration(locations = "/org/egovframe/rte/itl/webservice/data/dao/hibernate/context.xml")
+@Transactional(readOnly = false)
+public class HibernateWebServiceServerDefinitionDaoTest {
     @Autowired
     private HibernateWebServiceServerDefinitionDao dao;
 
     @Autowired
     private DataSource dataSource;
-    
+
     @Before
     @SuppressWarnings("deprecation")
-    public void before() throws Exception
-    {
+    public void before() throws Exception {
         ReplacementDataSet dataSet = new ReplacementDataSet(new FlatXmlDataSet(
                 ResourceUtils.getFile("classpath:org/egovframe/rte/itl/webservice/data/dao/hibernate/dataset.xml")));
         dataSet.addReplacementObject("[null]", null);
-        
+
         IDatabaseConnection connection = new SpringDatabaseDataSourceConnection(dataSource);
-        
+
         DatabaseOperation.CLEAN_INSERT.execute(connection, dataSet);
     }
 
     @Test
-    public void testReadSucceeds() throws Exception
-    {
+    public void testReadSucceeds() throws Exception {
         WebServiceServerDefinition wsd = dao.getWebServiceServerDefinition("3");
-        
+
         assertNotNull(wsd);
         assertTrue(wsd.isValid());
     }
 
     @Test
-    public void testReadFails() throws Exception
-    {
+    public void testReadFails() throws Exception {
         WebServiceServerDefinition wsd = dao.getWebServiceServerDefinition("1");
-        
+
         assertNull(wsd);
     }
 }

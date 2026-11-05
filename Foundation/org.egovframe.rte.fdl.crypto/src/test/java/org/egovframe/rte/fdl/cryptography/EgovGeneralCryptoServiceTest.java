@@ -15,75 +15,76 @@ import java.util.Base64;
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:/META-INF/spring/*.xml" })
+@ContextConfiguration(locations = {"classpath:/META-INF/spring/*.xml"})
 public class EgovGeneralCryptoServiceTest {
-    @Resource(name="generalCryptoService")
+
+    @Resource(name = "generalCryptoService")
     EgovCryptoService cryptoService;
-    
-    @Resource(name="password")
+
+    @Resource(name = "password")
     String password;
-    
+
     private byte[] getHashValue(File file) throws Exception {
-    	MessageDigest sha = MessageDigest.getInstance("SHA-256");
+        MessageDigest sha = MessageDigest.getInstance("SHA-256");
 
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		DigestOutputStream dout = new DigestOutputStream(baos, sha);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        DigestOutputStream dout = new DigestOutputStream(baos, sha);
 
-		byte[] data = new byte[1024];
+        byte[] data = new byte[1024];
 
-		FileInputStream fis = null;
-		BufferedInputStream is = null;
-		
-		try {
-			fis = new FileInputStream(file);
-			is = new BufferedInputStream(fis);
-			while (true) {
-				int bytesRead = is.read(data);
-				if (bytesRead < 0)
-					break;
-				dout.write(data, 0, bytesRead);
-			}
-			dout.flush();
-			byte[] result = dout.getMessageDigest().digest();
-	
-			return result;
-		} finally {
-			if (is != null) {
-				try {
-					is.close();
-				} catch (Exception ignore) {
-					// no-op
-				}
-			}
-			if (fis != null) {
-				try {
-					fis.close();
-				} catch (Exception ignore) {
-						// no-op
-				}
-			}
-		}
+        FileInputStream fis = null;
+        BufferedInputStream is = null;
+
+        try {
+            fis = new FileInputStream(file);
+            is = new BufferedInputStream(fis);
+            while (true) {
+                int bytesRead = is.read(data);
+                if (bytesRead < 0)
+                    break;
+                dout.write(data, 0, bytesRead);
+            }
+            dout.flush();
+            byte[] result = dout.getMessageDigest().digest();
+
+            return result;
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (Exception ignore) {
+                    // no-op
+                }
+            }
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (Exception ignore) {
+                    // no-op
+                }
+            }
+        }
     }
-    
-	private boolean checkFileWithHashFunction(File srcFile, File trgtFile) throws Exception {
 
-		byte[] srcByte = getHashValue(srcFile);
+    private boolean checkFileWithHashFunction(File srcFile, File trgtFile) throws Exception {
 
-		byte[] trgtByte = getHashValue(trgtFile);
+        byte[] srcByte = getHashValue(srcFile);
 
-		if (srcByte.length != trgtByte.length) {
-			System.out.println("=====> length not same!!");
-			return false;
-		}
+        byte[] trgtByte = getHashValue(trgtFile);
 
-		for (int i = 0; i < srcByte.length; i++) {
-			if (srcByte[i] != trgtByte[i]) {
-				System.out.println("=====> byte not same in " + i);
-				return false;
-			}
-		}
+        if (srcByte.length != trgtByte.length) {
+            System.out.println("=====> length not same!!");
+            return false;
+        }
 
-		return true;
+        for (int i = 0; i < srcByte.length; i++) {
+            if (srcByte[i] != trgtByte[i]) {
+                System.out.println("=====> byte not same in " + i);
+                return false;
+            }
+        }
+
+        return true;
     }
 
     @Test
@@ -107,53 +108,53 @@ public class EgovGeneralCryptoServiceTest {
 			fail();
 		}*/
 
-		String param = "aaa";
-		byte[] encrypted = cryptoService.encrypt(param.getBytes("UTF-8"), password);
-		System.out.println("##### General testString >>> " + Base64.getEncoder().encodeToString(encrypted));
+        String param = "aaa";
+        byte[] encrypted = cryptoService.encrypt(param.getBytes("UTF-8"), password);
+        System.out.println("##### General testString >>> " + Base64.getEncoder().encodeToString(encrypted));
     }
-    
+
     @Test
-	public void testBigDecimal() {
-		BigDecimal big = new BigDecimal(123456);
+    public void testBigDecimal() {
+        BigDecimal big = new BigDecimal(123456);
 
-		BigDecimal encrypted = cryptoService.encrypt(big, password);
+        BigDecimal encrypted = cryptoService.encrypt(big, password);
 
-		BigDecimal decrypted = cryptoService.decrypt(encrypted, password);
+        BigDecimal decrypted = cryptoService.decrypt(encrypted, password);
 
-		assertEquals(big, decrypted);
-	}
-    
+        assertEquals(big, decrypted);
+    }
+
     @Test
     public void testFile() {
-		String filePath = "/META-INF/spring/file/test.hwp";
+        String filePath = "/META-INF/spring/file/test.hwp";
 
-		File srcFile = new File(this.getClass().getResource(filePath).getFile());
+        File srcFile = new File(this.getClass().getResource(filePath).getFile());
 
-		File trgtFile;
-		File decryptedFile;
-		try {
-			trgtFile = File.createTempFile("tmp", "encrypted");
-			trgtFile.deleteOnExit();
-			//trgtFile = new File("C:/test.enc");
+        File trgtFile;
+        File decryptedFile;
+        try {
+            trgtFile = File.createTempFile("tmp", "encrypted");
+            trgtFile.deleteOnExit();
+            //trgtFile = new File("C:/test.enc");
 
-			//System.out.println("Temp file : " + trgtFile.toString());
+            //System.out.println("Temp file : " + trgtFile.toString());
 
-			cryptoService.encrypt(srcFile, password, trgtFile);
+            cryptoService.encrypt(srcFile, password, trgtFile);
 
-			decryptedFile = File.createTempFile("tmp", "decrypted");
-			decryptedFile.deleteOnExit();
-			//decryptedFile = new File("C:/test.dec.hwp");
+            decryptedFile = File.createTempFile("tmp", "decrypted");
+            decryptedFile.deleteOnExit();
+            //decryptedFile = new File("C:/test.dec.hwp");
 
-			cryptoService.decrypt(trgtFile, password, decryptedFile);
+            cryptoService.decrypt(trgtFile, password, decryptedFile);
 
-			assertTrue("Decrypted file not same!!", checkFileWithHashFunction(srcFile, decryptedFile));
+            assertTrue("Decrypted file not same!!", checkFileWithHashFunction(srcFile, decryptedFile));
 
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
-			fail(ioe.getMessage());
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			fail(ex.getMessage());
-		}
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+            fail(ioe.getMessage());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            fail(ex.getMessage());
+        }
     }
 }

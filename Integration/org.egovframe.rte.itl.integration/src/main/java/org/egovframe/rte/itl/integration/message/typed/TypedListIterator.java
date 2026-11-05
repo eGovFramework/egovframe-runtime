@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 MOPAS(Ministry of Public Administration and Security).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,9 +25,8 @@ import java.util.ListIterator;
  * <b>NOTE:</b> 전자정부 연계 서비스의 표준 메시지 Instance를 위한 Class이다. TypedList의
  * ListIterator class이다.
  * </p>
- * 
+ *
  * @author 실행환경 개발팀 심상호
- * @since 2009.06.01
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -36,61 +35,66 @@ import java.util.ListIterator;
  * ----------------------------------------------
  * 2009.06.01	심상호				최초 생성
  * </pre>
+ * @since 2009.06.01
  */
 final class TypedListIterator implements ListIterator<Object> {
 
-	/** type */
-	private ListType type;
+    /**
+     * type
+     */
+    private ListType type;
 
-	/** inner */
-	private ListIterator<Object> inner;
+    /**
+     * inner
+     */
+    private ListIterator<Object> inner;
 
-	/**
-	 * <code>list</code>에 대한 TypedListIterator를 생성한다.
-	 * 
-	 * @param type
-	 * @param inner
-	 */
-	protected TypedListIterator(final ListType type, final ListIterator<Object> inner) {
-		super();
-		this.type = type;
-		this.inner = inner;
-	}
+    /**
+     * <code>list</code>에 대한 TypedListIterator를 생성한다.
+     *
+     * @param type
+     * @param inner
+     */
+    protected TypedListIterator(final ListType type, final ListIterator<Object> inner) {
+        super();
+        this.type = type;
+        this.inner = inner;
+    }
 
-	public void add(Object o) {
-		inner.add(type.getElementType().convertToTypedObject(o));
-	}
+    public void add(Object o) {
+        inner.add(type.getElementType().convertToTypedObject(o));
+    }
 
-	public boolean hasNext() {
-		return inner.hasNext();
-	}
+    public boolean hasNext() {
+        return inner.hasNext();
+    }
 
-	public boolean hasPrevious() {
-		return inner.hasPrevious();
-	}
+    public boolean hasPrevious() {
+        return inner.hasPrevious();
+    }
 
-	public Object next() {
-		return inner.next();
-	}
+    public Object next() {
+        return inner.next();
+    }
 
-	public int nextIndex() {
-		return inner.nextIndex();
-	}
+    public int nextIndex() {
+        return inner.nextIndex();
+    }
 
-	public Object previous() {
-		return inner.previous();
-	}
+    public Object previous() {
+        return inner.previous();
+    }
 
-	public int previousIndex() {
-		return inner.previousIndex();
-	}
+    public int previousIndex() {
+        return inner.previousIndex();
+    }
 
-	public void remove() {
-		inner.remove();
-	}
+    public void remove() {
+        inner.remove();
+    }
 
-	public void set(Object o) {
-		inner.set(type.getElementType().convertToTypedObject(o));
-	}
+    public void set(Object o) {
+        inner.set(type.getElementType().convertToTypedObject(o));
+    }
 
 }

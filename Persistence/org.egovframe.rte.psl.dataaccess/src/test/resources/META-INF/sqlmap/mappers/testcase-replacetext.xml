@@ -3,36 +3,40 @@
 
 <mapper namespace="org.egovframe.rte.psl.dataaccess.EmpMapper">
 
-	<select id="selectUsingReplacedOrderBy" parameterType="map" resultType="org.egovframe.rte.psl.dataaccess.util.EgovMap">
+    <select id="selectUsingReplacedOrderBy" parameterType="map"
+            resultType="org.egovframe.rte.psl.dataaccess.util.EgovMap">
 		<![CDATA[
-			select DEPT_NO,
-			       DEPT_NAME,
-			       LOC
-			from   DEPT
-			order by ${orderExpr}
-		]]>
+        select DEPT_NO,
+               DEPT_NAME,
+               LOC
+        from DEPT
+        order by ${orderExpr}
+        ]]>
 	</select>
-	
-	<select id="selectUsingReplacedTable" parameterType="map" resultType="org.egovframe.rte.psl.dataaccess.util.EgovMap">
-		<![CDATA[
+
+    <select id="selectUsingReplacedTable" parameterType="map"
+            resultType="org.egovframe.rte.psl.dataaccess.util.EgovMap">
+        <![CDATA[
 			select *
 			from   ${table}
 		]]>
-		<if test="orderExpr != null">
-			order by ${orderExpr}
-		</if>
-	</select>
-	
-	<select id="selectUsingReplacedAllQuery" parameterType="map" resultType="org.egovframe.rte.psl.dataaccess.util.EgovMap">
+        <if test="orderExpr != null">
+            order by ${orderExpr}
+        </if>
+    </select>
+
+    <select id="selectUsingReplacedAllQuery" parameterType="map"
+            resultType="org.egovframe.rte.psl.dataaccess.util.EgovMap">
 		<![CDATA[
-			${selectQuery}
-		]]>
+        ${selectQuery}
+        ]]>
 	</select>
-	
-	<select id="selectUsingReplacedAllQueryUsingRemapResults" parameterType="map" resultType="org.egovframe.rte.psl.dataaccess.util.EgovMap">
+
+    <select id="selectUsingReplacedAllQueryUsingRemapResults" parameterType="map"
+            resultType="org.egovframe.rte.psl.dataaccess.util.EgovMap">
 		<![CDATA[
-			${selectQuery}
-		]]>
+        ${selectQuery}
+        ]]>
 	</select>
 
 </mapper>

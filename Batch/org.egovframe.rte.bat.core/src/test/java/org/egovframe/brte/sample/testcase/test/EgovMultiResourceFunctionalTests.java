@@ -28,38 +28,40 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
-* 여러 파일로 배치작업을 수행하는 테스트
-* @author 배치실행개발팀
-* @since 2012. 06.27
-* @version 1.0
-* @see
-*/
+ * 여러 파일로 배치작업을 수행하는 테스트
+ *
+ * @author 배치실행개발팀
+ * @version 1.0
+ * @see
+ * @since 2012. 06.27
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations="/org/egovframe/batch/jobs/multiResourceIoJob.xml")
+@ContextConfiguration(locations = "/org/egovframe/batch/jobs/multiResourceIoJob.xml")
 public class EgovMultiResourceFunctionalTests extends EgovAbstractIoSampleTests {
 
-	/**
-	 * 배치결과를 다시 읽을 때  reader 설정하는 메소드
-	 */
-	@Override
-	protected void pointReaderToOutput(ItemReader<CustomerCredit> reader) {
-		JobParameters jobParameters = new JobParametersBuilder(super.getUniqueJobParameters()).addString("input.file.path", "file:target/test-outputs/multiResourceOutput.csv.*")
-				.toJobParameters();
-		StepExecution stepExecution = MetaDataInstanceFactory.createStepExecution(jobParameters);
-		StepSynchronizationManager.close();
-		StepSynchronizationManager.register(stepExecution);
-	}
+    /**
+     * 배치결과를 다시 읽을 때  reader 설정하는 메소드
+     */
+    @Override
+    protected void pointReaderToOutput(ItemReader<CustomerCredit> reader) {
+        JobParameters jobParameters = new JobParametersBuilder(super.getUniqueJobParameters()).addString("input.file.path", "file:target/test-outputs/multiResourceOutput.csv.*")
+                .toJobParameters();
+        StepExecution stepExecution = MetaDataInstanceFactory.createStepExecution(jobParameters);
+        StepSynchronizationManager.close();
+        StepSynchronizationManager.register(stepExecution);
+    }
 
-	/**
-	 * 잡파라미터를 설정하기 위한 메소드
-	 * @return jobParameters
-	 */
-	@Override
-	protected JobParameters getUniqueJobParameters() {
+    /**
+     * 잡파라미터를 설정하기 위한 메소드
+     *
+     * @return jobParameters
+     */
+    @Override
+    protected JobParameters getUniqueJobParameters() {
 
-		JobParametersBuilder builder = new JobParametersBuilder(super.getUniqueJobParameters());
-		return builder.addString("input.file.path", "/org/egovframe/data/input/delimited*.csv").addString("output.file.path", "file:./target/test-outputs/multiResourceOutput.csv")
-				.toJobParameters();
-	}
+        JobParametersBuilder builder = new JobParametersBuilder(super.getUniqueJobParameters());
+        return builder.addString("input.file.path", "/org/egovframe/data/input/delimited*.csv").addString("output.file.path", "file:./target/test-outputs/multiResourceOutput.csv")
+                .toJobParameters();
+    }
 
 }
