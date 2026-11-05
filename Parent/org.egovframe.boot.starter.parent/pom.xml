@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.egovframe.boot</groupId>
+    <artifactId>egovframe-boot-starter-parent</artifactId>
+    <version>5.1.0</version>
+    <packaging>pom</packaging>
+    <name>egovframe-boot-starter-parent</name>
+    <description>The eGovernment Standard Framework</description>
+    <url>https://www.egovframe.go.kr</url>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.5.16</version><!--2026.08.02-->
+    </parent>
+
+    <properties>
+        <java.version>17</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <!-- eGovFrame -->
+        <egovframe.rte.version>5.1.0</egovframe.rte.version>
+        <egovframe.boot.starter.version>5.1.0</egovframe.boot.starter.version>
+
+        <!-- Spring -->
+        <!-- Spring Cloud 2025.0.3은 Spring Boot 3.5.15 기준으로 빌드/공지되었으나,
+             spring-cloud-dependencies BOM 자체는 spring-boot 버전을 강제하지 않으며
+             Spring Boot 3.5.x 라인(패치 버전 포함) 전체와 호환됨. -->
+        <spring.cloud.version>2025.0.3</spring.cloud.version><!--2026.08.02-->
+        <spring.ai.version>1.1.8</spring.ai.version><!--ai.md-->
+        <spring.ai.egov.version>1.1.8-egov.1</spring.ai.egov.version><!--.m2 에 egov.1 로 존재하는 spring-ai-* : BOM 없이 개별 관리-->
+
+        <!-- AI / ML -->
+        <huggingface.tokenizer.version>0.32.0</huggingface.tokenizer.version><!--ai.md : 0.32.0 유지-->
+        <onnx.runtime.version>1.20.0</onnx.runtime.version><!--ai.md : spring-ai 1.1.8 · langchain4j 1.18.1 공통-->
+
+        <!-- LangChain4J -->
+        <langchain4j.version>1.18.1</langchain4j.version><!--2026.06.10-->
+        <langchain4j-beta.version>1.18.1-beta28</langchain4j-beta.version><!--ai.md : GA 1.18.1 과 짝-->
+
+        <!-- PostgreSQL -->
+        <postgresql.version>42.7.11</postgresql.version><!--2026.06.10-->
+
+        <!-- Apache Commons -->
+        <commons-net.version>3.13.0</commons-net.version><!--2026.06.10-->
+        <commons-pool2.version>2.13.1</commons-pool2.version><!--2026.06.10-->
+        <!-- spring-boot-dependencies가 관리하는 3.17.0보다 egovframe-rte-root가 요구하는
+             버전이 최신이므로, 명시적으로 재정의함 (컴파일 시점 API와 런타임 버전 불일치 방지) -->
+        <commons-lang3.version>3.20.0</commons-lang3.version>
+
+        <!-- SpringDoc OpenAPI -->
+        <springdoc.version>2.8.17</springdoc.version>
+
+        <!-- QueryDSL -->
+        <querydsl.version>5.1.0</querydsl.version><!--2026.06.10-->
+
+        <!-- HSQLDB -->
+        <hsqldb.version>2.7.4</hsqldb.version>
+
+        <!-- Selenium -->
+        <selenium.version>4.44.0</selenium.version><!--2026.06.10-->
+
+        <!-- egovframe-rte-root 5.1.0 정렬 : spring-boot-dependencies 속성을 runtime 적용 버전으로 맞춤.
+             (BOM import 가 우선하지만, Boot 속성을 참조하는 플러그인 · 전이 모델과의 불일치를 막기 위해 재정의) -->
+        <spring-framework.version>6.2.19</spring-framework.version>
+        <spring-security.version>6.5.11-egov.1</spring-security.version>
+        <spring-batch.version>5.2.6</spring-batch.version>
+        <spring-data-bom.version>2025.0.13</spring-data-bom.version>
+        <spring-integration.version>6.5.10-egov.1</spring-integration.version>
+        <micrometer.version>1.15.12</micrometer.version>
+        <reactor-bom.version>2024.0.18</reactor-bom.version>
+        <netty.version>4.1.138.Final</netty.version>
+        <jackson-bom.version>2.22.3</jackson-bom.version>
+        <hibernate.version>6.6.58.Final</hibernate.version>
+        <log4j2.version>2.26.1</log4j2.version>
+        <slf4j.version>2.0.20</slf4j.version>
+        <lombok.version>1.18.48</lombok.version>
+        <aspectj.version>1.9.25.1</aspectj.version>
+        <junit-jupiter.version>6.1.3</junit-jupiter.version>
+        <mockito.version>5.24.0</mockito.version>
+        <commons-codec.version>1.22.1</commons-codec.version>
+        <commons-dbcp2.version>2.14.0</commons-dbcp2.version>
+        <quartz.version>2.5.2</quartz.version>
+        <httpclient5.version>5.6.1</httpclient5.version><!--web-config-parent 와 동일-->
+        <ehcache3.version>3.12.0</ehcache3.version>
+        <hibernate-validator.version>8.0.5.Final</hibernate-validator.version>
+        <lettuce.version>6.8.2.RELEASE</lettuce.version>
+        <r2dbc-h2.version>1.1.0.RELEASE</r2dbc-h2.version>
+        <mysql.version>26.7.0</mysql.version>
+        <maven-compiler-plugin.version>3.16.0</maven-compiler-plugin.version>
+        <maven-surefire-plugin.version>3.6.0</maven-surefire-plugin.version>
+        <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
+        <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
+        <maven-install-plugin.version>3.2.0</maven-install-plugin.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- eGovFrame RTE : spring-boot-starter-parent가 제공하는 값보다 이 파일 자신의
+                 dependencyManagement가 우선하므로, 아래 BOM import 값이 실제로 적용됨. -->
+            <dependency>
+                <groupId>org.egovframe.rte</groupId>
+                <artifactId>egovframe-rte-root</artifactId>
+                <version>${egovframe.rte.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- eGovFrame Boot Starter -->
+            <dependency>
+                <groupId>org.egovframe.boot</groupId>
+                <artifactId>egovframe-boot-starter-access</artifactId>
+                <version>${egovframe.boot.starter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.egovframe.boot</groupId>
+                <artifactId>egovframe-boot-starter-crypto</artifactId>
+                <version>${egovframe.boot.starter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.egovframe.boot</groupId>
+                <artifactId>egovframe-boot-starter-logging</artifactId>
+                <version>${egovframe.boot.starter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.egovframe.boot</groupId>
+                <artifactId>egovframe-boot-starter-security</artifactId>
+                <version>${egovframe.boot.starter.version}</version>
+            </dependency>
+
+            <!-- Spring Cloud -->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring.cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Spring AI -->
+            <dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-bom</artifactId>
+                <version>${spring.ai.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Spring AI egov 빌드 : .m2 에 1.1.8-egov.1 이 있는 항목은 BOM 이 아닌 개별 관리 (직접 선언이 BOM import 보다 우선) -->
+            <dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-commons</artifactId>
+                <version>${spring.ai.egov.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-model</artifactId>
+                <version>${spring.ai.egov.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-pdf-document-reader</artifactId>
+                <version>${spring.ai.egov.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-template-st</artifactId>
+                <version>${spring.ai.egov.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-transformers</artifactId>
+                <version>${spring.ai.egov.version}</version>
+            </dependency>
+
+            <!-- AI / ML -->
+            <dependency>
+                <groupId>ai.djl.huggingface</groupId>
+                <artifactId>tokenizers</artifactId>
+                <version>${huggingface.tokenizer.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.microsoft.onnxruntime</groupId>
+                <artifactId>onnxruntime</artifactId>
+                <version>${onnx.runtime.version}</version>
+            </dependency>
+
+            <!-- LangChain4J -->
+            <dependency>
+                <groupId>dev.langchain4j</groupId>
+                <artifactId>langchain4j-bom</artifactId>
+                <version>${langchain4j.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- PostgreSQL -->
+            <dependency>
+                <groupId>org.postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>${postgresql.version}</version>
+            </dependency>
+
+            <!-- Apache Commons -->
+            <dependency>
+                <groupId>commons-net</groupId>
+                <artifactId>commons-net</artifactId>
+                <version>${commons-net.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-pool2</artifactId>
+                <version>${commons-pool2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang3.version}</version>
+            </dependency>
+
+            <!-- SpringDoc OpenAPI -->
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webflux-ui</artifactId>
+                <version>${springdoc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>${springdoc.version}</version>
+            </dependency>
+
+            <!-- QueryDSL -->
+            <dependency>
+                <groupId>com.querydsl</groupId>
+                <artifactId>querydsl-apt</artifactId>
+                <version>${querydsl.version}</version>
+                <classifier>jakarta</classifier>
+            </dependency>
+            <dependency>
+                <groupId>com.querydsl</groupId>
+                <artifactId>querydsl-core</artifactId>
+                <version>${querydsl.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.querydsl</groupId>
+                <artifactId>querydsl-jpa</artifactId>
+                <version>${querydsl.version}</version>
+                <classifier>jakarta</classifier>
+            </dependency>
+
+            <!-- HSQLDB -->
+            <dependency>
+                <groupId>org.hsqldb</groupId>
+                <artifactId>hsqldb</artifactId>
+                <version>${hsqldb.version}</version>
+            </dependency>
+
+            <!-- Selenium -->
+            <dependency>
+                <groupId>org.seleniumhq.selenium</groupId>
+                <artifactId>selenium-java</artifactId>
+                <version>${selenium.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <!-- spring-boot-starter-parent 는 annotationProcessorPaths 를 설정하지 않아, classpath 탐색만으로는
+                     Lombok 이 동작하지 않는 모듈이 있다. 버전은 dependencyManagement(lombok.version) 에서 해석한다.
+                     모듈이 자체 annotationProcessorPaths 를 선언하면 그 설정이 우선한다. -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <annotationProcessorPathsUseDepMgmt>true</annotationProcessorPathsUseDepMgmt>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                            </path>
+                        </annotationProcessorPaths>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+</project>

@@ -4,11 +4,16 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.egovframe.rte</groupId>
     <artifactId>egovframe-rte-root</artifactId>
-    <version>5.0.0</version>
+    <version>5.1.0</version>
     <packaging>pom</packaging>
     <name>org.egovframe.rte.root</name>
 
     <modules>
+
+        <!-- AI Layer -->
+        <module>AI/org.egovframe.rte.ai.core</module>
+        <module>AI/org.egovframe.rte.ai.langchain4j</module>
+        <module>AI/org.egovframe.rte.ai.springai</module>
 
         <!-- Batch -->
         <module>Batch/org.egovframe.rte.bat.core</module>
@@ -43,31 +48,846 @@
         <!-- Presentation -->
         <module>Presentation/org.egovframe.rte.ptl.mvc</module>
         <module>Presentation/org.egovframe.rte.ptl.reactive</module>
+
+        <!-- Boot Starter : Spring Boot 자동구성 스타터 (egovframe-boot-starter-parent 와 무관하게 이 POM 을 부모로 사용) -->
+        <module>Boot/org.egovframe.boot.starter.access</module>
+        <module>Boot/org.egovframe.boot.starter.crypto</module>
+        <module>Boot/org.egovframe.boot.starter.logging</module>
+        <module>Boot/org.egovframe.boot.starter.security</module>
+
+        <!-- Parent : 적용 프로젝트용 부모 POM (실행환경과 같은 버전으로 배포) -->
+        <module>Parent/org.egovframe.boot.starter.parent</module>
+        <module>Parent/org.egovframe.web.config.parent</module>
     </modules>
 
-    <!-- Common properties: modules에 선언된 모든 자식 모듈의 pom.xml에서 참조되는 공통 속성 값 -->
+    <!-- Common properties: 모든 자식 모듈의 라이브러리/플러그인 버전을 이 곳에서 일괄 관리 -->
     <properties>
 
         <!-- System Properties -->
         <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <org.egovframe.rte.version>${project.version}</org.egovframe.rte.version>
 
-        <!-- Library Version -->
-        <spring.framework.version>6.2.11</spring.framework.version>
-        <junit.jupiter.version>5.12.1</junit.jupiter.version>
+        <!-- Spring -->
+        <spring.framework.version>6.2.19</spring.framework.version>
+        <spring.security.version>6.5.11-egov.1</spring.security.version>
+        <spring.batch.version>5.2.6</spring.batch.version>
+        <spring.data.version>2025.0.13</spring.data.version>
+        <spring.integration.version>6.5.10-egov.1</spring.integration.version>
+        <spring.retry.version>2.0.13</spring.retry.version>
+        <micrometer.version>1.15.12</micrometer.version>
+        <reactor.version>2024.0.18</reactor.version>
+        <netty.version>4.1.138.Final</netty.version>
+
+        <!-- Spring Boot : Boot 스타터(Boot/*) 전용. egovframe-boot-starter-parent 의 spring-boot-starter-parent 버전과 동일하게 유지 -->
+        <spring.boot.version>3.5.16</spring.boot.version>
+        <micrometer.tracing.version>1.5.12</micrometer.tracing.version>
+
+        <!-- Jakarta EE 10 (Spring Framework 6.2 기준 : Servlet 6.0) -->
+        <jakarta.annotation.version>3.0.0</jakarta.annotation.version>
+        <jakarta.persistence.version>3.2.0</jakarta.persistence.version>
+        <jakarta.mail.version>2.1.5</jakarta.mail.version>
+        <jakarta.servlet.version>6.0.0</jakarta.servlet.version>
+        <jakarta.servlet.jsp.version>4.0.0</jakarta.servlet.jsp.version>
+        <jakarta.validation.version>3.1.1</jakarta.validation.version>
+        <jakarta.el.version>6.0.1</jakarta.el.version>
+        <jakarta.xml.ws.version>4.0.3</jakarta.xml.ws.version>
+        <!-- spring-oxm 6.2 가 전이하는 3.0.1(EE 9) 대신 EE 10 계열로 통일 -->
+        <jakarta.xml.bind.version>4.0.5</jakarta.xml.bind.version>
+        <jakarta.activation.version>2.1.4</jakarta.activation.version>
+        <jaxb.version>4.0.9</jaxb.version>
+        <jakarta.transaction.version>2.0.1</jakarta.transaction.version>
+        <glassfish.jakarta.el.version>4.0.2</glassfish.jakarta.el.version>
+
+        <!-- Logging -->
+        <log4j2.version>2.26.1</log4j2.version>
+        <slf4j.version>2.0.20</slf4j.version>
+        <log4jdbc.version>1.2</log4jdbc.version>
+
+        <!-- Persistence / Data Store -->
+        <hibernate.version>6.6.58.Final</hibernate.version>
+        <hibernate.validator.version>8.0.5.Final</hibernate.validator.version>
+        <mybatis.version>3.5.19</mybatis.version>
+        <mybatis.spring.version>3.0.6</mybatis.spring.version>
+        <ibatis.version>2.3.4.726</ibatis.version>
+        <mongodb.version>5.13.0</mongodb.version>
+        <cassandra.version>4.19.3</cassandra.version>
+        <lettuce.version>6.8.2.RELEASE</lettuce.version>
+        <r2dbc.h2.version>1.1.0.RELEASE</r2dbc.h2.version>
+        <mysql.connector.version>26.7.0</mysql.connector.version>
+        <protobuf.java.version>4.36.2</protobuf.java.version>
+
+        <!-- JSON / XML -->
+        <jackson.version>2.22.3</jackson.version>
+        <jaxen.version>2.0.6</jaxen.version>
+
+        <!-- Apache Commons -->
+        <commons.beanutils.version>1.11.0</commons.beanutils.version>
+        <commons.codec.version>1.22.1</commons.codec.version>
+        <commons.collections4.version>4.6.0</commons.collections4.version>
+        <commons.compress.version>1.28.0</commons.compress.version>
+        <commons.configuration2.version>2.15.1</commons.configuration2.version>
+        <commons.dbcp2.version>2.14.0</commons.dbcp2.version>
+        <commons.io.version>2.22.0</commons.io.version>
+        <commons.lang3.version>3.20.0</commons.lang3.version>
+        <commons.pool2.version>2.13.1</commons.pool2.version>
+        <commons.validator.version>1.11.0</commons.validator.version>
+        <commons.vfs2.version>2.10.0</commons.vfs2.version>
+
+        <!-- AI : Spring AI / LangChain4j 버전은 egovframe-boot-starter-parent · egovframe-web-config-parent 와 동일하게 유지 -->
+        <spring.ai.version>1.1.8</spring.ai.version>
+        <!-- .m2 에 egov 빌드(1.1.8-egov.1)가 있는 spring-ai-* 는 BOM 이 아닌 개별 관리 -->
+        <spring.ai.egov.version>1.1.8-egov.1</spring.ai.egov.version>
+        <langchain4j.version>1.18.1</langchain4j.version>
+        <!-- AI 문서 파서·클라이언트(ai.core optional). pdfbox 3.0.7 · jedis 6.0.0 은 spring-ai 1.1.8 / Boot 3.5.16 BOM 기준.
+             hwplib · hwpxlib 는 Boot 관리 밖 — 샘플 두 벌의 분기(1.0.5 / 1.0.8)를 1.0.8 로 통일(Apache-2.0, 전이 의존 0) -->
+        <hwplib.version>1.1.9</hwplib.version>
+        <hwpxlib.version>1.0.8</hwpxlib.version>
+        <pdfbox.version>3.0.7</pdfbox.version>
+        <jedis.version>6.0.0</jedis.version>
+
+        <!-- Etc -->
+        <aopalliance.version>1.0</aopalliance.version>
+        <aspectj.version>1.9.25.1</aspectj.version>
+        <antlr.version>4.13.2</antlr.version>
+        <cglib.version>3.3.0</cglib.version>
+        <cxf.version>4.2.3</cxf.version>
+        <ehcache.version>3.12.0</ehcache.version>
+        <icu4j.version>78.3</icu4j.version>
+        <jasypt.version>1.9.3</jasypt.version>
+        <jsoup.version>1.23.2</jsoup.version>
+        <jxls.poi.version>3.2.0</jxls.poi.version>
+        <poi.version>5.5.1</poi.version>
+        <quartz.version>2.5.2</quartz.version>
+        <lombok.version>1.18.48</lombok.version>
+
+        <!-- Test -->
+        <junit.version>6.1.3</junit.version>
+        <dbunit.version>3.5.2</dbunit.version>
+        <easymock.version>5.7.0</easymock.version>
+        <mockito.version>5.24.0</mockito.version>
+        <hamcrest.version>3.0</hamcrest.version>
+        <hsqldb.version>2.7.4</hsqldb.version>
 
         <!-- Plugin Version -->
-        <maven.compiler.plugins.version>3.14.0</maven.compiler.plugins.version>
-        <maven.install.plugins.version>3.1.4</maven.install.plugins.version>
-        <maven.javadoc.plugins.version>3.11.2</maven.javadoc.plugins.version>
+        <maven.compiler.plugins.version>3.16.0</maven.compiler.plugins.version>
+        <maven.install.plugins.version>3.2.0</maven.install.plugins.version>
+        <maven.javadoc.plugins.version>3.12.0</maven.javadoc.plugins.version>
         <maven.jxr.plugins.version>3.6.0</maven.jxr.plugins.version>
-        <maven.pmd.plugins.version>3.26.0</maven.pmd.plugins.version>
-        <maven.project.info.report.plugins.version>3.6.2</maven.project.info.report.plugins.version>
-        <maven.source.plugins.version>3.3.1</maven.source.plugins.version>
-        <maven.surefire.plugins.version>3.5.2</maven.surefire.plugins.version>
-        <maven.surefire.report.plugins.version>3.5.3</maven.surefire.report.plugins.version>
+        <maven.pmd.plugins.version>3.28.0</maven.pmd.plugins.version>
+        <maven.project.info.report.plugins.version>3.9.0</maven.project.info.report.plugins.version>
+        <maven.source.plugins.version>3.4.0</maven.source.plugins.version>
+        <maven.surefire.plugins.version>3.6.0</maven.surefire.plugins.version>
+        <maven.surefire.report.plugins.version>3.6.0</maven.surefire.report.plugins.version>
+        <jacoco.plugins.version>0.8.15</jacoco.plugins.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+
+            <!-- eGovFrame Runtime -->
+            <dependency>
+                <groupId>org.egovframe.rte</groupId>
+                <artifactId>egovframe-rte-bat-core</artifactId>
+                <version>${org.egovframe.rte.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.egovframe.rte</groupId>
+                <artifactId>egovframe-rte-ai-core</artifactId>
+                <version>${org.egovframe.rte.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.egovframe.rte</groupId>
+                <artifactId>egovframe-rte-ai-langchain4j</artifactId>
+                <version>${org.egovframe.rte.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.egovframe.rte</groupId>
+                <artifactId>egovframe-rte-ai-springai</artifactId>
+                <version>${org.egovframe.rte.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.egovframe.rte</groupId>
+                <artifactId>egovframe-rte-fdl-access</artifactId>
+                <version>${org.egovframe.rte.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.egovframe.rte</groupId>
+                <artifactId>egovframe-rte-fdl-cmmn</artifactId>
+                <version>${org.egovframe.rte.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.egovframe.rte</groupId>
+                <artifactId>egovframe-rte-fdl-crypto</artifactId>
+                <version>${org.egovframe.rte.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.egovframe.rte</groupId>
+                <artifactId>egovframe-rte-fdl-excel</artifactId>
+                <version>${org.egovframe.rte.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.egovframe.rte</groupId>
+                <artifactId>egovframe-rte-fdl-filehandling</artifactId>
+                <version>${org.egovframe.rte.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.egovframe.rte</groupId>
+                <artifactId>egovframe-rte-fdl-idgnr</artifactId>
+                <version>${org.egovframe.rte.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.egovframe.rte</groupId>
+                <artifactId>egovframe-rte-fdl-logging</artifactId>
+                <version>${org.egovframe.rte.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.egovframe.rte</groupId>
+                <artifactId>egovframe-rte-fdl-property</artifactId>
+                <version>${org.egovframe.rte.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.egovframe.rte</groupId>
+                <artifactId>egovframe-rte-fdl-reactive</artifactId>
+                <version>${org.egovframe.rte.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.egovframe.rte</groupId>
+                <artifactId>egovframe-rte-fdl-security</artifactId>
+                <version>${org.egovframe.rte.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.egovframe.rte</groupId>
+                <artifactId>egovframe-rte-fdl-string</artifactId>
+                <version>${org.egovframe.rte.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.egovframe.rte</groupId>
+                <artifactId>egovframe-rte-fdl-xml</artifactId>
+                <version>${org.egovframe.rte.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.egovframe.rte</groupId>
+                <artifactId>egovframe-rte-itl-integration</artifactId>
+                <version>${org.egovframe.rte.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.egovframe.rte</groupId>
+                <artifactId>egovframe-rte-itl-webservice</artifactId>
+                <version>${org.egovframe.rte.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.egovframe.rte</groupId>
+                <artifactId>egovframe-rte-psl-data-jpa</artifactId>
+                <version>${org.egovframe.rte.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.egovframe.rte</groupId>
+                <artifactId>egovframe-rte-psl-data-mongodb</artifactId>
+                <version>${org.egovframe.rte.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.egovframe.rte</groupId>
+                <artifactId>egovframe-rte-psl-dataaccess</artifactId>
+                <version>${org.egovframe.rte.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.egovframe.rte</groupId>
+                <artifactId>egovframe-rte-psl-reactive-cassandra</artifactId>
+                <version>${org.egovframe.rte.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.egovframe.rte</groupId>
+                <artifactId>egovframe-rte-psl-reactive-mongodb</artifactId>
+                <version>${org.egovframe.rte.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.egovframe.rte</groupId>
+                <artifactId>egovframe-rte-psl-reactive-r2dbc</artifactId>
+                <version>${org.egovframe.rte.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.egovframe.rte</groupId>
+                <artifactId>egovframe-rte-psl-reactive-redis</artifactId>
+                <version>${org.egovframe.rte.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.egovframe.rte</groupId>
+                <artifactId>egovframe-rte-ptl-mvc</artifactId>
+                <version>${org.egovframe.rte.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.egovframe.rte</groupId>
+                <artifactId>egovframe-rte-ptl-reactive</artifactId>
+                <version>${org.egovframe.rte.version}</version>
+            </dependency>
+
+            <!-- eGovFrame Boot Starter -->
+            <dependency>
+                <groupId>org.egovframe.boot</groupId>
+                <artifactId>egovframe-boot-starter-access</artifactId>
+                <version>${org.egovframe.rte.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.egovframe.boot</groupId>
+                <artifactId>egovframe-boot-starter-crypto</artifactId>
+                <version>${org.egovframe.rte.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.egovframe.boot</groupId>
+                <artifactId>egovframe-boot-starter-logging</artifactId>
+                <version>${org.egovframe.rte.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.egovframe.boot</groupId>
+                <artifactId>egovframe-boot-starter-security</artifactId>
+                <version>${org.egovframe.rte.version}</version>
+            </dependency>
+
+            <!-- Spring Boot : spring-boot-dependencies BOM 은 import 하지 않음(다른 모듈의 전이 의존 버전에 영향).
+                 Boot 스타터가 사용하는 아티팩트만 개별 관리 -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot</artifactId>
+                <version>${spring.boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-autoconfigure</artifactId>
+                <version>${spring.boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-autoconfigure-processor</artifactId>
+                <version>${spring.boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-configuration-processor</artifactId>
+                <version>${spring.boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+                <version>${spring.boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-jdbc</artifactId>
+                <version>${spring.boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-security</artifactId>
+                <version>${spring.boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-test</artifactId>
+                <version>${spring.boot.version}</version>
+            </dependency>
+
+            <!-- BOM: 선언 순서가 우선순위 (Spring 계열 우선) -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-framework-bom</artifactId>
+                <version>${spring.framework.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-bom</artifactId>
+                <version>${spring.security.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.batch</groupId>
+                <artifactId>spring-batch-bom</artifactId>
+                <version>${spring.batch.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-bom</artifactId>
+                <version>${spring.data.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.integration</groupId>
+                <artifactId>spring-integration-bom</artifactId>
+                <version>${spring.integration.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-bom</artifactId>
+                <version>${micrometer.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-tracing-bom</artifactId>
+                <version>${micrometer.tracing.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.projectreactor</groupId>
+                <artifactId>reactor-bom</artifactId>
+                <version>${reactor.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-bom</artifactId>
+                <version>${netty.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>jaxb-bom</artifactId>
+                <version>${jaxb.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Spring AI (egov 빌드 5종은 개별 관리, 나머지는 공식 1.1.8) -->
+            <dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-commons</artifactId>
+                <version>${spring.ai.egov.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-model</artifactId>
+                <version>${spring.ai.egov.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-client-chat</artifactId>
+                <version>${spring.ai.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-rag</artifactId>
+                <version>${spring.ai.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-vector-store</artifactId>
+                <version>${spring.ai.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-retry</artifactId>
+                <version>${spring.ai.version}</version>
+            </dependency>
+
+            <!-- AI : LangChain4j / 문서 파서 / 클라이언트 -->
+            <dependency>
+                <groupId>dev.langchain4j</groupId>
+                <artifactId>langchain4j-core</artifactId>
+                <version>${langchain4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>dev.langchain4j</groupId>
+                <artifactId>langchain4j</artifactId>
+                <version>${langchain4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>kr.dogfoot</groupId>
+                <artifactId>hwplib</artifactId>
+                <version>${hwplib.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>kr.dogfoot</groupId>
+                <artifactId>hwpxlib</artifactId>
+                <version>${hwpxlib.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.pdfbox</groupId>
+                <artifactId>pdfbox</artifactId>
+                <version>${pdfbox.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>redis.clients</groupId>
+                <artifactId>jedis</artifactId>
+                <version>${jedis.version}</version>
+            </dependency>
+
+            <!-- Jakarta EE -->
+            <dependency>
+                <groupId>jakarta.annotation</groupId>
+                <artifactId>jakarta.annotation-api</artifactId>
+                <version>${jakarta.annotation.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.persistence</groupId>
+                <artifactId>jakarta.persistence-api</artifactId>
+                <version>${jakarta.persistence.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.mail</groupId>
+                <artifactId>jakarta.mail-api</artifactId>
+                <version>${jakarta.mail.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.servlet</groupId>
+                <artifactId>jakarta.servlet-api</artifactId>
+                <version>${jakarta.servlet.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.servlet.jsp</groupId>
+                <artifactId>jakarta.servlet.jsp-api</artifactId>
+                <version>${jakarta.servlet.jsp.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.validation</groupId>
+                <artifactId>jakarta.validation-api</artifactId>
+                <version>${jakarta.validation.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.el</groupId>
+                <artifactId>jakarta.el-api</artifactId>
+                <version>${jakarta.el.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.xml.ws</groupId>
+                <artifactId>jakarta.xml.ws-api</artifactId>
+                <version>${jakarta.xml.ws.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.xml.bind</groupId>
+                <artifactId>jakarta.xml.bind-api</artifactId>
+                <version>${jakarta.xml.bind.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.activation</groupId>
+                <artifactId>jakarta.activation-api</artifactId>
+                <version>${jakarta.activation.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.transaction</groupId>
+                <artifactId>jakarta.transaction-api</artifactId>
+                <version>${jakarta.transaction.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish</groupId>
+                <artifactId>jakarta.el</artifactId>
+                <version>${glassfish.jakarta.el.version}</version>
+            </dependency>
+
+            <!-- Logging -->
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-api</artifactId>
+                <version>${log4j2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-core</artifactId>
+                <version>${log4j2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-slf4j2-impl</artifactId>
+                <version>${log4j2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>jcl-over-slf4j</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>log4j-over-slf4j</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.googlecode.log4jdbc</groupId>
+                <artifactId>log4jdbc</artifactId>
+                <version>${log4jdbc.version}</version>
+            </dependency>
+
+            <!-- Persistence / Data Store -->
+            <dependency>
+                <groupId>org.hibernate.orm</groupId>
+                <artifactId>hibernate-core</artifactId>
+                <version>${hibernate.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate.validator</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>${hibernate.validator.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis</artifactId>
+                <version>${mybatis.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis-spring</artifactId>
+                <version>${mybatis.spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.ibatis</groupId>
+                <artifactId>ibatis-sqlmap</artifactId>
+                <version>${ibatis.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mongodb</groupId>
+                <artifactId>mongodb-driver-core</artifactId>
+                <version>${mongodb.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mongodb</groupId>
+                <artifactId>mongodb-driver-sync</artifactId>
+                <version>${mongodb.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mongodb</groupId>
+                <artifactId>mongodb-driver-reactivestreams</artifactId>
+                <version>${mongodb.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cassandra</groupId>
+                <artifactId>java-driver-core</artifactId>
+                <version>${cassandra.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.lettuce</groupId>
+                <artifactId>lettuce-core</artifactId>
+                <version>${lettuce.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.r2dbc</groupId>
+                <artifactId>r2dbc-h2</artifactId>
+                <version>${r2dbc.h2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mysql</groupId>
+                <artifactId>mysql-connector-j</artifactId>
+                <version>${mysql.connector.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.protobuf</groupId>
+                <artifactId>protobuf-java</artifactId>
+                <version>${protobuf.java.version}</version>
+            </dependency>
+
+            <!-- JSON / XML -->
+            <dependency>
+                <groupId>jaxen</groupId>
+                <artifactId>jaxen</artifactId>
+                <version>${jaxen.version}</version>
+            </dependency>
+
+            <!-- Apache Commons -->
+            <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>${commons.beanutils.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>${commons.codec.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons.io.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-validator</groupId>
+                <artifactId>commons-validator</artifactId>
+                <version>${commons.validator.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-collections4</artifactId>
+                <version>${commons.collections4.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-compress</artifactId>
+                <version>${commons.compress.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-configuration2</artifactId>
+                <version>${commons.configuration2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-dbcp2</artifactId>
+                <version>${commons.dbcp2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons.lang3.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-pool2</artifactId>
+                <version>${commons.pool2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-vfs2</artifactId>
+                <version>${commons.vfs2.version}</version>
+            </dependency>
+
+            <!-- Etc -->
+            <dependency>
+                <groupId>aopalliance</groupId>
+                <artifactId>aopalliance</artifactId>
+                <version>${aopalliance.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjrt</artifactId>
+                <version>${aspectj.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjweaver</artifactId>
+                <version>${aspectj.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.antlr</groupId>
+                <artifactId>antlr4</artifactId>
+                <version>${antlr.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.antlr</groupId>
+                <artifactId>antlr4-runtime</artifactId>
+                <version>${antlr.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cglib</groupId>
+                <artifactId>cglib</artifactId>
+                <version>${cglib.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-frontend-jaxws</artifactId>
+                <version>${cxf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-transports-http-jetty</artifactId>
+                <version>${cxf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ehcache</groupId>
+                <artifactId>ehcache</artifactId>
+                <version>${ehcache.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.ibm.icu</groupId>
+                <artifactId>icu4j</artifactId>
+                <version>${icu4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jasypt</groupId>
+                <artifactId>jasypt</artifactId>
+                <version>${jasypt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jsoup</groupId>
+                <artifactId>jsoup</artifactId>
+                <version>${jsoup.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jxls</groupId>
+                <artifactId>jxls-poi</artifactId>
+                <version>${jxls.poi.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi</artifactId>
+                <version>${poi.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi-ooxml</artifactId>
+                <version>${poi.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.quartz-scheduler</groupId>
+                <artifactId>quartz</artifactId>
+                <version>${quartz.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+
+            <!-- Test -->
+            <dependency>
+                <groupId>org.dbunit</groupId>
+                <artifactId>dbunit</artifactId>
+                <version>${dbunit.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.easymock</groupId>
+                <artifactId>easymock</artifactId>
+                <version>${easymock.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-junit-jupiter</artifactId>
+                <version>${mockito.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest</artifactId>
+                <version>${hamcrest.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hsqldb</groupId>
+                <artifactId>hsqldb</artifactId>
+                <version>${hsqldb.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <distributionManagement>
         <site>
@@ -80,85 +900,125 @@
         <defaultGoal>install</defaultGoal>
         <directory>${basedir}/target</directory>
         <finalName>${project.artifactId}-${project.version}</finalName>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven.compiler.plugins.version}</version>
+                    <configuration>
+                        <release>${java.version}</release>
+                        <parameters>true</parameters>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-pmd-plugin</artifactId>
+                    <version>${maven.pmd.plugins.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>${maven.source.plugins.version}</version>
+                    <executions>
+                        <execution>
+                            <id>attach-sources</id>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <!-- JavaDoc -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${maven.javadoc.plugins.version}</version>
+                    <configuration>
+                        <release>${java.version}</release>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                        <docencoding>${project.build.sourceEncoding}</docencoding>
+                        <charset>${project.build.sourceEncoding}</charset>
+                        <windowtitle>${project.name} ${project.version} API</windowtitle>
+                        <doctitle>${project.name} ${project.version} API</doctitle>
+                        <doclint>none</doclint>
+                        <quiet>true</quiet>
+                        <failOnError>true</failOnError>
+                        <failOnWarnings>false</failOnWarnings>
+                        <detectJavaApiLink>false</detectJavaApiLink>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>attach-javadoc</id>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>${maven.install.plugins.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven.surefire.plugins.version}</version>
+                    <configuration>
+                        <reportFormat>xml</reportFormat>
+                        <excludes>
+                            <exclude>**/Abstract*.java</exclude>
+                            <exclude>**/*Suite.java</exclude>
+                        </excludes>
+                        <includes>
+                            <include>**/*Test.java</include>
+                        </includes>
+                    </configuration>
+                </plugin>
+                <!-- JaCoCo Test coverage plugin -->
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${jacoco.plugins.version}</version>
+                    <executions>
+                        <execution>
+                            <id>prepare-agent</id>
+                            <goals>
+                                <goal>prepare-agent</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven.compiler.plugins.version}</version>
-                <configuration>
-                    <release>${java.version}</release>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-pmd-plugin</artifactId>
-                <version>${maven.pmd.plugins.version}</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>${maven.source.plugins.version}</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
-            <!-- JavaDoc -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>${maven.javadoc.plugins.version}</version>
-                <configuration>
-                    <doclint>none</doclint>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-install-plugin</artifactId>
-                <version>${maven.install.plugins.version}</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>${maven.surefire.plugins.version}</version>
-                <configuration>
-                    <skipTests>false</skipTests>
-                    <reportFormat>xml</reportFormat>
-                    <excludes>
-                        <exclude>**/Abstract*.java</exclude>
-                        <exclude>**/*Suite.java</exclude>
-                    </excludes>
-                    <includes>
-                        <include>**/*Test.java</include>
-                    </includes>
-                </configuration>
             </plugin>
-
-            <!-- JaCoCo Test coverage plugin -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.14</version>
-                <executions>
-                    <execution>
-                        <id>prepare-agent</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
@@ -207,7 +1067,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.14</version>
+                <version>${jacoco.plugins.version}</version>
                 <reportSets>
                     <reportSet>
                         <reports>

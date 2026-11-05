@@ -81,4 +81,20 @@ public class EgovSecurityConfigReaderTest {
         }
     }
 
+
+    @Test
+    public void testDefaultConfigUsesBCryptHashWhenFileMissing(@TempDir Path tempDir) {
+        // 설정 파일을 찾지 못하면 createDefaultConfig() 가 적용되며, 기본 hash 는 bcrypt 이다(이전 : MD5).
+        EgovSecurityConfigReader reader = new EgovSecurityConfigReader("file:" + tempDir.resolve("none.properties"), null);
+        EgovSecurityConfig config = reader.readConfig();
+        assertEquals("bcrypt", config.getHash());
+    }
+
+    @Test
+    public void testReadConfigWithoutHashKeyKeepsBCryptDefault(@TempDir Path tempDir) throws IOException {
+        Path propsFile = tempDir.resolve("egov-security-config.properties");
+        Files.writeString(propsFile, "loginUrl=/login.do\n", StandardCharsets.UTF_8);
+        EgovSecurityConfig config = new EgovSecurityConfigReader("file:" + propsFile, null).readConfig();
+        assertEquals("bcrypt", config.getHash());
+    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2009-2026 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,12 +23,12 @@ import java.text.MessageFormat;
  * 기본적인 페이징 기능이 구현되어 있으며, 화면에서 아래와 같이 display 된다.
  *
  * 0. 이전 페이지 링크 추가 (항상 표시, 1페이지일 때는 비활성화)
- * 1. 페이지가 1개인 경우: <이전 1 다음>
- * 2. 페이지가 8개 이하인 경우: <이전 1 2 3 4 5 6 7 8 다음>
+ * 1. 페이지가 1개인 경우: &lt;이전 1 다음&gt;
+ * 2. 페이지가 8개 이하인 경우: &lt;이전 1 2 3 4 5 6 7 8 다음&gt;
  * 3. 페이지가 8개 초과인 경우
- * 3-1. 현재 페이지가 처음 4페이지 이내인 경우: <이전 1 2 3 4 5 6 7 ... 9 다음>
- * 3-2. 현재 페이지가 마지막 4페이지 이내인 경우: <이전 1 ... 3 4 5 6 7 8 9 다음>
- * 3-3. 현재 페이지가 중간에 있는 경우: <이전 1 ... 3 4 5 6 7 ... 9 다음>
+ * 3-1. 현재 페이지가 처음 4페이지 이내인 경우: &lt;이전 1 2 3 4 5 6 7 ... 9 다음&gt;
+ * 3-2. 현재 페이지가 마지막 4페이지 이내인 경우: &lt;이전 1 ... 3 4 5 6 7 8 9 다음&gt;
+ * 3-3. 현재 페이지가 중간에 있는 경우: &lt;이전 1 ... 3 4 5 6 7 ... 9 다음&gt;
  * 4. 다음 페이지 링크 추가 (항상 표시, 마지막 페이지일 때는 비활성화)
  *
  * 클래스 변수값을 AbstractKrdsPaginationRenderer를 상속받은 하위 클래스에서 주게 되면,

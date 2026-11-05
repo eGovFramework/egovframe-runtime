@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2009-2026 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,6 +76,9 @@ import java.util.*;
 @Configuration
 @EnableWebSecurity
 public class EgovSecurityConfiguration {
+
+    /** hash 미지정(빈 값) 시 기본 비밀번호 인코더 : BCrypt */
+    private static final String DEFAULT_HASH = "bcrypt";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EgovSecurityConfiguration.class);
 
@@ -205,13 +208,14 @@ public class EgovSecurityConfiguration {
     @Bean
     public PasswordEncoder passwordEncoder(EgovSecurityConfig securityConfig) {
         String rawHash = securityConfig != null ? securityConfig.getHash() : null;
-        String securityHash = (rawHash == null || rawHash.trim().isEmpty()) ? "sha-256" : rawHash.trim().toLowerCase(Locale.ROOT);
+        String securityHash = (rawHash == null || rawHash.trim().isEmpty()) ? DEFAULT_HASH : rawHash.trim().toLowerCase(Locale.ROOT);
         boolean securityHashBase64 = securityConfig != null && securityConfig.isHashBase64();
         switch (securityHash) {
+            case "bcrypt":
+                return new BCryptPasswordEncoder();
             case "plaintext":
             case "noop":
                 return NoOpPasswordEncoder.getInstance();
-            case "eccp":
             case "egov-sha256":
                 return new EgovIdSaltSha256PasswordEncoder();
             case "ldap":
@@ -241,7 +245,7 @@ public class EgovSecurityConfiguration {
     @Bean
     public AuthenticationManager authenticationManager(EgovSecurityConfig securityConfig, PasswordEncoder passwordEncoder) {
         String rawHash = securityConfig != null ? securityConfig.getHash() : null;
-        String securityHash = (rawHash == null || rawHash.trim().isEmpty()) ? "sha-256" : rawHash.trim().toLowerCase(Locale.ROOT);
+        String securityHash = (rawHash == null || rawHash.trim().isEmpty()) ? DEFAULT_HASH : rawHash.trim().toLowerCase(Locale.ROOT);
 
         DaoAuthenticationProvider provider;
         if (isIdSaltHash(securityHash)) {

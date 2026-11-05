@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.egovframe.rte</groupId>
         <artifactId>egovframe-rte-root</artifactId>
-        <version>5.0.0</version>
+        <version>5.1.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -23,134 +23,80 @@
         </license>
     </licenses>
 
-    <properties>
-        <org.egovframe.rte.version>5.0.0</org.egovframe.rte.version>
-        <jakarta.annotation.version>3.0.0</jakarta.annotation.version>
-        <jakarta.validation.version>3.1.1</jakarta.validation.version>
-        <jakarta.servlet.version>6.0.0</jakarta.servlet.version>
-        <jakarta.servlet.jsp.version>4.0.0</jakarta.servlet.jsp.version>
-        <log4j2.version>2.25.3</log4j2.version>
-        <slf4j.version>2.0.17</slf4j.version>
-        <jsoup.version>1.21.1</jsoup.version>
-        <commons.beanutils.version>1.11.0</commons.beanutils.version>
-        <commons.validator.version>1.9.0</commons.validator.version>
-        <easymock.version>5.3.0</easymock.version>
-        <antlr.version>4.13.2</antlr.version>
-        <hamcrest.version>3.0</hamcrest.version>
-        <!-- 오류 처리기 통합 테스트 전용(test scope) -->
-        <jackson.version>2.18.2</jackson.version>
-        <hibernate.validator.version>8.0.2.Final</hibernate.validator.version>
-        <glassfish.jakarta.el.version>4.0.2</glassfish.jakarta.el.version>
-        <spring.security.version>6.5.5</spring.security.version>
-    </properties>
-
-    <repositories>
-        <repository>
-            <id>egovframe</id>
-            <url>https://maven.egovframe.go.kr/maven/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-
     <dependencies>
         <!-- eGovFramework -->
         <dependency>
             <groupId>org.egovframe.rte</groupId>
             <artifactId>egovframe-rte-fdl-cmmn</artifactId>
-            <version>${org.egovframe.rte.version}</version>
         </dependency>
         <!-- 업로드 검증 정책(EgovUploadPolicy)과 안전 경로 해석(EgovFiles)을 쓴다. -->
         <dependency>
             <groupId>org.egovframe.rte</groupId>
             <artifactId>egovframe-rte-fdl-filehandling</artifactId>
-            <version>${org.egovframe.rte.version}</version>
         </dependency>
 
         <!-- Spring -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
-            <version>${spring.framework.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
-            <version>${spring.framework.version}</version>
             <scope>test</scope>
         </dependency>
 
         <!-- Jakarta APIs -->
-        <dependency>
-            <groupId>jakarta.annotation</groupId>
-            <artifactId>jakarta.annotation-api</artifactId>
-            <version>${jakarta.annotation.version}</version>
-        </dependency>
         <!-- EgovRestExceptionHandler 가 제약 위반(ConstraintViolationException)을 해석하는 데 쓴다.
              구현체는 애플리케이션이 선택한다(hibernate-validator 등). -->
         <dependency>
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
-            <version>${jakarta.validation.version}</version>
         </dependency>
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
-            <version>${jakarta.servlet.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>jakarta.servlet.jsp</groupId>
             <artifactId>jakarta.servlet.jsp-api</artifactId>
-            <version>${jakarta.servlet.jsp.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <!-- Logging -->
-        <!-- CVE-2025-68161: 취약점 보완용 업데이트 -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
-            <version>${log4j2.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j2-impl</artifactId>
-            <version>${log4j2.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
-            <version>${slf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>log4j-over-slf4j</artifactId>
-            <version>${slf4j.version}</version>
         </dependency>
 
         <!-- Commons & Utils -->
-        <!-- CVE-2025-48734: 취약점 보완용 업데이트 -->
         <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
-            <version>${commons.beanutils.version}</version>
         </dependency>
         <!-- EgovHtmlSanitizer 전용 - optional 이므로 전이되지 않는다.
              정제 기능을 쓰는 애플리케이션만 jsoup 을 직접 선언하면 된다. -->
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>${jsoup.version}</version>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>commons-validator</groupId>
             <artifactId>commons-validator</artifactId>
-            <version>${commons.validator.version}</version>
             <exclusions>
                 <!-- Exclude Commons Logging in favor of SLF4j -->
                 <exclusion>
@@ -162,13 +108,38 @@
         <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
-            <version>${easymock.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.antlr</groupId>
             <artifactId>antlr4</artifactId>
-            <version>${antlr.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- EgovRestExceptionHandler 테스트가 응답 JSON 을 파싱하는 데 쓴다. 버전은 jackson-bom 이 관리한다. -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- EgovRestExceptionHandler 는 Spring Security 예외를 클래스명으로만 참조하므로 테스트에서만 필요하다. -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- 프레임워크 내장 메서드 파라미터 검증(HandlerMethodValidationException) 테스트용 Bean Validation 구현체.
+             구현체 선택은 애플리케이션 몫이므로 테스트 스코프로만 둔다. -->
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>jakarta.el</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -176,55 +147,12 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>${junit.jupiter.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest</artifactId>
-            <version>${hamcrest.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- 오류 처리기 MockMvc 통합 테스트 전용(test scope - main 의존 변화 없음).
-             JSON 변환기(깨진 본문 400)·메서드 파라미터 검증(Bean Validation 구현체)·인가 거부 예외 위임 검증에 쓴다. -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${jackson.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate.validator</groupId>
-            <artifactId>hibernate-validator</artifactId>
-            <version>${hibernate.validator.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish</groupId>
-            <artifactId>jakarta.el</artifactId>
-            <version>${glassfish.jakarta.el.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-core</artifactId>
-            <version>${spring.security.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven.compiler.plugins.version}</version>
-                <configuration>
-                    <release>${java.version}</release>
-                    <parameters>true</parameters>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>

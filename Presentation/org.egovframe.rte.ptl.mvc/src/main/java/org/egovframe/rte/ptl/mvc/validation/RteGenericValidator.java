@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2009-2026 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -226,7 +226,7 @@ public final class RteGenericValidator implements Serializable {
     }
 
     /**
-     * 패스워드 점검 : 최소 3가지 조합. 영문자, 숫자, 특수문자 ~!@#$%^&*? 필수
+     * 패스워드 점검 : 최소 3가지 조합. 영문자, 숫자, 특수문자 ~!@#$%^&amp;*? 필수
      *
      * @param password
      * @return boolean 일치여부
@@ -239,7 +239,7 @@ public final class RteGenericValidator implements Serializable {
     }
 
     /**
-     * 패스워드 점검 : 최소 4가지 조합. 영문 대문자, 영문 소문자, 숫자, 특수문자 ~!@#$%^&*? 필수
+     * 패스워드 점검 : 최소 4가지 조합. 영문 대문자, 영문 소문자, 숫자, 특수문자 ~!@#$%^&amp;*? 필수
      *
      * @param password
      * @return

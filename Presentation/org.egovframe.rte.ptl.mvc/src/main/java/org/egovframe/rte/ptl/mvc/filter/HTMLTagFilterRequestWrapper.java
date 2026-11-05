@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2009-2026 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ import java.util.Set;
  * ----------------------------------------------
  * 2009.05.30	함철				최초 생성
  * 2026.09.01	실행환경 개발팀		허용 태그·리치텍스트 우회 목록 지원(공통컴포넌트
- *                              분기 기능을 하드코딩 없이 설정형으로 승격 — & 인코딩 유지,
+ *                              분기 기능을 하드코딩 없이 설정형으로 승격 — &amp; 인코딩 유지,
  *                              사본과 달리 원본 배열·맵은 변조하지 않는다)
  * </pre>
  * @since 2009.06.01

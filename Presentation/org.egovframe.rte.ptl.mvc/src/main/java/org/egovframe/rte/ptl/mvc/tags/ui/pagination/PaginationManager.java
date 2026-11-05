@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2009-2026 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ package org.egovframe.rte.ptl.mvc.tags.ui.pagination;
  * Tag사용시에 type을 자유롭게 정하여 사용하기 위함이다.
  *
  * 아래의 예와 같이 프로퍼티 rendererType에 여러 PaginationRenderer을 설정하면,
- * 페이징을 위한 태그인 <ui:pagination type="..."/>에서 사용자가 사용하려는 PaginationRenderer의 key값을 type 속성값으로 주면 된다.
+ * 페이징을 위한 태그인 &lt;ui:pagination type="..."/&gt;에서 사용자가 사용하려는 PaginationRenderer의 key값을 type 속성값으로 주면 된다.
  * </pre>
  * <pre class="code">
  * &lt;bean id="imageRenderer" class="com.easycompany.tag.ImagePaginationRenderer"/&gt;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2009-2026 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -232,7 +232,7 @@ public class EgovSecurityConfigReader {
         config.setAccessDeniedUrl("/system/accessDenied.do");
         config.setDataSource("dataSource");
         config.setRequestMatcherType("regex");
-        config.setHash("MD5");
+        config.setHash("bcrypt");
         config.setHashBase64(true);
         config.setConcurrentMaxSessons(1);
         config.setErrorIfMaximumExceeded(false);

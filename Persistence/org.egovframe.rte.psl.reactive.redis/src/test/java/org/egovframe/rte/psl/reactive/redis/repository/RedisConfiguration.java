@@ -17,7 +17,7 @@ public class RedisConfiguration {
 
     private String host = "localhost";
     private int port = 6379;
-    private String password = "rhdxhd12";
+    private String password = "redis001";
 
     @Bean(name = "reactiveRedisConnectionFactory")
     public ReactiveRedisConnectionFactory reactiveRedisConnectionFactory() {

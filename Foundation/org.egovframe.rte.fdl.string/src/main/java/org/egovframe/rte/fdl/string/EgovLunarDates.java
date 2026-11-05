@@ -84,12 +84,6 @@ public final class EgovLunarDates {
 	/** 지원하는 최대 연도(양력·음력 입력 공통). */
 	public static final int MAX_YEAR = 9999;
 
-	/**
-	 * 단기력의 {@code EXTENDED_YEAR} 와 서기 연도의 차 — 단군기원(檀紀, 기원전 2333년) 기산이다
-	 * (2025년 = 단기 4358년).
-	 */
-	private static final int EXTENDED_YEAR_OFFSET = 2333;
-
 	/** 하루의 밀리초. */
 	private static final long MILLIS_PER_DAY = 86_400_000L;
 
@@ -136,7 +130,9 @@ public final class EgovLunarDates {
 		// GregorianCalendar 경유 없이 epoch 일수로 직접 지정한다(UTC 자정 = UTC 달력 해석).
 		lunarCalendar.setTimeInMillis(solarDate.toEpochDay() * MILLIS_PER_DAY);
 
-		int year = lunarCalendar.get(Calendar.EXTENDED_YEAR) - EXTENDED_YEAR_OFFSET;
+		// 음력 연도는 서기 기준 연도(related year)로 읽는다 — EXTENDED_YEAR 의 기산은 ICU 버전마다 다르다
+		// (ICU 77 이하: 단군기원 기산 2025년 = 4358, ICU 78 이상: 서기 기산 2025년 = 2025).
+		int year = lunarCalendar.getRelatedYear();
 		int month = lunarCalendar.get(Calendar.MONTH) + 1;
 		int day = lunarCalendar.get(Calendar.DAY_OF_MONTH);
 		boolean leap = lunarCalendar.get(Calendar.IS_LEAP_MONTH) == 1;
@@ -162,7 +158,7 @@ public final class EgovLunarDates {
 		}
 		requireSupportedYear(lunarDate.getYear(), "lunarDate");
 		Calendar lunarCalendar = newCalendar();
-		lunarCalendar.set(Calendar.EXTENDED_YEAR, lunarDate.getYear() + EXTENDED_YEAR_OFFSET);
+		lunarCalendar.setRelatedYear(lunarDate.getYear());
 		lunarCalendar.set(Calendar.MONTH, lunarDate.getMonth() - 1);
 		lunarCalendar.set(Calendar.DAY_OF_MONTH, lunarDate.getDay());
 		lunarCalendar.set(Calendar.IS_LEAP_MONTH, lunarDate.isLeapMonth() ? 1 : 0);

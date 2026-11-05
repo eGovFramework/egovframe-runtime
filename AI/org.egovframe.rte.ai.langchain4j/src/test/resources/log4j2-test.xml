@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 테스트용 로깅 구성 — AI 감사 채널(EGOV_AI_AUDIT)을 INFO 로 선언해야 감사 발신이 root(warn)에 걸러지지 않는다.
+     기반 모듈(ai.core)·Spring AI 어댑터와 같은 구성. 운영 구성도 같은 전제(채널 로거 선언)가 필요하다 — 모듈 가이드 참조. -->
+<Configuration status="WARN">
+    <Appenders>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n"/>
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Logger name="EGOV_AI_AUDIT" level="info" additivity="false">
+            <AppenderRef ref="console"/>
+        </Logger>
+        <Logger name="org.egovframe.rte.ai" level="info"/>
+        <Root level="warn">
+            <AppenderRef ref="console"/>
+        </Root>
+    </Loggers>
+</Configuration>
