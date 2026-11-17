@@ -80,7 +80,7 @@
         <selenium.version>4.44.0</selenium.version>
 
         <!-- HTTP, Web Services -->
-        <httpclient5.version>5.6.1</httpclient5.version>
+        <httpclient5.version>5.6.3</httpclient5.version>
         <jaxws-rt.version>3.0.2</jaxws-rt.version>
         <jaxrpc-impl.version>1.1.6</jaxrpc-impl.version>
         <jaxrpc-api-osgi.version>1.1-b01</jaxrpc-api-osgi.version>
