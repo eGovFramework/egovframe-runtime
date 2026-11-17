@@ -2,8 +2,8 @@
 
 **Foundation 엑셀(Excel) 모듈**은 Apache POI 기반으로 엑셀 파일(xls/xlsx)을 생성·적재하고, 업로드한 엑셀의 행을 VO로 매핑하여 MyBatis(`SqlSessionTemplate`) 또는 iBatis(`SqlMapClient`)로 일괄 INSERT 하는 `EgovExcelService`와, Spring MVC에서 xlsx 다운로드 응답을 만드는 `AbstractPOIExcelView`를 제공합니다. JXLS 템플릿 엔진(`jxls`, `jxls-poi`, `jxls-reader`)을 의존성으로 함께 제공합니다. 실행환경의 다른 모듈은 이 모듈에 의존하지 않습니다.
 
-- **Artifact**: `org.egovframe.rte:org.egovframe.rte.fdl.excel:4.3.1`
-- **Runtime**: Java 1.8 / Spring Framework 5.3.39-egov.1 / Apache POI 5.4.0 / JXLS 2.14.0 (jxls-reader 2.1.0)
+- **Artifact**: `org.egovframe.rte:org.egovframe.rte.fdl.excel:4.3.2`
+- **Runtime**: Java 1.8 / Spring Framework 5.3.39-egov.2 / Apache POI 5.4.0 / JXLS 2.14.0 (jxls-reader 2.1.0)
 - **실행환경 의존**: `org.egovframe.rte.fdl.cmmn`, `org.egovframe.rte.psl.dataaccess`, `org.egovframe.rte.fdl.filehandling` (`fdl.string`은 전이)
 
 ---
@@ -61,18 +61,21 @@ src/main/resources/org/egovframe/rte/fdl/excel/messages/
 
 | 라이브러리 | 버전 | scope/비고 |
 |---|---|---|
-| `org.egovframe.rte:org.egovframe.rte.fdl.cmmn` / `psl.dataaccess` / `fdl.filehandling` | 4.3.1 | compile |
-| `spring-webmvc` | 5.3.39-egov.1 | compile |
+| `org.egovframe.rte:org.egovframe.rte.fdl.cmmn` / `psl.dataaccess` / `fdl.filehandling` | 4.3.2 | compile |
+| `spring-webmvc` | 5.3.39-egov.2 | compile |
 | `javax.servlet:javax.servlet-api` | 4.0.1 | provided |
 | `javax.annotation:javax.annotation-api` | 1.3.2 | compile |
 | `org.apache.logging.log4j:log4j-core` | 2.25.5 | compile |
 | `commons-beanutils:commons-beanutils` / `commons-io:commons-io` | 1.11.0 / 2.18.0 | compile |
 | `org.apache.poi:poi`, `poi-ooxml` | 5.4.0 | compile |
-| `org.jxls:jxls`, `jxls-poi` / `jxls-reader` | 2.14.0 / 2.1.0 | compile |
+| `org.jxls:jxls`, `jxls-poi` / `jxls-reader` | 2.14.0 / 2.1.0 | compile. `jxls`·`jxls-poi`에서 `logback-core`(1.2.13) 제외 — jxls XML 빌더(`org.jxls.builder.xml`) 전용이며 실행환경은 사용하지 않음 |
+| `org.apache.commons:commons-digester3` | 3.2 | compile. `jxls-reader`가 가져오는 분류자 `with-deps` jar(commons-beanutils 1.8.3 · commons-logging 1.1.1 클래스 내장)를 제외하고 분류자 없는 jar를 직접 선언 — beanutils는 관리 버전 1.11.0이 적용됨 |
 | `commons-logging:commons-logging` | 1.3.5 | 모듈 POM `dependencyManagement` (commons-dbcp2 test 전이 의존성 고정) |
-| `commons-dbcp2`, `hsqldb`(`jdk8`), `mysql-connector-j`, `jackson-databind`, `spring-test`, `junit`, `easymock` | 2.13.0 / 2.7.3 / 8.4.0 / 2.18.11 / 5.3.39-egov.1 / 4.13.2 / 5.2.0 | test |
+| `commons-dbcp2`, `hsqldb`(`jdk8`), `mysql-connector-j`, `jackson-databind`, `spring-test`, `junit`, `easymock` | 2.13.0 / 2.7.3 / 8.4.0 / 2.18.12 / 5.3.39-egov.2 / 4.13.2 / 5.2.0 | test |
 
-버전은 루트 POM(`org.egovframe.rte.root` 4.3.1)의 `dependencyManagement`에서 관리하며 모듈 POM은 버전을 선언하지 않습니다 (위 `commons-logging` 제외).
+버전은 루트 POM(`org.egovframe.rte.root` 4.3.2)의 `dependencyManagement`에서 관리하며 모듈 POM은 버전을 선언하지 않습니다 (위 `commons-logging` 제외).
+
+jxls XML 빌더(`org.jxls.builder.xml`)를 직접 사용하는 프로젝트는 `ch.qos.logback:logback-core`를 프로젝트 POM에 직접 선언하십시오.
 
 ---
 
@@ -196,11 +199,11 @@ mvn test -pl Foundation/org.egovframe.rte.fdl.excel
 <dependency>
     <groupId>org.egovframe.rte</groupId>
     <artifactId>org.egovframe.rte.fdl.excel</artifactId>
-    <version>4.3.1</version>
+    <version>4.3.2</version>
 </dependency>
 ```
 
-부모 POM(`org.egovframe.boot.starter.parent` 또는 `org.egovframe.web.config.parent` 4.3.1)을 상속하면 `<version>`을 생략할 수 있습니다. `-egov.1` 포크 아티팩트(Spring Framework 등)를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소 등록이 필요합니다. Servlet 기반 부모 POM은 POI 5.4.0에 맞춰 `xmlbeans` 5.3.0을 관리합니다.
+부모 POM(`org.egovframe.boot.starter.parent` 또는 `org.egovframe.web.config.parent` 4.3.2)을 상속하면 `<version>`을 생략할 수 있습니다. `-egov.2` 포크 아티팩트(Spring Framework 등)를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소 등록이 필요합니다. Servlet 기반 부모 POM은 POI 5.4.0에 맞춰 `xmlbeans` 5.3.0을 관리합니다.
 
 ---
 

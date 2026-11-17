@@ -50,7 +50,7 @@ import java.util.Locale;
  * 2009.05.30	Judd Cho		최초 생성
  * 2015.01.31	Vincent Han		코드 품질 개선 및 보완 (processHandling 메소드 Exception 처리)
  * 2020.08.31	유지보수			시큐어코딩(ES)-Private 배열에 Public 데이터 할당[CWE-496]
- * 2026.10.25	실행환경 개발팀		DataAccessException 메시지 일반화(CWE-209), 후처리 매니저 호출을 run(Exception, String) 으로 변경
+ * 2026.10.25	실행환경 개발팀		DataAccessException 메시지 일반화(CWE-209), run(Exception, String) 호출로 변경
  * </pre>
  * @since 2009.06.01
  */
@@ -134,10 +134,7 @@ public class ExceptionTransfer {
             if (be instanceof DataAccessException) {
                 LOGGER.debug("RuntimeException case :: DataAccessException ");
                 DataAccessException sqlEx = (DataAccessException) be;
-                // DataAccessException 메시지는 SQL 구문·테이블/컬럼명·드라이버 오류 등 내부 정보를
-                // 담고 있는 경우가 많다. 원본은 위 getLog(clazz).error(...)로 이미 서버 로그에
-                // 남겼으므로, 상위로 전파되는 메시지는 일반화해 CWE-209(오류 메시지를 통한 정보노출)를
-                // 방지한다. cause로 원본을 보존해 DataAccessException 타입 계약(상위 catch 호환)은 유지한다.
+                // 내부 정보 노출 방지(CWE-209): 원본은 서버 로그에 남기고 메시지만 일반화, cause로 원본 보존
                 throw new DataAccessException("A data access error occurred. See server log for details.", sqlEx) {
                     private static final long serialVersionUID = 1L;
                 };
@@ -221,8 +218,7 @@ public class ExceptionTransfer {
         if (exceptionHandlerServices == null) {
             return;
         }
-        // 발생 위치를 파라미터로 전달한다. 싱글톤 매니저 빈의 상태(setPackageName)를 바꾸는 방식은
-        // 동시 요청 간에 발생 위치가 섞인다.
+        // 동시 요청 간 상태가 섞이지 않도록 발생 위치를 파라미터로 전달
         String packageName = clazz.getCanonicalName() + "." + methodName;
         for (ExceptionHandlerService ehm : exceptionHandlerServices) {
             try {

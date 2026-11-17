@@ -2,8 +2,8 @@
 
 **연계(Integration) 실행환경 모듈**입니다. 전자정부 표준프레임워크 기반 시스템이 타 시스템과 연계할 때 사용하는 **인터페이스 표준**(연계 컨텍스트·서비스·메시지·타입)과, 기관·시스템·서비스·레코드 타입·연계 정의 메타데이터를 Hibernate로 조회하는 DAO를 제공합니다. 실제 전송 수단(SOAP 웹서비스 등)은 이 모듈에 의존하는 `org.egovframe.rte.itl.webservice`가 구현합니다.
 
-- **Artifact**: `org.egovframe.rte:org.egovframe.rte.itl.integration:4.3.1`
-- **Runtime**: Java 1.8 / Spring Framework 5.3.39-egov.1 / Hibernate 5.6.15.Final
+- **Artifact**: `org.egovframe.rte:org.egovframe.rte.itl.integration:4.3.2`
+- **Runtime**: Java 1.8 / Spring Framework 5.3.39-egov.2 / Hibernate 5.6.15.Final
 - **실행환경 의존**: `org.egovframe.rte.fdl.logging`
 
 ---
@@ -83,11 +83,11 @@ src/main/resources/org/egovframe/rte/itl/integration/metadata/dao/hibernate/
 
 | 라이브러리 | 버전 | scope/비고 |
 |---|---|---|
-| `org.egovframe.rte.fdl.logging` | 4.3.1 | compile |
-| `spring-context-support`, `spring-orm` | 5.3.39-egov.1 | compile |
+| `org.egovframe.rte.fdl.logging` | 4.3.2 | compile |
+| `spring-context-support`, `spring-orm` | 5.3.39-egov.2 | compile |
 | `hibernate-entitymanager` | 5.6.15.Final | compile (`hibernate-core` 전이) |
 | `javax.annotation-api` | 1.3.2 | compile |
-| `spring-test`, `spring-context` | 5.3.39-egov.1 | test |
+| `spring-test`, `spring-context` | 5.3.39-egov.2 | test |
 | `hsqldb` (`jdk8`), `junit`, `dbunit`, `easymock` | 2.7.3 / 4.13.2 / 2.7.3 / 5.2.0 | test |
 
 ---
@@ -204,11 +204,11 @@ mvn test -pl Integration/org.egovframe.rte.itl.integration
 <dependency>
     <groupId>org.egovframe.rte</groupId>
     <artifactId>org.egovframe.rte.itl.integration</artifactId>
-    <version>4.3.1</version>
+    <version>4.3.2</version>
 </dependency>
 ```
 
-부모 POM(`org.egovframe.boot.starter.parent` 또는 `org.egovframe.web.config.parent` 4.3.1)을 상속하면 `<version>` 생략 가능. `-egov.1` 포크 아티팩트를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소 등록 필요.
+부모 POM(`org.egovframe.boot.starter.parent` 또는 `org.egovframe.web.config.parent` 4.3.2)을 상속하면 `<version>` 생략 가능. `-egov.2` Spring 포크 아티팩트를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소 등록 필요.
 
 ---
 

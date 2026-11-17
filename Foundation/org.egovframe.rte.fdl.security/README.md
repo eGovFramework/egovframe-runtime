@@ -1,9 +1,9 @@
 # org.egovframe.rte.fdl.security
 
-**Foundation Layer 보안(Security) 모듈**입니다. **Spring Security 5.8.16-egov.1**의 XML 네임스페이스 설정(`<http>`, `<authentication-manager>`)을 기반으로, 폼 로그인·세션 관리·보안 헤더·CSRF와 **DB 기반 URL/메서드/포인트컷 단위 접근제어**를 한 번에 구성해 주는 전용 네임스페이스 `egov-security`(`<egov-security:config>`, `<egov-security:initializer>`, `<egov-security:secured-object-config>`)를 제공합니다. 인가는 `FilterSecurityInterceptor` + `AffirmativeBased`(`RoleVoter`, `AuthenticatedVoter`) + DB에서 읽은 `FilterInvocationSecurityMetadataSource`로 동작하며, 사용자·권한은 `JdbcUserDetailsManager`를 확장한 `EgovJdbcUserDetailsManager`가 JDBC로 조회합니다. 다른 실행환경 모듈이 이 모듈에 의존하지는 않으며, 웹 적용 프로젝트에서 직접 사용합니다.
+**Foundation Layer 보안(Security) 모듈**입니다. **Spring Security 5.8.16-egov.2**의 XML 네임스페이스 설정(`<http>`, `<authentication-manager>`)을 기반으로, 폼 로그인·세션 관리·보안 헤더·CSRF와 **DB 기반 URL/메서드/포인트컷 단위 접근제어**를 한 번에 구성해 주는 전용 네임스페이스 `egov-security`(`<egov-security:config>`, `<egov-security:initializer>`, `<egov-security:secured-object-config>`)를 제공합니다. 인가는 `FilterSecurityInterceptor` + `AffirmativeBased`(`RoleVoter`, `AuthenticatedVoter`) + DB에서 읽은 `FilterInvocationSecurityMetadataSource`로 동작하며, 사용자·권한은 `JdbcUserDetailsManager`를 확장한 `EgovJdbcUserDetailsManager`가 JDBC로 조회합니다. 다른 실행환경 모듈이 이 모듈에 의존하지는 않으며, 웹 적용 프로젝트에서 직접 사용합니다.
 
-- **Artifact**: `org.egovframe.rte:org.egovframe.rte.fdl.security:4.3.1`
-- **Runtime**: Java 1.8 / Spring Framework 5.3.39-egov.1 / Spring Security 5.8.16-egov.1 / javax.servlet 4.0.1
+- **Artifact**: `org.egovframe.rte:org.egovframe.rte.fdl.security:4.3.2`
+- **Runtime**: Java 1.8 / Spring Framework 5.3.39-egov.2 / Spring Security 5.8.16-egov.2 / javax.servlet 4.0.1
 - **실행환경 의존**: `org.egovframe.rte.fdl.string` (→ `fdl.logging` 전이)
 
 ---
@@ -72,7 +72,7 @@ src/main/resources/
 │   ├── security-config.xml                                 # 인증·세션·DB 메타데이터·FilterSecurityInterceptor 빈
 │   ├── method-config.xml                                   # MethodSecurityInterceptor + DB 메서드 매핑
 │   └── pointcut-config.xml                                 # ProtectPointcutPostProcessor + DB 포인트컷 매핑
-├── org/egovframe/rte/fdl/security/config/egov-security-4.3.1.xsd
+├── org/egovframe/rte/fdl/security/config/egov-security-4.3.2.xsd
 └── org/egovframe/rte/fdl/security/messages/message-security*.properties
 ```
 
@@ -95,7 +95,7 @@ src/main/resources/
 | 클래스 | 설명 |
 |--------|------|
 | `EgovSecurityNameHandler` | `config`, `initializer`, `secured-object-config` 엘리먼트에 각 파서를 등록하는 `NamespaceHandlerSupport` |
-| `SecurityConfig` | `loginUrl`, `logoutSuccessUrl`, `loginFailureUrl`, `accessDeniedUrl`, `dataSource`, `jdbcUsersByUsernameQuery`, `jdbcAuthoritiesByUsernameQuery`, `jdbcMapClass`, `requestMatcherType`, `hash`, `hashBase64`, `concurrentMaxSessons`, `concurrentExpiredUrl`, `errorIfMaximumExceeded`, `defaultTargetUrl`, `alwaysUseDefaultTargetUrl`, `useExpressions`, `sniff`, `xframeOptions`, `xssProtection`, `cacheControl`, `csrf`, `csrfAccessDeniedUrl` 보관 |
+| `SecurityConfig` | `loginUrl`, `logoutSuccessUrl`, `loginFailureUrl`, `accessDeniedUrl`, `dataSource`, `jdbcUsersByUsernameQuery`, `jdbcAuthoritiesByUsernameQuery`, `jdbcMapClass`, `requestMatcherType`, `hash`, `hashBase64`, `concurrentMaxSessons`, `concurrentExpiredUrl`, `errorIfMaximumExceeded`, `defaultTargetUrl`, `alwaysUseDefaultTargetUrl`, `useExpressions`, `sniff`, `xframeOptions`, `xssProtection`, `cacheControl`, `csrf`, `csrfAccessDeniedUrl`, `supportPointcut`, `supportMethod` 보관 |
 | `SecuredObjectConfig` | `sqlRolesAndUrl`, `sqlRolesAndMethod`, `sqlRolesAndPointcut`, `sqlRegexMatchedRequestMapping`, `sqlHierarchicalRoles`, `roleHierarchyString` 보관. `SecuredObjectDAO.securedObjectConfigInit()`이 컨텍스트에서 찾아 기본 SQL을 덮어씀 |
 | `SecurityConfigInitializer` | `ApplicationContextAware`. `init()`에서 `ExceptionTranslationFilter`, `UsernamePasswordAuthenticationFilter`, `LogoutFilter` 등 생성된 필터와 `DaoAuthenticationProvider`를 찾아 설정값을 반영 |
 | `EgovSecurityHttp` | 싱글톤. `getHttp(useExpressions, sniff, xFrameOptions, xssProtection, cacheControl, csrf)`로 `<http>` 정의 XML을 `InputStreamResource`로 생성 |
@@ -140,15 +140,15 @@ src/main/resources/
 
 | 라이브러리 | 버전 | scope / 비고 |
 |---|---|---|
-| `org.egovframe.rte:org.egovframe.rte.fdl.string` | 4.3.1 | compile. `EgovObjectUtil` 등 사용, `fdl.logging` 전이 |
-| `org.springframework.security:spring-security-config` | 5.8.16-egov.1 | compile (spring-core/beans/context/aop/expression 제외 후 Spring 5.3.39-egov.1 사용). `spring-security-core`, `spring-security-web` 전이 |
-| `org.springframework.security:spring-security-taglibs` | 5.8.16-egov.1 | compile. JSP `<sec:authorize>` 등 |
-| `org.springframework:spring-webmvc` | 5.3.39-egov.1 | compile (commons-logging 제외) |
-| `org.springframework:spring-jdbc` | 5.3.39-egov.1 | compile. `JdbcUserDetailsManager`, `NamedParameterJdbcTemplate` |
+| `org.egovframe.rte:org.egovframe.rte.fdl.string` | 4.3.2 | compile. `EgovObjectUtil` 등 사용, `fdl.logging` 전이 |
+| `org.springframework.security:spring-security-config` | 5.8.16-egov.2 | compile (spring-core/beans/context/aop/expression 제외 후 Spring 5.3.39-egov.2 사용). `spring-security-core`, `spring-security-web` 전이 |
+| `org.springframework.security:spring-security-taglibs` | 5.8.16-egov.2 | compile. JSP `<sec:authorize>` 등 |
+| `org.springframework:spring-webmvc` | 5.3.39-egov.2 | compile (commons-logging 제외) |
+| `org.springframework:spring-jdbc` | 5.3.39-egov.2 | compile. `JdbcUserDetailsManager`, `NamedParameterJdbcTemplate` |
 | `org.aspectj:aspectjweaver` | 1.9.23 | compile. 포인트컷 기반 메서드 보안 |
 | `javax.servlet:javax.servlet-api` | 4.0.1 | provided |
 | `javax.annotation:javax.annotation-api` | 1.3.2 | compile |
-| `spring-test` / `junit` / `easymock` / `hsqldb`(`jdk8`) / `log4jdbc` | 5.3.39-egov.1 / 4.13.2 / 5.2.0 / 2.7.3 / 1.2 | test |
+| `spring-test` / `junit` / `easymock` / `hsqldb`(`jdk8`) / `log4jdbc` | 5.3.39-egov.2 / 4.13.2 / 5.2.0 / 2.7.3 / 1.2 | test |
 
 버전은 모두 루트 `pom.xml`의 `dependencyManagement`에서 관리하며 모듈 POM에는 선언하지 않습니다.
 
@@ -165,7 +165,7 @@ src/main/resources/
        xmlns:egov-security="http://maven.egovframe.go.kr/schema/egov-security"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
            http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
-           http://maven.egovframe.go.kr/schema/egov-security http://maven.egovframe.go.kr/schema/egov-security/egov-security-4.3.1.xsd">
+           http://maven.egovframe.go.kr/schema/egov-security http://maven.egovframe.go.kr/schema/egov-security/egov-security-4.3.2.xsd">
 
     <!-- 정적 자원은 보안 필터 제외 -->
     <security:http pattern="/css/**" security="none"/>
@@ -189,7 +189,7 @@ src/main/resources/
 </beans>
 ```
 
-`spring.schemas`는 `egov-security.xsd`와 `egov-security-4.3.1.xsd` 두 위치를 모듈 내 `egov-security-4.3.1.xsd`로 매핑합니다.
+`spring.schemas`는 `egov-security.xsd`와 `egov-security-4.3.2.xsd` 두 위치를 모듈 내 `egov-security-4.3.2.xsd`로 매핑합니다.
 
 `<egov-security:config>` 주요 속성(XSD 기준):
 
@@ -345,11 +345,11 @@ mvn test -pl Foundation/org.egovframe.rte.fdl.security
 <dependency>
     <groupId>org.egovframe.rte</groupId>
     <artifactId>org.egovframe.rte.fdl.security</artifactId>
-    <version>4.3.1</version>
+    <version>4.3.2</version>
 </dependency>
 ```
 
-부모 POM(`org.egovframe.boot.starter.parent` 또는 `org.egovframe.web.config.parent` 4.3.1)을 상속하면 `<version>`을 생략할 수 있습니다. `-egov.1` 포크 아티팩트(Spring Framework, Spring Security)를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소 등록이 필요합니다. 웹 애플리케이션의 `web.xml`에는 Spring Security 표준대로 `springSecurityFilterChain`(`DelegatingFilterProxy`)을 등록해야 합니다.
+부모 POM(`org.egovframe.boot.starter.parent` 또는 `org.egovframe.web.config.parent` 4.3.2)을 상속하면 `<version>`을 생략할 수 있습니다. `-egov.2` 포크 아티팩트(Spring Framework, Spring Security)를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소 등록이 필요합니다. 웹 애플리케이션의 `web.xml`에는 Spring Security 표준대로 `springSecurityFilterChain`(`DelegatingFilterProxy`)을 등록해야 합니다.
 
 ---
 

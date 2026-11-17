@@ -34,12 +34,8 @@ import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 
 /**
- * EgovFileStore 의 <b>심볼릭 링크</b> 경계 검증(CWE-59).
- *
- * <p>루트 안에 밖을 가리키는 링크가 <b>미리 심겨 있다</b>는 전제(운영 규칙 위반)에서 저장·읽기·삭제가
- * 경계 밖을 건드리지 않음을 고정한다. 저장은 무작위 저장명이라 링크를 심을 자리가 없고, 읽기·삭제는
- * 실재하는 경로의 실경로를 루트와 대조해 링크를 거부한다. 링크 생성은 Windows 에서 권한이 필요하므로
- * 링크 테스트는 POSIX 계열에서만 실행한다.</p>
+ * EgovFileStore 심볼릭 링크 경계(CWE-59) 테스트.
+ * 루트 안에 밖을 가리키는 링크가 있어도 읽기·삭제가 경계 밖을 건드리지 않음을 검증한다(POSIX 한정).
  *
  * <pre>
  * &lt;&lt; 개정이력(Modification Information) &gt;&gt;

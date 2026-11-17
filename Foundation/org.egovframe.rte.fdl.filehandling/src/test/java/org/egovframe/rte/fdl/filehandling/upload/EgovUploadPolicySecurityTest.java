@@ -27,11 +27,8 @@ import org.junit.After;
 import org.junit.Test;
 
 /**
- * EgovUploadPolicy 의 <b>확장자 화이트리스트 우회</b> 회귀 검증(CWE-434).
- *
- * <p>기능 테스트({@link EgovUploadPolicyTest})와 별도로, 업로드 필터 우회에 실제로 쓰이는
- * 파일명 변형을 한 표로 모아 두고 <b>하나라도 통과하면 실패</b>하게 한다. 새 우회 기법이
- * 알려지면 이 목록에 한 줄을 더한다.</p>
+ * EgovUploadPolicy 확장자 화이트리스트 우회(CWE-434) 회귀 테스트.
+ * 우회용 파일명 변형이 하나라도 통과하면 실패한다.
  *
  * <pre>
  * &lt;&lt; 개정이력(Modification Information) &gt;&gt;
@@ -63,7 +60,7 @@ public class EgovUploadPolicySecurityTest {
 		List<String> bypasses = Arrays.asList(
 				"shell.jsp", "shell.JSP", "shell.JsP",            // 대소문자
 				"shell.png.jsp",                                   // 마지막 확장자가 실행형
-				"shell.jsp.",  "shell.jsp..",                      // 끝 점 — NTFS 가 잘라내는 표기
+				"shell.jsp.",  "shell.jsp..",                      // 끝 점(NTFS가 잘라내는 표기)
 				"shell.jsp ",  "shell.jsp\t",                      // 끝 공백·탭
 				"shell.jsp::$DATA", "shell.png::$DATA",            // NTFS 대체 데이터 스트림
 				"shell.jsp" + (char) 0 + ".png",                   // 널바이트 잘라먹기
@@ -92,7 +89,7 @@ public class EgovUploadPolicySecurityTest {
 
 	@Test
 	public void 정상_파일은_허용() {
-		// "shell.jsp%00.png" 은 퍼센트 인코딩을 해석하지 않으므로 그냥 png 다 — 저장명은 uuid.png 가 된다
+		// "shell.jsp%00.png"는 퍼센트 인코딩을 해석하지 않으므로 png로 판정
 		for (String ok : Arrays.asList("photo.png", "PHOTO.PNG", "보고서.xlsx", "a.b.c.jpg", "shell.jsp.png", "shell.jsp%00.png")) {
 			assertTrue("허용돼야 한다: " + ok, !POLICY.check(ok, 10L).isPresent());
 		}
@@ -107,8 +104,7 @@ public class EgovUploadPolicySecurityTest {
 
 	@Test
 	public void 빈_화이트리스트는_생성_거부() {
-		// 빈 목록이 "전부 거부" 로 조용히 동작하면 설정 실수가 운영까지 숨어 들어간다.
-		// 빌더가 즉시 실패해야 기동 시점에 드러난다.
+		// 빈 화이트리스트는 빌더에서 즉시 실패해야 한다
 		assertThrows(IllegalStateException.class,
 				() -> EgovUploadPolicy.builder().allowExtensionList("").maxFileSize(10L).build());
 		assertThrows(IllegalStateException.class,

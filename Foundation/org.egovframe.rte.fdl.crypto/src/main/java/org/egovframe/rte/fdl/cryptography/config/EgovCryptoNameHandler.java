@@ -41,7 +41,6 @@ public class EgovCryptoNameHandler extends NamespaceHandlerSupport {
      * 초기화-Crypto 설정간소화 Definition Parser 등록
      *
      * @param
-     * @return void
      */
     public void init() {
         registerBeanDefinitionParser("config", new EgovCryptoConfigBeanDefinitionParser());

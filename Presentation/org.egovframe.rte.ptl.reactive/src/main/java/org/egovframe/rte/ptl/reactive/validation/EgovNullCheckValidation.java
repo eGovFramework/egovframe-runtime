@@ -36,10 +36,10 @@ import javax.validation.ConstraintValidatorContext;
  * </pre>
  * @since 2023.08.31
  */
-public class EgovNullCheckValidation implements ConstraintValidator<EgovNullCheck, String> {
+public class EgovNullCheckValidation implements ConstraintValidator<EgovNullCheck, Object> {
 
     @Override
-    public boolean isValid(String value, ConstraintValidatorContext context) {
+    public boolean isValid(Object value, ConstraintValidatorContext context) {
         return !ObjectUtils.isEmpty(value);
     }
 

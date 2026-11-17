@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.egovframe.rte</groupId>
         <artifactId>org.egovframe.rte.root</artifactId>
-        <version>4.3.1</version>
+        <version>4.3.2</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -34,6 +34,11 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webflux</artifactId>
+        </dependency>
+        <dependency>
+            <!-- spring-webflux 가 가져오는 reactor-core(공식 3.4.41) 대신 루트 POM 관리 버전(보안 수정 포크)을 부모 POM 없이 쓰는 소비자에도 적용 -->
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -89,6 +94,13 @@
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
+            <exclusions>
+                <!-- json-simple 1.1.1 이 junit(4.10)을 compile 로 잘못 선언 -->
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Test -->

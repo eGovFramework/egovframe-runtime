@@ -4,8 +4,8 @@
 R2DBC URL로 `ConnectionFactory`를 만드는 `EgovR2dbcConnectionFactory`와 `R2dbcEntityTemplate`을 확장하여 `Mono`/`Flux` 기반 CRUD 메서드를 제공하는
 `EgovR2dbcRepository`를 제공합니다. 테스트는 **r2dbc-h2 0.9.1.RELEASE**(H2 2.2.220) 인메모리 DB를 사용합니다. 이 모듈에 의존하는 다른 실행환경 모듈은 없습니다.
 
-- **Artifact**: `org.egovframe.rte:org.egovframe.rte.psl.reactive.r2dbc:4.3.1`
-- **Runtime**: Java 1.8 / Spring Framework 5.3.39-egov.1 / Spring Data R2DBC 1.5.18 / Reactor Core 3.4.41 (테스트: r2dbc-h2 0.9.1.RELEASE, H2 2.2.220)
+- **Artifact**: `org.egovframe.rte:org.egovframe.rte.psl.reactive.r2dbc:4.3.2`
+- **Runtime**: Java 1.8 / Spring Framework 5.3.39-egov.2 / Spring Data R2DBC 1.5.18 / Reactor Core 3.4.41-egov.2 (테스트: r2dbc-h2 0.9.1.RELEASE, H2 2.2.220)
 - **실행환경 의존**: `org.egovframe.rte.fdl.logging`
 
 ---
@@ -57,14 +57,16 @@ src/test/resources/script/r2dbc-h2.sql    # sample 테이블 생성 스크립트
 
 | 라이브러리 | 버전 | scope/비고 |
 |---|---|---|
-| `org.egovframe.rte:org.egovframe.rte.fdl.logging` | 4.3.1 | compile |
-| `org.springframework:spring-webflux`, `spring-context`, `spring-tx` | 5.3.39-egov.1 | compile |
-| `org.springframework.data:spring-data-r2dbc` | 1.5.18 | compile (Spring Data Commons 2.7.18-egov.1, spring-r2dbc 전이) |
-| `io.projectreactor:reactor-core` | 3.4.41 | compile |
+| `org.egovframe.rte:org.egovframe.rte.fdl.logging` | 4.3.2 | compile |
+| `org.springframework:spring-webflux`, `spring-context`, `spring-tx` | 5.3.39-egov.2 | compile |
+| `org.springframework.data:spring-data-r2dbc` | 1.5.18 | compile |
+| `org.springframework.data:spring-data-commons` | 2.7.18-egov.2 | compile. 전이 의존성 버전 지정 — `spring-data-r2dbc`가 가져오는 공식 2.7.18 대신 포크 버전 |
+| `org.springframework:spring-r2dbc` | 5.3.39-egov.2 | compile. 전이 의존성 버전 지정 — `spring-data-r2dbc`가 가져오는 공식 5.3.31 대신 포크 버전 |
+| `io.projectreactor:reactor-core` | 3.4.41-egov.2 | compile |
 | `io.r2dbc:r2dbc-h2` | 0.9.1.RELEASE | test (H2 2.2.220 전이) |
 | `io.projectreactor:reactor-test`, `org.assertj:assertj-core` | 3.4.41 / 3.27.7 | test |
 | `org.projectlombok:lombok` | 1.18.36 | test (`Sample` 엔티티) |
-| `org.springframework:spring-test`, `junit`, `easymock`, `com.googlecode.log4jdbc:log4jdbc` | 5.3.39-egov.1 / 4.13.2 / 5.2.0 / 1.2 | test |
+| `org.springframework:spring-test`, `junit`, `easymock`, `com.googlecode.log4jdbc:log4jdbc` | 5.3.39-egov.2 / 4.13.2 / 5.2.0 / 1.2 | test |
 
 R2DBC 드라이버는 compile 의존성에 포함되지 않으므로 적용 프로젝트에서 사용하는 DB의 R2DBC 드라이버를 직접 추가해야 합니다.
 
@@ -173,12 +175,12 @@ mvn test -pl Persistence/org.egovframe.rte.psl.reactive.r2dbc
 <dependency>
     <groupId>org.egovframe.rte</groupId>
     <artifactId>org.egovframe.rte.psl.reactive.r2dbc</artifactId>
-    <version>4.3.1</version>
+    <version>4.3.2</version>
 </dependency>
 ```
 
-부모 POM(`org.egovframe.boot.starter.parent` 또는 `org.egovframe.web.config.parent` 4.3.1)을 상속하면 `<version>` 생략 가능.
-`-egov.1` 포크 아티팩트(Spring Framework, Spring Data Commons)를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소 등록 필요.
+부모 POM(`org.egovframe.boot.starter.parent` 또는 `org.egovframe.web.config.parent` 4.3.2)을 상속하면 `<version>` 생략 가능.
+`-egov.2` 포크 아티팩트(Spring Framework, Spring Data Commons)를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소 등록 필요.
 
 ---
 

@@ -30,16 +30,8 @@ import org.junit.runner.RunWith;
 import org.junit.Test;
 
 /**
- * {@link EgovOutputEncoder} 의 <b>XSS 방어 완전성</b> 회귀 검증.
- *
- * <p>기능 테스트({@link EgovOutputEncoderTest})가 대표 사례를 다루고, 이 클래스는 두 가지를 맡는다.
- * 첫째, <b>BMP 65,536자 전수</b>에 대해 컨텍스트별 불변식(위험 문자가 원시 형태로 남지 않는다 ·
- * 이스케이프 형식이 유효하다 · 디코딩하면 원문으로 돌아온다)을 고정한다 — 빠진 문자가 하나라도
- * 생기면 실패한다. 둘째, 공격에 실제로 쓰이는 이탈 페이로드를 컨텍스트별로 모아 두고 새 우회
- * 기법이 알려지면 한 줄을 더한다.</p>
- *
- * <p>인코딩이 <b>해결하지 않는 것</b>(URL 스킴 · 템플릿 리터럴)도 계약으로 고정해, 호출부가
- * 인코딩만으로 충분하다고 오해하지 않도록 한다.</p>
+ * {@link EgovOutputEncoder}의 XSS 방어 회귀 테스트 클래스.
+ * BMP 전수 문자 왕복, 컨텍스트별 이탈 페이로드, 인코딩이 해결하지 않는 경우(URL 스킴 등)를 검증한다.
  *
  * <pre>
  * &lt;&lt; 개정이력(Modification Information) &gt;&gt;
@@ -55,10 +47,10 @@ import org.junit.Test;
 @RunWith(Enclosed.class)
 public class EgovOutputEncoderSecurityTest {
 
-	/** 역슬래시 — 소스 가독성을 위해 코드포인트로 선언한다. */
+	/** 역슬래시 (가독성을 위해 코드포인트로 선언) */
 	private static final char BS = 0x5C;
 
-	/** JavaScript 가 줄바꿈으로 해석하는 두 문자. 소스에 리터럴로 두지 않는다. */
+	/** JavaScript가 줄바꿈으로 해석하는 두 문자 */
 	private static final char LINE_SEPARATOR = 0x2028;
 
 	private static final char PARAGRAPH_SEPARATOR = 0x2029;
@@ -118,7 +110,7 @@ public class EgovOutputEncoderSecurityTest {
 		public void forUrl_전수_왕복() {
 			for (int c = 0; c <= 0xFFFF; c++) {
 				if (Character.isSurrogate((char) c)) {
-					continue; // 단독 서로게이트는 문자열로서 유효하지 않다 — 쌍은 아래에서 따로 본다
+					continue; // 단독 서로게이트는 제외(쌍은 아래에서 검사)
 				}
 				String in = String.valueOf((char) c);
 				String out = EgovOutputEncoder.forUrl(in);
@@ -149,7 +141,7 @@ public class EgovOutputEncoderSecurityTest {
 
 	// ------------------------------------------------------------ 이탈 페이로드
 
-	/** 컨텍스트를 가리지 않고 던져 보는 페이로드 — 새 우회 기법이 알려지면 여기에 더한다. */
+	/** 모든 컨텍스트에 적용하는 이탈 페이로드 */
 	private static final List<String> PAYLOADS = Arrays.asList(
 			"</script>", "<!--", "-->", "]]>", "\"><script>alert(1)</script>", "' onmouseover='alert(1)",
 			" onmouseover=alert(1)", "'-alert(1)-'", "\"-alert(1)-\"", BS + "'-alert(1)//", "</textarea><script>alert(1)</script>",
@@ -216,7 +208,7 @@ public class EgovOutputEncoderSecurityTest {
 		}
 	}
 
-	// ------------------------------------------------------------ 계약 고정 — 인코딩이 해결하지 않는 것
+	// ------------------------------------------------------------ 인코딩이 해결하지 않는 것
 
 		public static class ContractLimits {
 
@@ -303,7 +295,7 @@ public class EgovOutputEncoderSecurityTest {
 		}
 	}
 
-	/** 인코더가 낼 수 있는 문자 참조만 받아들이는 엄격한 디코더 — 다른 형태가 나오면 실패한다. */
+	/** 인코더가 낼 수 있는 문자 참조만 허용하는 엄격한 디코더 */
 	private static String decodeEntities(String s) {
 		StringBuilder out = new StringBuilder();
 		int i = 0;

@@ -41,7 +41,6 @@ public interface EgovEnvCryptoService {
      * 클래스 초기화 메소드.
      *
      * @param
-     * @return void
      */
     void init();
 
@@ -57,7 +56,6 @@ public interface EgovEnvCryptoService {
      * EgovPasswordEncoder 클래스 setter
      *
      * @param passwordEncoder EgovPasswordEncoder클래스
-     * @return void
      */
     void setPasswordEncoder(EgovPasswordEncoder passwordEncoder);
 
@@ -73,7 +71,6 @@ public interface EgovEnvCryptoService {
      * EgovCryptoService 클래스 setter
      *
      * @param cryptoService EgovCryptoService
-     * @return void
      */
     void setCryptoService(EgovCryptoService cryptoService);
 
@@ -89,7 +86,6 @@ public interface EgovEnvCryptoService {
      * EgovPropertyService 클래스 setter
      *
      * @param cryptoConfigurer EgovPropertyService클래스
-     * @return void
      */
     void setCryptoConfigurer(EgovPropertyService cryptoConfigurer);
 
@@ -137,7 +133,6 @@ public interface EgovEnvCryptoService {
      * 데이터베이스 접속 항목(계정명)에 대한 setter
      *
      * @param username 계정명
-     * @return void
      */
     void setUsername(String username);
 
@@ -153,7 +148,6 @@ public interface EgovEnvCryptoService {
      * 데이터베이스 접속 항목(비밀번호)에 대한 setter
      *
      * @param password 비밀번호
-     * @return void
      */
     void setPassword(String password);
 
@@ -169,7 +163,6 @@ public interface EgovEnvCryptoService {
      * 데이터베이스 접속 항목(URL)에 대한 getter
      *
      * @param url 접속경로
-     * @return void
      */
     void setUrl(String url);
 
@@ -185,7 +178,6 @@ public interface EgovEnvCryptoService {
      * Crypto 사용여부에 대한 setter
      *
      * @param crypto Crypto사용여부
-     * @return void
      */
     void setCrypto(boolean crypto);
 
@@ -201,7 +193,6 @@ public interface EgovEnvCryptoService {
      * Crypto 계정 알고리즘 지정에 대한 getter
      *
      * @param cryptoAlgorithm 계정 암호화 알고리즘(MD5, SHA-1, SHA-256)
-     * @return void
      */
     void setCryptoAlgorithm(String cryptoAlgorithm);
 
@@ -217,7 +208,6 @@ public interface EgovEnvCryptoService {
      * Crypto 알고리즘 키에 대한 setter
      *
      * @param cyptoAlgorithmKey 알고리즘키
-     * @return void
      */
     void setCyptoAlgorithmKey(String cyptoAlgorithmKey);
 
@@ -233,7 +223,6 @@ public interface EgovEnvCryptoService {
      * Crypto 알고리즘 키 Hash에 대한 setter
      *
      * @param cyptoAlgorithmKeyHash 알고리즘키Hash코드
-     * @return void
      */
     void setCyptoAlgorithmKeyHash(String cyptoAlgorithmKeyHash);
 
@@ -249,7 +238,6 @@ public interface EgovEnvCryptoService {
      * Crypto 블럭 사이즈에 대한 setter
      *
      * @param cryptoBlockSize 블럭사이즈
-     * @return void
      */
     void setCryptoBlockSize(int cryptoBlockSize);
 

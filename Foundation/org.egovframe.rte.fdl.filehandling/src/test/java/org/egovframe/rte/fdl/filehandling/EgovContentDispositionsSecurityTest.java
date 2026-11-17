@@ -10,9 +10,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
- * EgovContentDispositions 의 <b>헤더 인젝션(CWE-113)</b> 회귀 검증 — 기능 테스트와 별도로
- * 공격자가 파일명에 실어 보낼 법한 입력을 모아, 어떤 입력에도 헤더 값에 CR/LF 가 남지 않고
- * quoted-string 이 닫히지 않은 채 끝나지 않음을 고정한다.
+ * EgovContentDispositions 헤더 인젝션(CWE-113) 회귀 테스트.
+ * 공격 파일명에도 헤더 값에 CR/LF가 남지 않고 quoted-string이 깨지지 않음을 검증한다.
  */
 public class EgovContentDispositionsSecurityTest {
 
@@ -45,7 +44,7 @@ public class EgovContentDispositionsSecurityTest {
         for (String name : HOSTILE) {
             String header = EgovContentDispositions.attachment(name);
             String quoted = header.substring(header.indexOf("filename=\"") + "filename=\"".length());
-            // 폴백 filename 값 안에 이스케이프되지 않은 " 가 있으면 파라미터 경계가 무너진다
+            // 폴백 filename 값에 이스케이프되지 않은 " 가 없어야 한다
             int end = quoted.indexOf("\"; filename*=");
             String value = (end >= 0) ? quoted.substring(0, end) : quoted.substring(0, quoted.lastIndexOf('"'));
             assertFalse("이스케이프되지 않은 인용부호: " + header, value.replace(BS + BS, "").replace(BS + "\"", "").contains("\""));

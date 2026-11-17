@@ -59,7 +59,7 @@ import java.util.regex.Pattern;
  * 2013.03.25	한성곤				필드명 속성 처리, JdbcTemplate 방식으로 변경, 초기 id 값 등록(자동 insert 처리), 반복처리 제외
  * 2013.09.04	한성곤				TransactionTemplate을 통해 transaction 처리 분리
  * 2017.02.28	장동한				시큐어코딩(ES)-오류 메시지를 통한 정보노출[CWE-209]
- * 2026.10.25	실행환경 개발팀		SQL 식별자 검증·구분값 바인딩(SQL 삽입 방지), 채번 SELECT 행 잠금(FOR UPDATE)
+ * 2026.10.25	실행환경 개발팀		SQL 삽입 방지, 채번 SELECT 행 잠금 적용
  * </pre>
  */
 @Deprecated
@@ -133,7 +133,7 @@ public class EgovTableIdGnrService extends AbstractDataBlockIdGnrService {
     private Object insertInitId(final boolean useBigDecimals, final int blockSize) {
         LOGGER.debug(messageSource.getMessage("debug.idgnr.init.idblock", new Object[]{tableName}, Locale.getDefault()));
         Object initId = null;
-        // 구분값(tableName)은 문자열로 이어 붙이지 않고 바인드 변수로 전달한다(SQL 삽입 방지).
+        // 구분값은 바인드 변수로 전달(SQL 삽입 방지)
         String insertQuery = "INSERT INTO " + table + "(" + tableNameFieldName + ", " + nextIdFieldName + ") " + "values(?, ?)";
         LOGGER.debug("Insert Query : {}", insertQuery);
         if (useBigDecimals) {
@@ -163,8 +163,7 @@ public class EgovTableIdGnrService extends AbstractDataBlockIdGnrService {
                     Object nextId;
                     Object newNextId;
                     try {
-                        // mSemaphore 는 같은 JVM 내 동시성만 막는다. 여러 WAS 가 같은 DB 를 공유하면 다른 JVM 의
-                        // 트랜잭션이 같은 next_id 를 동시에 읽을 수 있으므로 FOR UPDATE 로 행을 잠근다.
+                        // 다중 WAS 동시 채번 방지를 위해 FOR UPDATE로 행 잠금
                         String selectQuery = "SELECT " + nextIdFieldName + " FROM " + table + " WHERE " + tableNameFieldName + " = ?"
                                 + (selectForUpdate ? " FOR UPDATE" : "");
                         LOGGER.debug("Select Query : {}", selectQuery);
@@ -288,8 +287,7 @@ public class EgovTableIdGnrService extends AbstractDataBlockIdGnrService {
     }
 
     /**
-     * 블록 채번 SELECT 에 FOR UPDATE 행 잠금을 사용할지 지정한다 (기본 true).
-     * FOR UPDATE 구문을 지원하지 않는 DBMS(SQL Server 등)에서만 false 로 둔다.
+     * 블록 채번 SELECT에 FOR UPDATE 행 잠금 사용 여부를 지정한다(기본 true, 미지원 DBMS는 false).
      *
      * @param selectForUpdate FOR UPDATE 사용 여부
      */

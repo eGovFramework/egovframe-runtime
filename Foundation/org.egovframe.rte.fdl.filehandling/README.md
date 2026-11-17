@@ -2,7 +2,7 @@
 
 **Foundation 파일 처리(File Handling) 모듈**은 Apache Commons VFS2 기반 파일 유틸(`EgovFileUtil`)과 NIO.2(`java.nio.file`) 기반 표준 구현(`EgovFiles`), zip 아카이브 생성·해제(`EgovArchives`), 업로드 파일 정책·저장명·시그니처 검사·저장소(`upload` 패키지), 다운로드 `Content-Disposition` 헤더 생성(`EgovContentDispositions`)을 제공합니다. `org.egovframe.rte.fdl.excel`이 이 모듈에 의존합니다.
 
-- **Artifact**: `org.egovframe.rte:org.egovframe.rte.fdl.filehandling:4.3.1`
+- **Artifact**: `org.egovframe.rte:org.egovframe.rte.fdl.filehandling:4.3.2`
 - **Runtime**: Java 1.8 / Commons VFS2 2.10.0 / Commons IO 2.18.0
 - **실행환경 의존**: `org.egovframe.rte.fdl.string`
 
@@ -65,13 +65,14 @@ src/main/java/org/egovframe/rte/fdl/filehandling/
 
 | 라이브러리 | 버전 | scope/비고 |
 |---|---|---|
-| `org.egovframe.rte:org.egovframe.rte.fdl.string` | 4.3.1 | compile (commons-logging 제외) |
+| `org.egovframe.rte:org.egovframe.rte.fdl.string` | 4.3.2 | compile (commons-logging 제외) |
 | `javax.annotation:javax.annotation-api` | 1.3.2 | compile |
 | `org.apache.commons:commons-vfs2` | 2.10.0 | compile (commons-logging, maven-scm-api, maven-scm-provider-svnexe 제외) |
 | `commons-io:commons-io` | 2.18.0 | compile |
+| `org.apache.commons:commons-lang3` | 3.20.0 | compile. 전이 의존성 버전 지정 — `commons-vfs2`가 가져오는 3.17.0 대신 루트 POM 관리 버전 (CVE-2025-48924) |
 | `junit:junit` | 4.13.2 | test |
 
-버전은 루트 POM(`org.egovframe.rte.root` 4.3.1)의 `dependencyManagement`에서 관리하며 모듈 POM은 버전을 선언하지 않습니다.
+버전은 루트 POM(`org.egovframe.rte.root` 4.3.2)의 `dependencyManagement`에서 관리하며 모듈 POM은 버전을 선언하지 않습니다.
 
 ---
 
@@ -170,11 +171,11 @@ mvn test -pl Foundation/org.egovframe.rte.fdl.filehandling
 <dependency>
     <groupId>org.egovframe.rte</groupId>
     <artifactId>org.egovframe.rte.fdl.filehandling</artifactId>
-    <version>4.3.1</version>
+    <version>4.3.2</version>
 </dependency>
 ```
 
-부모 POM(`org.egovframe.boot.starter.parent` 또는 `org.egovframe.web.config.parent` 4.3.1)을 상속하면 `<version>`을 생략할 수 있습니다. `-egov.1` 포크 아티팩트를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소 등록이 필요합니다.
+부모 POM(`org.egovframe.boot.starter.parent` 또는 `org.egovframe.web.config.parent` 4.3.2)을 상속하면 `<version>`을 생략할 수 있습니다. `-egov.2` 포크 아티팩트를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소 등록이 필요합니다.
 
 ---
 

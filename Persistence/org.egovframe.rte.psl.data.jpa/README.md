@@ -4,8 +4,8 @@
 테스트 코드와 설정 예제로 제공합니다. 이 모듈은 `src/main`이 없고 `src/test`만 있으며, 별도의 실행환경 클래스를 제공하지 않습니다.
 빌드 결과 JAR은 의존성(`org.egovframe.rte.psl.dataaccess`, Spring Data JPA, Hibernate)을 묶어 적용 프로젝트에 전달하는 역할을 합니다. 이 모듈에 의존하는 다른 실행환경 모듈은 없습니다.
 
-- **Artifact**: `org.egovframe.rte:org.egovframe.rte.psl.data.jpa:4.3.1`
-- **Runtime**: Java 1.8 / Spring Framework 5.3.39-egov.1 / Spring Data JPA 2.7.18 / Hibernate 5.6.15.Final
+- **Artifact**: `org.egovframe.rte:org.egovframe.rte.psl.data.jpa:4.3.2`
+- **Runtime**: Java 1.8 / Spring Framework 5.3.39-egov.2 / Spring Data JPA 2.7.18 / Hibernate 5.6.15.Final
 - **실행환경 의존**: `org.egovframe.rte.psl.dataaccess`
 
 ---
@@ -34,8 +34,8 @@ src/test/java/org/egovframe/rte/psl/data/jpa/
 ├── SimpleTest.java               # @Query, 복합키 조회
 ├── domain/
 │   ├── Article.java              # @Entity
-│   ├── Department.java           # @Entity
-│   ├── Employee.java             # @Entity @Table(name="employee"), Department @ManyToOne
+│   ├── Department.java           # @Entity, manager(Employee) @ManyToOne
+│   ├── Employee.java             # @Entity @Table(name="employee")
 │   ├── User.java                 # @Entity @IdClass(UserPK.class)
 │   └── UserPK.java               # 복합키 클래스 (Serializable)
 └── repository/
@@ -63,7 +63,7 @@ src/test/resources/
 | 기본 CRUD | `CrudTest` | `CrudRepository`의 `save`/`findById`/`findAll`/`count`/`delete` 검증 |
 | 페이징·정렬 | `PagingAndSortingTest` | `PagingAndSortingRepository`에 `PageRequest`/`Sort` 전달 |
 | 쿼리 메서드 | `QueryMethodTest` | `UserDetailRepository`의 메서드 이름 기반 파생 쿼리 검증 |
-| 연관관계 | `RelationshipTest` | `Employee` → `Department` `@ManyToOne(optional=false)` 매핑 |
+| 연관관계 | `RelationshipTest` | `Department.manager` → `Employee` `@ManyToOne(optional=false)` 매핑 |
 | JPQL / 복합키 | `SimpleTest` | `UserRepository`의 `@Query`, `UserPK` 복합키 사용 |
 
 모든 테스트는 `@ContextConfiguration(locations = "classpath*:META-INF/spring/context-*.xml")`로 테스트 설정을 로드합니다.
@@ -76,12 +76,13 @@ src/test/resources/
 
 | 라이브러리 | 버전 | scope/비고 |
 |---|---|---|
-| `org.egovframe.rte:org.egovframe.rte.psl.dataaccess` | 4.3.1 | compile (Spring, MyBatis, iBatis 전이) |
+| `org.egovframe.rte:org.egovframe.rte.psl.dataaccess` | 4.3.2 | compile (Spring, MyBatis, iBatis 전이) |
 | `org.springframework.data:spring-data-jpa` | 2.7.18 | compile (spring-core/beans/context/aop/tx/orm, slf4j, aspectjrt 제외 → 실행환경 버전 사용) |
+| `org.springframework.data:spring-data-commons` | 2.7.18-egov.2 | compile. 전이 의존성 버전 지정 — `spring-data-jpa`가 가져오는 공식 2.7.18 대신 포크 버전 (spring-core, spring-beans, slf4j-api 제외) |
 | `org.hibernate:hibernate-entitymanager` | 5.6.15.Final | runtime (JPA 구현체, `javax.persistence` API) |
 | `javax.annotation:javax.annotation-api` | 1.3.2 | compile |
 | `org.apache.commons:commons-dbcp2` | 2.13.0 | compile |
-| `org.springframework:spring-test`, `junit`, `easymock` | 5.3.39-egov.1 / 4.13.2 / 5.2.0 | test |
+| `org.springframework:spring-test`, `junit`, `easymock` | 5.3.39-egov.2 / 4.13.2 / 5.2.0 | test |
 | `org.hsqldb:hsqldb` (`jdk8` 분류자), `com.mysql:mysql-connector-j` | 2.7.3 / 8.4.0 | test |
 
 ---
@@ -172,12 +173,12 @@ mvn test -pl Persistence/org.egovframe.rte.psl.data.jpa
 <dependency>
     <groupId>org.egovframe.rte</groupId>
     <artifactId>org.egovframe.rte.psl.data.jpa</artifactId>
-    <version>4.3.1</version>
+    <version>4.3.2</version>
 </dependency>
 ```
 
-부모 POM(`org.egovframe.boot.starter.parent` 또는 `org.egovframe.web.config.parent` 4.3.1)을 상속하면 `<version>` 생략 가능.
-`-egov.1` 포크 아티팩트(Spring Framework, Spring Data Commons 2.7.18-egov.1)를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소 등록 필요.
+부모 POM(`org.egovframe.boot.starter.parent` 또는 `org.egovframe.web.config.parent` 4.3.2)을 상속하면 `<version>` 생략 가능.
+`-egov.2` 포크 아티팩트(Spring Framework, Spring Data Commons 2.7.18-egov.2)를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소 등록 필요.
 
 ---
 

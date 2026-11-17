@@ -26,23 +26,9 @@ import java.util.Set;
 /**
  * HTMLTagFilter.java
  *
- * <p>요청 파라미터의 HTML 특수문자를 엔티티로 인코딩하는 필터. 초기화 파라미터 없이 등록하면
- * 종전과 완전히 같은 동작(모든 {@code < > & " '} 인코딩)이며, 아래 초기화 파라미터로
- * 허용 태그·리치텍스트 우회·제외 경로를 지정할 수 있다.</p>
- *
- * <pre>
- * &lt;filter&gt;
- *     &lt;filter-name&gt;htmlTagFilter&lt;/filter-name&gt;
- *     &lt;filter-class&gt;org.egovframe.rte.ptl.mvc.filter.HTMLTagFilter&lt;/filter-class&gt;
- *     &lt;init-param&gt;&lt;param-name&gt;allowedTags&lt;/param-name&gt;&lt;param-value&gt;p, br&lt;/param-value&gt;&lt;/init-param&gt;
- *     &lt;init-param&gt;&lt;param-name&gt;richTextParameters&lt;/param-name&gt;&lt;param-value&gt;nttCn&lt;/param-value&gt;&lt;/init-param&gt;
- *     &lt;init-param&gt;&lt;param-name&gt;excludePaths&lt;/param-name&gt;&lt;param-value&gt;/api/*&lt;/param-value&gt;&lt;/init-param&gt;
- * &lt;/filter&gt;
- * </pre>
- *
- * <p><b>리치텍스트 우회 파라미터는 출력 시점 정제가 전제다.</b> 우회한 값은 저장·출력 전에
- * 반드시 화이트리스트 방식의 HTML 정제기(jsoup Safelist, OWASP Java HTML Sanitizer 등)로 정제한다 —
- * 우회만 하고 정제하지 않으면 XSS 무방비가 된다.</p>
+ * <p>요청 파라미터의 HTML 특수문자({@code < > & " '})를 엔티티로 인코딩하는 필터.
+ * 초기화 파라미터 allowedTags·richTextParameters·excludePaths로 허용 태그·인코딩 우회·제외 경로를 지정한다.
+ * 인코딩을 우회한 리치텍스트 값은 저장·출력 전에 화이트리스트 HTML 정제기로 정제해야 한다(XSS 방지).</p>
  *
  * @author 실행환경 개발팀 함철
  * @version 1.0
@@ -52,20 +38,19 @@ import java.util.Set;
  * 수정일		수정자				수정내용
  * ----------------------------------------------
  * 2009.05.30	함철				최초 생성
- * 2026.10.25	실행환경 개발팀		FilterConfig 초기화 파라미터 승격 —
- *                              allowedTags·richTextParameters·excludePaths
+ * 2026.10.25	실행환경 개발팀		FilterConfig 초기화 파라미터 추가
  * </pre>
  * @since 2009.06.01
  */
 public class HTMLTagFilter implements Filter {
 
-    /** 초기화 파라미터 — 쉼표 구분 허용 태그 이름(예: {@code p, br}). 속성 없는 형태만 통과한다. */
+    /** 초기화 파라미터: 허용 태그 이름(쉼표 구분, 속성 없는 형태만 통과). */
     public static final String INIT_PARAM_ALLOWED_TAGS = "allowedTags";
 
-    /** 초기화 파라미터 — 쉼표 구분 리치텍스트 파라미터명. 해당 파라미터는 인코딩을 우회한다. */
+    /** 초기화 파라미터: 인코딩을 우회할 리치텍스트 파라미터명(쉼표 구분). */
     public static final String INIT_PARAM_RICH_TEXT_PARAMETERS = "richTextParameters";
 
-    /** 초기화 파라미터 — 쉼표 구분 제외 경로. {@code /*} 로 끝나면 접두 일치, 아니면 정확 일치. */
+    /** 초기화 파라미터: 제외 경로(쉼표 구분, {@code /*}로 끝나면 접두 일치). */
     public static final String INIT_PARAM_EXCLUDE_PATHS = "excludePaths";
 
     private Set<String> allowedTagNames = Collections.emptySet();

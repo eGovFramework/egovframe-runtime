@@ -34,11 +34,7 @@ import java.util.Set;
  *
  * <p><b>NOTE:</b> Class 로딩 등의 객체관련 기능을 제공하는 유틸이다.</p>
  *
- * <p><b>보안 주의:</b> {@link #loadClass(String)}/{@link #instantiate(String)}는 className을 그대로
- * 클래스로더에 전달해 로드·인스턴스화한다(CWE-470 Unsafe Reflection). 신뢰할 수 없는 입력
- * (사용자 요청 파라미터 등)을 className으로 직접 전달하지 말 것. 값의 출처를 신뢰할 수 없다면
- * {@link #setAllowedClassNames(Set)}으로 허용 클래스 목록을 설정하라(기본값은 null=제한 없음,
- * 기존 동작과 동일).</p>
+ * <p>신뢰할 수 없는 className은 {@link #setAllowedClassNames(Set)}로 허용 목록을 지정해 제한한다(CWE-470).</p>
  *
  * @author 실행환경 개발팀 윤성종
  * @version 1.0
@@ -50,7 +46,7 @@ import java.util.Set;
  * 2009.06.01	윤성종			최초 생성
  * 2023.08.31   ESFC			기능 추가(isEmpty(), Contribution 반영)
  * 2024.08.17	이백행			시큐어코딩 Exception 제거
- * 2026.10.25	실행환경 개발팀		클래스 로딩 허용목록(setAllowedClassNames) 추가 - CWE-470
+ * 2026.10.25	실행환경 개발팀		클래스 로딩 허용목록 추가(CWE-470)
  * </pre>
  * @since 2009.06.01
  */
@@ -58,19 +54,14 @@ public final class EgovObjectUtil {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EgovObjectUtil.class);
 
-    /**
-     * 로딩을 허용할 클래스명(FQCN) 화이트리스트. null이면 제한 없음(기본값, 기존 동작과 동일 — 하위 호환).
-     */
+    /** 로딩을 허용할 클래스명(FQCN) 목록 (null이면 제한 없음) */
     private static volatile Set<String> allowedClassNames = null;
 
     private EgovObjectUtil() {
     }
 
     /**
-     * className이 신뢰할 수 없는 입력으로 흘러들 가능성이 있는 경우, 로딩 가능한 클래스를 제한하려면
-     * 이 메서드로 허용 목록을 설정한다. 설정 시 {@link #loadClass(String)}(및 이를 호출하는
-     * {@link #instantiate(String)} 등)는 목록에 없는 클래스명에 대해 {@link SecurityException}을 던진다.
-     * null 또는 빈 집합을 넘기면 제한이 해제된다(기본값).
+     * 로딩 허용 클래스 목록을 지정한다(목록 밖 클래스는 {@link SecurityException}, null 또는 빈 집합이면 해제).
      *
      * @param classNames 허용할 클래스명(FQCN) 집합
      */

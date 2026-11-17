@@ -21,33 +21,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 /**
- * 세션 만료 시각 정보 — 서버 시각과 만료 예정 시각을 함께 담는 값 객체.
- *
- * <p>세션 잔여 시간을 화면에 표시하려면 <b>서버 시각도 함께</b> 필요하다. 클라이언트 시계는
- * 서버와 어긋나 있을 수 있으므로, 남은 시간은 "만료 시각 − <b>서버</b> 시각"으로 계산한 뒤
- * 그 시점부터 브라우저에서 흘려보내야 한다.</p>
- *
- * <p><b>쿠키를 거치지 않고 바로 쓸 수 있다.</b> {@link EgovSessionExpiryCookieFilter} 가
- * 쿠키로도 실어 보내지만, 쿠키는 <b>다음 요청부터</b> 브라우저가 되돌려 주므로 최초 진입
- * 화면에서는 값이 비어 있다. 컨트롤러에서 이 클래스로 값을 직접 얻어 모델에 담으면
- * 그 문제가 없다.</p>
+ * 서버 시각과 세션 만료 예정 시각을 담는 값 객체.
+ * 무제한 세션이면 만료 시각은 {@link #UNLIMITED}(-1)이며, 쿠키가 없는 최초 화면에서는 컨트롤러에서 직접 조회한다.
  *
  * <pre>
- * EgovSessionExpiry.from(request)
- *         .ifPresent(expiry -&gt; model.addAttribute("sessionExpiry", expiry));
+ * EgovSessionExpiry.from(request).ifPresent(expiry -&gt; model.addAttribute("sessionExpiry", expiry));
  * </pre>
- *
- * <p><b>무제한 세션</b>({@code maxInactiveInterval} 이 0 이하)이면 {@link #getExpiryTime()} 이
- * {@link #UNLIMITED}(-1)를 반환한다. 화면은 이 값을 보고 카운트다운을 하지 않으면 된다.</p>
  *
  * <pre>
  * &lt;&lt; 개정이력(Modification Information) &gt;&gt;
  *
  *  수정일        수정자        수정내용
  *  ----------  --------    ---------------------------
- *  2026.09.01  실행환경팀     최초 생성 (공통컴포넌트 SessionTimeoutCookieFilter 가
- *                            필터 안에 계산을 묻어 두어 쿠키를 거쳐야만 값을 얻을 수 있던
- *                            구조를, 서버에서 바로 조회 가능한 값 객체로 분리)
+ *  2026.09.01  실행환경팀     최초 생성
  * </pre>
  *
  * @author 실행환경 개발팀
@@ -72,13 +58,10 @@ public final class EgovSessionExpiry {
 	}
 
 	/**
-	 * 현재 요청의 세션에서 만료 정보를 얻는다.
-	 *
-	 * <p><b>세션을 새로 만들지 않는다</b>({@code getSession(false)}) — 정적 자원 요청처럼
-	 * 세션이 필요 없는 요청 때문에 세션이 생기면 서버 자원이 낭비된다.</p>
+	 * 현재 요청의 세션에서 만료 정보를 얻는다. 세션을 새로 만들지 않는다.
 	 *
 	 * @param request 현재 요청 (null 불가)
-	 * @return 만료 정보. <b>세션이 없으면 빈 Optional</b>
+	 * @return 만료 정보. 세션이 없으면 빈 Optional
 	 * @throws IllegalArgumentException request 가 null 인 경우
 	 */
 	public static Optional<EgovSessionExpiry> from(HttpServletRequest request) {
@@ -105,8 +88,7 @@ public final class EgovSessionExpiry {
 			throw new IllegalArgumentException("session must not be null");
 		}
 		int interval = session.getMaxInactiveInterval();
-		// interval 이 0 이하이면 만료 없음(서블릿 규약). 곱셈은 long 으로 — int 연산은
-		// 약 24.8일을 넘기면 넘침이 생기고, 음수일 때는 과거 시각이 되어 즉시 만료로 오판된다.
+		// 0 이하이면 만료 없음(서블릿 규약). int 넘침 방지를 위해 long으로 계산한다.
 		long expiry = (interval <= 0) ? UNLIMITED : serverTime + (long) interval * 1000L;
 		return new EgovSessionExpiry(serverTime, expiry, interval);
 	}

@@ -5,4 +5,8 @@
     <artifactId>spring-modules-validation</artifactId>
     <version>0.9</version>
     <description>Fixed JBoss tld loading problem</description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 </project>

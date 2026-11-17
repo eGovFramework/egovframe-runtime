@@ -80,11 +80,7 @@ public interface ExceptionHandlerService {
     public boolean run(Exception exception) throws Exception;
 
     /**
-     * 발생 위치를 인자로 받아 실행한다.
-     *
-     * <p>싱글톤 빈의 상태를 {@link #setPackageName(String)} 으로 바꾼 뒤 {@link #run(Exception)} 을 호출하면
-     * 동시 요청 간에 발생 위치가 섞인다. 기본 구현은 하위 호환을 위해 두 호출을 이 객체로 동기화하며,
-     * 구현체는 상태를 바꾸지 않도록 재정의할 수 있다({@link DefaultExceptionHandleManager} 참조).</p>
+     * 발생 위치를 인자로 받아 실행한다. 기본 구현은 하위 호환을 위해 이 객체로 동기화한다.
      *
      * @param exception   발생한 Exception
      * @param packageName 발생 위치(클래스 FQCN.메서드명)

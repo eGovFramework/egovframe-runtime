@@ -22,11 +22,7 @@ import org.springframework.mock.web.MockPageContext;
 import org.springframework.mock.web.MockServletContext;
 
 /**
- * {@link EgovSubmitTokens} 의 <b>예측 불가성·원자성·세션 바인딩·비반사</b> 회귀 검증.
- *
- * <p>기능 테스트({@link EgovSubmitTokensTest})가 흐름을 다루고, 이 클래스는 공격 관점의 성질을
- * 고정한다 — 토큰을 추측할 수 없고, 동시에 두 번 쓸 수 없고, 다른 세션에서 쓸 수 없으며,
- * 실패 응답이 요청 값을 되비추지 않는다.</p>
+ * {@link EgovSubmitTokens}의 예측 불가성·원자성·세션 바인딩·비반사 회귀 테스트.
  */
 public class EgovSubmitTokensSecurityTest {
 

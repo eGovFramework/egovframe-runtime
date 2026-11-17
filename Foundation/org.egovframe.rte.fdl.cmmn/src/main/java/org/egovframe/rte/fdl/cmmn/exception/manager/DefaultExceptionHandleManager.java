@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  * ----------------------------------------------
  * 2009.05.30	Judd Cho			최초 생성
  * 2015.01.31	Vincent Han			코드 품질 개선
- * 2026.10.25	실행환경 개발팀		run(Exception, String) — 싱글톤 상태 변경 없이 발생 위치 전달
+ * 2026.10.25	실행환경 개발팀		run(Exception, String) 추가
  * </pre>
  * @since 2009.06.01
  */
@@ -63,8 +63,7 @@ public class DefaultExceptionHandleManager extends AbstractExceptionHandleManage
     }
 
     /**
-     * 발생 위치를 인자로 받아 상태(thisPackageName) 변경 없이 처리한다.
-     * 하위 클래스가 run(Exception) 을 재정의한 경우에는 기존 동작을 위해 기본 구현(동기화)을 쓴다.
+     * 발생 위치를 인자로 받아 상태 변경 없이 처리한다. run(Exception) 재정의 시 기본 구현을 쓴다.
      */
     @Override
     public boolean run(Exception exception, String packageName) throws Exception {

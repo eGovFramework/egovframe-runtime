@@ -2,8 +2,8 @@
 
 **Foundation Layer 문자열(String) 유틸리티 모듈**입니다. 문자열·날짜·숫자·객체 처리에 필요한 정적 유틸리티 클래스와, 4.3.1에서 추가된 **출력 컨텍스트별 XSS 인코더**(`EgovOutputEncoder`)를 제공합니다. 도메인에 의존하지 않는 순수 유틸 성격이며, `fdl.filehandling`, `fdl.security` 모듈이 이 모듈에 의존합니다.
 
-- **Artifact**: `org.egovframe.rte:org.egovframe.rte.fdl.string:4.3.1`
-- **Runtime**: Java 1.8 / Spring Framework 5.3.39-egov.1 / Commons Codec 1.18.0
+- **Artifact**: `org.egovframe.rte:org.egovframe.rte.fdl.string:4.3.2`
+- **Runtime**: Java 1.8 / Spring Framework 5.3.39-egov.2 / Commons Codec 1.18.0
 - **실행환경 의존**: `org.egovframe.rte.fdl.logging`
 
 ---
@@ -40,7 +40,7 @@ src/main/java/org/egovframe/rte/fdl/string/
 | `EgovStringUtil` | `isEmpty`/`isNotEmpty`/`isEmptyTrimmed`/`isNull`, `null2void`/`null2string`, `trim`/`ltrim`/`rtrim`, `lPad`/`rPad`/`fillString`, `alignLeft`/`alignCenter`/`alignRight`, `getTokens`/`getStringArray`, `search`/`countOf`/`replace`/`reverse`/`concat`, `capitalize`/`swapFirstLetterCase`, `convertToCamelCase`/`convertToUnderScore`, `isAlpha`/`isAlphaNumeric`/`isNumeric`/`isPatternMatch`/`isPatternMatching`/`containsInvalidChars`/`containsMaxSequence`, `string2integer`/`string2long`/`string2float`/`string2double` 및 역변환, `toEng`/`toKor`, `toSubString`/`getLastString`, `encodeString`/`decodeString`(Base64, Commons Codec), `encodePassword(password, algorithm)`(MessageDigest + Base64) |
 | `EgovDateUtil` | `getCalcDateAsString`/`getCalcYearAsString`/`getCalcMonthAsString`/`getCalcDayAsString`(및 `AsInt`), `getCurrentDateAsString`/`getCurrentDateTimeAsString`/`getCurrentTimeAsString` 등 현재 시각, `getDayOfWeekAsString`, `getDayCount`/`getDayCountWithFormatter`/`getDayCountForMonth`/`getDayOfWeekCount`/`getTimeCount`, `getFullAge`/`getCurrentFullAge`, `dateFormatCheck`, `toString(date, format, locale)` |
 | `EgovNumericUtil` | `isNumber`, `plus`/`minus`/`multiply`/`divide`(scale, `RoundingMode` 오버로드), `setScale`. 상수 `ROUND_UP`, `ROUND_DOWN`, `ROUND_HALF_UP`, `ROUND_UNNECESSARY` |
-| `EgovObjectUtil` | `loadClass(className)`, `instantiate(className)`, `instantiate(className, types, values)`, `isNull`, `isEmpty`. `setAllowedClassNames(Set<String>)`로 허용 목록을 지정하면 목록 밖 클래스는 로딩하지 않음(기본 null = 제한 없음) |
+| `EgovObjectUtil` | `loadClass(className)`, `instantiate(className)`, `instantiate(className, types, values)`, `isNull`, `isEmpty`. `setAllowedClassNames(Set<String>)`로 허용 목록을 지정하면 목록 밖 클래스는 `SecurityException`으로 거부(기본 null = 제한 없음) |
 | `EgovOutputEncoder` | `forHtml`(본문·따옴표 속성), `forHtmlAttribute`(따옴표 없는 속성), `forJavaScript`(따옴표 문자열 리터럴), `forUrl`(쿼리 파라미터), `forXml`. 모든 메서드가 null을 빈 문자열로 반환하고 예외를 던지지 않음. `href`/`src`에 값 전체를 넣는 경우의 `javascript:` 스킴 검사, CSS 컨텍스트, JSON 직렬화는 다루지 않음 |
 
 ---
@@ -49,11 +49,11 @@ src/main/java/org/egovframe/rte/fdl/string/
 
 | 라이브러리 | 버전 | scope / 비고 |
 |---|---|---|
-| `org.egovframe.rte:org.egovframe.rte.fdl.logging` | 4.3.1 | compile. Log4j 2 / SLF4J 전이 |
-| `org.springframework:spring-context` | 5.3.39-egov.1 | compile (commons-logging 제외). `@Nullable`, `ClassUtils` 등 |
+| `org.egovframe.rte:org.egovframe.rte.fdl.logging` | 4.3.2 | compile. Log4j 2 / SLF4J 전이 |
+| `org.springframework:spring-context` | 5.3.39-egov.2 | compile (commons-logging 제외). `@Nullable`, `ClassUtils` 등 |
 | `commons-codec:commons-codec` | 1.18.0 | compile. Base64 |
 | `javax.annotation:javax.annotation-api` | 1.3.2 | compile |
-| `spring-test` / `junit` / `easymock` | 5.3.39-egov.1 / 4.13.2 / 5.2.0 | test |
+| `spring-test` / `junit` / `easymock` | 5.3.39-egov.2 / 4.13.2 / 5.2.0 | test |
 
 버전은 모두 루트 `pom.xml`의 `dependencyManagement`에서 관리하며 모듈 POM에는 선언하지 않습니다.
 
@@ -94,7 +94,7 @@ EgovNumericUtil.divide("10", "3", 2, EgovNumericUtil.ROUND_HALF_UP); // "3.33"
 ```java
 EgovObjectUtil.setAllowedClassNames(new HashSet<>(Arrays.asList("com.example.SafeBean")));
 EgovObjectUtil.instantiate("com.example.SafeBean");   // 허용
-EgovObjectUtil.instantiate("java.lang.Runtime");      // 허용 목록에 없으면 로딩하지 않음
+EgovObjectUtil.instantiate("java.lang.Runtime");      // 허용 목록에 없으면 SecurityException
 ```
 
 ### 테스트
@@ -130,11 +130,11 @@ mvn test -pl Foundation/org.egovframe.rte.fdl.string
 <dependency>
     <groupId>org.egovframe.rte</groupId>
     <artifactId>org.egovframe.rte.fdl.string</artifactId>
-    <version>4.3.1</version>
+    <version>4.3.2</version>
 </dependency>
 ```
 
-부모 POM(`org.egovframe.boot.starter.parent` 또는 `org.egovframe.web.config.parent` 4.3.1)을 상속하면 `<version>`을 생략할 수 있습니다. `-egov.1` 포크 아티팩트를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소 등록이 필요합니다.
+부모 POM(`org.egovframe.boot.starter.parent` 또는 `org.egovframe.web.config.parent` 4.3.2)을 상속하면 `<version>`을 생략할 수 있습니다. `-egov.2` 포크 아티팩트를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소 등록이 필요합니다.
 
 ---
 

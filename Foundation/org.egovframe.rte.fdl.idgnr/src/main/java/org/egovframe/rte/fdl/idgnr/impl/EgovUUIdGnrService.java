@@ -52,9 +52,7 @@ import java.util.StringTokenizer;
  * <p><b>NOTE</b>: UUID(Universally Unique Identifier)
  * 알고리즘 기반의 유일키를 제공 받을 수 있다.</p>
  *
- * <p><b>보안 주의:</b> 이 구현은 주소+시각(초 미만 절삭)+순번으로 값을 만들어 <b>예측 가능</b>하다(CWE-330).
- * 세션ID·토큰 등 보안 목적 식별자로 사용하지 말고, 신규 개발은 {@link EgovUUIdGnrServiceImpl}(주소 미설정 시
- * {@link java.util.UUID#randomUUID()})을 사용한다.</p>
+ * <p>생성 값은 예측 가능하므로 보안 목적 식별자로 사용하지 않는다(CWE-330).</p>
  *
  * @author 실행환경 개발팀 김태호
  * @version 1.0
@@ -67,7 +65,7 @@ import java.util.StringTokenizer;
  * ----------------------------------------------
  * 2009.02.01	김태호            최초 생성
  * 2020.08.31   ESFC            ES-적절하지 않은 난수값 사용[CWE-330]
- * 2026.10.25   실행환경 개발팀      예측 가능한 값임을 명시(보안 목적 사용 금지 안내)
+ * 2026.10.25   실행환경 개발팀      보안 목적 사용 금지 안내 추가
  *
  * </pre>
  */

@@ -15,11 +15,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 /**
- * {@link EgovRequestContext} 의 <b>신뢰 경계</b> 회귀 검증.
- *
- * <p>이 파사드는 요청 정보를 <b>해석하지 않고 그대로 전달</b>한다. 그래서 고정할 성질은 두 가지다 —
- * 원격 주소가 클라이언트가 위조할 수 있는 전달 헤더에 영향받지 않을 것, 어떤 적대적 헤더 값에도
- * 예외 없이 값을 그대로 돌려줄 것(해석은 호출자의 신뢰 경계 설계에 맡긴다).</p>
+ * {@link EgovRequestContext}가 전달 헤더를 해석하지 않고 값을 그대로 반환하는지 검증하는 회귀 테스트.
  */
 public class EgovRequestContextSecurityTest {
 

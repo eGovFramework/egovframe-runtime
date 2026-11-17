@@ -41,10 +41,8 @@ import java.util.UUID;
  *
  * <p><b>NOTE</b>: UUID(Universally Unique Identifier) 알고리즘 기반의 유일키를 제공 받을 수 있다.</p>
  *
- * <p><b>보안 주의:</b> {@link #setAddress(String)}로 IP/MAC 주소를 설정하면 시각 기반 UUIDv1(타임스탬프+노드+
- * 기동 시 random 초기화된 14-bit clockSequence)을 생성한다. 예측 가능한 값이므로 세션ID·비밀번호 재설정
- * 토큰·API 키 등 <b>보안 목적 식별자로 사용하지 말 것</b> — 그런 용도라면 {@code setAddress}를 호출하지 않은
- * 기본 경로({@link java.util.UUID#randomUUID()}) 또는 별도의 CSPRNG 기반 토큰 생성기를 사용하라(CWE-330).</p>
+ * <p>주소 설정 시 생성되는 시각 기반 UUIDv1은 예측 가능하므로 보안 목적 식별자에는
+ * 주소 미설정 기본 경로({@link java.util.UUID#randomUUID()})를 사용한다(CWE-330).</p>
  *
  * @author 실행환경 개발팀 김태호
  * @version 1.0
@@ -57,8 +55,7 @@ import java.util.UUID;
  * 2014.08.18	한성곤				UUID 오류 수정
  * 2017.02.03	장동한				시큐어코딩(ES)-시큐어 코딩 적절하지 않은 난수값 사용[CWE-330]
  * 2017.02.15	장동한				시큐어코딩(ES)-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
- * 2026.10.25	실행환경 개발팀		UUIDv1 clockSequence 를 SecureRandom 으로 초기화(고정 0 제거), RFC 4122 variant 적용,
- *                              IP 주소 10진수 파싱 오류 수정
+ * 2026.10.25	실행환경 개발팀		UUIDv1 clockSequence 난수 초기화, RFC 4122 variant 적용, IP 파싱 오류 수정
  * </pre>
  * @since 2009.02.01
  */
@@ -205,7 +202,7 @@ public class EgovUUIdGnrServiceImpl implements EgovIdGnrService, ApplicationCont
                 addressBytes[1] = (byte) 255;
                 int i = 2;
                 while (stok.hasMoreTokens()) {
-                    // IP 주소 옥텟은 10진수다(종전 16진수 파싱 오류 수정).
+                    // IP 옥텟은 10진수로 파싱
                     addressBytes[i++] = Integer.valueOf(stok.nextToken(), 10).byteValue();
                 }
             } else if (address.indexOf(":") > 0) {
@@ -253,24 +250,17 @@ final class TimeBasedUUIDGenerator {
     public static final Object LOCK = new Object();
     private static final Logger LOGGER = LoggerFactory.getLogger(TimeBasedUUIDGenerator.class);
     private static final long HOST_IDENTIFIER = getHostId();
-    /**
-     * UUID epoch(1582-10-15 00:00:00 UTC, RFC 5.1)부터 Unix epoch(1970-01-01)까지의
-     * 100ns 간격 수. 141,427일 × 86,400초 × 10,000,000 = 122,192,928,000,000,000
-     * (0x01B21DD213814000).
-     */
+    /** UUID epoch(1582-10-15 UTC)부터 Unix epoch까지의 100ns 간격 수 (RFC 5.1) */
     private static final long UUID_EPOCH_TICKS = 122192928000000000L;
     /** node 필드 48-bit (RFC 5.1) */
     private static final long NODE_MASK = 0x0000FFFFFFFFFFFFL;
-    /** IEEE 802 multicast bit: IEEE 주소를 구하지 못한 node 는 관리(로컬) 주소임을 표시 (RFC 6.10) */
+    /** IEEE 802 multicast bit: random node 표시 (RFC 6.10) */
     private static final long MULTICAST_BIT = 0x0000010000000000L;
-    /**
-     * clock sequence 초기화 및 node fallback 용 난수원. RFC 5.1 은 clock sequence 를
-     * 시스템 식별자당 한 번 random 값으로 초기화할 것(Node ID 와 상관되지 않을 것)을 요구한다.
-     */
+    /** clock sequence 초기화 및 node fallback 용 난수원 (RFC 5.1) */
     private static final SecureRandom RANDOM = new SecureRandom();
     /** JVM 기동 시 random 초기화된 14-bit clock sequence */
     private static final long CLOCK_SEQUENCE = RANDOM.nextInt(1 << 14);
-    /** IEEE 주소를 구하지 못한 인스턴스용 random multicast node (JVM 생애 주기 동안 고정) */
+    /** IEEE 주소를 구하지 못한 경우의 random multicast node */
     private static final long RANDOM_NODE = (RANDOM.nextLong() & NODE_MASK) | MULTICAST_BIT;
     /** 마지막으로 사용한 UUID timestamp (100ns 단위, 단일 JVM 내 strictly monotonic) */
     private static long lastTime = Long.MIN_VALUE;
@@ -293,7 +283,7 @@ final class TimeBasedUUIDGenerator {
     public static final UUID generateIdFromTimestamp(long currentTimeMillis, long hostId) {
         long node = (hostId != 0L ? hostId : HOST_IDENTIFIER) & NODE_MASK;
         if (node == 0L) {
-            // RFC 5.1: IEEE 주소를 구할 수 없으면 random 으로 생성한 node 를 사용한다
+            // RFC 5.1: IEEE 주소가 없으면 random node 사용
             node = RANDOM_NODE;
         }
 
@@ -302,8 +292,7 @@ final class TimeBasedUUIDGenerator {
             // RFC 5.1: UUIDv1 timestamp = 1582-10-15 UTC 자정부터의 100ns count
             timestamp = currentTimeMillis * 10_000L + UUID_EPOCH_TICKS;
             if (timestamp <= lastTime) {
-                // 동일 시각 연속 생성 또는 system clock 후퇴 시 마지막 timestamp 를 재사용해
-                // 100ns 단위로 논리적 증가시켜 단일 JVM 내 유일성을 보장한다 (RFC 6.1, 6.2)
+                // 동일 시각·clock 후퇴 시 마지막 timestamp를 1 증가 (RFC 6.1, 6.2)
                 timestamp = lastTime + 1;
             }
             lastTime = timestamp;

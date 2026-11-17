@@ -50,7 +50,7 @@ import java.util.stream.Collectors;
  * ----------------------------------------------
  * 2019.10.01	ESFC            최초 생성
  * 2024.03.29   ESFC            권한별 접근 제한 수정
- * 2026.10.25   실행환경 개발팀      요청 경로 디코딩·정규화 후 인가 패턴 매칭(경로 조작 우회 차단)
+ * 2026.10.25   실행환경 개발팀      요청 경로 정규화 후 인가 패턴 매칭
  * </pre>
  * @since 2019.10.01
  */
@@ -58,8 +58,7 @@ public class EgovAccessInterceptor implements HandlerInterceptor, ApplicationCon
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EgovAccessInterceptor.class);
 
-    // getPathWithinApplication()이 요청 경로를 디코딩하고 contextPath 접두사만 정확히 제거해준다.
-    // (기존의 String.replace(contextPath, "")는 문자열 내 모든 occurrence를 치환해 경로가 왜곡될 수 있었음)
+    // 요청 경로 디코딩 및 contextPath 접두사 제거용
     private static final UrlPathHelper URL_PATH_HELPER = new UrlPathHelper();
 
     private ApplicationContext context;
@@ -71,9 +70,7 @@ public class EgovAccessInterceptor implements HandlerInterceptor, ApplicationCon
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
-        // 1) UrlPathHelper: 요청 경로를 디코딩(%2e%2e 등)하고 contextPath는 접두사 위치에서만 제거.
-        // 2) 중복 슬래시를 하나로 줄이고 StringUtils.cleanPath 로 "." / ".." 세그먼트를 정규화해, 인코딩·경로
-        //    조작으로 Ant/정규식 인가 패턴을 우회하려는 시도가 정규화 전 원문 그대로 매칭되지 않도록 함.
+        // 디코딩·중복 슬래시·"."/".." 정규화 후 매칭(경로 조작으로 인가 패턴 우회 방지)
         String requestUrl = StringUtils.cleanPath(
                 URL_PATH_HELPER.getPathWithinApplication(request).replaceAll("/{2,}", "/"));
 

@@ -2,8 +2,8 @@
 
 **Foundation ID 생성(ID Generation) 모듈**은 시스템 개발 시 필요한 유일한 ID를 DB 시퀀스, 채번 테이블(블록 단위), UUID 방식으로 생성하는 `EgovIdGnrService`와, 생성된 ID에 접두어·자릿수 채움을 적용하는 정책(`EgovIdGnrStrategy`)을 제공합니다. `org.egovframe.rte.bat.core`가 이 모듈에 의존합니다.
 
-- **Artifact**: `org.egovframe.rte:org.egovframe.rte.fdl.idgnr:4.3.1`
-- **Runtime**: Java 1.8 / Spring Framework 5.3.39-egov.1 (`spring-context`, `spring-jdbc` provided)
+- **Artifact**: `org.egovframe.rte:org.egovframe.rte.fdl.idgnr:4.3.2`
+- **Runtime**: Java 1.8 / Spring Framework 5.3.39-egov.2 (`spring-context`, `spring-jdbc` provided)
 - **실행환경 의존**: `org.egovframe.rte.fdl.cmmn` (`FdlException`)
 
 ---
@@ -59,7 +59,7 @@ src/main/resources/org/egovframe/rte/fdl/idgnr/messages/
 | `impl.AbstractDataBlockIdGnrService` | `blockSize` 프로퍼티, `allocateBigDecimalIdBlock(blockSize)`/`allocateLongIdBlock(blockSize)` 추상 메서드, `afterPropertiesSet()` |
 | `impl.EgovSequenceIdGnrServiceImpl` | `query`에 지정한 시퀀스 조회 SQL을 실행해 ID 반환 (예: `SELECT seq.NEXTVAL FROM DUAL`, HSQLDB `call NEXT VALUE FOR idstest`) |
 | `impl.EgovTableIdGnrServiceImpl` | 프로퍼티 `table`(기본 `ids`), `tableName`(기본 `id`), `tableNameFieldName`(기본 `table_name`), `nextIdFieldName`(기본 `next_id`), `blockSize`, `selectForUpdate`(기본 `true`). 행이 없으면 초기값을 INSERT 한 뒤 블록 할당 |
-| `impl.EgovUUIdGnrServiceImpl` | `address` 프로퍼티(IP `a.b.c.d` 또는 MAC `xx:xx:xx:xx:xx:xx`, 미설정 시 `UUID.randomUUID()`). `getNextStringId()`, `getNextBigDecimalId()`, `getNextByteId()`만 지원하며 int/long/short/정책 적용은 `FdlException`(`error.idgnr.not.supported`) |
+| `impl.EgovUUIdGnrServiceImpl` | `address` 프로퍼티(IP `a.b.c.d` 또는 MAC `xx:xx:xx:xx:xx:xx`, 미설정 시 `UUID.randomUUID()`). `getNextStringId()`, `getNextBigDecimalId()`만 지원하며 byte/int/long/short/정책 적용은 `FdlException`(`error.idgnr.not.supported`) |
 
 ---
 
@@ -67,13 +67,13 @@ src/main/resources/org/egovframe/rte/fdl/idgnr/messages/
 
 | 라이브러리 | 버전 | scope/비고 |
 |---|---|---|
-| `org.egovframe.rte:org.egovframe.rte.fdl.cmmn` | 4.3.1 | compile |
-| `spring-context` (commons-logging 제외) | 5.3.39-egov.1 | compile |
-| `spring-jdbc` | 5.3.39-egov.1 | provided (`JdbcTemplate`, `TransactionTemplate` 사용. 적용 프로젝트가 제공) |
+| `org.egovframe.rte:org.egovframe.rte.fdl.cmmn` | 4.3.2 | compile |
+| `spring-context` (commons-logging 제외) | 5.3.39-egov.2 | compile |
+| `spring-jdbc` | 5.3.39-egov.2 | provided (`JdbcTemplate`, `TransactionTemplate` 사용. 적용 프로젝트가 제공) |
 | `javax.annotation:javax.annotation-api` | 1.3.2 | compile |
-| `spring-test`, `commons-dbcp2`, `mysql-connector-j`, `hsqldb`(`jdk8`), `junit`, `easymock` | 5.3.39-egov.1 / 2.13.0 / 8.4.0 / 2.7.3 / 4.13.2 / 5.2.0 | test |
+| `spring-test`, `commons-dbcp2`, `mysql-connector-j`, `hsqldb`(`jdk8`), `junit`, `easymock` | 5.3.39-egov.2 / 2.13.0 / 8.4.0 / 2.7.3 / 4.13.2 / 5.2.0 | test |
 
-버전은 루트 POM(`org.egovframe.rte.root` 4.3.1)의 `dependencyManagement`에서 관리하며 모듈 POM은 버전을 선언하지 않습니다.
+버전은 루트 POM(`org.egovframe.rte.root` 4.3.2)의 `dependencyManagement`에서 관리하며 모듈 POM은 버전을 선언하지 않습니다.
 
 ---
 
@@ -194,11 +194,11 @@ mvn test -pl Foundation/org.egovframe.rte.fdl.idgnr
 <dependency>
     <groupId>org.egovframe.rte</groupId>
     <artifactId>org.egovframe.rte.fdl.idgnr</artifactId>
-    <version>4.3.1</version>
+    <version>4.3.2</version>
 </dependency>
 ```
 
-부모 POM(`org.egovframe.boot.starter.parent` 또는 `org.egovframe.web.config.parent` 4.3.1)을 상속하면 `<version>`을 생략할 수 있습니다. `spring-jdbc`는 provided 이므로 적용 프로젝트에서 별도로 포함해야 합니다. `-egov.1` 포크 아티팩트를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소 등록이 필요합니다.
+부모 POM(`org.egovframe.boot.starter.parent` 또는 `org.egovframe.web.config.parent` 4.3.2)을 상속하면 `<version>`을 생략할 수 있습니다. `spring-jdbc`는 provided 이므로 적용 프로젝트에서 별도로 포함해야 합니다. `-egov.2` 포크 아티팩트를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소 등록이 필요합니다.
 
 ---
 

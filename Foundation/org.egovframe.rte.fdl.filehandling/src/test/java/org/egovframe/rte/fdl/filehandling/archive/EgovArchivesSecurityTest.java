@@ -23,11 +23,8 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
 
 /**
- * EgovArchives 해제의 <b>공격 아카이브</b> 회귀 검증 — Zip Slip(CWE-22)·링크(CWE-59)·
- * 압축 폭탄(CWE-400) 에 실제로 쓰이는 엔트리 변형을 모아 두고, 판정은 하나로 한다:
- * <b>대상 디렉터리 밖에 파일이 생기는가.</b>
- *
- * <p>기능 테스트({@link EgovArchivesTest})가 대표 사례를 다루고, 이 클래스는 변형 배터리를 맡는다.</p>
+ * EgovArchives 해제 공격 아카이브 회귀 테스트(Zip Slip CWE-22, 링크 CWE-59, 압축 폭탄 CWE-400).
+ * 대상 디렉터리 밖에 파일이 생기지 않음을 검증한다.
  */
 public class EgovArchivesSecurityTest {
 
@@ -66,8 +63,7 @@ public class EgovArchivesSecurityTest {
 
     @Test
     public void 드라이브_문자_엔트리는_어느_OS에서도_밖에_생기지_않는다() throws IOException {
-        // Windows: 드라이브 절대 경로라 차단(IAE). POSIX: 정규화 후 "C:/pwn.txt" 는 "C:" 라는 이름의
-        // 하위 디렉터리일 뿐이라 대상 안에 풀린다. 보안 속성은 양쪽 모두 "경계 밖에 없음" 이다.
+        // Windows는 드라이브 절대 경로로 차단, POSIX는 "C:" 하위 디렉터리로 대상 안에 해제
         arrange();
         Path zip = zip(tempDir.resolve("drive.zip"), "C:" + BS + "pwn.txt");
         try {
@@ -82,8 +78,7 @@ public class EgovArchivesSecurityTest {
 
     @Test
     public void 역슬래시_상위_이동_엔트리는_POSIX에서도_차단된다() throws IOException {
-        // EgovArchives 는 엔트리 이름의 역슬래시를 / 로 정규화한 뒤 검사한다 — POSIX 에서
-        // "..\..\x" 가 이름 하나로 남아 통과하는 일이 없다(EgovFiles 단독 계약보다 엄격)
+        // 엔트리 이름의 역슬래시를 / 로 정규화한 뒤 검사(POSIX에서도 차단)
         arrange();
         Path zip = zip(tempDir.resolve("bs.zip"), ".." + BS + ".." + BS + "pwn.txt");
         assertThrows(IllegalArgumentException.class, () -> EgovArchives.unzip(zip, target));
@@ -102,8 +97,7 @@ public class EgovArchivesSecurityTest {
 
     @Test
     public void 기준_자신으로_정규화되는_파일_엔트리는_실패로_닫힌다() throws IOException {
-        // "sub/.." 는 정규화하면 대상 디렉터리 자신이라 탈출은 아니지만, 파일 엔트리로 디렉터리에
-        // 쓰려는 셈이라 입출력 실패로 닫힌다 — 어느 쪽이든 밖에는 아무것도 생기지 않는다
+        // "sub/.."는 대상 디렉터리 자신이라 탈출은 아니며 입출력 실패로 끝난다
         arrange();
         Path zip = zip(tempDir.resolve("self.zip"), "sub/..");
         assertThrows(RuntimeException.class, () -> EgovArchives.unzip(zip, target));
@@ -144,11 +138,7 @@ public class EgovArchivesSecurityTest {
 
     // ------------------------------------------------------------ 미리 심긴 링크
 
-    /**
-     * 대상 디렉터리에 밖을 가리키는 링크가 <b>미리</b> 있어도 링크를 따라 밖에 쓰지 않는다 — 어휘적 봉쇄를
-     * 통과한 뒤 쓰기 직전에 실경로를 재확인해 거부한다. 이 API 군으로는 링크를 심을 수 없지만(링크 엔트리 거부),
-     * 다른 경로로 심긴 링크와 결합되는 방어 심도를 고정한다.
-     */
+    /** 대상 디렉터리에 밖을 가리키는 링크가 미리 있어도 링크를 따라 밖에 쓰지 않는다. */
     @Test
         public void 대상_디렉터리의_기존_심볼릭_링크_아래로는_해제되지_않는다() throws IOException {
 		org.junit.Assume.assumeFalse(System.getProperty("os.name").toLowerCase(java.util.Locale.ROOT).contains("win"));
@@ -163,7 +153,7 @@ public class EgovArchivesSecurityTest {
     @Test
         public void 대상_디렉터리의_기존_파일_링크를_엔트리가_덮어쓰지_않는다() throws IOException {
 		org.junit.Assume.assumeFalse(System.getProperty("os.name").toLowerCase(java.util.Locale.ROOT).contains("win"));
-        // 엔트리 이름과 같은 자리에 밖의 파일을 가리키는 링크가 있으면, 열어서 쓰는 순간 밖의 파일이 덮어써진다
+        // 엔트리 자리에 밖의 파일을 가리키는 링크를 미리 심는다
         arrange();
         Path secret = Files.write(outside.resolve("secret.txt"), "TOP-SECRET".getBytes(java.nio.charset.StandardCharsets.UTF_8));
         plantLink(target.resolve("flink.txt"), secret);

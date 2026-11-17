@@ -19,11 +19,7 @@ import org.springframework.mock.web.MockServletContext;
 import javax.servlet.http.Cookie;
 
 /**
- * {@link EgovSessionExpiryCookieFilter} 의 <b>노출 범위·설정 오류</b> 회귀 검증.
- *
- * <p>이 필터의 쿠키는 스크립트가 읽어야 하므로 {@code HttpOnly} 가 아니다. 그래서 담기는 값이
- * <b>시각 두 개뿐</b>이라는 점(세션 식별자 미노출)이 안전성의 근거이며, 여기서 그것을 고정한다.
- * 초기화 파라미터에 주입 문자가 섞인 경우에는 쿠키를 내지 않고 실패해야 한다.</p>
+ * {@link EgovSessionExpiryCookieFilter} 쿠키가 시각 값만 노출하고 잘못된 설정은 거부하는지 검증하는 회귀 테스트.
  */
 public class EgovSessionExpiryCookieFilterSecurityTest {
 

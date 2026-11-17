@@ -366,9 +366,7 @@ public class EgovFileUtil {
     }
 
     /**
-     * 호출자가 지정한 파일 경로가 상위 디렉토리 이동 시퀀스("..")를 포함하거나 절대 경로여서
-     * 의도한 위치를 벗어난 경로 순회(Path Traversal)나 임의 파일 쓰기/읽기로 이어지지 않도록 차단한다.
-     * 신뢰할 수 없는 입력(사용자 업로드 파일명 등)은 항상 이 검증을 통과하는 상대 경로여야 한다.
+     * 상위 디렉토리 이동(".."), 절대 경로, 널 바이트를 포함한 경로를 차단한다(Path Traversal 방지).
      */
     private static void assertNoPathTraversal(String fileName) {
         if (fileName == null || fileName.isEmpty()) {

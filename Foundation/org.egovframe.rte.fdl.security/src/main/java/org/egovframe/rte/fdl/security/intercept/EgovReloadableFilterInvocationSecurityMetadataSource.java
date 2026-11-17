@@ -39,18 +39,14 @@ import java.util.Map.Entry;
  * ----------------------------------------------
  * 2009.06.01   윤성종		        최초 생성
  * 2014.01.22   한성곤		        Spring Security 3.2.X 업그레이드 적용
- * 2026.10.25   실행환경 개발팀      reload() 시 맵을 비운 뒤 다시 채우던 방식을 새 맵 원자 교체로 변경
- *                               (재적재 중 빈 맵으로 인가가 적용되지 않는 구간 제거)
+ * 2026.10.25   실행환경 개발팀      reload() 시 새 맵 원자 교체로 변경
  * </pre>
  * @since 2009.06.01
  */
 public class EgovReloadableFilterInvocationSecurityMetadataSource implements FilterInvocationSecurityMetadataSource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EgovReloadableFilterInvocationSecurityMetadataSource.class);
-    /**
-     * URL-권한 매핑. reload() 시 새 맵을 완성한 뒤 참조를 한 번에 교체한다(volatile).
-     * 기존처럼 clear() 후 다시 채우면 그 사이 요청이 빈 맵을 보고 권한 검사 없이 통과할 수 있다.
-     */
+    /** URL-권한 매핑 (reload() 시 새 맵으로 원자 교체) */
     private volatile Map<RequestMatcher, Collection<ConfigAttribute>> requestMap;
     private EgovSecuredObjectService securedObjectService;
 
@@ -93,7 +89,7 @@ public class EgovReloadableFilterInvocationSecurityMetadataSource implements Fil
         for (Entry<RequestMatcher, List<ConfigAttribute>> entry : reloadedMap.entrySet()) {
             reloaded.put(entry.getKey(), entry.getValue());
         }
-        // 새 맵을 완성한 뒤 한 번에 교체한다(조회 중인 요청은 이전 맵을 끝까지 사용).
+        // 새 맵을 완성한 뒤 한 번에 교체
         this.requestMap = reloaded;
         LOGGER.info("Secured Url Resources - Role Mappings reloaded at Runtime!");
     }

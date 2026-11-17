@@ -31,48 +31,21 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * 안전 기본값이 붙는 쿠키 빌더 + 읽기·삭제 헬퍼.
- *
- * <p>Servlet {@link Cookie} 도 Spring {@code ResponseCookie} 도 기본값이 비어 있어(SameSite 없음·
- * HttpOnly false·Secure false) 개발자가 빠뜨리면 그대로 나간다. 이 빌더는 <b>빠뜨릴 수 없는
- * 기본값</b>을 강제하고, 브라우저가 폐기하는 조합과 주입 가능한 값을 <b>생성 시점에 거부</b>한다.</p>
- *
- * <table border="1">
- *   <caption>기본값</caption>
- *   <tr><th>속성</th><th>기본</th><th>비고</th></tr>
- *   <tr><td>HttpOnly</td><td>true</td><td>{@link Builder#httpOnly(boolean)} 로 명시 해제</td></tr>
- *   <tr><td>SameSite</td><td>Lax</td><td>Strict·None 선택 가능, 빈 값이면 미설정</td></tr>
- *   <tr><td>Secure</td><td>요청이 보안 채널이면 자동</td><td>{@link Builder#secure(boolean)} 명시가 우선</td></tr>
- *   <tr><td>Path</td><td>컨텍스트 루트</td><td>요청 경로에 따라 달라지는 Servlet 기본값을 쓰지 않는다</td></tr>
- * </table>
+ * 안전 기본값(HttpOnly, SameSite=Lax, 컨텍스트 루트 Path, 보안 채널이면 Secure)을 적용하는 쿠키 빌더 및 읽기·삭제 헬퍼.
+ * SameSite=None+비 Secure 조합과 제어 문자·CR/LF·{@code ;} 포함 입력은 생성 시점에 거부한다(헤더 주입 방지).
  *
  * <pre>
  * EgovCookies.builder("theme", "dark").maxAge(Duration.ofDays(30)).addTo(request, response);
- * EgovCookies.builder("name", "홍길동").encodeValue().addTo(request, response);   // 비 ASCII 는 인코딩 선택
  * Optional&lt;String&gt; theme = EgovCookies.value(request, "theme");
- * EgovCookies.expire("theme").addTo(request, response);                        // 같은 Path 로 삭제
+ * EgovCookies.expire("theme").addTo(request, response);
  * </pre>
- *
- * <p><b>거부 규칙(IAE)</b>: {@code SameSite=None} 인데 Secure 가 아님(브라우저가 폐기) · 이름이 RFC 6265
- * token 이 아님 · 이름·값에 제어 문자·CR/LF·{@code ;} 포함(헤더 주입) · 값이 cookie-octet 밖
- * 문자(공백·{@code "}·{@code ,}·{@code \}·비 ASCII)를 포함하는데 {@link Builder#encodeValue()} 를
- * 선택하지 않음. 원본(공통컴포넌트 {@code EgovSessionCookieUtil})처럼 CRLF 를 조용히 지우는
- * 정제는 하지 않는다 — 잘못된 입력은 실패가 맞다(설계 원칙 4).</p>
- *
- * <p><b>Secure 자동 판정과 프록시</b>: HTTPS 종단이 리버스 프록시에 있으면 컨테이너가 보는
- * {@code request.isSecure()} 는 false 다. 표준 경로는 forward 헤더 신뢰 설정(Boot
- * {@code server.forward-headers-strategy}, Tomcat {@code RemoteIpValve})이고, 그것이 없으면
- * {@code secure(true)} 를 명시한다. 원본처럼 무조건 true 로 두면 HTTP 개발환경에서 쿠키가
- * 저장되지 않는 침묵 미동작이 생기므로 자동이 기본이다.</p>
  *
  * <pre>
  * &lt;&lt; 개정이력(Modification Information) &gt;&gt;
  *
  *  수정일        수정자        수정내용
  *  ----------  --------    ---------------------------
- *  2026.09.02  실행환경팀     최초 생성 (안전 기본값 쿠키 빌더 — 원본 EgovSessionCookieUtil 은
- *                            SameSite 전무·Secure 하드코딩·CRLF 정제 편측·path 미설정·부재 이원화
- *                            결함에 소비처 0건이라 계약(set·get·delete)만 참고, 코드 이식 없음)
+ *  2026.09.02  실행환경팀     최초 생성
  * </pre>
  *
  * @author 실행환경 개발팀
@@ -80,13 +53,13 @@ import java.util.Optional;
  */
 public final class EgovCookies {
 
-	/** SameSite=Lax — 기본값. 외부 링크 진입(top-level GET)에는 쿠키가 실리고 교차 사이트 POST 에는 실리지 않는다. */
+	/** SameSite=Lax (기본값). */
 	public static final String SAME_SITE_LAX = "Lax";
 
-	/** SameSite=Strict — 외부 링크 진입에도 쿠키가 실리지 않는다(로그인 유지가 끊기는 흔한 함정). */
+	/** SameSite=Strict. */
 	public static final String SAME_SITE_STRICT = "Strict";
 
-	/** SameSite=None — 교차 사이트 허용. 반드시 Secure 여야 한다(아니면 생성 거부). */
+	/** SameSite=None (Secure 필수). */
 	public static final String SAME_SITE_NONE = "None";
 
 	private static final String ATTR_PARTITIONED = "Partitioned";
@@ -98,7 +71,7 @@ public final class EgovCookies {
 	 * 발급 빌더를 연다.
 	 *
 	 * @param name  쿠키 이름(RFC 6265 token)
-	 * @param value 쿠키 값(cookie-octet — 비 ASCII·공백 등은 {@link Builder#encodeValue()} 필요)
+	 * @param value 쿠키 값(비 ASCII·공백 등은 {@link Builder#encodeValue()} 필요)
 	 * @throws IllegalArgumentException 이름이 token 이 아니거나 값에 제어 문자·CR/LF·{@code ;} 가 있는 경우
 	 */
 	public static Builder builder(String name, String value) {
@@ -106,8 +79,7 @@ public final class EgovCookies {
 	}
 
 	/**
-	 * 삭제 빌더를 연다 — 빈 값·{@code Max-Age=0}. 발급 때와 <b>같은 Path·Domain</b> 을 지정해야
-	 * 브라우저가 같은 쿠키로 본다(기본값끼리는 자동 정합).
+	 * 삭제 빌더(빈 값, {@code Max-Age=0})를 연다. 발급 때와 같은 Path·Domain을 지정해야 한다.
 	 *
 	 * @param name 삭제할 쿠키 이름
 	 */
@@ -116,8 +88,7 @@ public final class EgovCookies {
 	}
 
 	/**
-	 * 요청에서 쿠키 값을 읽는다. 쿠키가 전혀 없거나 이름이 없으면 <b>둘 다</b> 빈 Optional —
-	 * 원본의 {@code ""}/{@code null} 이원화를 단일 표현으로 교정.
+	 * 요청에서 쿠키 값을 읽는다. 쿠키가 없으면 빈 Optional을 반환한다.
 	 */
 	public static Optional<String> value(HttpServletRequest request, String name) {
 		Objects.requireNonNull(request, "request must not be null");
@@ -135,9 +106,7 @@ public final class EgovCookies {
 	}
 
 	/**
-	 * {@link Builder#encodeValue()} 로 발급한 쿠키의 값을 URL 디코딩해 읽는다(발급의 대칭).
-	 * 쿠키 값은 클라이언트가 임의로 바꿀 수 있으므로, 디코딩할 수 없는 값(깨진 퍼센트 인코딩)은
-	 * 예외 대신 <b>빈 Optional</b> 로 다룬다 — 이 헬퍼가 발급한 값은 항상 디코딩된다.
+	 * {@link Builder#encodeValue()}로 발급한 쿠키 값을 URL 디코딩해 읽는다. 디코딩할 수 없으면 빈 Optional.
 	 */
 	public static Optional<String> decodedValue(HttpServletRequest request, String name) {
 		return value(request, name).flatMap(EgovCookies::decodeOrEmpty);
@@ -151,9 +120,7 @@ public final class EgovCookies {
 		}
 	}
 
-	/**
-	 * {@link EgovCookies} 빌더 — 미지정 속성은 안전 기본값.
-	 */
+	/** {@link EgovCookies} 빌더. 미지정 속성은 안전 기본값을 쓴다. */
 	public static final class Builder {
 
 		private final String name;
@@ -184,8 +151,7 @@ public final class EgovCookies {
 		}
 
 		/**
-		 * SameSite — {@code Lax}·{@code Strict}·{@code None}(대소문자 무시, 표준 표기로 정규화).
-		 * null 이나 빈 값이면 속성을 붙이지 않는다(명시 해제).
+		 * SameSite({@code Lax}·{@code Strict}·{@code None}, 대소문자 무시)를 지정한다. null·빈 값이면 속성을 붙이지 않는다.
 		 *
 		 * @throws IllegalArgumentException 세 값 외의 문자열
 		 */
@@ -202,7 +168,7 @@ public final class EgovCookies {
 			return this;
 		}
 
-		/** Secure 명시 — 지정하면 요청 채널 자동 판정보다 우선한다. */
+		/** Secure 여부를 지정한다(요청 채널 자동 판정보다 우선). */
 		public Builder secure(boolean secure) {
 			this.secure = secure;
 			return this;
@@ -249,8 +215,7 @@ public final class EgovCookies {
 		}
 
 		/**
-		 * 값을 URL 인코딩해 발급한다(UTF-8). 비 ASCII·공백·따옴표 등 cookie-octet 밖 문자가 있을 때
-		 * 선택한다. 읽을 때는 {@link EgovCookies#decodedValue(HttpServletRequest, String)}.
+		 * 값을 UTF-8로 URL 인코딩해 발급한다. 읽을 때는 {@link EgovCookies#decodedValue(HttpServletRequest, String)}를 쓴다.
 		 */
 		public Builder encodeValue() {
 			this.encodeValue = true;
@@ -258,16 +223,10 @@ public final class EgovCookies {
 		}
 
 		/**
-		 * 쿠키를 만든다. Secure 미지정 시 {@code request.isSecure()} 로, Path 미지정 시 컨텍스트 루트로
-		 * 채운다.
+		 * 쿠키를 만든다. Secure 미지정 시 {@code request.isSecure()}, Path 미지정 시 컨텍스트 루트를 쓴다.
 		 *
-		 * <p>Servlet 4.0 의 {@link Cookie} 는 SameSite·Partitioned 속성을 담을 수 없으므로 Spring
-		 * {@link ResponseCookie} 로 조립한다. 응답에는 {@link #addTo(HttpServletRequest, HttpServletResponse)} 가
-		 * {@code Set-Cookie} 헤더로 직접 싣는다({@code response.addCookie()} 를 쓰면 SameSite 가 빠진다).</p>
-		 *
-		 * @param request 발급 요청(자동 판정용 — null 이면 Secure=false·Path="/")
-		 * @throws IllegalArgumentException None/Partitioned 인데 Secure 가 아님, 값이 cookie-octet 밖인데
-		 *                                  인코딩 미선택
+		 * @param request 발급 요청(null이면 Secure=false, Path="/")
+		 * @throws IllegalArgumentException None/Partitioned인데 Secure가 아니거나, cookie-octet 밖 값을 인코딩하지 않은 경우
 		 */
 		public ResponseCookie build(HttpServletRequest request) {
 			String cookieValue = encodeValue
@@ -347,7 +306,7 @@ public final class EgovCookies {
 
 	// ---------------------------------------------------------------- 검증
 
-	/** RFC 6265 token — 제어 문자·구분자(`()<>@,;:\"/[]?={} 공백 탭`) 제외. */
+	/** 이름이 RFC 6265 token인지 검증한다. */
 	private static String validName(String name) {
 		Objects.requireNonNull(name, "name must not be null");
 		if (name.isEmpty()) {
@@ -362,7 +321,7 @@ public final class EgovCookies {
 		return name;
 	}
 
-	/** 인코딩 여부와 무관하게 절대 허용하지 않는 문자 — 제어 문자·CR/LF·{@code ;}. */
+	/** 제어 문자·CR/LF·{@code ;}가 포함된 값을 거부한다. */
 	private static String validRawValue(String value) {
 		Objects.requireNonNull(value, "value must not be null");
 		for (int i = 0; i < value.length(); i++) {

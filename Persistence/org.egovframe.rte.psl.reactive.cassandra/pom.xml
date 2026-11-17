@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.egovframe.rte</groupId>
         <artifactId>org.egovframe.rte.root</artifactId>
-        <version>4.3.1</version>
+        <version>4.3.2</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -81,6 +81,60 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <!-- 전이 의존성 버전 지정 : 부모 POM(BOM) 없이 이 모듈을 쓰는 프로젝트에도 루트 POM 관리 버전 적용 -->
+        <dependency>
+            <!-- spring-data-cassandra 가 가져오는 공식 spring-data-commons(2.7.18) 대신 보안 수정 포크 버전을 소비자에도 적용 (CVE-2026-41716 · 41711 · 41721) -->
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-commons</artifactId>
+        </dependency>
+        <dependency>
+            <!-- java-driver-core 가 가져오는 jackson(2.13.2) 대신 루트 POM 관리 버전을 소비자에도 적용 -->
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+        </dependency>
+        <dependency>
+            <!-- java-driver-core 가 가져오는 netty(4.1.94.Final) 대신 루트 POM 관리 버전(netty-bom)을 소비자에도 적용 -->
+            <groupId>io.netty</groupId>
+            <artifactId>netty-handler</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-buffer</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-resolver</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport-native-unix-common</artifactId>
+        </dependency>
+        <dependency>
+            <!-- java-driver-core 가 가져오는 reactive-streams(1.0.3) 대신 reactor-core 와 같은 루트 POM 관리 버전을 소비자에도 적용 -->
+            <groupId>org.reactivestreams</groupId>
+            <artifactId>reactive-streams</artifactId>
         </dependency>
 
         <!-- Test -->

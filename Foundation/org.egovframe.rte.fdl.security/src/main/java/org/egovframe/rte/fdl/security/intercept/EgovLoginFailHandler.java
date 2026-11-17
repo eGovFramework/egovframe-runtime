@@ -29,13 +29,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * 로그인 실패 처리기 — 실패 원인과 무관하게 동일한 예외(메시지)만 화면에 전달한다.
- *
- * <p>기본 {@link SimpleUrlAuthenticationFailureHandler}는 실제 실패 예외(계정 없음·잠김·비활성·만료 등)를
- * 세션의 {@code SPRING_SECURITY_LAST_EXCEPTION}에 그대로 저장하므로, 화면이 그 메시지를 출력하면 계정 존재
- * 여부와 상태가 드러난다(계정 열거, CWE-203/204). 이 처리기는 이동 방식(redirect/forward)과 실패 URL 설정은
- * 그대로 두고, 저장되는 예외만 일반 메시지의 {@link BadCredentialsException}으로 바꾼다.
- * 실제 원인은 서버 debug 로그로만 남긴다.</p>
+ * 실패 원인과 무관하게 동일한 예외(메시지)만 화면에 전달하는 로그인 실패 처리 클래스.
+ * 세션에는 일반 메시지의 {@link BadCredentialsException}만 저장하고 실제 원인은 debug 로그로 남긴다(계정 열거 CWE-203/204 방지).
  *
  * @author 실행환경 개발팀
  * @since 2026.10.25
@@ -44,7 +39,7 @@ import java.io.IOException;
  *
  * 수정일		수정자				수정내용
  * ----------------------------------------------
- * 2026.10.25	실행환경 개발팀		최초 생성 (5.1.0 EgovLoginFailHandler 의 계정 열거 방지 정책 반영)
+ * 2026.10.25	실행환경 개발팀		최초 생성 (5.1.0 기능 이식)
  * </pre>
  */
 public class EgovLoginFailHandler extends SimpleUrlAuthenticationFailureHandler {
@@ -69,7 +64,7 @@ public class EgovLoginFailHandler extends SimpleUrlAuthenticationFailureHandler 
     }
 
     /**
-     * 화면에 전달할 일반 예외. 메시지는 Spring Security 메시지 번들의 자격 증명 실패 문구를 쓴다.
+     * 화면에 전달할 일반 예외(Spring Security 자격 증명 실패 메시지)를 반환한다.
      */
     protected AuthenticationException genericException() {
         return new BadCredentialsException(

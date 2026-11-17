@@ -38,8 +38,7 @@ import java.util.Locale;
  * 2014.03.12	장동한			SpringSecurity 4.x 업그레이드 추가
  * 2020.05.27	ESFC			CSRF Access Denied handler 설정 추가
  * 2023.08.31	ESFC			Spring 표현 언어(SpEL) 설정 옵션 추가
- * 2026.10.25	실행환경 개발팀		보안 헤더 개별 제어(sniff=false 가 기본 헤더 전체를 끄던 문제 수정),
- *                          X-Frame-Options 값 검증, cacheControl=true 경고, 로그인 실패 메시지 일반화
+ * 2026.10.25	실행환경 개발팀		보안 헤더 개별 제어, X-Frame-Options 값 검증, 로그인 실패 메시지 일반화
  * </pre>
  * @since 2016.07.03
  */
@@ -95,14 +94,13 @@ public class EgovSecurityHttp {
         sb.append("        disable-url-rewriting=\"false\"\n");
         sb.append("        use-expressions=\"").append(useExpressions).append("\">\n");
 
-        // 기본 보안 헤더(HSTS·Cache-Control·X-Content-Type-Options 등)는 항상 켜 두고, 옵션별로 개별 제어한다.
-        // (종전에는 sniff=false 이면 defaults-disabled="true" 가 되어 모든 기본 보안 헤더가 함께 꺼졌다)
+        // 기본 보안 헤더는 유지하고 옵션별로 개별 제어
         sb.append("        <headers defaults-disabled=\"false\">\n");
 
         // X-Content-Type-Options
         sb.append("            <content-type-options disabled=\"").append(!Sniff).append("\"/>\n");
 
-        // X-Frame-Options (설정 값을 XML 에 그대로 이어 붙이지 않도록 허용 값만 사용)
+        // X-Frame-Options (허용 값만 사용)
         String frameOptions = (XFrameOptions == null) ? "" : XFrameOptions.trim().toUpperCase(Locale.ROOT);
         if ("DISABLE".equals(frameOptions)) {
             sb.append("            <frame-options disabled=\"true\"/>\n");
@@ -119,7 +117,7 @@ public class EgovSecurityHttp {
             sb.append("            <xss-protection enabled=\"true\" block=\"true\"/>\n");
         }
 
-        // Cache-Control (주의: cacheControl=true 는 보호 헤더를 "비활성화"한다 - 이름과 반대 동작, CWE-525)
+        // Cache-Control (cacheControl=true는 보호 헤더 비활성화, CWE-525)
         if (CacheControl) {
             LOGGER.warn("cacheControl=true - this DISABLES the protective Cache-Control/Pragma/Expires " +
                     "response headers (the property name is misleading). Sensitive pages may be cached by " +
@@ -138,7 +136,7 @@ public class EgovSecurityHttp {
             sb.append("        <csrf disabled=\"true\"/>\n");
         }
 
-        // 로그인 실패 원인(계정 없음·잠김 등)을 화면에 구분해 노출하지 않도록 일반화 처리기를 사용한다(CWE-203).
+        // 로그인 실패 원인을 노출하지 않는 처리기 사용(CWE-203)
         sb.append("        <form-login login-page=\"/egov_security_login\" username-parameter=\"egov_security_username\" password-parameter=\"egov_security_password\" authentication-failure-handler-ref=\"egovLoginFailHandler\"/>\n");
         sb.append("        <logout logout-url=\"/egov_security_logout\"/>\n");
         sb.append("        <anonymous/>\n");

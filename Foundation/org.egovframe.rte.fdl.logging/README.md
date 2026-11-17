@@ -2,8 +2,8 @@
 
 **Foundation Layer 로깅(Logging) 모듈**입니다. 실행환경의 로깅 구현체인 **Apache Log4j 2**와 **SLF4J 2.x** 브리지(`log4j-slf4j2-impl`, `jcl-over-slf4j`, `log4j-over-slf4j`)를 한 곳에서 의존성으로 묶어 제공하며, 여기에 Log4j 2 JDBC Appender용 커넥션 팩토리, 요청 식별자 검증, 리소스 해제 등의 소형 유틸리티 클래스를 더합니다. `fdl.cmmn`, `fdl.string`, `fdl.xml`, `psl.dataaccess`, `psl.reactive.*`, `ptl.reactive`, `itl.integration` 등 대부분의 실행환경 모듈이 이 모듈을 통해 로깅 의존성을 전이받습니다.
 
-- **Artifact**: `org.egovframe.rte:org.egovframe.rte.fdl.logging:4.3.1`
-- **Runtime**: Java 1.8 / Log4j 2 2.25.5 / SLF4J 2.0.17 (Spring Framework 5.3.39-egov.1은 테스트 전용)
+- **Artifact**: `org.egovframe.rte:org.egovframe.rte.fdl.logging:4.3.2`
+- **Runtime**: Java 1.8 / Log4j 2 2.25.5 / SLF4J 2.0.17 (Spring Framework 5.3.39-egov.2는 테스트 전용)
 - **실행환경 의존**: 없음
 
 ---
@@ -58,9 +58,10 @@ src/main/java/org/egovframe/rte/fdl/logging/
 | `org.slf4j:log4j-over-slf4j` | 2.0.17 | compile. Log4j 1.x API → SLF4J 브리지 |
 | `javax.annotation:javax.annotation-api` | 1.3.2 | compile |
 | `com.googlecode.log4jdbc:log4jdbc` | 1.2 | test (slf4j-api 제외) |
-| `org.springframework:spring-context` / `spring-jdbc` / `spring-jms` / `spring-test` | 5.3.39-egov.1 | test |
+| `org.springframework:spring-context` / `spring-jdbc` / `spring-jms` / `spring-test` | 5.3.39-egov.2 | test |
 | `org.hsqldb:hsqldb` (`jdk8`) / `commons-dbcp2` / `mysql-connector-j` | 2.7.3 / 2.13.0 / 8.4.0 | test |
 | `aspectjweaver` / `aspectjrt` / `cglib` / `aopalliance` / `commons-lang3` | 1.9.23 / 1.9.23 / 3.3.0 / 1.0 / 3.20.0 | test (AOP 로깅 예제) |
+| `javax.servlet-api` / `jstl-api` / `taglibs-standard-impl` | 4.0.1 / 1.2 / 1.2.5 | test |
 | `junit` | 4.13.2 | test |
 
 버전은 모두 루트 `pom.xml`의 `dependencyManagement`에서 관리하며 모듈 POM에는 선언하지 않습니다. `spring-jms`, `spring-test`는 `commons-logging`을 제외하여 `jcl-over-slf4j`와 충돌하지 않도록 합니다.
@@ -182,11 +183,11 @@ mvn test -pl Foundation/org.egovframe.rte.fdl.logging
 <dependency>
     <groupId>org.egovframe.rte</groupId>
     <artifactId>org.egovframe.rte.fdl.logging</artifactId>
-    <version>4.3.1</version>
+    <version>4.3.2</version>
 </dependency>
 ```
 
-부모 POM(`org.egovframe.boot.starter.parent` 또는 `org.egovframe.web.config.parent` 4.3.1)을 상속하면 `<version>`을 생략할 수 있습니다. `-egov.1` 포크 아티팩트를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소 등록이 필요합니다.
+부모 POM(`org.egovframe.boot.starter.parent` 또는 `org.egovframe.web.config.parent` 4.3.2)을 상속하면 `<version>`을 생략할 수 있습니다. `-egov.2` 포크 아티팩트를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소 등록이 필요합니다.
 
 ---
 

@@ -46,11 +46,8 @@ import java.util.regex.Pattern;
  *   );
  * </pre>
  *
- * <p><b>보안·동시성:</b> 테이블명·필드명은 SQL 문에 이어 붙는 식별자이므로 영문·숫자·밑줄(테이블은
- * {@code 스키마.테이블} 허용)만 받는다(SQL 삽입 방지). 구분값({@code tableName})은 바인드 변수로 전달한다.
- * 블록 채번 SELECT 에는 {@code FOR UPDATE} 행 잠금을 걸어 여러 WAS 가 같은 DB 를 공유해도 같은 블록을
- * 중복 할당하지 않는다. SQL Server 처럼 {@code FOR UPDATE} 를 지원하지 않는 DBMS 는
- * {@link #setSelectForUpdate(boolean)} 로 끄고 DBMS 별 잠금 방식을 별도로 적용한다.</p>
+ * <p>테이블명·필드명은 안전한 식별자만 허용하고 구분값은 바인드 변수로 전달한다(SQL 삽입 방지).
+ * 블록 채번 SELECT는 {@code FOR UPDATE}로 행을 잠근다({@link #setSelectForUpdate(boolean)}로 해제 가능).</p>
  *
  * @author 실행환경 개발팀 김태호
  * @version 1.0
@@ -64,7 +61,7 @@ import java.util.regex.Pattern;
  * 2013.09.04	한성곤				TransactionTemplate을 통해 transaction 처리 분리
  * 2014.08.18	한성곤				명명규칙 클래스 명 변경
  * 2017.02.28	장동한				시큐어코딩(ES)-오류 메시지를 통한 정보노출[CWE-209]
- * 2026.10.25	실행환경 개발팀		SQL 식별자 검증·구분값 바인딩(SQL 삽입 방지), 채번 SELECT 행 잠금(FOR UPDATE)
+ * 2026.10.25	실행환경 개발팀		SQL 삽입 방지, 채번 SELECT 행 잠금 적용
  * </pre>
  * @since 2009.02.01
  */
@@ -138,7 +135,7 @@ public class EgovTableIdGnrServiceImpl extends AbstractDataBlockIdGnrService {
     private Object insertInitId(final boolean useBigDecimals, final int blockSize) {
         LOGGER.debug(messageSource.getMessage("debug.idgnr.init.idblock", new Object[]{tableName}, Locale.getDefault()));
         Object initId = null;
-        // 구분값(tableName)은 문자열로 이어 붙이지 않고 바인드 변수로 전달한다(SQL 삽입 방지).
+        // 구분값은 바인드 변수로 전달(SQL 삽입 방지)
         String insertQuery = "INSERT INTO " + table + "(" + tableNameFieldName + ", " + nextIdFieldName + ") " + "values(?, ?)";
         LOGGER.debug("Insert Query : {}", insertQuery);
         if (useBigDecimals) {
@@ -168,8 +165,7 @@ public class EgovTableIdGnrServiceImpl extends AbstractDataBlockIdGnrService {
                     Object nextId;
                     Object newNextId;
                     try {
-                        // mSemaphore 는 같은 JVM 내 동시성만 막는다. 여러 WAS 가 같은 DB 를 공유하면 다른 JVM 의
-                        // 트랜잭션이 같은 next_id 를 동시에 읽을 수 있으므로 FOR UPDATE 로 행을 잠근다.
+                        // 다중 WAS 동시 채번 방지를 위해 FOR UPDATE로 행 잠금
                         String selectQuery = "SELECT " + nextIdFieldName + " FROM " + table + " WHERE " + tableNameFieldName + " = ?"
                                 + (selectForUpdate ? " FOR UPDATE" : "");
                         LOGGER.debug("Select Query : {}", selectQuery);
@@ -293,8 +289,7 @@ public class EgovTableIdGnrServiceImpl extends AbstractDataBlockIdGnrService {
     }
 
     /**
-     * 블록 채번 SELECT 에 FOR UPDATE 행 잠금을 사용할지 지정한다 (기본 true).
-     * FOR UPDATE 구문을 지원하지 않는 DBMS(SQL Server 등)에서만 false 로 둔다.
+     * 블록 채번 SELECT에 FOR UPDATE 행 잠금 사용 여부를 지정한다(기본 true, 미지원 DBMS는 false).
      *
      * @param selectForUpdate FOR UPDATE 사용 여부
      */

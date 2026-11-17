@@ -2,8 +2,8 @@
 
 **배치(Batch) 실행환경 모듈**입니다. Spring Batch 4.3.10을 기반으로 대용량 파일·DB 연동 Reader/Writer, 복합(Composite) Reader, Job/Step/Chunk 리스너, Job·Step 범위 변수 공유, 커맨드라인·스케줄러 실행기 등 배치 업무 개발에 필요한 확장 기능을 제공합니다. 실행환경의 다른 모듈은 이 모듈에 의존하지 않으며, 배치 적용 프로젝트(배치 템플릿 등)가 직접 사용합니다.
 
-- **Artifact**: `org.egovframe.rte:org.egovframe.rte.bat.core:4.3.1`
-- **Runtime**: Java 1.8 / Spring Framework 5.3.39-egov.1 / Spring Batch 4.3.10 / Spring Integration 5.5.20-egov.1
+- **Artifact**: `org.egovframe.rte:org.egovframe.rte.bat.core:4.3.2`
+- **Runtime**: Java 1.8 / Spring Framework 5.3.39-egov.2 / Spring Batch 4.3.10 / Spring Integration 5.5.20-egov.2
 - **실행환경 의존**: `org.egovframe.rte.fdl.cmmn`, `org.egovframe.rte.psl.dataaccess` (compile), `org.egovframe.rte.fdl.idgnr`, `spring-modules-validation` (test)
 
 ---
@@ -122,16 +122,19 @@ src/main/java/org/egovframe/rte/bat/
 
 | 라이브러리 | 버전 | scope/비고 |
 |---|---|---|
-| `org.egovframe.rte.fdl.cmmn`, `org.egovframe.rte.psl.dataaccess` | 4.3.1 | compile. MyBatis 3.5.16 / MyBatis-Spring 2.1.2는 `psl.dataaccess`를 통해 전이 |
+| `org.egovframe.rte.fdl.cmmn`, `org.egovframe.rte.psl.dataaccess` | 4.3.2 | compile. MyBatis 3.5.16 / MyBatis-Spring 2.1.2는 `psl.dataaccess`를 통해 전이 |
 | `spring-batch-test`, `spring-batch-integration` | 4.3.10 | compile (`spring-batch-core`, `spring-batch-infrastructure` 전이) |
-| `spring-integration-core` | 5.5.20-egov.1 | compile (`spring-batch-integration`이 가져오는 버전을 소비자에게도 적용) |
-| `micrometer-core` | 1.15.12 | compile (`spring-batch-core` 전이 의존성, CVE-2026-40984 대응) |
-| `spring-webmvc`, `spring-context-support`, `spring-orm`, `spring-messaging`, `spring-aop`, `spring-tx`, `spring-jdbc` | 5.3.39-egov.1 | compile |
+| `spring-integration-core` | 5.5.20-egov.2 | compile (`spring-batch-integration`이 가져오는 버전을 소비자에게도 적용) |
+| `micrometer-core` | 1.9.17-egov.2 | compile (`spring-batch-core` 전이 의존성. CVE-2026-40984, CVE-2026-59295, CVE-2026-59296 대응) |
+| `jackson-databind`, `jackson-core`, `jackson-annotations` | 2.18.12 | compile. 전이 의존성 버전 지정 — `spring-batch-core`가 가져오는 2.11.4 대신 루트 POM `jackson-bom` 버전 |
+| `io.projectreactor:reactor-core` | 3.4.41-egov.2 | compile. 전이 의존성 버전 지정 — `spring-integration-core`가 가져오는 3.4.34 대신 리액티브 모듈과 같은 버전 |
+| `spring-webmvc`, `spring-context-support`, `spring-orm`, `spring-messaging`, `spring-aop`, `spring-tx`, `spring-jdbc` | 5.3.39-egov.2 | compile |
 | `javax.annotation-api` | 1.3.2 | compile |
 | `commons-io` | 2.18.0 | compile |
-| `spring-test`, `spring-oxm` | 5.3.39-egov.1 | test |
+| `spring-test`, `spring-oxm` | 5.3.39-egov.2 | test |
 | `quartz` | 2.3.2 | test (c3p0 0.14.0 전이) |
 | `hsqldb` (`jdk8`), `commons-dbcp2`, `javax.mail`, `javax.servlet-api`, `junit` | 2.7.3 / 2.13.0 / 1.5.0-b01 / 4.0.1 / 4.13.2 | test |
+| `org.egovframe.rte.fdl.idgnr` / `spring-modules-validation` | 4.3.2 / 0.9 | test |
 
 Quartz는 test scope이므로 `EgovSchedulerRunner`를 사용하는 적용 프로젝트는 `org.quartz-scheduler:quartz`를 직접 추가해야 합니다.
 
@@ -302,11 +305,11 @@ mvn test -pl Batch/org.egovframe.rte.bat.core
 <dependency>
     <groupId>org.egovframe.rte</groupId>
     <artifactId>org.egovframe.rte.bat.core</artifactId>
-    <version>4.3.1</version>
+    <version>4.3.2</version>
 </dependency>
 ```
 
-부모 POM(`org.egovframe.boot.starter.parent` 또는 `org.egovframe.web.config.parent` 4.3.1)을 상속하면 `<version>` 생략 가능. `-egov.1` 포크 아티팩트(Spring Framework, Spring Integration)를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소 등록 필요.
+부모 POM(`org.egovframe.boot.starter.parent` 또는 `org.egovframe.web.config.parent` 4.3.2)을 상속하면 `<version>` 생략 가능. `-egov.2` 포크 아티팩트(Spring Framework, Spring Integration)를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소 등록 필요.
 
 ---
 

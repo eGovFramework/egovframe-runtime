@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.egovframe.rte</groupId>
         <artifactId>org.egovframe.rte.root</artifactId>
-        <version>4.3.1</version>
+        <version>4.3.2</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -131,6 +131,38 @@
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-transports-http-jetty</artifactId>
+        </dependency>
+
+        <!-- 전이 의존성 버전 지정 : 부모 POM(BOM) 없이 이 모듈을 쓰는 프로젝트에도 루트 POM 관리 버전 적용 -->
+        <dependency>
+            <!-- cxf-rt-ws-policy 가 가져오는 neethi(3.2.1) 대신 루트 POM 관리 버전을 소비자에도 적용 (CVE-2026-42402 · 42403 · 42404) -->
+            <groupId>org.apache.neethi</groupId>
+            <artifactId>neethi</artifactId>
+        </dependency>
+        <dependency>
+            <!-- cxf-rt-transports-http-jetty 가 가져오는 jetty(9.4.57) 대신 루트 POM 관리 버전(jetty-bom)을 소비자에도 적용 -->
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-http</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-io</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-continuation</artifactId>
         </dependency>
 
         <!-- Test -->

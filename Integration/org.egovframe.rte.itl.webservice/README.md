@@ -2,8 +2,8 @@
 
 **연계(Integration) 웹서비스 모듈**입니다. `org.egovframe.rte.itl.integration`의 연계 표준(컨텍스트·서비스·메시지·타입)을 **Apache CXF 기반 JAX-WS(SOAP) 웹서비스**로 구현합니다. 연계 정의 메타데이터와 웹서비스 클라이언트/서버 정의를 Hibernate DAO로 읽어 서비스 엔드포인트 클래스를 런타임에 생성하고, SOAP 호출과 `EgovIntegrationMessage` 간 변환을 수행합니다. 실행환경의 다른 모듈은 이 모듈에 의존하지 않습니다.
 
-- **Artifact**: `org.egovframe.rte:org.egovframe.rte.itl.webservice:4.3.1`
-- **Runtime**: Java 1.8 / Spring Framework 5.3.39-egov.1 / Apache CXF 3.5.11 / Jetty 9.4.58.v20250814 / JAX-WS API (`javax.xml.ws`) 2.3.1
+- **Artifact**: `org.egovframe.rte:org.egovframe.rte.itl.webservice:4.3.2`
+- **Runtime**: Java 1.8 / Spring Framework 5.3.39-egov.2 / Apache CXF 3.5.11 / Jetty 9.4.58.v20250814 / JAX-WS API (`javax.xml.ws`) 2.3.1
 - **실행환경 의존**: `org.egovframe.rte.itl.integration` (→ `org.egovframe.rte.fdl.logging`)
 
 ---
@@ -77,14 +77,16 @@ src/main/resources/org/egovframe/rte/itl/webservice/
 
 | 라이브러리 | 버전 | scope/비고 |
 |---|---|---|
-| `org.egovframe.rte.itl.integration` | 4.3.1 | compile (`fdl.logging`, `hibernate-entitymanager` 5.6.15.Final 전이) |
+| `org.egovframe.rte.itl.integration` | 4.3.2 | compile (`fdl.logging`, `hibernate-entitymanager` 5.6.15.Final 전이) |
 | `cxf-rt-frontend-jaxws`, `cxf-rt-transports-http-jetty` | 3.5.11 | compile (Jetty 9.4.58.v20250814, Neethi 3.2.2는 루트 POM에서 관리) |
+| `org.apache.neethi:neethi` | 3.2.2 | compile. 전이 의존성 버전 지정 — `cxf-rt-ws-policy`가 가져오는 3.2.1 대신 루트 POM 관리 버전 |
+| `jetty-server`, `jetty-http`, `jetty-io`, `jetty-util`, `jetty-security`, `jetty-continuation` | 9.4.58.v20250814 | compile. 전이 의존성 버전 지정 — `cxf-rt-transports-http-jetty`가 가져오는 9.4.57.v20241219 대신 루트 POM `jetty-bom` 버전 |
 | `jaxb-runtime`, `txw2` / `istack-commons-runtime` | 2.3.5 / 3.0.12 | `cxf-core` 전이 의존성. 이 모듈 POM의 `dependencyManagement`에서 버전 정렬 |
-| `spring-orm`, `spring-web`, `spring-context` | 5.3.39-egov.1 | compile |
+| `spring-orm`, `spring-web`, `spring-context` | 5.3.39-egov.2 | compile |
 | `jaxws-api` (`javax.xml.ws`) | 2.3.1 | compile |
 | `javax.annotation-api` | 1.3.2 | compile |
 | `javax.servlet-api` | 4.0.1 | provided |
-| `spring-test`, `hibernate-entitymanager`, `hsqldb` (`jdk8`), `commons-dbcp2`, `junit`, `dbunit`, `easymock` | 5.3.39-egov.1 / 5.6.15.Final / 2.7.3 / 2.13.0 / 4.13.2 / 2.7.3 / 5.2.0 | test |
+| `spring-test`, `hibernate-entitymanager`, `hsqldb` (`jdk8`), `commons-dbcp2`, `junit`, `dbunit`, `easymock` | 5.3.39-egov.2 / 5.6.15.Final / 2.7.3 / 2.13.0 / 4.13.2 / 2.7.3 / 5.2.0 | test |
 
 ---
 
@@ -205,11 +207,11 @@ mvn test -pl Integration/org.egovframe.rte.itl.webservice
 <dependency>
     <groupId>org.egovframe.rte</groupId>
     <artifactId>org.egovframe.rte.itl.webservice</artifactId>
-    <version>4.3.1</version>
+    <version>4.3.2</version>
 </dependency>
 ```
 
-부모 POM(`org.egovframe.boot.starter.parent` 또는 `org.egovframe.web.config.parent` 4.3.1)을 상속하면 `<version>` 생략 가능. `-egov.1` 포크 아티팩트를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소 등록 필요. 서블릿 컨테이너에 배포하는 경우 `javax.servlet-api`는 컨테이너가 제공합니다(provided).
+부모 POM(`org.egovframe.boot.starter.parent` 또는 `org.egovframe.web.config.parent` 4.3.2)을 상속하면 `<version>` 생략 가능. `-egov.2` Spring 포크 아티팩트를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소 등록 필요. 서블릿 컨테이너에 배포하는 경우 `javax.servlet-api`는 컨테이너가 제공합니다(provided).
 
 ---
 

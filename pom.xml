@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.egovframe.rte</groupId>
     <artifactId>org.egovframe.rte.root</artifactId>
-    <version>4.3.1</version>
+    <version>4.3.2</version>
     <packaging>pom</packaging>
     <name>org.egovframe.rte.root</name>
 
@@ -78,22 +78,25 @@
         <org.egovframe.rte.version>${project.version}</org.egovframe.rte.version>
 
         <!-- Spring -->
-        <spring.framework.version>5.3.39-egov.1</spring.framework.version>
-        <spring.security.version>5.8.16-egov.1</spring.security.version>
+        <spring.framework.version>5.3.39-egov.2</spring.framework.version>
+        <spring.security.version>5.8.16-egov.2</spring.security.version>
         <spring.batch.version>4.3.10</spring.batch.version>
-        <spring.integration.version>5.5.20-egov.1</spring.integration.version>
+        <spring.integration.version>5.5.20-egov.2</spring.integration.version>
         <spring.boot.version>2.7.18</spring.boot.version>
-        <jackson.version>2.18.11</jackson.version>
+        <jackson.version>2.18.12</jackson.version>
         <netty.version>4.1.138.Final</netty.version>
         <spring.data.cassandra.version>3.4.18</spring.data.cassandra.version>
         <spring.data.jpa.version>2.7.18</spring.data.jpa.version>
         <spring.data.mongodb.version>3.4.18-egov.1</spring.data.mongodb.version>
         <spring.data.r2dbc.version>1.5.18</spring.data.r2dbc.version>
         <spring.data.redis.version>2.7.18</spring.data.redis.version>
-        <spring.data.commons.version>2.7.18-egov.1</spring.data.commons.version>
+        <spring.data.commons.version>2.7.18-egov.2</spring.data.commons.version>
         <reactive.streams.version>1.0.4</reactive.streams.version>
         <reactor.version>3.4.41</reactor.version>
-        <micrometer.core.version>1.15.12</micrometer.core.version>
+        <!-- reactor-core : CVE-2026-47857 수정을 이식한 포크 (3.4 계열 수정판 3.4.42 는 상용 전용). reactor-test 는 공식 3.4.41(reactor.version) -->
+        <reactor.core.version>3.4.41-egov.2</reactor.core.version>
+        <!-- micrometer-core · micrometer-registry-statsd : CVE-2026-40984 · 59295 · 59296 수정을 이식한 포크 (Spring Boot 2.7.18 이 정한 1.9 계열 유지, 수정판 1.9.18 · 1.9.19 는 상용 전용) -->
+        <micrometer.core.version>1.9.17-egov.2</micrometer.core.version>
 
         <!-- Java EE (javax) -->
         <javaee.api.version>8.0.1</javaee.api.version>
@@ -135,6 +138,7 @@
         <!-- JSON / XML -->
         <jaxen.version>2.0.0</jaxen.version>
         <json.simple.version>1.1.1</json.simple.version>
+        <commons.digester3.version>3.2</commons.digester3.version>
 
         <!-- Apache Commons -->
         <commons.beanutils.version>1.11.0</commons.beanutils.version>
@@ -386,6 +390,12 @@
                 <version>${micrometer.core.version}</version>
             </dependency>
             <dependency>
+                <!-- CVE-2026-59296 영향 모듈 : 관리하지 않으면 Spring Boot 2.7.18 관리 버전(공식 1.9.17, 수정 전)이 선택됨 -->
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-registry-statsd</artifactId>
+                <version>${micrometer.core.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.springframework.data</groupId>
                 <artifactId>spring-data-jpa</artifactId>
                 <version>${spring.data.jpa.version}</version>
@@ -411,9 +421,7 @@
                 <version>${spring.data.redis.version}</version>
             </dependency>
 
-            <!-- Spring Boot : Boot Starter 모듈이 사용하는 항목만 관리
-                 spring-boot-dependencies BOM 전체를 import하면 실행환경 모듈과 루트 BOM을 가져오는
-                 적용 프로젝트의 전이 의존성 버전까지 바뀌므로 개별 아티팩트로 선언 -->
+            <!-- Spring Boot : Boot Starter 사용 항목만 개별 관리 (BOM 전체 import 시 적용 프로젝트 전이 버전까지 바뀜) -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-autoconfigure</artifactId>
@@ -644,6 +652,12 @@
                 <artifactId>json-simple</artifactId>
                 <version>${json.simple.version}</version>
             </dependency>
+            <dependency>
+                <!-- jxls-reader 가 쓰는 commons-digester3. 분류자 with-deps 대신 일반 jar 사용(fdl.excel) -->
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-digester3</artifactId>
+                <version>${commons.digester3.version}</version>
+            </dependency>
 
             <!-- Apache Commons -->
             <dependency>
@@ -756,7 +770,7 @@
             <dependency>
                 <groupId>io.projectreactor</groupId>
                 <artifactId>reactor-core</artifactId>
-                <version>${reactor.version}</version>
+                <version>${reactor.core.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.projectlombok</groupId>

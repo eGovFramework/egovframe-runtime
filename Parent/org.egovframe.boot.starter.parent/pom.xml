@@ -13,7 +13,7 @@
 
   <groupId>org.egovframe.boot</groupId>
   <artifactId>org.egovframe.boot.starter.parent</artifactId>
-  <version>4.3.1</version>
+  <version>4.3.2</version>
   <packaging>pom</packaging>
   <name>org.egovframe.boot.starter.parent</name>
   <description>eGovFramework Boot Dependencies</description>
@@ -32,7 +32,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <!-- eGovFrame -->
-    <egovframe.rte.version>4.3.1</egovframe.rte.version>
+    <egovframe.rte.version>4.3.2</egovframe.rte.version>
 
     <!-- 관리 라이브러리는 Java 8 동작 버전(class 52 이하)으로 지정 -->
     <!-- aspectjtools : 1.9.8+는 Java 11+ 필요 → 1.9.7 별도 지정 (aspectj.version과 분리) -->
@@ -40,6 +40,9 @@
 
     <!-- Spring Cloud -->
     <spring.cloud.version>2021.0.9</spring.cloud.version>
+
+    <!-- SpringDoc OpenAPI -->
+    <springdoc.version>1.8.0</springdoc.version>
 
     <!-- QueryDSL -->
     <com.querydsl.version>5.0.0</com.querydsl.version>
@@ -60,22 +63,23 @@
     <postgresql.version>42.7.12</postgresql.version>
     <!-- MariaDB : web.config.parent와 동일 버전 (Boot 기본 3.0.11) -->
     <mariadb.version>3.4.0</mariadb.version>
-    <!-- slf4j.version 재정의 금지 (Boot 기본 1.7.36 유지)
-         2.x로 올리면 log4j-slf4j2-impl과 log4j-to-slf4j가 충돌하여 기동 시 LoggingException 발생 -->
+    <!-- slf4j.version 재정의 금지 : Boot 기본 1.7.36 유지 (2.x는 log4j-slf4j2-impl·log4j-to-slf4j 충돌로 기동 실패) -->
     <log4j2.version>2.25.5</log4j2.version>
     <logback.version>1.2.13</logback.version>
     <commons-pool2.version>2.12.0</commons-pool2.version>
     <!-- commons-logging : Boot·실행환경 모두 미관리 (commons-configuration2 경유) -->
     <commons-logging.version>1.3.6</commons-logging.version>
-    <!-- log4j-api : 실행환경 루트 POM이 고정한 log4j-core/log4j-slf4j2-impl(2.25.5)과 같은 버전
-         (log4j2.version과 분리 : 프로젝트가 log4j2.version을 바꿔도 core와 api가 어긋나지 않도록) -->
+    <!-- log4j-api : 실행환경 log4j-core(2.25.5)와 같은 버전, log4j2.version과 분리해 core·api 불일치 방지 -->
     <log4j-api.version>2.25.5</log4j-api.version>
+
+    <!-- embeded tomcat : Boot 2.7.18 기본값(9.0.83) 재정의. Boot BOM 이 ${tomcat.version} 으로 tomcat-embed-* 등 7개를 함께 관리 -->
+    <tomcat.version>9.0.123</tomcat.version>
+
   </properties>
 
   <dependencyManagement>
     <dependencies>
-      <!-- eGovFrame RTE BOM : 실행환경 모듈과 관리 라이브러리 버전 적용
-           Boot가 가져오는 BOM보다 우선, Boot 직접 선언 항목보다는 후순위 (위 속성으로 재정의) -->
+      <!-- eGovFrame RTE BOM : Boot import BOM보다 우선, Boot 직접 선언 항목은 위 속성으로 재정의 -->
       <dependency>
         <groupId>org.egovframe.rte</groupId>
         <artifactId>org.egovframe.rte.root</artifactId>
@@ -91,6 +95,18 @@
         <version>${spring.cloud.version}</version>
         <type>pom</type>
         <scope>import</scope>
+      </dependency>
+
+      <!-- SpringDoc OpenAPI : Boot 2.7 용 1.x 계열 artifact (springdoc-openapi-starter-* 는 Boot 3 용 2.x 전용) -->
+      <dependency>
+        <groupId>org.springdoc</groupId>
+        <artifactId>springdoc-openapi-webflux-ui</artifactId>
+        <version>${springdoc.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springdoc</groupId>
+        <artifactId>springdoc-openapi-ui</artifactId>
+        <version>${springdoc.version}</version>
       </dependency>
 
       <!-- QueryDSL -->
@@ -117,8 +133,7 @@
         <artifactId>commons-logging</artifactId>
         <version>${commons-logging.version}</version>
       </dependency>
-      <!-- log4j-api : 실행환경 루트 POM은 log4j-core/log4j-slf4j2-impl만 관리 (log4j-core는 Boot log4j-bom보다 우선)
-           Boot log4j-bom의 log4j-api는 log4j2.version을 따르므로 별도 고정 → xmlbeans 5.3.0(2.24.x) 등 전이 버전과 core 불일치 방지 -->
+      <!-- log4j-api : 실행환경 log4j-core와 같은 버전으로 고정 (xmlbeans 5.3.0 전이 2.24.x 방지) -->
       <dependency>
         <groupId>org.apache.logging.log4j</groupId>
         <artifactId>log4j-api</artifactId>

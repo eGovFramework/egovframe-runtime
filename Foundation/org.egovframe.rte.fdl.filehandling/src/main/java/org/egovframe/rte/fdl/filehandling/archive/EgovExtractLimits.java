@@ -16,17 +16,11 @@
 package org.egovframe.rte.fdl.filehandling.archive;
 
 /**
- * 아카이브 해제 한도 — 압축 폭탄(zip bomb)형 자원 고갈을 봉쇄하는 상한 값.
- *
- * <p><b>NOTE:</b> 아카이브의 엔트리 수·압축 해제 후 크기는 <b>파일 안에 적힌 값을 믿을 수 없다</b>
- * (조작 가능). {@link EgovArchives}는 이 한도를 실제로 만든 엔트리 수·실제로 쓴 바이트 수에
- * 적용한다. 기본값({@link #defaults()})은 일반 업무 아카이브가 걸리지 않는 수준의 안전망이며,
- * 사용자 업로드 zip 해제처럼 신뢰 경계를 넘는 자리는 {@link #of(long, long)}로 훨씬 낮게 잡고,
- * 운영자가 직접 만든 대용량 백업 복원은 {@link #unlimited()}를 명시해 푼다.</p>
+ * 아카이브 해제 한도(엔트리 수·누적 해제 바이트) 값 객체.
+ * 압축 폭탄 방지를 위해 실제 해제한 엔트리 수·기록 바이트에 적용한다. 사용자 업로드 zip은 {@link #of(long, long)}로 낮게 지정한다.
  *
  * <pre>
- * EgovArchives.unzip(uploaded, workDir, StandardCharsets.UTF_8,
- *         EgovExtractLimits.of(1_000, 100L * 1024 * 1024));   // 1,000개·100MB 상한
+ * EgovArchives.unzip(uploaded, workDir, StandardCharsets.UTF_8, EgovExtractLimits.of(1_000, 100L * 1024 * 1024));
  * </pre>
  *
  * <pre>
@@ -34,7 +28,7 @@ package org.egovframe.rte.fdl.filehandling.archive;
  *
  *  수정일        수정자        수정내용
  *  ----------  --------    ---------------------------
- *  2026.09.01  실행환경팀     최초 생성 (원본 EgovFileCmprs 에 없던 해제 한도 신설)
+ *  2026.09.01  실행환경팀     최초 생성
  * </pre>
  *
  * @author 실행환경 개발팀
@@ -62,9 +56,7 @@ public final class EgovExtractLimits {
 		this.maxTotalBytes = maxTotalBytes;
 	}
 
-	/**
-	 * 기본 한도 — 엔트리 {@value #DEFAULT_MAX_ENTRIES}개, 누적 10 GiB.
-	 */
+	/** 기본 한도(엔트리 {@value #DEFAULT_MAX_ENTRIES}개, 누적 10 GiB). */
 	public static EgovExtractLimits defaults() {
 		return DEFAULTS;
 	}
@@ -84,9 +76,7 @@ public final class EgovExtractLimits {
 		return new EgovExtractLimits(maxEntries, maxTotalBytes);
 	}
 
-	/**
-	 * 한도 없음 — 운영자가 직접 만든 대용량 백업 복원처럼 <b>출처를 신뢰할 수 있는 경우에만</b> 쓴다.
-	 */
+	/** 한도 없음. 출처를 신뢰할 수 있는 아카이브에만 사용한다. */
 	public static EgovExtractLimits unlimited() {
 		return UNLIMITED;
 	}

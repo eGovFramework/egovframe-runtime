@@ -18,37 +18,20 @@ package org.egovframe.rte.fdl.filehandling;
 import java.nio.charset.StandardCharsets;
 
 /**
- * 다운로드 응답의 {@code Content-Disposition} 헤더 값을 만든다 — RFC 6266/5987 준수.
- *
- * <p><b>NOTE:</b> 한글 파일명을 {@code filename="한글.hwp"} 로 그대로 실으면 브라우저·프록시의
- * 헤더 해석 규칙(ISO-8859-1 기준)에 따라 파일명이 깨진다. 표준 해법은 RFC 5987
- * {@code filename*=UTF-8''퍼센트인코딩} 확장 파라미터이며, 이를 해석하지 못하는 구형
- * 에이전트를 위해 ASCII 폴백 {@code filename="..."} 을 <b>병기</b>하는 것이 RFC 6266 부록 D의
- * 권고다. 이 클래스는 두 파라미터를 함께 만든다.</p>
+ * 다운로드 응답의 {@code Content-Disposition} 헤더 값을 만든다(RFC 6266/5987).
+ * 비ASCII 파일명은 {@code filename*=UTF-8''...}과 ASCII 폴백 {@code filename}을 함께 싣고,
+ * 제어문자 제거·경로 구분자 앞부분 제거로 헤더 인젝션을 방지한다.
  *
  * <pre>
  * response.setHeader("Content-Disposition", EgovContentDispositions.attachment("연차보고서.hwp"));
- * // → attachment; filename="_____.hwp"; filename*=UTF-8''%EC%97%B0%EC%B0%A8...%EC%84%9C.hwp
- *
- * response.setHeader("Content-Disposition", EgovContentDispositions.attachment("report.pdf"));
- * // → attachment; filename="report.pdf"   (ASCII 는 기존 형식 유지)
  * </pre>
- *
- * <p><b>헤더 인젝션 차단.</b> 파일명은 사용자 입력(원본 업로드명)에서 오는 값이므로,
- * CR·LF 등 제어문자는 제거하고 경로 구분자 앞부분은 잘라 <b>파일명만</b> 싣는다.
- * 인용부호·역슬래시는 quoted-string 규칙으로 이스케이프한다.</p>
- *
- * <p>Spring MVC 컨트롤러에서는 {@code org.springframework.http.ContentDisposition} 빌더를 써도
- * 되지만, 그 빌더는 비ASCII 파일명에서 ASCII 폴백을 병기하지 않으며 spring-web 의존을 요구한다.
- * 본 클래스는 서블릿·필터·뷰 등 <b>의존 없는 어느 계층에서나</b> 쓸 수 있다.</p>
  *
  * <pre>
  * &lt;&lt; 개정이력(Modification Information) &gt;&gt;
  *
  *  수정일        수정자        수정내용
  *  ----------  --------    ---------------------------
- *  2026.09.01  실행환경팀     최초 생성 (RFC 5987 파일명 인코딩을 공용 API 로 제공 —
- *                            구형 에이전트용 ASCII 폴백 병기·제어문자 제거)
+ *  2026.09.01  실행환경팀     최초 생성
  * </pre>
  *
  * @author 실행환경 개발팀
@@ -99,7 +82,7 @@ public final class EgovContentDispositions {
 	}
 
 	/**
-	 * 파일명만 남기고(경로 구분자 앞 제거) 제어문자를 걷어낸다 — 헤더 인젝션(CR/LF) 차단.
+	 * 파일명만 남기고 제어문자를 제거한다(헤더 인젝션 방지).
 	 */
 	private static String sanitize(String filename) {
 		if (filename == null || filename.isEmpty()) {
@@ -129,7 +112,7 @@ public final class EgovContentDispositions {
 		return true;
 	}
 
-	/** quoted-string 이스케이프 — 역슬래시·인용부호. */
+	/** quoted-string 이스케이프(역슬래시·인용부호). */
 	private static String escapeQuoted(String value) {
 		StringBuilder escaped = new StringBuilder(value.length());
 		for (int i = 0; i < value.length(); i++) {
@@ -142,7 +125,7 @@ public final class EgovContentDispositions {
 		return escaped.toString();
 	}
 
-	/** 구형 에이전트용 ASCII 폴백 — 비ASCII 문자를 {@code _} 로 치환한다(확장자는 통상 ASCII 라 보존된다). */
+	/** 구형 에이전트용 ASCII 폴백. 비ASCII 문자를 {@code _}로 치환한다. */
 	private static String asciiFallback(String value) {
 		StringBuilder fallback = new StringBuilder(value.length());
 		for (int i = 0; i < value.length(); i++) {
@@ -152,7 +135,7 @@ public final class EgovContentDispositions {
 		return fallback.toString();
 	}
 
-	/** RFC 5987 — UTF-8 바이트를 attr-char 외 전부 퍼센트 인코딩한다. */
+	/** RFC 5987 인코딩. attr-char 외 UTF-8 바이트를 퍼센트 인코딩한다. */
 	private static String rfc5987Encode(String value) {
 		byte[] bytes = value.getBytes(StandardCharsets.UTF_8);
 		StringBuilder encoded = new StringBuilder(bytes.length * 3);

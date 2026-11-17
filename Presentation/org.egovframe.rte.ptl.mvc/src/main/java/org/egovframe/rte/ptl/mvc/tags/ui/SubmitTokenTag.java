@@ -26,26 +26,18 @@ import javax.servlet.jsp.tagext.TagSupport;
 
 /**
  * 중복 제출 방지 토큰을 hidden input 으로 출력하는 JSP 태그.
+ * 토큰 발급은 {@link EgovSubmitTokens}가 담당하며, 이 태그는 출력만 한다.
  *
  * <pre>
- * &lt;%@ taglib prefix="ui" uri="http://egovframework.gov/ctl/ui" %&gt;
- * &lt;form action="/orders" method="post"&gt;
- *     &lt;ui:submitToken/&gt;                        &lt;!-- 기본 키 --&gt;
- *     &lt;ui:submitToken tokenKey="orderForm"/&gt;    &lt;!-- 폼별 키 --&gt;
- * &lt;/form&gt;
+ * &lt;ui:submitToken tokenKey="orderForm"/&gt;
  * </pre>
- *
- * <p>토큰 발급·검증 로직은 {@link EgovSubmitTokens} 가 갖고 있으며 이 태그는 출력만 담당한다.
- * <b>JSP 가 아닌 뷰</b>(Thymeleaf·SPA 등)는 태그 없이 컨트롤러에서
- * {@code EgovSubmitTokens.issue(request)} 로 토큰을 얻어 모델·응답에 담으면 된다.</p>
  *
  * <pre>
  * &lt;&lt; 개정이력(Modification Information) &gt;&gt;
  *
  *  수정일        수정자        수정내용
  *  ----------  --------    ---------------------------
- *  2026.09.01  실행환경팀     최초 생성 (공통컴포넌트 DoubleSubmitTag 가 발급 로직까지
- *                            품고 있어 JSP 없이는 쓸 수 없던 구조를, 출력 전용 얇은 태그로 분리)
+ *  2026.09.01  실행환경팀     최초 생성
  * </pre>
  *
  * @author 실행환경 개발팀
@@ -68,8 +60,7 @@ public class SubmitTokenTag extends TagSupport {
 	}
 
 	/**
-	 * 토큰 키를 지정한다. 한 세션에서 여러 폼을 동시에 열 때 폼마다 다른 키를 주면
-	 * 서로 간섭하지 않는다.
+	 * 토큰 키를 지정한다(폼별로 다른 키를 주면 서로 간섭하지 않는다).
 	 *
 	 * @param tokenKey 토큰 키
 	 */

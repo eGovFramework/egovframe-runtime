@@ -35,6 +35,7 @@ import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.util.Assert;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.Map;
@@ -56,6 +57,7 @@ import static org.apache.commons.configuration2.PropertiesConfiguration.DEFAULT_
  * 2009.02.01	김태호			최초 생성
  * 2014.08.12	Vincent Han		"properties" 속성이 없는 경우 처리
  * 2020.08.31	유지보수			Property 값을 정확히 등록하기 위해 put() 메소드를 addProperty() 메소드로 변경
+ * 2026.11.14	유지보수			refreshPropertyFiles()가 새 설정 객체에 다시 읽은 뒤 바꿔 끼우도록 수정(바뀐 값 반영, 값 누적 방지), 읽은 파일 스트림 닫기
  * </pre>
  * @since 2009.02.01
  */
@@ -63,7 +65,7 @@ public class EgovPropertyServiceImpl implements EgovPropertyService, Application
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EgovPropertyServiceImpl.class);
 
-    private PropertiesConfiguration egovProperties;
+    private volatile PropertiesConfiguration egovProperties;
     private ResourceLoader resourceLoader;
     private MessageSource messageSource;
     private Set<?> extFileName;
@@ -235,23 +237,21 @@ public class EgovPropertyServiceImpl implements EgovPropertyService, Application
 
     /**
      * resource 변경시 refresh
+     * <p>새 설정 객체에 외부파일과 properties를 모두 읽은 뒤 바꿔 끼운다.
+     * 읽는 중에 실패하면 예외를 던지고 기존 값을 그대로 둔다.</p>
      */
     public void refreshPropertyFiles() throws IOException {
-        String fileName = null;
-        Iterator<?> it = extFileName.iterator();
-        while (it != null && it.hasNext()) {
-            Object element = it.next();
-            String enc = null;
-            if (element instanceof Map) {
-                Map<?, ?> ele = (Map<?, ?>) element;
-                enc = (String) ele.get("encoding");
-                fileName = (String) ele.get("filename");
-            } else {
-                fileName = (String) element;
-            }
-
-            loadPropertyResources(fileName, enc);
+        if (egovProperties == null) {
+            return;
         }
+        PropertiesConfiguration refreshedProperties;
+        try {
+            refreshedProperties = createConfiguration();
+        } catch (FdlException e) {
+            // properties의 키는 afterPropertiesSet()에서 이미 검사했다
+            throw new IllegalStateException(e);
+        }
+        egovProperties = refreshedProperties;
     }
 
     /**
@@ -259,13 +259,36 @@ public class EgovPropertyServiceImpl implements EgovPropertyService, Application
      *
      * @throws Exception fail to initialize
      */
-    @SuppressWarnings({"rawtypes", "unchecked"})
     public void afterPropertiesSet() throws IOException, FdlException {
-        egovProperties = new PropertiesConfiguration();
+        egovProperties = createConfiguration();
+    }
+
+    /**
+     * 외부파일과 properties를 읽은 새 설정 객체 생성
+     *
+     * @return 새 설정 객체
+     */
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private PropertiesConfiguration createConfiguration() throws IOException, FdlException {
+        PropertiesConfiguration propertiesConfiguration = new PropertiesConfiguration();
 
         // 외부파일이 정의되었을때
         if (extFileName != null) {
-            refreshPropertyFiles();
+            String fileName = null;
+            Iterator<?> it = extFileName.iterator();
+            while (it.hasNext()) {
+                Object element = it.next();
+                String enc = null;
+                if (element instanceof Map) {
+                    Map<?, ?> ele = (Map<?, ?>) element;
+                    enc = (String) ele.get("encoding");
+                    fileName = (String) ele.get("filename");
+                } else {
+                    fileName = (String) element;
+                }
+
+                loadPropertyResources(propertiesConfiguration, fileName, enc);
+            }
         }
 
         if (properties != null) {
@@ -278,9 +301,10 @@ public class EgovPropertyServiceImpl implements EgovPropertyService, Application
                     throw new FdlException(messageSource, "error.properties.check.essential", null);
                 }
                 // 2020.08.31 ESFC Property 값을 정확히 등록하기 위해 put() 메소드를 addProperty() 메소드로 변경
-                egovProperties.addProperty(key, value);
+                propertiesConfiguration.addProperty(key, value);
             }
         }
+        return propertiesConfiguration;
     }
 
     /**
@@ -325,48 +349,69 @@ public class EgovPropertyServiceImpl implements EgovPropertyService, Application
     /**
      * 파일위치정보를 가지고 resources 정보 추출
      *
+     * @param propertiesConfiguration 읽은 값을 담을 설정 객체
      * @param location 파일위치
      * @param encoding Encoding 정보
      * @throws IOException
      */
-    private void loadPropertyResources(String location, String encoding) throws IOException {
+    private void loadPropertyResources(PropertiesConfiguration propertiesConfiguration, String location, String encoding) throws IOException {
         if (resourceLoader instanceof ResourcePatternResolver) {
             Resource[] resources = ((ResourcePatternResolver) resourceLoader).getResources(location);
-            loadPropertyLoop(resources, encoding);
+            loadPropertyLoop(propertiesConfiguration, resources, encoding);
         } else {
             Resource resource = resourceLoader.getResource(location);
-            loadPropertyRes(resource, encoding);
+            loadPropertyRes(propertiesConfiguration, resource, encoding);
         }
     }
 
     /**
      * 멀티로 지정된 경우 처리를 위해 LOOP 처리
      *
+     * @param propertiesConfiguration 읽은 값을 담을 설정 객체
      * @param resources 리소스정보
      * @param encoding  인코딩정보
      * @throws IOException
      */
-    private void loadPropertyLoop(Resource[] resources, String encoding) {
+    private void loadPropertyLoop(PropertiesConfiguration propertiesConfiguration, Resource[] resources, String encoding) {
         Assert.notNull(resources, "Resource array must not be null");
         for (int i = 0; i < resources.length; i++) {
-            loadPropertyRes(resources[i], encoding);
+            loadPropertyRes(propertiesConfiguration, resources[i], encoding);
         }
     }
 
     /**
-     * 파일 정보를 읽어서 egovProperties에 저장
+     * 파일 정보를 읽어서 설정 객체에 저장
      *
+     * @param propertiesConfiguration 읽은 값을 담을 설정 객체
      * @param resource 리소스정보
      * @param encoding 인코딩정보
      * @throws IOException
      */
-    private void loadPropertyRes(Resource resource, String encoding) {
+    private void loadPropertyRes(PropertiesConfiguration propertiesConfiguration, Resource resource, String encoding) {
 
+        InputStream inputStream = null;
+        InputStreamReader inputStreamReader = null;
         try {
-            InputStreamReader inputStreamReader = new InputStreamReader(resource.getInputStream(), StringUtils.isEmpty(encoding) ? DEFAULT_ENCODING : encoding);
-            egovProperties.read(inputStreamReader);
+            inputStream = resource.getInputStream();
+            inputStreamReader = new InputStreamReader(inputStream, StringUtils.isEmpty(encoding) ? DEFAULT_ENCODING : encoding);
+            propertiesConfiguration.read(inputStreamReader);
         } catch (ConfigurationException | IOException e) {
             throw new RuntimeException(e);
+        } finally {
+            // refreshPropertyFiles()를 부를 때마다 파일을 다시 열므로 닫는다
+            if (inputStreamReader != null) {
+                try {
+                    inputStreamReader.close();
+                } catch (IOException e) {
+                    LOGGER.debug("Failed to close loadPropertyRes : {}", e.getMessage());
+                }
+            } else if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    LOGGER.debug("Failed to close loadPropertyRes : {}", e.getMessage());
+                }
+            }
         }
     }
 

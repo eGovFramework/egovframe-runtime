@@ -1,9 +1,9 @@
 # org.egovframe.rte.fdl.cmmn
 
-**Foundation 공통(Common) 모듈**은 업무 서비스 구현체가 상속하는 추상 클래스, 메시지 리소스 기반 예외 계층, AOP 기반 예외 후처리(`ExceptionTransfer`), 추적(Trace) 처리 기능을 제공합니다. `fdl.excel`, `fdl.filehandling`, `fdl.idgnr`, `fdl.property`, `fdl.string`, `fdl.xml`, `psl.dataaccess`, `ptl.mvc`, `itl.*` 등 대부분의 실행환경 모듈이 이 모듈(의 `EgovBizException`/`FdlException`)에 의존합니다.
+**Foundation 공통(Common) 모듈**은 업무 서비스 구현체가 상속하는 추상 클래스, 메시지 리소스 기반 예외 계층, AOP 기반 예외 후처리(`ExceptionTransfer`), 추적(Trace) 처리 기능을 제공합니다. `fdl.excel`, `fdl.idgnr`, `fdl.property`, `ptl.mvc`, `bat.core`, `psl.data.mongodb` 모듈이 이 모듈에 직접 의존합니다(`fdl.property`를 쓰는 `fdl.access`, `fdl.crypto` 등은 전이 의존).
 
-- **Artifact**: `org.egovframe.rte:org.egovframe.rte.fdl.cmmn:4.3.1`
-- **Runtime**: Java 1.8 / Spring Framework 5.3.39-egov.1 / AspectJ 1.9.23 / Commons Lang3 3.20.0
+- **Artifact**: `org.egovframe.rte:org.egovframe.rte.fdl.cmmn:4.3.2`
+- **Runtime**: Java 1.8 / Spring Framework 5.3.39-egov.2 / AspectJ 1.9.23 / Commons Lang3 3.20.0
 - **실행환경 의존**: `org.egovframe.rte.fdl.logging`
 
 ---
@@ -16,7 +16,7 @@
 - **패키지 패턴 기반 핸들러 연결**: `DefaultExceptionHandleManager`가 `AntPathMatcher` 패턴(`**exception.*` 등)으로 발생 위치(`클래스.메서드`)를 매칭하여 `ExceptionHandler.occur()` 호출. 발생 위치를 인자로 전달하므로 동시 요청 간 상태가 섞이지 않음
 - **추적(Trace)**: `LeaveaTrace`가 `TraceHandlerService` 목록을 패턴 매칭하여 `TraceHandler.todo()` 실행
 - **정보 노출 방지**: `DataAccessException`은 원본을 서버 로그에 남기고 일반화된 메시지(`A data access error occurred. See server log for details.`)로 재전파 (CWE-209 대응)
-- 기본 메시지 번들 `message/message-common*.properties` 제공 (`fail.common.msg`, `fail.data.sql`, `info.nodata.msg`)
+- 기본 메시지 번들 `message/message-common*.properties` 제공 (`fail.common.msg`, `fail.data.sql`, `info.nodata.msg`, `message.exception.test`)
 
 ---
 
@@ -79,16 +79,16 @@ src/main/resources/message/
 
 | 라이브러리 | 버전 | scope/비고 |
 |---|---|---|
-| `org.egovframe.rte:org.egovframe.rte.fdl.logging` | 4.3.1 | compile |
-| `spring-context-support` (commons-logging 제외), `spring-tx` | 5.3.39-egov.1 | compile |
+| `org.egovframe.rte:org.egovframe.rte.fdl.logging` | 4.3.2 | compile |
+| `spring-context-support` (commons-logging 제외), `spring-tx` | 5.3.39-egov.2 | compile |
 | `org.apache.commons:commons-lang3` | 3.20.0 | compile |
 | `org.aspectj:aspectjweaver`, `aspectjrt` | 1.9.23 | compile |
-| `spring-jdbc`, `spring-test`, `spring-webmvc` | 5.3.39-egov.1 | test |
+| `spring-jdbc`, `spring-test`, `spring-webmvc` | 5.3.39-egov.2 | test |
 | `javax.servlet-api` / `javax.mail:mail` | 4.0.1 / 1.5.0-b01 | test |
 | `commons-dbcp2` / `hsqldb`(`jdk8`) / `ehcache` | 2.13.0 / 2.7.3 / 2.10.9.2 | test |
 | `junit` / `easymock` | 4.13.2 / 5.2.0 | test |
 
-버전은 루트 POM(`org.egovframe.rte.root` 4.3.1)의 `dependencyManagement`에서 관리하며 모듈 POM은 버전을 선언하지 않습니다.
+버전은 루트 POM(`org.egovframe.rte.root` 4.3.2)의 `dependencyManagement`에서 관리하며 모듈 POM은 버전을 선언하지 않습니다.
 
 ---
 
@@ -215,11 +215,11 @@ mvn test -pl Foundation/org.egovframe.rte.fdl.cmmn
 <dependency>
     <groupId>org.egovframe.rte</groupId>
     <artifactId>org.egovframe.rte.fdl.cmmn</artifactId>
-    <version>4.3.1</version>
+    <version>4.3.2</version>
 </dependency>
 ```
 
-부모 POM(`org.egovframe.boot.starter.parent` 또는 `org.egovframe.web.config.parent` 4.3.1)을 상속하면 `<version>`을 생략할 수 있습니다. `-egov.1` 포크 아티팩트(Spring Framework 등)를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소 등록이 필요합니다.
+부모 POM(`org.egovframe.boot.starter.parent` 또는 `org.egovframe.web.config.parent` 4.3.2)을 상속하면 `<version>`을 생략할 수 있습니다. `-egov.2` 포크 아티팩트(Spring Framework 등)를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소 등록이 필요합니다.
 
 ---
 

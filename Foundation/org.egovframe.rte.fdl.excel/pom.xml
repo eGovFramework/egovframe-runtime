@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.egovframe.rte</groupId>
         <artifactId>org.egovframe.rte.root</artifactId>
-        <version>4.3.1</version>
+        <version>4.3.2</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -123,14 +123,40 @@
         <dependency>
             <groupId>org.jxls</groupId>
             <artifactId>jxls</artifactId>
+            <exclusions>
+                <!-- 실행환경이 쓰지 않는 전이 의존성(jxls XML 빌더 전용). 필요한 프로젝트만 직접 선언 -->
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.jxls</groupId>
             <artifactId>jxls-poi</artifactId>
+            <exclusions>
+                <!-- 실행환경이 쓰지 않는 전이 의존성(jxls XML 빌더 전용). 필요한 프로젝트만 직접 선언 -->
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.jxls</groupId>
             <artifactId>jxls-reader</artifactId>
+            <exclusions>
+                <!-- with-deps 분류자 jar는 commons-beanutils 1.8.3 · commons-logging 1.1.1 클래스를 통째로 담고 있어 관리 버전(beanutils 1.11.0 등)과 중복된다 -->
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-digester3</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <!-- 분류자 없는 commons-digester3 : beanutils · logging 은 일반 의존성으로 받아 관리 버전이 적용된다 -->
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-digester3</artifactId>
         </dependency>
 
         <!-- Test -->

@@ -59,31 +59,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * REST 응답용 기본 예외 핸들러 — <b>동작하는 기본 구현</b> + RFC 7807/9457(Problem Details) 형식 응답.
+ * 실행환경 예외와 Spring MVC 표준 예외를 {@code application/problem+json}(RFC 7807) 응답으로 매핑하는 REST 예외 핸들러 기본 구현.
+ * 내부 오류는 일반화 메시지로 응답하고(CWE-209), 제약 위반 응답에는 거부된 입력값을 싣지 않는다.
+ * Spring Security 인증·인가 예외는 클래스 이름으로 판별해 다시 던진다.
  *
- * <p>기존 {@link AbstractAnnotationExceptionHandler}는 전 메서드가 abstract 인 시그니처 골격이라
- * 사용자가 전부 직접 구현해야 했고, 구현이 빠지면 컨테이너 기본 오류 페이지·스택트레이스가 노출될 수 있었다.
- * 본 클래스는 실행환경 예외 계층을 {@code application/problem+json} 응답으로 매핑하는 기본 구현을 제공한다.
- * (Spring 5.3 에는 {@code ProblemDetail} 이 없으므로 같은 필드 구성의 {@code Map} 본문을 쓴다.)</p>
- * <ul>
- *   <li>{@link EgovBizException}(업무 예외) → 400 + 예외 메시지 + {@code messageKey} 확장 필드</li>
- *   <li><b>제약 위반</b>({@code @Valid} 본문·바인딩 {@link BindException} 계열, {@code @Validated} 파라미터
- *       {@code ConstraintViolationException}) → 400 + {@code errors} 확장 필드(필드명·메시지 — <b>거부된 값은 싣지
- *       않는다</b>: 입력 반사·민감값 노출 방지)</li>
- *   <li><b>형 변환 실패</b>·<b>읽을 수 없는 본문</b> → 400 + 일반화 메시지(입력값·자바 타입명·파서 상세 미노출)</li>
- *   <li><b>자기 HTTP 상태를 가진 Spring 표준 예외</b>(405·415·406·404·413·필수 파라미터 누락 등)와
- *       {@link ResponseStatusException}·{@link ResponseStatus} 예외 → 그 상태(405 는 {@code Allow} 헤더 포함)와
- *       상태별 일반화 문구</li>
- *   <li><b>인증·인가 예외</b>(Spring Security {@code AccessDeniedException}·{@code AuthenticationException} 계열)
- *       → 응답을 쓰지 않고 <b>같은 예외를 다시 던져</b> 보안 계층이 401·403·로그인 유도로 처리하게 한다.
- *       판별은 클래스 이름으로 하므로 본 모듈은 Spring Security 에 의존하지 않는다</li>
- *   <li>{@link FdlException}/{@link BaseException}/그 외 → 500 + <b>일반화 메시지</b>
- *       (내부 정보 노출 방지 — CWE-209, 원본은 서버 로그)</li>
- * </ul>
- *
- * <p>사용: 그대로 빈 등록이 아니라 <b>애플리케이션에서 {@code @RestControllerAdvice}를 붙인
- * 하위 클래스로 등록</b>한다(적용 범위·추가 예외 매핑을 앱이 결정). 개별 응답 커스터마이징은
- * {@code protected} 메서드 오버라이드로 한다.</p>
  * <pre>{@code
  * @RestControllerAdvice(basePackages = "egovframework.example")
  * public class ExampleExceptionHandler extends EgovRestExceptionHandler { }
@@ -97,7 +76,7 @@ import java.util.Map;
  *
  * 수정일        수정자           수정내용
  * ----------  --------------  ---------------------------
- * 2026.10.25  실행환경 개발팀    최초 생성 (5.1.0 EgovRestExceptionHandler 의 응답 정책을 Spring 5.3 기준으로 반영)
+ * 2026.10.25  실행환경 개발팀    최초 생성 (5.1.0 기능 이식)
  * </pre>
  */
 public class EgovRestExceptionHandler {
@@ -113,33 +92,32 @@ public class EgovRestExceptionHandler {
     /** 제약 위반 응답의 detail(개별 사유는 errors 확장 필드) */
     private static final String VALIDATION_ERROR_DETAIL = "Request validation failed.";
 
-    /** 형 변환 실패 필드에 쓸 일반화 메시지 — Spring 기본 메시지는 거부된 입력값과 자바 타입명을 담는다 */
+    /** 형 변환 실패 필드에 쓸 일반화 메시지(입력값·타입명 미노출) */
     private static final String BINDING_FAILURE_DETAIL = "Invalid value.";
 
     /** 읽을 수 없는 요청 본문 응답의 detail(파서 상세는 싣지 않는다) */
     private static final String UNREADABLE_BODY_DETAIL = "Request body could not be read.";
 
-    /** 보안 계층에 넘길 예외 타입(이름으로 판별 — 본 모듈은 Spring Security 에 의존하지 않는다) */
+    /** 보안 계층에 넘길 예외 타입(클래스 이름으로 판별) */
     private static final String[] SECURITY_EXCEPTION_TYPES = {
             "org.springframework.security.access.AccessDeniedException",
             "org.springframework.security.core.AuthenticationException"
     };
 
-    /** Bean Validation 파라미터 제약 위반 예외(이름으로 판별 — 본 모듈은 javax.validation 에 의존하지 않는다) */
+    /** Bean Validation 파라미터 제약 위반 예외(클래스 이름으로 판별) */
     private static final String CONSTRAINT_VIOLATION_EXCEPTION = "javax.validation.ConstraintViolationException";
 
     private MessageSource messageSource;
 
     /**
-     * 위반 메시지의 코드 해석에 쓸 {@link MessageSource}(opt-in — 미연동이면 제약의 기본 메시지로 완결된다).
+     * 위반 메시지 코드 해석에 쓸 {@link MessageSource}를 지정한다(선택).
      */
     public void setMessageSource(MessageSource messageSource) {
         this.messageSource = messageSource;
     }
 
     /**
-     * 제약 위반(@Valid 본문·바인딩) — 400 + 필드 오류 목록. 거부된 값은 싣지 않는다.
-     * {@code MethodArgumentNotValidException} 은 {@link BindException} 의 하위라 두 경로를 함께 처리한다.
+     * 제약 위반(@Valid 본문·바인딩, MethodArgumentNotValidException 포함)을 400 + 필드 오류 목록으로 응답한다.
      */
     @ExceptionHandler(BindException.class)
     public ResponseEntity<Map<String, Object>> handleBindException(BindException e) {
@@ -159,7 +137,7 @@ public class EgovRestExceptionHandler {
     }
 
     /**
-     * 업무 예외 — 사용자 대상 메시지이므로 그대로 전달하고 messageKey 를 확장 필드로 싣는다.
+     * 업무 예외를 400 + 예외 메시지·messageKey로 응답한다.
      */
     @ExceptionHandler(EgovBizException.class)
     public ResponseEntity<Map<String, Object>> handleEgovBizException(EgovBizException e) {
@@ -172,7 +150,7 @@ public class EgovRestExceptionHandler {
     }
 
     /**
-     * 단일 값 형 변환 실패({@code @PathVariable}·{@code @RequestParam} 등) — 400 + 일반화 메시지.
+     * 단일 값 형 변환 실패({@code @PathVariable}·{@code @RequestParam} 등)를 400 + 일반화 메시지로 응답한다.
      */
     @ExceptionHandler(TypeMismatchException.class)
     public ResponseEntity<Map<String, Object>> handleTypeMismatch(TypeMismatchException e) {
@@ -188,7 +166,7 @@ public class EgovRestExceptionHandler {
     }
 
     /**
-     * 읽을 수 없는 요청 본문(JSON 문법 오류 등) — 400. 파서가 준 상세(클래스명·위치)는 싣지 않는다.
+     * 읽을 수 없는 요청 본문(JSON 문법 오류 등)을 400으로 응답한다. 파서 상세는 싣지 않는다.
      */
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<Map<String, Object>> handleNotReadable(HttpMessageNotReadableException e) {
@@ -197,7 +175,7 @@ public class EgovRestExceptionHandler {
     }
 
     /**
-     * 실행환경 확장모듈 예외 — 내부 오류로 일반화한다.
+     * 실행환경 확장모듈 예외를 내부 오류로 일반화한다.
      */
     @ExceptionHandler(FdlException.class)
     public ResponseEntity<Map<String, Object>> handleFdlException(FdlException e) {
@@ -205,7 +183,7 @@ public class EgovRestExceptionHandler {
     }
 
     /**
-     * 그 외 실행환경 checked 예외 — 내부 오류로 일반화한다.
+     * 그 외 실행환경 checked 예외를 내부 오류로 일반화한다.
      */
     @ExceptionHandler(BaseException.class)
     public ResponseEntity<Map<String, Object>> handleBaseException(BaseException e) {
@@ -213,11 +191,8 @@ public class EgovRestExceptionHandler {
     }
 
     /**
-     * 미분류 예외 — 내부 오류로 일반화한다(원본 메시지·스택은 서버 로그로만).
-     *
-     * <p>단 다음은 미분류가 아니다. ① 인증·인가 예외는 같은 예외를 다시 던져 보안 계층에 넘긴다.
-     * ② Bean Validation 파라미터 제약 위반은 400 필드 오류로 응답한다. ③ 자기 HTTP 상태를 가진 Spring 표준 예외는
-     * {@link #standardError(HttpStatus, HttpHeaders, Exception)} 로 그 상태를 지킨다.</p>
+     * 미분류 예외를 내부 오류로 일반화한다.
+     * 보안 예외는 다시 던지고, 제약 위반은 400, 상태를 가진 Spring 표준 예외는 해당 상태로 응답한다.
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleException(Exception e) {
@@ -237,8 +212,7 @@ public class EgovRestExceptionHandler {
     }
 
     /**
-     * Spring 표준 예외 공통 처리 — 예외가 뜻하는 HTTP 상태와 헤더를 쓰고, detail 은 상태별 일반화 문구로 둔다
-     * (Spring 기본 메시지는 요청 경로·파라미터명 등 입력을 되비출 수 있다).
+     * Spring 표준 예외를 해당 HTTP 상태와 상태별 일반화 문구로 응답한다.
      */
     protected ResponseEntity<Map<String, Object>> standardError(HttpStatus status, HttpHeaders headers, Exception e) {
         if (status.is5xxServerError()) {
@@ -250,7 +224,7 @@ public class EgovRestExceptionHandler {
     }
 
     /**
-     * 내부 오류 공통 처리 — 원본은 로그, 응답은 일반화 메시지(CWE-209 방지).
+     * 내부 오류를 일반화 메시지로 응답하고 원본은 로그로 남긴다(CWE-209).
      */
     protected ResponseEntity<Map<String, Object>> internalError(Exception e) {
         LOGGER.error("Unhandled exception mapped to internal server error", e);
@@ -258,7 +232,7 @@ public class EgovRestExceptionHandler {
     }
 
     /**
-     * 공통 Problem Details 골격 — type·title·status·detail·timestamp.
+     * Problem Details 공통 골격(type·title·status·detail·timestamp)을 만든다.
      */
     protected Map<String, Object> baseProblem(HttpStatus status, String title, String detail) {
         Map<String, Object> problem = new LinkedHashMap<String, Object>();
@@ -270,7 +244,7 @@ public class EgovRestExceptionHandler {
         return problem;
     }
 
-    /** 제약 위반 공통 골격 — 400 + errors 확장 필드. */
+    /** 제약 위반 골격(400 + errors 확장 필드)을 만든다. */
     protected Map<String, Object> validationProblem(List<Map<String, String>> errors) {
         Map<String, Object> problem = baseProblem(HttpStatus.BAD_REQUEST, "Validation Failed", VALIDATION_ERROR_DETAIL);
         problem.put("errors", errors);
@@ -278,8 +252,7 @@ public class EgovRestExceptionHandler {
     }
 
     /**
-     * 위반 메시지 해석 — {@link MessageSource} 연동 시 오류 코드 해석 우선, 미연동이면 제약의 기본 메시지.
-     * 형 변환 실패는 기본 메시지(입력값·타입명 포함)로 폴백하지 않는다.
+     * 위반 메시지를 해석한다. MessageSource가 있으면 코드 해석을 우선하며, 형 변환 실패는 일반화 메시지를 쓴다.
      */
     protected String resolveMessage(ObjectError error) {
         boolean bindingFailure = (error instanceof FieldError) && ((FieldError) error).isBindingFailure();
@@ -290,14 +263,14 @@ public class EgovRestExceptionHandler {
                         : error;
                 return messageSource.getMessage(resolvable, LocaleContextHolder.getLocale());
             } catch (NoSuchMessageException noMessage) {
-                // 코드·기본 메시지 모두 없음 — 아래 기본 메시지 경로로 폴백
+                // 코드·기본 메시지가 모두 없으면 아래 기본 경로로 폴백
                 LOGGER.debug("No message for codes of '{}'", error.getObjectName());
             }
         }
         return bindingFailure ? BINDING_FAILURE_DETAIL : error.getDefaultMessage();
     }
 
-    /** 단일 값 형 변환 실패 메시지 해석 — 바인딩 경로와 같은 코드 단계·필드명 인자를 쓴다. */
+    /** 단일 값 형 변환 실패 메시지를 바인딩과 같은 코드 체계로 해석한다. */
     private String resolveTypeMismatchMessage(String name, Class<?> requiredType) {
         if (messageSource == null) {
             return BINDING_FAILURE_DETAIL;
@@ -316,7 +289,7 @@ public class EgovRestExceptionHandler {
     }
 
     /**
-     * Spring 표준 예외의 HTTP 상태(대응이 없으면 null). 405·415 는 허용 값을 헤더로 함께 싣는다.
+     * Spring 표준 예외의 HTTP 상태를 반환한다(대응이 없으면 null). 405·415는 허용 값을 헤더에 싣는다.
      */
     protected HttpStatus standardStatus(Exception e, HttpHeaders headers) {
         if (e instanceof HttpRequestMethodNotSupportedException) {
@@ -364,7 +337,7 @@ public class EgovRestExceptionHandler {
         return null;
     }
 
-    /** 표준 예외의 상태별 일반화 detail — 요청 경로·요청 값 같은 입력을 담지 않는 고정 문구다. */
+    /** 표준 예외의 상태별 일반화 detail 문구. */
     private static String standardDetail(HttpStatus status) {
         switch (status.value()) {
             case 400: return "The request is invalid.";
@@ -382,7 +355,7 @@ public class EgovRestExceptionHandler {
     }
 
     /**
-     * Bean Validation 제약 위반 목록(필드명·메시지). javax.validation 에 컴파일 의존하지 않도록 리플렉션으로 읽는다.
+     * Bean Validation 제약 위반 목록(필드명·메시지)을 리플렉션으로 읽는다.
      */
     private static List<Map<String, String>> constraintViolationErrors(Exception e) {
         List<Map<String, String>> errors = new ArrayList<Map<String, String>>();
@@ -405,7 +378,7 @@ public class EgovRestExceptionHandler {
         return errors;
     }
 
-    /** 예외 클래스 계층에 보안 계층이 처리할 타입이 있는지 — 이름으로만 비교한다. */
+    /** 예외 클래스 계층에 보안 예외 타입이 있는지 이름으로 확인한다. */
     private static boolean isSecurityException(Throwable e) {
         if (!(e instanceof RuntimeException)) {
             return false;

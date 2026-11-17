@@ -2,8 +2,8 @@
 
 **Foundation 암복호화(Crypto) 모듈**은 국산 블록암호 **ARIA(256bit)** 기반 암복호화, Jasypt PBE 기반 일반 암복호화, Digest(해시) 생성·검증, 그리고 `globals.properties`의 DB 접속정보(URL/계정/비밀번호)를 암호화해 두고 기동 시 복호화하는 환경설정 암복호화 서비스를 제공합니다. `<egov-crypto:config>` 커스텀 네임스페이스 하나로 환경설정 암복호화 Bean 구성을 간소화할 수 있습니다. 실행환경의 다른 모듈은 이 모듈에 의존하지 않습니다.
 
-- **Artifact**: `org.egovframe.rte:org.egovframe.rte.fdl.crypto:4.3.1`
-- **Runtime**: Java 1.8 / Spring Framework 5.3.39-egov.1 / Jasypt 1.9.3 / Commons Codec 1.18.0
+- **Artifact**: `org.egovframe.rte:org.egovframe.rte.fdl.crypto:4.3.2`
+- **Runtime**: Java 1.8 / Spring Framework 5.3.39-egov.2 / Jasypt 1.9.3 / Commons Codec 1.18.0
 - **실행환경 의존**: `org.egovframe.rte.fdl.property`
 
 > 패키지명은 모듈명과 달리 `org.egovframe.rte.fdl.cryptography` 입니다.
@@ -49,8 +49,8 @@ src/main/java/org/egovframe/rte/fdl/cryptography/
 
 src/main/resources/
 ├── META-INF/spring.handlers           # egov-crypto 네임스페이스 → EgovCryptoNameHandler
-├── META-INF/spring.schemas            # egov-crypto.xsd / egov-crypto-4.3.1.xsd 매핑
-└── org/egovframe/rte/fdl/crypto/config/egov-crypto-4.3.1.xsd
+├── META-INF/spring.schemas            # egov-crypto.xsd / egov-crypto-4.3.2.xsd 매핑
+└── org/egovframe/rte/fdl/crypto/config/egov-crypto-4.3.2.xsd
 ```
 
 ---
@@ -77,15 +77,16 @@ src/main/resources/
 
 | 라이브러리 | 버전 | scope/비고 |
 |---|---|---|
-| `org.egovframe.rte:org.egovframe.rte.fdl.property` | 4.3.1 | compile (`EgovPropertyService`) |
-| `spring-beans` | 5.3.39-egov.1 | compile |
+| `org.egovframe.rte:org.egovframe.rte.fdl.property` | 4.3.2 | compile (`EgovPropertyService`) |
+| `spring-beans` | 5.3.39-egov.2 | compile |
 | `javax.annotation:javax.annotation-api` | 1.3.2 | compile |
 | `commons-codec:commons-codec` | 1.18.0 | compile (Base64) |
 | `commons-io:commons-io` | 2.18.0 | compile |
 | `org.jasypt:jasypt` | 1.9.3 | compile (PBE, Digest, PasswordEncryptor) |
-| `spring-context`, `spring-test`, `junit`, `easymock` | 5.3.39-egov.1 / 5.3.39-egov.1 / 4.13.2 / 5.2.0 | test |
+| `org.apache.commons:commons-lang3` | 3.20.0 | compile. 전이 의존성 버전 지정 — `commons-configuration2` 2.15.0이 요구하는 3.18 이상을 적용 프로젝트의 다른 경로(예: `commons-compress` 1.26.2의 3.14.0)보다 가까운 자리에서 정함 |
+| `spring-context`, `spring-test`, `junit`, `easymock` | 5.3.39-egov.2 / 5.3.39-egov.2 / 4.13.2 / 5.2.0 | test |
 
-버전은 루트 POM(`org.egovframe.rte.root` 4.3.1)의 `dependencyManagement`에서 관리하며 모듈 POM은 버전을 선언하지 않습니다.
+버전은 루트 POM(`org.egovframe.rte.root` 4.3.2)의 `dependencyManagement`에서 관리하며 모듈 POM은 버전을 선언하지 않습니다.
 
 ---
 
@@ -137,7 +138,7 @@ crypto.hashed.password=gdyYs/IZqY86VcWhT8emCYfqY1ahw2vtLG+/FzNqtrQ=
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:egov-crypto="http://maven.egovframe.go.kr/schema/egov-crypto"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://maven.egovframe.go.kr/schema/egov-crypto http://maven.egovframe.go.kr/schema/egov-crypto/egov-crypto-4.3.1.xsd">
+       http://maven.egovframe.go.kr/schema/egov-crypto http://maven.egovframe.go.kr/schema/egov-crypto/egov-crypto-4.3.2.xsd">
 
     <egov-crypto:config id="egovCryptoConfig"
         initial="false"
@@ -158,7 +159,7 @@ crypto.hashed.password=gdyYs/IZqY86VcWhT8emCYfqY1ahw2vtLG+/FzNqtrQ=
 | `algorithmKey` | - | 암호화 키(평문). 시스템 속성 `egov.crypto.algorithmKey`가 있으면 우선 |
 | `algorithmKeyHash` | - | `algorithmKey`의 해시. 시스템 속성 `egov.crypto.algorithmKeyHash`가 있으면 우선 |
 | `cryptoBlockSize` | `1024` | ARIA 서비스 블록 크기 |
-| `cryptoPropertyLocation` | - | `Globals.*` 프로퍼티 파일 위치 |
+| `cryptoPropertyLocation` | `classpath:/egovframework/egovProps/globals.properties` | `Globals.*` 프로퍼티 파일 위치 |
 
 등록되는 Bean: `egovEnvPasswordEncoderService`, `egovEnvARIACryptoService`, `egovEnvCryptoConfigurerService`, `egovEnvCryptoService`.
 
@@ -224,7 +225,7 @@ mvn clean install -pl Foundation/org.egovframe.rte.fdl.crypto -am
 mvn test -pl Foundation/org.egovframe.rte.fdl.crypto
 ```
 
-테스트는 클래스패스 리소스(`src/test/resources/META-INF/spring/**`, `vector/ARIA-*_(ECB)_*.txt` KAT/MCT/MMT 벡터)만 사용하며 외부 서버가 필요 없습니다. `EgovEnvCryptoAdminTest`, `EgovEnvCryptoUserTest`는 `main()` 기반 유틸리티로 surefire가 실행하지 않습니다.
+테스트는 클래스패스 리소스(`src/test/resources/META-INF/spring/**`, `vector/ARIA-*_(ECB)_*.txt` KAT/MCT/MMT 벡터)만 사용하며 외부 서버가 필요 없습니다. `EgovEnvCryptoAdminTest`, `EgovEnvCryptoUserTest`는 `@Test` 없이 `main()`으로 실행하는 유틸리티입니다.
 
 ---
 
@@ -234,11 +235,11 @@ mvn test -pl Foundation/org.egovframe.rte.fdl.crypto
 <dependency>
     <groupId>org.egovframe.rte</groupId>
     <artifactId>org.egovframe.rte.fdl.crypto</artifactId>
-    <version>4.3.1</version>
+    <version>4.3.2</version>
 </dependency>
 ```
 
-부모 POM(`org.egovframe.boot.starter.parent` 또는 `org.egovframe.web.config.parent` 4.3.1)을 상속하면 `<version>`을 생략할 수 있습니다. `-egov.1` 포크 아티팩트(Spring Framework 등)를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소 등록이 필요합니다.
+부모 POM(`org.egovframe.boot.starter.parent` 또는 `org.egovframe.web.config.parent` 4.3.2)을 상속하면 `<version>`을 생략할 수 있습니다. `-egov.2` 포크 아티팩트(Spring Framework 등)를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소 등록이 필요합니다.
 
 ---
 

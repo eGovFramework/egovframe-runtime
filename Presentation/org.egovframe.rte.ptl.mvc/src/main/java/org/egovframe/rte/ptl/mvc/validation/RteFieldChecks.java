@@ -203,7 +203,7 @@ public class RteFieldChecks extends FieldChecks {
     }
 
     /**
-     * 패스워드 점검 : [조합] 영문자,숫자,특수문자(~!@#$%^&*?)의 최소 3가지 조합
+     * 패스워드 점검 : [조합] 영문자,숫자,특수문자(~!@#$%^&amp;*?)의 최소 3가지 조합
      * </pre>
      *
      * @param bean
@@ -222,7 +222,7 @@ public class RteFieldChecks extends FieldChecks {
     }
 
     /**
-     * 패스워드 점검 : [조합] 영대문자,영소문자,숫자,특수문자(~!@#$%^&*?)의 최소 4가지 조합
+     * 패스워드 점검 : [조합] 영대문자,영소문자,숫자,특수문자(~!@#$%^&amp;*?)의 최소 4가지 조합
      * </pre>
      *
      * @param bean

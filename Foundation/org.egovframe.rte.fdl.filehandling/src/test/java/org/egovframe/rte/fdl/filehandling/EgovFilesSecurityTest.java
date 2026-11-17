@@ -15,11 +15,8 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 /**
- * EgovFiles 경로 봉쇄의 <b>공격 입력</b> 검증 — 기능 테스트({@link EgovFilesTest})와 별도로,
- * 경로 조작(CWE-22)에 실제로 쓰이는 표기 변형을 한 곳에 모아 회귀를 막는다.
- *
- * <p>판정 기준은 하나다: 기준 디렉터리 <b>밖으로 확정되는 경로가 하나라도 나오는가.</b>
- * 리터럴로 남아 기준 안에 놓이는 입력(URL 인코딩·전각 점)은 탈출이 아니므로 허용이 맞다.</p>
+ * EgovFiles 경로 조작(CWE-22) 공격 입력 회귀 테스트.
+ * 기준 디렉터리 밖으로 확정되는 경로가 없음을 검증한다(URL 인코딩·전각 점은 리터럴 이름이므로 허용).
  */
 public class EgovFilesSecurityTest {
 
@@ -55,7 +52,7 @@ public class EgovFilesSecurityTest {
     @Test
     public void 인코딩_변형은_해석하지_않고_리터럴_이름으로_기준_안에_둔다() throws Exception {
         Path base = base();
-        // 퍼센트 인코딩·전각 점은 파일시스템에 그런 이름의 항목일 뿐이다 — 디코딩해 탈출로 바꾸지 않는다
+        // 퍼센트 인코딩·전각 점은 디코딩하지 않는 리터럴 이름
         for (String literal : Arrays.asList("%2e%2e/pwn", "%2e%2e%2fpwn", "．．/pwn", "....//pwn")) {
             Path resolved = EgovFiles.resolveSecurely(base, literal);
             assertTrue("기준 안이어야 한다: " + literal + " -> " + resolved, resolved.startsWith(base));
@@ -75,7 +72,7 @@ public class EgovFilesSecurityTest {
     @Test
     public void POSIX_절대_경로는_기준_밖으로_차단된다() throws Exception {
         Path base = base();
-        // Windows 에서는 루트 상대(현재 드라이브 루트)로 해석돼 역시 기준 밖이다
+        // Windows에서는 현재 드라이브 루트 기준이라 역시 기준 밖
         assertThrows(IllegalArgumentException.class, () -> EgovFiles.resolveSecurely(base, "/etc/passwd"));
         assertThrows(IllegalArgumentException.class, () -> EgovFiles.resolveSecurely(base, "//server/share/pwn"));
     }
@@ -99,7 +96,7 @@ public class EgovFilesSecurityTest {
         public void 윈도우_드라이브_상대_경로는_기준_드라이브_기준으로_붙어_기준_안에_남는다() throws Exception {
 		org.junit.Assume.assumeTrue(System.getProperty("os.name").toLowerCase(java.util.Locale.ROOT).contains("win"));
         Path base = base();
-        // "C:pwn" 은 드라이브 상대 표기 — Java 가 기준 경로의 드라이브에 이어 붙이므로 탈출이 아니다
+        // "C:pwn"은 드라이브 상대 표기로 기준 경로에 이어 붙으므로 탈출 아님
         Path resolved = EgovFiles.resolveSecurely(base, base.getRoot().toString().substring(0, 2) + "pwn");
         assertTrue(resolved.toString(), resolved.startsWith(base));
     }
@@ -108,7 +105,7 @@ public class EgovFilesSecurityTest {
         public void 윈도우_ADS와_끝_공백은_경로로_해석되지_않아_거부된다() throws Exception {
 		org.junit.Assume.assumeTrue(System.getProperty("os.name").toLowerCase(java.util.Locale.ROOT).contains("win"));
         Path base = base();
-        // 대체 데이터 스트림 구분자(:)와 끝 공백은 Windows 경로 파서가 InvalidPathException 으로 거부한다
+        // ADS 구분자(:)와 끝 공백은 InvalidPathException으로 거부
         assertFalse(EgovFiles.tryResolveSecurely(base, "ok.txt:hidden").isPresent());
         assertFalse(EgovFiles.tryResolveSecurely(base, "ok.txt::$DATA").isPresent());
         assertFalse(EgovFiles.tryResolveSecurely(base, "ok.txt ").isPresent());
@@ -117,8 +114,7 @@ public class EgovFilesSecurityTest {
     @Test
         public void 윈도우_예약_장치명은_거부된다() throws Exception {
 		org.junit.Assume.assumeTrue(System.getProperty("os.name").toLowerCase(java.util.Locale.ROOT).contains("win"));
-        // 예약 장치명은 파일이 아니라 장치로 열린다 — NUL 은 내용이 사라지고 CON 은 콘솔에 붙어 블로킹될 수 있다.
-        // 확장자가 붙어도(NUL.txt) 장치이며, 중간 구성요소로 와도 마찬가지다
+        // 예약 장치명은 확장자가 붙거나 중간 구성요소여도 거부
         Path base = base();
         for (String name : Arrays.asList("NUL", "nul", "NUL.txt", "CON", "PRN.log", "AUX", "COM1", "com9.dat",
                 "LPT1", "sub/NUL/x.txt")) {

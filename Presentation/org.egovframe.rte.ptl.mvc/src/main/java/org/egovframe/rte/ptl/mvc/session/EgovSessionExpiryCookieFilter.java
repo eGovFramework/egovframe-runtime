@@ -37,56 +37,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * 세션 만료 시각을 쿠키로 내려 주는 필터 — 화면이 세션 잔여 시간을 표시할 수 있게 한다.
+ * 세션 만료 시각 쿠키({@value #DEFAULT_SERVER_TIME_COOKIE}, {@value #DEFAULT_EXPIRY_TIME_COOKIE})를 매 요청 갱신하는 필터.
+ * 세션이 없는 요청에는 쿠키를 발행하지 않으며 세션도 만들지 않는다.
+ * 화면 스크립트가 읽어야 하므로 httpOnly 기본값은 false이다.
  *
- * <p>매 요청마다 두 쿠키를 갱신한다. 요청이 오면 세션 유효 기간이 연장되므로, 갱신된 값을
- * 그때그때 내려 줘야 화면 카운트다운이 실제 세션과 어긋나지 않는다.</p>
- *
- * <table border="1">
- * <caption>발행 쿠키</caption>
- * <tr><th>쿠키</th><th>값</th></tr>
- * <tr><td>{@value #DEFAULT_SERVER_TIME_COOKIE}</td><td>서버 현재 시각(epoch millis)</td></tr>
- * <tr><td>{@value #DEFAULT_EXPIRY_TIME_COOKIE}</td>
- *     <td>세션 만료 예정 시각(epoch millis). 무제한 세션이면 {@code -1}</td></tr>
- * </table>
- *
- * <p><b>세션을 새로 만들지 않는다.</b> 세션이 없는 요청(정적 자원·비로그인 최초 진입)에는
- * 쿠키를 발행하지 않고 지나간다.</p>
- *
- * <p><b>{@code httpOnly} 기본값이 {@code false} 인 이유</b> — 이 쿠키는 <b>브라우저
- * 스크립트가 읽어서</b> 잔여 시간을 표시하라고 있는 것이다. {@code httpOnly=true} 로 두면
- * 스크립트가 읽지 못해 목적을 잃는다(그 경우 서버에서 값을 심어 주는 우회가 필요해진다).
- * 담기는 값은 세션 식별자가 아니라 시각 두 개뿐이라 노출 위험이 낮다. 그래도 막고 싶으면
- * {@code httpOnly} 초기화 파라미터로 켤 수 있다.</p>
- *
- * <p><b>최초 진입 화면</b>은 쿠키가 아직 브라우저에 없다(응답에 실린 쿠키는 <b>다음</b>
- * 요청부터 되돌아온다). 그 화면에서도 값이 필요하면 컨트롤러에서
- * {@link EgovSessionExpiry#from(HttpServletRequest)} 로 직접 얻어 모델에 담는다.</p>
- *
- * <p><b>web.xml 설정 예</b></p>
- * <pre>
- * &lt;filter&gt;
- *     &lt;filter-name&gt;sessionExpiryCookieFilter&lt;/filter-name&gt;
- *     &lt;filter-class&gt;org.egovframe.rte.ptl.mvc.session.EgovSessionExpiryCookieFilter&lt;/filter-class&gt;
- *     &lt;init-param&gt;
- *         &lt;param-name&gt;excludePathPatterns&lt;/param-name&gt;
- *         &lt;param-value&gt;/css/**,/js/**,/images/**&lt;/param-value&gt;
- *     &lt;/init-param&gt;
- * &lt;/filter&gt;
- * </pre>
- *
- * <p>지원하는 초기화 파라미터: {@code serverTimeCookieName} · {@code expiryTimeCookieName} ·
- * {@code cookiePath} · {@code httpOnly} · {@code sameSite} · {@code excludePathPatterns}</p>
+ * <p>초기화 파라미터: {@code serverTimeCookieName}, {@code expiryTimeCookieName},
+ * {@code cookiePath}, {@code httpOnly}, {@code sameSite}, {@code excludePathPatterns}(Ant 패턴, 쉼표 구분)</p>
  *
  * <pre>
  * &lt;&lt; 개정이력(Modification Information) &gt;&gt;
  *
  *  수정일        수정자        수정내용
  *  ----------  --------    ---------------------------
- *  2026.09.01  실행환경팀     최초 생성 (공통컴포넌트 SessionTimeoutCookieFilter 의
- *                            설계를 차용하되 세션 강제 생성·httpOnly 목적 모순·무제한 세션
- *                            음수 계산·경로 제외 부재를 재구성 — 코드 이식 아님)
- *  2026.09.02  실행환경팀     쿠키 조립을 EgovCookies 빌더에 위임 (동작·초기화 파라미터 불변)
+ *  2026.09.01  실행환경팀     최초 생성
+ *  2026.09.02  실행환경팀     쿠키 조립을 EgovCookies 빌더에 위임
  * </pre>
  *
  * @author 실행환경 개발팀
@@ -97,10 +61,10 @@ public class EgovSessionExpiryCookieFilter implements Filter {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(EgovSessionExpiryCookieFilter.class);
 
-	/** 서버 시각 쿠키의 기본 이름 — 공통컴포넌트와 동일하게 두어 화면 코드를 그대로 쓸 수 있다. */
+	/** 서버 시각 쿠키의 기본 이름(공통컴포넌트와 동일). */
 	public static final String DEFAULT_SERVER_TIME_COOKIE = "egovLatestServerTime";
 
-	/** 만료 시각 쿠키의 기본 이름 — 공통컴포넌트와 동일. */
+	/** 만료 시각 쿠키의 기본 이름(공통컴포넌트와 동일). */
 	public static final String DEFAULT_EXPIRY_TIME_COOKIE = "egovExpireSessionTime";
 
 	private final PathMatcher pathMatcher = new AntPathMatcher();
@@ -120,7 +84,7 @@ public class EgovSessionExpiryCookieFilter implements Filter {
 	/**
 	 * 초기화 파라미터를 읽는다. 지정하지 않은 항목은 기본값을 유지한다.
 	 *
-	 * @param filterConfig 필터 설정 (null 허용 — 전부 기본값)
+	 * @param filterConfig 필터 설정 (null이면 모두 기본값)
 	 */
 	@Override
 	public void init(FilterConfig filterConfig) {
@@ -132,7 +96,7 @@ public class EgovSessionExpiryCookieFilter implements Filter {
 		cookiePath = value(filterConfig, "cookiePath", cookiePath);
 		sameSite = value(filterConfig, "sameSite", sameSite);
 		httpOnly = Boolean.parseBoolean(value(filterConfig, "httpOnly", String.valueOf(httpOnly)));
-		// 이름·경로·SameSite 의 설정 오류는 첫 요청이 아니라 기동 시점에 드러나야 한다 — 빌더 검증을 미리 거친다
+		// 설정 오류를 기동 시점에 드러내기 위해 빌더 검증을 미리 거친다
 		EgovCookies.builder(serverTimeCookieName, "0").path(cookiePath).sameSite(sameSite);
 		EgovCookies.builder(expiryTimeCookieName, "0").path(cookiePath).sameSite(sameSite);
 
@@ -165,14 +129,13 @@ public class EgovSessionExpiryCookieFilter implements Filter {
 		if (request instanceof HttpServletRequest && response instanceof HttpServletResponse) {
 			HttpServletRequest httpRequest = (HttpServletRequest) request;
 			if (!isExcluded(httpRequest)) {
-				// 세션이 없으면 빈 Optional — 쿠키를 발행하지 않고, 세션도 만들지 않는다
+				// 세션이 없으면 쿠키를 발행하지 않는다
 				Optional<EgovSessionExpiry> expiry = EgovSessionExpiry.from(httpRequest);
 				if (expiry.isPresent()) {
 					try {
 						writeCookies(httpRequest, (HttpServletResponse) response, expiry.get());
 					} catch (IllegalArgumentException invalidCookieAttributes) {
-						// 이 쿠키는 부가 기능(만료 안내)이다 — SameSite=None 등 설정이 이번 요청의
-						// 채널(Secure)과 맞지 않아 발급이 거부돼도 본 요청 처리는 막지 않는다
+						// 부가 기능이므로 쿠키 발급이 거부돼도 본 요청 처리는 계속한다
 						LOGGER.warn("세션 만료 쿠키 발행 실패 — 요청은 계속 진행: {}", invalidCookieAttributes.getMessage());
 					}
 				}
@@ -180,6 +143,14 @@ public class EgovSessionExpiryCookieFilter implements Filter {
 		}
 
 		chain.doFilter(request, response);
+	}
+
+	/**
+	 * 해제할 자원이 없다(Servlet 3.1 호환을 위해 명시 구현).
+	 */
+	@Override
+	public void destroy() {
+		// 해제할 자원 없음
 	}
 
 	/**
@@ -211,9 +182,7 @@ public class EgovSessionExpiryCookieFilter implements Filter {
 	}
 
 	/**
-	 * 쿠키 조립을 {@link EgovCookies} 에 위임한다(같은 조리법 두 벌 방지). Secure 는 빌더가
-	 * {@code request.isSecure()} 로 자동 판정하고, {@code sameSite} 초기화 파라미터가 빈 값이면
-	 * 속성을 붙이지 않는 종전 의미를 그대로 유지한다.
+	 * {@link EgovCookies} 빌더로 쿠키를 조립한다. sameSite가 빈 값이면 속성을 붙이지 않는다.
 	 */
 	private EgovCookies.Builder cookie(String name, String value) {
 		return EgovCookies.builder(name, value)
@@ -257,7 +226,7 @@ public class EgovSessionExpiryCookieFilter implements Filter {
 	/**
 	 * {@code HttpOnly} 사용 여부를 지정한다.
 	 *
-	 * @param httpOnly true 면 스크립트에서 읽을 수 없다(기본 false — 클래스 설명 참조)
+	 * @param httpOnly true면 스크립트에서 읽을 수 없다(기본 false)
 	 */
 	public void setHttpOnly(boolean httpOnly) {
 		this.httpOnly = httpOnly;

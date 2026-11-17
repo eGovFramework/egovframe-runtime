@@ -325,6 +325,8 @@ public class FilehandlingServiceTest {
             EgovFileUtil.writeFile(path, text);
         }
         FileObject file = EgovFileUtil.getFileObject(path);
+        // 파일 생성과 touch가 같은 밀리초에 실행되어도 비교가 유효하도록 수정 시각을 과거로 설정
+        file.getContent().setLastModifiedTime(System.currentTimeMillis() - 60_000L);
         long lastModifyTime = file.getContent().getLastModifiedTime();
 
         long setTime = EgovFileUtil.touch(path);

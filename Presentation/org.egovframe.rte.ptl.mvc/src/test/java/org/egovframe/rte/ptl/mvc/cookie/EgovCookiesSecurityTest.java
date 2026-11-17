@@ -17,12 +17,7 @@ import javax.servlet.http.Cookie;
 import org.springframework.http.ResponseCookie;
 
 /**
- * {@link EgovCookies} 의 <b>헤더 주입(CWE-113)·안전 기본값</b> 회귀 검증.
- *
- * <p>기능 테스트({@link EgovCookiesTest})와 별도로, Set-Cookie 헤더를 깨뜨리거나 속성을 끼워 넣는 데
- * 실제로 쓰이는 입력을 표로 모아 두고 <b>하나라도 쿠키가 만들어지면 실패</b>하게 한다. 컨테이너
- * (Tomcat 의 RFC 6265 처리기)도 같은 문자를 거부하지만 이 빌더는 컨테이너에 기대지 않고 생성
- * 시점에 거부한다 — 테스트 응답 객체는 검증을 하지 않으므로 여기서 그 계약을 고정한다.</p>
+ * {@link EgovCookies}의 헤더 주입(CWE-113) 거부와 안전 기본값 회귀 테스트.
  */
 public class EgovCookiesSecurityTest {
 
@@ -30,7 +25,7 @@ public class EgovCookiesSecurityTest {
 	private static final String LF = "\n";
 	private static final String NUL = String.valueOf((char) 0);
 
-	/** 헤더 경계·속성 경계를 무너뜨리는 입력 — 이름·값·Path·Domain 어디에 넣어도 거부돼야 한다. */
+	/** 헤더·속성 경계를 깨는 입력(이름·값·Path·Domain 어디서든 거부돼야 함). */
 	private static final List<String> INJECTIONS = Arrays.asList(
 			"x" + CR + LF + "Set-Cookie: admin=true",
 			"x" + LF + "Set-Cookie: admin=true",
@@ -111,7 +106,7 @@ public class EgovCookiesSecurityTest {
 
 	@Test
 	public void 변조된_인코딩은_예외가_아니라_빈값() {
-		// 쿠키 값은 클라이언트가 임의로 바꿀 수 있다 — 읽기 헬퍼가 그 값 때문에 예외를 내면 요청 처리가 500 으로 끝난다
+		// 변조된 쿠키 값 때문에 읽기 헬퍼가 예외를 내면 안 된다
 		for (String tampered : Arrays.asList("%", "%zz", "%E0%A4%A", "abc%", "%%")) {
 			MockHttpServletRequest request = new MockHttpServletRequest();
 			request.setCookies(new Cookie("n", tampered));

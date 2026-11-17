@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.egovframe.web</groupId>
   <artifactId>org.egovframe.web.config.parent</artifactId>
-  <version>4.3.1</version>
+  <version>4.3.2</version>
   <packaging>pom</packaging>
   <name>org.egovframe.web.config.parent</name>
   <description>eGovFramework Web Dependencies</description>
@@ -17,28 +17,23 @@
     </license>
   </licenses>
 
-  <!--
-    Spring Boot 미사용 웹 프로젝트(공통컴포넌트, 웹 템플릿 등)용 부모 POM (5.x egovframe-web-config-parent 대응)
-      - 실행환경 루트 POM(org.egovframe.rte.root)을 BOM import → 실행환경 관리 버전을 그대로 사용
-      - 이 POM에는 루트 POM 미관리 라이브러리만 선언 (직접 선언이 BOM보다 우선하므로 중복 선언 금지)
-      - 속성 이름은 기존 프로젝트 속성(org.egovframe.rte.version, spring.maven.artifact.version)과 겹치지 않게 지정
-        → 적용 후 mvn dependency:tree로 이전 버전 잔존 여부 확인
-      - 관리 라이브러리는 Java 8 동작 버전(class 52 이하)으로 지정
-      - JDK 8 javac는 release 옵션이 없으므로 compiler에 source/target 지정
-  -->
+  <!-- Spring Boot 미사용 웹 프로젝트용 부모 POM : 실행환경 BOM import + 루트 POM 미관리 라이브러리만 선언 (Java 8 동작 버전) -->
+  <!-- 직접 선언이 BOM보다 우선하므로 루트 POM 관리 항목 중복 선언 금지 (Servlet/JSP API만 예외) -->
   <properties>
     <java.version>1.8</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <!-- eGovFrame -->
-    <egovframe.rte.version>4.3.1</egovframe.rte.version>
+    <egovframe.rte.version>4.3.2</egovframe.rte.version>
 
     <!-- Spring : 루트 POM 미관리 모듈 (spring.batch.version은 실행환경과 동일) -->
     <spring.batch.version>4.3.10</spring.batch.version>
     <spring-ldap-core.version>2.4.1</spring-ldap-core.version>
 
-    <!-- Java EE (javax) -->
+    <!-- Java EE 7 기준 (Servlet 3.1 컨테이너), spring-test Mock 사용 시 자식에서 javax.servlet-api.version 4.0.1 지정 -->
+    <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
+    <javax.servlet.jsp-api.version>2.3.3</javax.servlet.jsp-api.version>
     <javax.websocket-api.version>1.1</javax.websocket-api.version>
     <javax.faces-api.version>2.3</javax.faces-api.version>
     <javax.inject.version>1</javax.inject.version>
@@ -69,7 +64,7 @@
     <xercesImpl.version>2.12.2</xercesImpl.version>
     <quartz.version>2.3.2</quartz.version>
     <oro.version>2.0.8</oro.version>
-    <icu4j.version>75.1</icu4j.version>
+    <icu4j.version>77.1</icu4j.version>
     <javaparser-core.version>3.26.1</javaparser-core.version>
 
     <!-- UI, Editor, Converter -->
@@ -126,11 +121,24 @@
         <version>${spring-ldap-core.version}</version>
       </dependency>
 
-      <!-- Java EE (javax) -->
+      <!-- Java EE (javax) : WAS 제공 API는 provided, BOM 값(Servlet 4.0.1)을 의도적으로 덮어씀 -->
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>javax.servlet-api</artifactId>
+        <version>${javax.servlet-api.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>javax.servlet.jsp</groupId>
+        <artifactId>javax.servlet.jsp-api</artifactId>
+        <version>${javax.servlet.jsp-api.version}</version>
+        <scope>provided</scope>
+      </dependency>
       <dependency>
         <groupId>javax.websocket</groupId>
         <artifactId>javax.websocket-api</artifactId>
         <version>${javax.websocket-api.version}</version>
+        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>javax.faces</groupId>
@@ -182,8 +190,7 @@
         <version>${commons-fileupload.version}</version>
       </dependency>
 
-      <!-- Database : MySQL·PostgreSQL·HSQLDB는 루트 POM 관리
-           mysql:mysql-connector-java(구 좌표)는 8.0.33으로 고정되므로 com.mysql:mysql-connector-j 사용 -->
+      <!-- Database : MySQL(com.mysql:mysql-connector-j)·PostgreSQL·HSQLDB는 루트 POM 관리 -->
       <!-- MariaDB : 공통컴포넌트 maria 프로파일용 -->
       <dependency>
         <groupId>org.mariadb.jdbc</groupId>
@@ -221,8 +228,7 @@
         <artifactId>xmlbeans</artifactId>
         <version>${xmlbeans.version}</version>
       </dependency>
-      <!-- log4j-core 경유 : 루트 POM은 log4j-core/log4j-slf4j2-impl만 관리
-           (xmlbeans 5.3.0 등이 log4j-api 2.24.x를 전이 → nearest-wins로 core와 버전 불일치 방지) -->
+      <!-- log4j-api : 루트 POM log4j-core와 같은 버전으로 고정 (xmlbeans 5.3.0 전이 2.24.x 방지) -->
       <dependency>
         <groupId>org.apache.logging.log4j</groupId>
         <artifactId>log4j-api</artifactId>

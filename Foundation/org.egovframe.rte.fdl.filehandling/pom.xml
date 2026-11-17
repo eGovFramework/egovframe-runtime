@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.egovframe.rte</groupId>
         <artifactId>org.egovframe.rte.root</artifactId>
-        <version>4.3.1</version>
+        <version>4.3.2</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -64,6 +64,13 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
+        </dependency>
+
+        <!-- 전이 의존성 버전 지정 : 부모 POM(BOM) 없이 이 모듈을 쓰는 프로젝트에도 루트 POM 관리 버전 적용 -->
+        <dependency>
+            <!-- commons-vfs2 가 가져오는 commons-lang3(3.17.0) 대신 루트 POM 관리 버전을 소비자에도 적용 (CVE-2025-48924) -->
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
         </dependency>
 
         <!-- Test -->

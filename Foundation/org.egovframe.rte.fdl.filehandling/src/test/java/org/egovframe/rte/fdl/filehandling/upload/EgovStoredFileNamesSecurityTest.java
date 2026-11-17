@@ -25,11 +25,8 @@ import java.util.List;
 import org.junit.Test;
 
 /**
- * EgovStoredFileNames 의 <b>저장명 오염</b> 회귀 검증.
- *
- * <p>저장명은 결국 파일시스템 경로와 다운로드 헤더에 실린다. 공격자가 원본 파일명에 무엇을
- * 실어 보내든 저장명에는 <b>UUID 32자 + 소문자 영숫자 확장자</b> 외의 문자가 들어가지 않아야 한다.
- * 확장자 자리로 경로 구분자·인용부호·널바이트·ADS 구분자가 새어 들어오면 그 자체가 취약점이다.</p>
+ * EgovStoredFileNames 저장명 오염 회귀 테스트.
+ * 어떤 원본 파일명에도 저장명이 UUID 32자 + 소문자 영숫자 확장자만으로 구성됨을 검증한다.
  *
  * <pre>
  * &lt;&lt; 개정이력(Modification Information) &gt;&gt;
@@ -70,7 +67,7 @@ public class EgovStoredFileNamesSecurityTest {
 
 	@Test
 	public void 널바이트_확장자() {
-		// 정책 단계에서 이미 거부되지만, 저장명 생성 단계 단독으로도 위험 문자가 남지 않아야 한다
+		// 저장명 생성 단독으로도 위험 문자가 남지 않아야 한다
 		String stored = EgovStoredFileNames.generate("shell.jsp" + (char) 0 + ".png");
 		assertTrue(stored, stored.endsWith(".png"));
 		assertFalse(stored, stored.contains("\0") || stored.contains("jsp"));

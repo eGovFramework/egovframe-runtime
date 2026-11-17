@@ -48,13 +48,8 @@ public class BlobSerializableTypeHandler extends AbstractLobTypeHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(BlobSerializableTypeHandler.class);
 
     /**
-     * Allowlist of class names permitted for deserialization from BLOB.
-     * Prevents deserialization of untrusted data (e.g. RCE via malicious payloads, CWE-502).
-     * Add application domain types via {@link #addAllowedClass(Class)} or {@link #addAllowedClassName(String)}.
-     *
-     * <p><b>보안 주의:</b> 이 목록은 JVM 전역(static)이므로, 여기에 클래스를 추가하면 이 TypeHandler를
-     * 사용하는 애플리케이션의 모든 BLOB 역직렬화 지점에 동일하게 적용된다. 신뢰할 수 있는 자체 도메인
-     * 타입만 추가할 것.</p>
+     * BLOB 역직렬화 허용 클래스 목록(CWE-502 방지).
+     * JVM 전역(static) 목록이므로 신뢰할 수 있는 도메인 타입만 {@link #addAllowedClass(Class)}로 추가한다.
      */
     private static final Set<String> ALLOWED_CLASS_NAMES = ConcurrentHashMap.newKeySet();
 

@@ -5,8 +5,8 @@
 `Mono`/`Flux` CRUD 메서드를 제공하는 `EgovRedisRepository`를 제공합니다. 값 직렬화에는 Jackson(`Jackson2JsonRedisSerializer`)을 사용합니다.
 이 모듈에 의존하는 다른 실행환경 모듈은 없습니다.
 
-- **Artifact**: `org.egovframe.rte:org.egovframe.rte.psl.reactive.redis:4.3.1`
-- **Runtime**: Java 1.8 / Spring Framework 5.3.39-egov.1 / Spring Data Redis 2.7.18 / Lettuce 6.5.5.RELEASE / Jackson 2.18.11 / Reactor Core 3.4.41
+- **Artifact**: `org.egovframe.rte:org.egovframe.rte.psl.reactive.redis:4.3.2`
+- **Runtime**: Java 1.8 / Spring Framework 5.3.39-egov.2 / Spring Data Redis 2.7.18 / Lettuce 6.5.5.RELEASE / Jackson 2.18.12 / Reactor Core 3.4.41-egov.2
 - **실행환경 의존**: `org.egovframe.rte.fdl.logging`
 
 ---
@@ -56,15 +56,18 @@ src/test/java/org/egovframe/rte/psl/reactive/redis/repository/
 
 | 라이브러리 | 버전 | scope/비고 |
 |---|---|---|
-| `org.egovframe.rte:org.egovframe.rte.fdl.logging` | 4.3.1 | compile |
-| `org.springframework:spring-webflux`, `spring-context`, `spring-tx` | 5.3.39-egov.1 | compile |
-| `org.springframework.data:spring-data-redis` | 2.7.18 | compile (Spring Data Commons 2.7.18-egov.1 전이) |
-| `io.lettuce:lettuce-core` | 6.5.5.RELEASE | compile (전이되는 Netty는 루트 POM `netty-bom` 4.1.138.Final로 관리) |
-| `com.fasterxml.jackson.core:jackson-core`, `jackson-databind` | 2.18.11 | compile (`jackson-bom`) |
-| `io.projectreactor:reactor-core` | 3.4.41 | compile |
+| `org.egovframe.rte:org.egovframe.rte.fdl.logging` | 4.3.2 | compile |
+| `org.springframework:spring-webflux`, `spring-context`, `spring-tx` | 5.3.39-egov.2 | compile |
+| `org.springframework.data:spring-data-redis` | 2.7.18 | compile |
+| `org.springframework.data:spring-data-commons` | 2.7.18-egov.2 | compile. 전이 의존성 버전 지정 — `spring-data-redis`가 가져오는 공식 2.7.18 대신 포크 버전 |
+| `org.springframework:spring-oxm`, `spring-context-support` | 5.3.39-egov.2 | compile. 전이 의존성 버전 지정 — `spring-data-redis`가 가져오는 공식 5.3.31 대신 포크 버전 |
+| `io.lettuce:lettuce-core` | 6.5.5.RELEASE | compile |
+| `netty-handler`, `netty-codec`, `netty-common`, `netty-buffer`, `netty-resolver`, `netty-transport`, `netty-transport-native-unix-common` | 4.1.138.Final | compile. 전이 의존성 버전 지정 — `lettuce-core`가 가져오는 4.1.118.Final 대신 루트 POM `netty-bom` 버전 |
+| `com.fasterxml.jackson.core:jackson-core`, `jackson-databind` | 2.18.12 | compile (`jackson-bom`) |
+| `io.projectreactor:reactor-core` | 3.4.41-egov.2 | compile |
 | `io.projectreactor:reactor-test`, `org.assertj:assertj-core` | 3.4.41 / 3.27.7 | test |
 | `org.projectlombok:lombok` | 1.18.36 | test (`Sample` 엔티티) |
-| `org.springframework:spring-test`, `junit`, `easymock`, `com.googlecode.log4jdbc:log4jdbc` | 5.3.39-egov.1 / 4.13.2 / 5.2.0 / 1.2 | test |
+| `org.springframework:spring-test`, `junit`, `easymock`, `com.googlecode.log4jdbc:log4jdbc` | 5.3.39-egov.2 / 4.13.2 / 5.2.0 / 1.2 | test |
 
 ---
 
@@ -171,12 +174,12 @@ mvn test -pl Persistence/org.egovframe.rte.psl.reactive.redis
 <dependency>
     <groupId>org.egovframe.rte</groupId>
     <artifactId>org.egovframe.rte.psl.reactive.redis</artifactId>
-    <version>4.3.1</version>
+    <version>4.3.2</version>
 </dependency>
 ```
 
-부모 POM(`org.egovframe.boot.starter.parent` 또는 `org.egovframe.web.config.parent` 4.3.1)을 상속하면 `<version>` 생략 가능.
-`-egov.1` 포크 아티팩트(Spring Framework, Spring Data Commons)를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소 등록 필요.
+부모 POM(`org.egovframe.boot.starter.parent` 또는 `org.egovframe.web.config.parent` 4.3.2)을 상속하면 `<version>` 생략 가능.
+`-egov.2` 포크 아티팩트(Spring Framework, Spring Data Commons)를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소 등록 필요.
 
 ---
 

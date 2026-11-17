@@ -5,10 +5,10 @@
 Foundation 레이어의 `org.egovframe.rte.fdl.crypto`(Spring XML 네임스페이스 설정 방식)와 같은 서비스 구성을 `application.yml` 속성만으로 제공하며,
 `fdl.crypto` 모듈에 의존하지 않고 `org.egovframe.boot.crypto` 패키지에 서비스 인터페이스·구현·ARIA 엔진을 자체 포함합니다. 다른 실행환경 모듈이 이 모듈에 의존하지는 않습니다.
 
-- **Artifact**: `org.egovframe.boot:org.egovframe.crypto.spring.boot.starter:4.3.1`
-- **Runtime**: Java 1.8 / Spring Boot 2.7.18 / Spring Framework 5.3.39-egov.1 / Jasypt 1.9.3
+- **Artifact**: `org.egovframe.boot:org.egovframe.crypto.spring.boot.starter:4.3.2`
+- **Runtime**: Java 1.8 / Spring Boot 2.7.18 / Spring Framework 5.3.39-egov.2 / Jasypt 1.9.3
 - **실행환경 의존**: 없음 (`org.egovframe.rte.*` 모듈을 의존하지 않음)
-- **부모 POM**: 실행환경 루트 POM `org.egovframe.rte:org.egovframe.rte.root:4.3.1` (`spring-boot-starter-parent`가 아님)
+- **부모 POM**: 실행환경 루트 POM `org.egovframe.rte:org.egovframe.rte.root:4.3.2` (`spring-boot-starter-parent`가 아님)
 
 ---
 
@@ -186,14 +186,14 @@ boolean ok = digestService.matches("data".getBytes(StandardCharsets.UTF_8), dige
 ## 주요 의존성
 
 모듈 POM은 버전을 선언하지 않으며 루트 POM `dependencyManagement`에서 관리합니다.
-Spring Boot는 `spring-boot-dependencies` BOM 전체가 아니라 아래 아티팩트만 개별 관리하고, Spring Framework는 루트 POM의 `spring-framework-bom`(5.3.39-egov.1)으로 맞춥니다.
+Spring Boot는 `spring-boot-dependencies` BOM 전체가 아니라 아래 아티팩트만 개별 관리하고, Spring Framework는 루트 POM의 `spring-framework-bom`(5.3.39-egov.2)으로 맞춥니다.
 
 | 라이브러리 | 버전 | scope/비고 |
 |---|---|---|
 | `org.springframework.boot:spring-boot-autoconfigure` | 2.7.18 | compile |
 | `org.springframework.boot:spring-boot-autoconfigure-processor` | 2.7.18 | optional |
 | `org.springframework.boot:spring-boot-configuration-processor` | 2.7.18 | optional |
-| `org.springframework.boot:spring-boot-starter-web` | 2.7.18 | compile (`spring-webmvc` 5.3.39-egov.1) |
+| `org.springframework.boot:spring-boot-starter-web` | 2.7.18 | compile (`spring-webmvc` 5.3.39-egov.2) |
 | `commons-codec:commons-codec` | 1.18.0 | compile (Base64) |
 | `commons-io:commons-io` | 2.18.0 | compile (파일 읽기·쓰기) |
 | `javax.annotation:javax.annotation-api` | 1.3.2 | compile |
@@ -209,7 +209,7 @@ Spring Boot는 `spring-boot-dependencies` BOM 전체가 아니라 아래 아티�
 mvn clean install -pl Boot/org.egovframe.crypto.spring.boot.starter -am
 ```
 
-결과물: `target/org.egovframe.crypto.spring.boot.starter-4.3.1.jar`, `-sources.jar`, `-javadoc.jar`
+결과물: `target/org.egovframe.crypto.spring.boot.starter-4.3.2.jar`, `-sources.jar`, `-javadoc.jar`
 
 ## 테스트
 
@@ -219,14 +219,14 @@ mvn clean install -pl Boot/org.egovframe.crypto.spring.boot.starter -am
 
 ## Maven 의존성 추가
 
-Spring Boot 적용 프로젝트는 [org.egovframe.boot.starter.parent](../../Parent/org.egovframe.boot.starter.parent/README.md) 4.3.1을 부모 POM으로 상속하고
-스타터를 버전 없이 추가합니다. 부모 POM이 실행환경 루트 POM을 BOM으로 가져오므로 이 스타터(4.3.1)와 Spring 포크 버전이 함께 적용됩니다.
+Spring Boot 적용 프로젝트는 [org.egovframe.boot.starter.parent](../../Parent/org.egovframe.boot.starter.parent/README.md) 4.3.2를 부모 POM으로 상속하고
+스타터를 버전 없이 추가합니다. 부모 POM이 실행환경 루트 POM을 BOM으로 가져오므로 이 스타터(4.3.2)와 Spring 포크 버전이 함께 적용됩니다.
 
 ```xml
 <parent>
     <groupId>org.egovframe.boot</groupId>
     <artifactId>org.egovframe.boot.starter.parent</artifactId>
-    <version>4.3.1</version>
+    <version>4.3.2</version>
 </parent>
 
 <dependencies>
@@ -237,8 +237,8 @@ Spring Boot 적용 프로젝트는 [org.egovframe.boot.starter.parent](../../Par
 </dependencies>
 ```
 
-부모 POM을 상속하지 않는 경우 `<version>4.3.1</version>`을 명시합니다.
-`-egov.1` 포크 아티팩트를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소를 프로젝트 `pom.xml` 또는 `settings.xml`에 등록해야 합니다.
+부모 POM을 상속하지 않는 경우 `<version>4.3.2</version>`을 명시합니다.
+`-egov.2` Spring 포크 아티팩트를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소를 프로젝트 `pom.xml` 또는 `settings.xml`에 등록해야 합니다.
 
 ---
 

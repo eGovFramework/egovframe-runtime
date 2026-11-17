@@ -4,8 +4,8 @@
 `CqlSession`을 감싼 `ReactiveSession`을 만드는 `EgovCassandraConfiguration`과, `ReactiveCassandraTemplate`을 확장하여 `Mono`/`Flux` 기반 CRUD 메서드를 제공하는
 `EgovCassandraRepository`를 제공합니다. 이 모듈에 의존하는 다른 실행환경 모듈은 없습니다.
 
-- **Artifact**: `org.egovframe.rte:org.egovframe.rte.psl.reactive.cassandra:4.3.1`
-- **Runtime**: Java 1.8 / Spring Framework 5.3.39-egov.1 / Spring Data Cassandra 3.4.18 / Cassandra Java Driver 4.17.0 / Reactor Core 3.4.41
+- **Artifact**: `org.egovframe.rte:org.egovframe.rte.psl.reactive.cassandra:4.3.2`
+- **Runtime**: Java 1.8 / Spring Framework 5.3.39-egov.2 / Spring Data Cassandra 3.4.18 / Cassandra Java Driver 4.17.0 / Reactor Core 3.4.41-egov.2
 - **실행환경 의존**: `org.egovframe.rte.fdl.logging`
 
 ---
@@ -55,14 +55,18 @@ src/test/java/org/egovframe/rte/psl/reactive/cassandra/repository/
 
 | 라이브러리 | 버전 | scope/비고 |
 |---|---|---|
-| `org.egovframe.rte:org.egovframe.rte.fdl.logging` | 4.3.1 | compile |
-| `org.springframework:spring-webflux`, `spring-context`, `spring-tx` | 5.3.39-egov.1 | compile |
-| `org.springframework.data:spring-data-cassandra` | 3.4.18 | compile (Spring Data Commons 2.7.18-egov.1 전이) |
+| `org.egovframe.rte:org.egovframe.rte.fdl.logging` | 4.3.2 | compile |
+| `org.springframework:spring-webflux`, `spring-context`, `spring-tx` | 5.3.39-egov.2 | compile |
+| `org.springframework.data:spring-data-cassandra` | 3.4.18 | compile |
 | `com.datastax.oss:java-driver-core` | 4.17.0 | compile |
-| `io.projectreactor:reactor-core` | 3.4.41 | compile (Reactive Streams 1.0.4 전이) |
+| `org.springframework.data:spring-data-commons` | 2.7.18-egov.2 | compile. 전이 의존성 버전 지정 — `spring-data-cassandra`가 가져오는 공식 2.7.18 대신 포크 버전 |
+| `jackson-databind`, `jackson-core`, `jackson-annotations` | 2.18.12 | compile. 전이 의존성 버전 지정 — `java-driver-core`가 가져오는 2.13.2.x 대신 루트 POM `jackson-bom` 버전 |
+| `netty-handler`, `netty-codec`, `netty-common`, `netty-buffer`, `netty-resolver`, `netty-transport`, `netty-transport-native-unix-common` | 4.1.138.Final | compile. 전이 의존성 버전 지정 — `java-driver-core`가 가져오는 4.1.94.Final 대신 루트 POM `netty-bom` 버전 |
+| `org.reactivestreams:reactive-streams` | 1.0.4 | compile. 전이 의존성 버전 지정 — `java-driver-core`가 가져오는 1.0.3 대신 `reactor-core` 3.4.41-egov.2와 같은 버전 |
+| `io.projectreactor:reactor-core` | 3.4.41-egov.2 | compile |
 | `io.projectreactor:reactor-test`, `org.assertj:assertj-core` | 3.4.41 / 3.27.7 | test |
 | `org.projectlombok:lombok` | 1.18.36 | test (`Sample` 엔티티) |
-| `org.springframework:spring-test`, `junit`, `easymock`, `com.googlecode.log4jdbc:log4jdbc` | 5.3.39-egov.1 / 4.13.2 / 5.2.0 / 1.2 | test |
+| `org.springframework:spring-test`, `junit`, `easymock`, `com.googlecode.log4jdbc:log4jdbc` | 5.3.39-egov.2 / 4.13.2 / 5.2.0 / 1.2 | test |
 
 ---
 
@@ -162,12 +166,12 @@ mvn test -pl Persistence/org.egovframe.rte.psl.reactive.cassandra
 <dependency>
     <groupId>org.egovframe.rte</groupId>
     <artifactId>org.egovframe.rte.psl.reactive.cassandra</artifactId>
-    <version>4.3.1</version>
+    <version>4.3.2</version>
 </dependency>
 ```
 
-부모 POM(`org.egovframe.boot.starter.parent` 또는 `org.egovframe.web.config.parent` 4.3.1)을 상속하면 `<version>` 생략 가능.
-`-egov.1` 포크 아티팩트(Spring Framework, Spring Data Commons)를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소 등록 필요.
+부모 POM(`org.egovframe.boot.starter.parent` 또는 `org.egovframe.web.config.parent` 4.3.2)을 상속하면 `<version>` 생략 가능.
+`-egov.2` 포크 아티팩트(Spring Framework, Spring Data Commons)를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소 등록 필요.
 
 ---
 

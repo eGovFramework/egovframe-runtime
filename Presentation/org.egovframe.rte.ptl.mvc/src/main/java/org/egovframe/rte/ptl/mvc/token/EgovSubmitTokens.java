@@ -25,39 +25,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 /**
- * <b>중복 제출 방지 토큰</b>(멱등성 토큰) 유틸 — 같은 요청이 두 번 처리되는 것을 막는다.
+ * 중복 제출 방지 토큰(1회용) 발급·검증 유틸 클래스.
+ * 새로고침·중복 클릭으로 같은 요청이 두 번 처리되는 것을 막으며, CSRF 방어를 대체하지 않는다.
  *
- * <p><b>CSRF 토큰과 다르다.</b> CSRF 토큰은 "제3자 사이트가 보낸 요청인가"를 가리고
- * 세션 동안 재사용되지만, 제출 토큰은 <b>"이미 처리한 요청인가"</b>를 가리며
- * <b>1회 사용 후 소비</b>된다. 새로고침·따닥 클릭·뒤로가기 후 재전송으로 생기는
- * 이중 등록·이중 결제를 막는 용도이며, CSRF 방어(Spring Security)를 대체하지 않는다.</p>
- *
- * <p><b>사용 흐름</b> — 화면을 그릴 때 발급하고, 처리 직전에 검증한다.</p>
  * <pre>
- * // ① 폼 화면
- * model.addAttribute("submitToken", EgovSubmitTokens.issue(request));
- *
- * // ② 처리 컨트롤러 — 실패 시 사유가 담긴 예외
- * EgovSubmitTokens.validateOrThrow(request);
- * orderService.register(vo);
- * return "redirect:/orders";   // PRG 로 새로고침 재전송까지 차단
+ * model.addAttribute("submitToken", EgovSubmitTokens.issue(request));   // 폼 화면
+ * EgovSubmitTokens.validateOrThrow(request);                            // 처리 컨트롤러
  * </pre>
- *
- * <p>JSP 는 {@code <ui:submitToken/>} 태그로 hidden input 을 바로 출력할 수 있고,
- * Thymeleaf 등 다른 뷰는 위처럼 모델에 담아 쓰면 된다 — <b>이 클래스는 뷰 기술에
- * 의존하지 않는다.</b></p>
- *
- * <p><b>토큰 키</b>는 화면(폼)을 구분한다. 한 세션에서 여러 폼을 동시에 열 수 있으므로
- * 폼마다 다른 키를 주면 서로 간섭하지 않는다. 지정하지 않으면 {@link #DEFAULT_TOKEN_KEY}.</p>
  *
  * <pre>
  * &lt;&lt; 개정이력(Modification Information) &gt;&gt;
  *
  *  수정일        수정자        수정내용
  *  ----------  --------    ---------------------------
- *  2026.09.01  실행환경팀     최초 생성 (공통컴포넌트 EgovDoubleSubmitHelper·
- *                            DoubleSubmitTag 의 설계를 차용하되 원자적 검증·뷰 비종속·
- *                            명시 예외·토큰 상한으로 재구성 — 코드 이식 아님)
+ *  2026.09.01  실행환경팀     최초 생성
  * </pre>
  *
  * @author 실행환경 개발팀
@@ -79,7 +60,7 @@ public final class EgovSubmitTokens {
 	/** 토큰 키를 지정하지 않았을 때 쓰는 기본 키. */
 	public static final String DEFAULT_TOKEN_KEY = "DEFAULT";
 
-	/** 세션당 보관하는 최대 토큰 수 — 초과 시 가장 오래된 토큰부터 제거된다. */
+	/** 세션당 보관하는 최대 토큰 수(초과 시 가장 오래된 토큰부터 제거). */
 	public static final int MAX_TOKENS_PER_SESSION = 32;
 
 	private EgovSubmitTokens() {
@@ -110,8 +91,7 @@ public final class EgovSubmitTokens {
 		String token = UUID.randomUUID().toString();
 
 		HttpSession session = request.getSession();
-		// 저장소 최초 생성이 요청 간에 겹칠 수 있으므로 세션을 모니터로 잡는다.
-		// 이후 토큰 조작은 저장소 자신이 동기화한다.
+		// 저장소 최초 생성이 동시 요청 간에 겹치지 않도록 세션으로 동기화한다.
 		EgovSubmitTokenStore store;
 		synchronized (session) {
 			Object attribute = session.getAttribute(SESSION_ATTRIBUTE_NAME);
@@ -129,7 +109,7 @@ public final class EgovSubmitTokens {
 	}
 
 	/**
-	 * 기본 키로 토큰을 검증한다. 성공하면 토큰은 <b>소비되어 재사용할 수 없다</b>.
+	 * 기본 키로 토큰을 검증한다. 성공하면 토큰은 소비된다.
 	 *
 	 * @param request 현재 요청 (null 불가)
 	 * @return 유효한 요청이면 true, 중복 제출·미발급·세션 부재면 false
@@ -139,10 +119,7 @@ public final class EgovSubmitTokens {
 	}
 
 	/**
-	 * 지정한 키로 토큰을 검증한다. 성공하면 토큰은 <b>소비되어 재사용할 수 없다</b>.
-	 *
-	 * <p>확인과 소비가 한 임계 구역에서 일어나므로, 같은 토큰으로 <b>동시에</b> 들어온
-	 * 요청 중 정확히 하나만 true 를 받는다.</p>
+	 * 지정한 키로 토큰을 검증한다. 성공하면 토큰은 소비되며, 동시 요청 중 하나만 성공한다.
 	 *
 	 * @param request  현재 요청 (null 불가)
 	 * @param tokenKey 토큰 키 (null·공백이면 {@link #DEFAULT_TOKEN_KEY})
@@ -214,7 +191,7 @@ public final class EgovSubmitTokens {
 			return Reason.NO_PARAMETER;
 		}
 
-		// 확인과 소비가 원자적으로 일어난다 — 동시 요청 중 하나만 통과
+		// 확인과 소비를 원자적으로 처리한다(동시 요청 중 하나만 통과).
 		if (store.consume(key, parameter)) {
 			LOGGER.debug("제출 토큰 검증 성공·소비 — tokenKey={}", key);
 			return null;

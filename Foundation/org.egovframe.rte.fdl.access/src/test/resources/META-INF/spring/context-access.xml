@@ -3,7 +3,7 @@
        xmlns:egov-access="http://maven.egovframe.go.kr/schema/egov-access"
        xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://maven.egovframe.go.kr/schema/egov-access http://maven.egovframe.go.kr/schema/egov-access/egov-access-4.3.1.xsd">
+       http://maven.egovframe.go.kr/schema/egov-access http://maven.egovframe.go.kr/schema/egov-access/egov-access-4.3.2.xsd">
 
     <egov-access:config id="egovAccessConfig"
                         globalAuthen="session"

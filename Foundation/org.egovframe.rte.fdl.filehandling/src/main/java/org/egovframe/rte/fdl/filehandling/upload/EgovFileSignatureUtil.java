@@ -28,42 +28,21 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 파일 앞부분의 <b>시그니처(매직넘버)</b>를 읽어 선언된 확장자와 실제 내용이 맞는지 본다.
- *
- * <p><b>NOTE:</b> 확장자는 사용자가 지어 보내는 문자열일 뿐이다. {@link EgovUploadPolicy} 의 화이트리스트는
- * "이름이 {@code .jpg} 인가"를 볼 뿐 내용 바이트를 읽지 않으므로, 실행 가능한 파일을 {@code .jpg} 로 바꿔
- * 올리는 위장을 이름만으로는 가려낼 수 없다. 이 유틸이 그 한 겹을 맡는다. 한국 공공에서 쓰는
- * HWP(CFBF)·HWPX(ZIP) 등 사무 문서 포맷을 함께 등록해 두었다.</p>
+ * 파일 앞부분의 시그니처(매직넘버)로 선언된 확장자와 실제 내용의 일치 여부를 검사한다.
+ * 시그니처가 등록되지 않은 확장자는 통과시키므로 {@link EgovUploadPolicy} 화이트리스트와 함께 사용한다.
+ * ZIP 계열(hwpx·docx 등)과 CFBF 계열(hwp·doc 등)은 컨테이너가 같아 서로 구분하지 않는다.
  *
  * <pre>
- * // 업로드 처리 — 이름 검사(정책)와 내용 검사(시그니처)를 함께 둔다
  * policy.validate(fileName, fileSize);
- * if (!EgovFileSignatureUtil.matches(file.getBytes(), fileName)) {
- *     throw new EgovUploadRejectedException(EgovUploadPolicy.Reason.EXTENSION_NOT_ALLOWED, fileName);
- * }
- *
- * EgovFileSignatureUtil.detect(header);   // 내용으로 본 포맷: "pdf"/"jpg"/... 판별 불가면 null
+ * boolean ok = EgovFileSignatureUtil.matches(file.getBytes(), fileName);
  * </pre>
- *
- * <p><b>시그니처를 등록하지 않은 확장자는 통과시킨다(이 검사에 한해 fail-open).</b> 텍스트·CSV 처럼 고정된
- * 앞부분 바이트가 없는 형식까지 이 유틸이 거부하면 쓸 수 없기 때문이다. 따라서 <b>단독으로 쓰면 방어가 되지
- * 않는다</b> — 허용할 확장자 자체는 {@link EgovUploadPolicy} 의 화이트리스트(fail-closed)가 정하고, 이 유틸은
- * 그 안에서 이름과 내용의 불일치를 잡는 순서로 써야 한다. 어떤 확장자가 실제 검사 대상인지는
- * {@link #isSupportedExtension(String)} 으로 확인할 수 있다.</p>
- *
- * <p>같은 시그니처를 여러 확장자가 나눠 쓴다. ZIP 계열({@code hwpx}·{@code docx}·{@code xlsx}·{@code pptx})과
- * 구 오피스 CFBF 계열({@code hwp}·{@code doc}·{@code xls}·{@code ppt})은 <b>컨테이너 형식이 같아</b> 서로
- * 구분되지 않는다. 컨테이너 안의 내용까지 봐야 하는 검증은 이 유틸의 범위 밖이다.</p>
  *
  * <pre>
  * &lt;&lt; 개정이력(Modification Information) &gt;&gt;
  *
  *  수정일        수정자        수정내용
  *  ----------  --------    ---------------------------
- *  2026.09.14  실행환경팀     최초 생성 (공통컴포넌트 EgovFileSignatureUtil 의 시그니처 표를
- *                            차용하고, 확장자를 파일명 마지막 경로 구간에서만 뽑도록 정규화하며
- *                            검사 대상 여부를 알려주는 isSupportedExtension ·
- *                            getSupportedExtensions 를 더했다)
+ *  2026.09.14  실행환경팀     최초 생성
  * </pre>
  *
  * @author 실행환경 개발팀
@@ -83,7 +62,7 @@ public final class EgovFileSignatureUtil {
 	private static final byte[] SIG_CFBF = { (byte) 0xD0, (byte) 0xCF, 0x11, (byte) 0xE0, (byte) 0xA1, (byte) 0xB1,
 			0x1A, (byte) 0xE1 };
 
-	/** 확장자(소문자) → 허용 시그니처 목록. 클래스 로딩 때 채우고 이후 바뀌지 않는다. */
+	/** 확장자(소문자)별 허용 시그니처 목록(불변). */
 	private static final Map<String, List<byte[]>> EXT_SIGNATURES;
 
 	static {
@@ -119,7 +98,7 @@ public final class EgovFileSignatureUtil {
 	 *
 	 * @param content  파일 내용(앞부분 8바이트면 충분하다)
 	 * @param fileName 확장자를 포함한 파일명
-	 * @return 등록된 시그니처와 맞거나 검사 대상 확장자가 아니면 {@code true}, 위·변조로 어긋나면 {@code false}
+	 * @return 시그니처가 맞거나 검사 대상 확장자가 아니면 {@code true}
 	 */
 	public static boolean matches(byte[] content, String fileName) {
 		List<byte[]> signatures = EXT_SIGNATURES.get(extensionOf(fileName));
@@ -138,10 +117,7 @@ public final class EgovFileSignatureUtil {
 	}
 
 	/**
-	 * 스트림 앞부분을 읽어 선언된 확장자의 시그니처와 맞는지 본다.
-	 *
-	 * <p>읽은 만큼 <b>스트림 위치가 이동한다.</b> 이어서 같은 스트림으로 파일을 저장하려면 {@code mark}/{@code reset}
-	 * 을 지원하는 스트림을 쓰거나, 바이트를 먼저 읽어 두고 {@link #matches(byte[], String)} 을 쓴다.</p>
+	 * 스트림 앞부분을 읽어 선언된 확장자의 시그니처와 맞는지 본다. 읽은 만큼 스트림 위치가 이동한다.
 	 *
 	 * @param in       파일 입력 스트림
 	 * @param fileName 확장자를 포함한 파일명
@@ -197,10 +173,7 @@ public final class EgovFileSignatureUtil {
 	}
 
 	/**
-	 * 이 파일명의 확장자가 시그니처 검사 대상인지 알려준다.
-	 *
-	 * <p>{@code false} 라면 {@link #matches} 는 내용을 보지 않고 {@code true} 를 돌려준다. 업로드 정책이 허용한
-	 * 확장자가 검사 대상인지 미리 확인해 검사 공백을 알아차리는 데 쓴다.</p>
+	 * 파일명의 확장자가 시그니처 검사 대상인지 반환한다.
 	 *
 	 * @param fileName 확장자를 포함한 파일명
 	 * @return 등록된 시그니처가 있으면 {@code true}
@@ -230,10 +203,7 @@ public final class EgovFileSignatureUtil {
 		return true;
 	}
 
-	/**
-	 * 파일명에서 확장자를 뽑는다. 경로가 섞여 들어와도 <b>마지막 구간</b>에서만 확장자를 본다 —
-	 * {@code "dir.zip/report"} 의 확장자는 {@code "zip/report"} 가 아니라 없음이다.
-	 */
+	/** 파일명의 마지막 경로 구간에서 소문자 확장자를 추출한다. */
 	private static String extensionOf(String fileName) {
 		if (fileName == null) {
 			return "";

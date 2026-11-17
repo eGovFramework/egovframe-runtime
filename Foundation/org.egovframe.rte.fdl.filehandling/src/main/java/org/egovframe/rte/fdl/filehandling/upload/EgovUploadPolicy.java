@@ -26,43 +26,21 @@ import java.util.Set;
 import org.egovframe.rte.fdl.filehandling.EgovFiles;
 
 /**
- * 파일 업로드 허용 조건을 담은 <b>불변 정책</b> 객체이자 검증기.
- *
- * <p><b>NOTE:</b> 확장자 화이트리스트·파일 크기·파일 개수를 하나의 정책으로 묶어 검증한다.
- * <b>서블릿·Spring 에 의존하지 않으므로</b> 웹 요청뿐 아니라 배치·연계 수신처럼 파일을
- * 받아들이는 모든 자리에서 같은 규칙을 쓸 수 있다. 웹 계층에서 {@code MultipartFile} 을
- * 다룰 때는 {@code ptl.mvc} 의 어댑터를 함께 쓴다.</p>
+ * 확장자 화이트리스트·파일 크기·파일 개수를 검증하는 불변 업로드 정책.
+ * 화이트리스트는 필수(fail-closed)이며, 서블릿·Spring에 의존하지 않는다.
  *
  * <pre>
- * EgovUploadPolicy policy = EgovUploadPolicy.builder()
- *         .allowExtensions("png", "jpg", "pdf")
- *         .maxFileSize(10 * 1024 * 1024L)
- *         .maxFileCount(5)
- *         .build();
- *
- * policy.validate(fileName, fileSize);                 // 위반 시 예외
+ * EgovUploadPolicy policy = EgovUploadPolicy.builder().allowExtensions("png", "jpg", "pdf").maxFileSize(10 * 1024 * 1024L).build();
+ * policy.validate(fileName, fileSize);                            // 위반 시 예외
  * Optional&lt;Reason&gt; reason = policy.check(fileName, fileSize);   // 예외 없이 판정
  * </pre>
- *
- * <p><b>화이트리스트는 필수다(fail-closed).</b> 확장자를 하나도 지정하지 않으면 정책을
- * 만들 수 없다. "설정이 비어 있으면 전부 허용"하는 형태는 설정 파일의 오타나 누락이
- * 그대로 무방비 상태가 되므로 채택하지 않았다.</p>
- *
- * <p><b>확장자 검사는 방어의 한 겹일 뿐이다.</b> 확장자는 사용자가 마음대로 지어 보내는
- * 값이므로 내용과 일치한다는 보장이 없다. 업로드 디렉터리에서 <b>실행 권한을 제거</b>하고,
- * 저장 파일명을 새로 만들며(원본 이름을 그대로 쓰지 않는다), 필요하면 내용 기반 판별을
- * 함께 두는 것이 전제다.</p>
  *
  * <pre>
  * &lt;&lt; 개정이력(Modification Information) &gt;&gt;
  *
  *  수정일        수정자        수정내용
  *  ----------  --------    ---------------------------
- *  2026.09.01  실행환경팀     최초 생성 (공통컴포넌트 EgovFileUploadUtil ·
- *                            EgovMultipartResolver 의 검증 항목을 차용하되, 화이트리스트
- *                            미설정 시 전부 허용(fail-open)·설정 파싱 실패 시 침묵 폴백·
- *                            같은 화이트리스트 로직 이중 구현·경로 구분자 무시를 재구성 —
- *                            코드 이식 아님)
+ *  2026.09.01  실행환경팀     최초 생성
  * </pre>
  *
  * @author 실행환경 개발팀
@@ -98,10 +76,7 @@ public final class EgovUploadPolicy {
 	}
 
 	/**
-	 * 파일 하나를 검증하고 위반 사유를 반환한다. <b>예외를 던지지 않는다.</b>
-	 *
-	 * <p>여러 파일을 받아 개별로 성공·실패를 가려내야 하는 화면에서는 이 메서드가 편하다.
-	 * 위반 즉시 요청 전체를 거부할 자리라면 {@link #validate(String, long)} 를 쓴다.</p>
+	 * 파일 하나를 검증하고 위반 사유를 반환한다(예외 없음).
 	 *
 	 * @param fileName 파일명(경로가 아닌 <b>이름만</b>)
 	 * @param fileSize 바이트 크기
@@ -148,7 +123,7 @@ public final class EgovUploadPolicy {
 	}
 
 	/**
-	 * 파일 개수를 검증하고 위반 사유를 반환한다. <b>예외를 던지지 않는다.</b>
+	 * 파일 개수를 검증하고 위반 사유를 반환한다(예외 없음).
 	 *
 	 * @param fileCount 실제 업로드된 파일 개수
 	 * @return 위반 사유. 통과하면 {@link Optional#empty()}
@@ -262,10 +237,7 @@ public final class EgovUploadPolicy {
 	}
 
 	/**
-	 * {@link EgovUploadPolicy} 빌더.
-	 *
-	 * <p>잘못된 설정은 <b>정책을 만드는 시점에 즉시 실패</b>한다 — 검증이 필요한 순간에
-	 * 조용히 기본값으로 넘어가면 의도한 제한이 걸리지 않은 채 운영된다.</p>
+	 * {@link EgovUploadPolicy} 빌더. 잘못된 설정은 생성 시점에 즉시 실패한다.
 	 */
 	public static final class Builder {
 

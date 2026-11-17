@@ -17,18 +17,14 @@ package org.egovframe.rte.ptl.mvc.token;
 
 /**
  * 중복 제출 방지 토큰 검증 실패를 알리는 unchecked 예외.
- *
- * <p>{@link EgovSubmitTokens#validateOrThrow(javax.servlet.http.HttpServletRequest)} 계열이
- * 던진다. 실패 사유는 {@link Reason} 으로 구분되므로, 화면에서 "중복 제출입니다"와
- * "세션이 만료됐습니다"를 다르게 안내할 수 있다.</p>
+ * 사유는 {@link Reason}으로 구분한다.
  *
  * <pre>
  * &lt;&lt; 개정이력(Modification Information) &gt;&gt;
  *
  *  수정일        수정자        수정내용
  *  ----------  --------    ---------------------------
- *  2026.09.01  실행환경팀     최초 생성 (공통컴포넌트 EgovDoubleSubmitHelper 의
- *                            raw RuntimeException 을 사유 구분 가능한 명시 예외로 재구성)
+ *  2026.09.01  실행환경팀     최초 생성
  * </pre>
  *
  * @author 실행환경 개발팀
@@ -44,16 +40,16 @@ public class EgovSubmitTokenException extends RuntimeException {
 	 */
 	public enum Reason {
 
-		/** 세션이 없거나 만료됐다 — 발급 이력 자체가 사라진 상태. */
+		/** 세션이 없거나 만료됨. */
 		NO_SESSION("세션이 없거나 만료되어 제출 토큰을 확인할 수 없습니다."),
 
-		/** 요청에 토큰 파라미터가 없다 — 화면에 토큰을 심지 않았을 가능성이 크다. */
+		/** 요청에 토큰 파라미터가 없음. */
 		NO_PARAMETER("요청에 제출 토큰 파라미터가 없습니다. 화면에 토큰을 출력했는지 확인하십시오."),
 
-		/** 토큰이 발급되지 않았거나 이미 소비됐다 — <b>중복 제출의 전형</b>. */
+		/** 토큰이 발급되지 않았거나 이미 소비됨(중복 제출). */
 		TOKEN_NOT_ISSUED("발급되지 않았거나 이미 사용된 제출 토큰입니다."),
 
-		/** 세션 토큰과 요청 토큰이 다르다. */
+		/** 세션 토큰과 요청 토큰이 다름. */
 		TOKEN_MISMATCH("제출 토큰이 일치하지 않습니다.");
 
 		private final String defaultMessage;
@@ -107,11 +103,7 @@ public class EgovSubmitTokenException extends RuntimeException {
 	}
 
 	/**
-	 * 중복 제출로 판단되는 사유인지 여부.
-	 *
-	 * <p>{@link Reason#TOKEN_NOT_ISSUED} · {@link Reason#TOKEN_MISMATCH} 는 이미 처리된
-	 * 요청의 재전송으로 보는 것이 타당하다. 반면 {@link Reason#NO_SESSION} 은 세션 만료,
-	 * {@link Reason#NO_PARAMETER} 는 화면 구성 누락에 가깝다.</p>
+	 * 중복 제출로 판단되는 사유({@link Reason#TOKEN_NOT_ISSUED}, {@link Reason#TOKEN_MISMATCH})인지 여부.
 	 *
 	 * @return 중복 제출로 판단되면 true
 	 */

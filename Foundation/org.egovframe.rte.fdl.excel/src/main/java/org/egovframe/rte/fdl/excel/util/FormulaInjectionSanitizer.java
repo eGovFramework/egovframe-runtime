@@ -16,10 +16,8 @@
 package org.egovframe.rte.fdl.excel.util;
 
 /**
- * 셀 값이 {@code = + - @}(또는 탭·캐리지리턴)로 시작하면 일부 스프레드시트 프로그램이 이를 수식으로
- * 해석해 실행할 수 있다(CSV/Excel Formula Injection, CWE-1236). DB에 저장된 사용자 입력을 그대로
- * 엑셀로 내보내는 화면(게시판 다운로드 등)에서 특히 위험하므로, 셀에 기록하기 전 앞에 작은따옴표를
- * 붙여 리터럴 문자열로 강제한다.
+ * 셀 값의 수식 인젝션(CWE-1236)을 방지한다.
+ * {@code = + - @}, 탭, CR로 시작하는 값 앞에 작은따옴표를 붙여 리터럴 문자열로 기록한다.
  */
 final class FormulaInjectionSanitizer {
 

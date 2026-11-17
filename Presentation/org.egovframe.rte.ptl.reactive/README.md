@@ -4,9 +4,9 @@
 공통 오류 코드·예외·JSON 오류 응답 핸들러, Bean Validation(javax.validation) 제약 어노테이션(주민등록번호·사업자등록번호·법인등록번호·이메일·전화번호·IP·비밀번호 등)과
 Functional Endpoints용 검증 헬퍼를 제공합니다. `org.egovframe.rte.fdl.logging`에 의존하며, 실행환경의 다른 모듈은 이 모듈에 의존하지 않습니다.
 
-- **Artifact**: `org.egovframe.rte:org.egovframe.rte.ptl.reactive:4.3.1`
-- **Runtime**: Java 1.8 / Spring Framework 5.3.39-egov.1 (spring-webflux, spring-context) / Reactor Core 3.4.41 / javaee-api 8.0.1 (javax.validation API)
-- **실행환경 의존**: `org.egovframe.rte.fdl.logging` 4.3.1
+- **Artifact**: `org.egovframe.rte:org.egovframe.rte.ptl.reactive:4.3.2`
+- **Runtime**: Java 1.8 / Spring Framework 5.3.39-egov.2 (spring-webflux, spring-context) / Reactor Core 3.4.41-egov.2 / javaee-api 8.0.1 (javax.validation API)
+- **실행환경 의존**: `org.egovframe.rte.fdl.logging` 4.3.2
 
 ---
 
@@ -91,7 +91,7 @@ src/main/java/org/egovframe/rte/ptl/reactive/
 | `@EgovEnglishCheck` / `EgovEnglishCheckValidation` | 영문자만 |
 | `@EgovIPCheck` / `EgovIPCheckValidation` | IPv4 또는 IPv6 형식. 기본 메시지 `Invalid IP Address` |
 | `@EgovPwdCheck` / `EgovPwdCheckValidation` | 8~20자, 공백 없이 영문자·숫자·특수문자(`~!@#$%^&*?`) 조합, 같은 문자 3회 이상 반복 금지, 연속 문자(abc, 123) 3개 이상 금지. 정적 메서드 `passwordCheck`, `repetitivePasswordCheck`, `consecutivePasswordCheck` |
-| `@EgovNullCheck` / `EgovNullCheckValidation` | 값이 비어 있지 않을 것. 기본 메시지 `Please enter required values` |
+| `@EgovNullCheck` / `EgovNullCheckValidation` | 값이 비어 있지 않을 것(`ObjectUtils.isEmpty` 기준). 대상 타입이 `Object`이므로 `String`뿐 아니라 `Integer`·`int`·`Double` 등 숫자 필드와 컬렉션·배열에도 붙일 수 있음. 기본 메시지 `Please enter required values` |
 | `EgovValidation` | 생성자로 받은 `javax.validation.Validator`로 `validate(T)` 수행. 위반이 있으면 메시지를 `, `로 이어 `EgovException(INVALID_INPUT_VALUE, …)` |
 
 제약 어노테이션의 기본 메시지는 `@EgovIPCheck`, `@EgovNullCheck`를 제외하고 `Invalid input values`이며, `message`·`groups`·`payload` 속성으로 재정의할 수 있습니다.
@@ -103,16 +103,16 @@ src/main/java/org/egovframe/rte/ptl/reactive/
 
 | 라이브러리 | 버전 | scope/비고 |
 |---|---|---|
-| `org.egovframe.rte:org.egovframe.rte.fdl.logging` | 4.3.1 | compile (POM 선언. Log4j2 연동) |
-| `org.springframework:spring-webflux` | 5.3.39-egov.1 | compile. Reactor Core 3.4.41 전이 |
-| `org.springframework:spring-context` | 5.3.39-egov.1 | compile |
+| `org.egovframe.rte:org.egovframe.rte.fdl.logging` | 4.3.2 | compile (POM 선언. Log4j2 연동) |
+| `org.springframework:spring-webflux` | 5.3.39-egov.2 | compile. Reactor Core 전이 (공식 3.4.41 대신 루트 POM 관리 3.4.41-egov.2) |
+| `org.springframework:spring-context` | 5.3.39-egov.2 | compile |
 | `javax:javaee-api` | 8.0.1 | compile. `javax.validation` API 제공 |
 | `javax.servlet:javax.servlet-api` | 4.0.1 | provided |
 | `org.slf4j:slf4j-api` | 2.0.17 | compile |
-| `com.googlecode.json-simple:json-simple` | 1.1.1 | compile. 오류 응답 JSON 직렬화 |
+| `com.googlecode.json-simple:json-simple` | 1.1.1 | compile. 오류 응답 JSON 직렬화 (json-simple이 compile로 잘못 선언한 `junit` 제외) |
 | `org.hibernate.validator:hibernate-validator` | 6.2.5.Final | test. Bean Validation 구현체 |
 | `javax.validation:validation-api`, `javax.el:javax.el-api`, `org.glassfish:javax.el` | 2.0.1.Final / 3.0.0 / 3.0.0 | test |
-| `org.springframework:spring-test`, `junit:junit`, `org.easymock:easymock`, `org.powermock:powermock-module-junit4`, `org.powermock:powermock-api-easymock` | 5.3.39-egov.1 / 4.13.2 / 5.2.0 / 2.0.9 / 2.0.9 | test |
+| `org.springframework:spring-test`, `junit:junit`, `org.easymock:easymock`, `org.powermock:powermock-module-junit4`, `org.powermock:powermock-api-easymock` | 5.3.39-egov.2 / 4.13.2 / 5.2.0 / 2.0.9 / 2.0.9 | test |
 
 버전은 모두 루트 POM `dependencyManagement`에서 관리되며 모듈 POM에는 선언하지 않습니다.
 런타임에 제약 어노테이션을 실제로 검증하려면 적용 프로젝트에 Bean Validation 구현체(hibernate-validator 등)가 필요합니다.
@@ -175,7 +175,7 @@ SampleDto checked = validation.validate(dto);                 // 위반 시 Egov
 mvn clean install -pl Presentation/org.egovframe.rte.ptl.reactive -am
 ```
 
-결과물: `target/org.egovframe.rte.ptl.reactive-4.3.1.jar`, `-sources.jar`, `-javadoc.jar`
+결과물: `target/org.egovframe.rte.ptl.reactive-4.3.2.jar`, `-sources.jar`, `-javadoc.jar`
 
 ## 테스트
 
@@ -194,12 +194,12 @@ mvn test -pl Presentation/org.egovframe.rte.ptl.reactive
 <dependency>
     <groupId>org.egovframe.rte</groupId>
     <artifactId>org.egovframe.rte.ptl.reactive</artifactId>
-    <version>4.3.1</version>
+    <version>4.3.2</version>
 </dependency>
 ```
 
-부모 POM(`org.egovframe.boot.starter.parent` 또는 `org.egovframe.web.config.parent` 4.3.1)을 상속하면 `<version>` 생략 가능.
-`-egov.1` 포크 아티팩트를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소 등록 필요.
+부모 POM(`org.egovframe.boot.starter.parent` 또는 `org.egovframe.web.config.parent` 4.3.2)을 상속하면 `<version>` 생략 가능.
+`-egov.2` 포크 아티팩트를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소 등록 필요.
 
 ---
 

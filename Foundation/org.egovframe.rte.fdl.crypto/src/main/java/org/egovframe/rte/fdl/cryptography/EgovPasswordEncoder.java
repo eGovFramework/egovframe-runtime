@@ -1,7 +1,7 @@
 /**
- * 패드워드를 Encoder 하는 클래스.
+ * 패스워드를 Encoder 하는 클래스.
  *
- * <p><b>NOTE:</b> 파일 서비스를 제공하기 위해 구현한 클래스이다.</p>
+ * <p><b>NOTE:</b> Jasypt ConfigurablePasswordEncryptor로 패스워드 해시 생성·검증을 수행한다.</p>
  *
  * @author 실행환경 개발팀 윤성종
  * @version 1.0

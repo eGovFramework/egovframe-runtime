@@ -32,64 +32,22 @@ import java.util.Set;
 import org.egovframe.rte.fdl.filehandling.EgovFiles;
 
 /**
- * 신뢰 루트 위에서 업로드 파일의 <b>저장·재검증·삭제</b>를 한 번에 맡는 참조 구현.
- *
- * <p><b>NOTE:</b> 안전 경로 부품(저장명 {@link EgovStoredFileNames}, 경로 확정
- * {@link EgovFiles#resolveSecurely(Path, String)}·{@link EgovFiles#requireContainedIn(String, Path...)},
- * 정책 {@link EgovUploadPolicy})을 <b>올바른 순서로 조립</b>한 것이며 새 규칙을 두지 않는다.
- * 개발자가 매번 네 부품을 직접 엮지 않도록 하는 것이 목적이다. 웹 타입에 의존하지 않으므로
- * 컨트롤러·서비스·배치·리액티브 어디서나 같은 조립을 쓴다.</p>
+ * 허용 루트 위에서 업로드 파일의 저장·재검증·삭제를 담당하는 참조 구현.
+ * 저장명은 새로 생성하고(확장자만 보존) 원본 이름은 경로에 쓰지 않는다.
+ * 모든 경로는 허용 루트 내부로 제한하며, 읽기·삭제 시 실경로로 재확인한다(심볼릭 링크 우회 방지).
  *
  * <pre>
- * EgovFileStore store = EgovFileStore.builder()
- *         .root("store", Paths.get("/data/upload"))        // 첫 루트 = 기본 루트
- *         .root("image", Paths.get("/data/image"))
- *         .policy(uploadPolicy)                             // 선택 — 이름·크기 검증 위임
- *         .build();
- *
- * // 업로드
+ * EgovFileStore store = EgovFileStore.builder().root("store", Paths.get("/data/upload")).policy(uploadPolicy).build();
  * EgovStoredFile stored = store.store(file.getInputStream(), file.getOriginalFilename());
- * // → DB 에는 stored.getRootKey()·getStoredName()·getOriginalName() 을 보관
- *
- * // 다운로드 — 읽는 시점에 다시 검증한다
  * Path verified = store.resolve(attach.getRootKey(), attach.getStoredName());
- * response.setHeader("Content-Disposition", EgovContentDispositions.attachment(attach.getOriginalName()));
- * Files.copy(verified, response.getOutputStream());
  * </pre>
- *
- * <p><b>허용 루트는 설정에서 오는 신뢰 값이어야 한다.</b> 루트가 하나도 없으면 만들 수 없다
- * (fail-closed). 저장·해석·삭제의 모든 경로는 루트 중 하나의 내부여야 하며, 벗어나면
- * {@link IllegalArgumentException} 이다.</p>
- *
- * <p><b>원본 이름은 경로에 쓰이지 않는다.</b> 저장명은 새로 만들고(확장자만 보존) 원본 이름은
- * 결과 값으로 돌려줄 뿐이다. 따라서 {@code ../../etc/passwd.txt} 같은 이름이 와도 루트 바로
- * 아래에 {@code <무작위>.txt} 로 놓인다.</p>
- *
- * <p><b>정책은 선택이며, 지정하지 않으면 이름·크기를 검증하지 않는다.</b> 웹 계층에서
- * {@code ptl.mvc} 어댑터로 이미 검증했다면 생략할 수 있지만, 서비스 계층 스토어에도 정책을
- * 붙여 두면 두 번 검증되어도 무해하고 우회 경로가 막힌다. 정책이 있으면 크기는 <b>실제로 기록된
- * 바이트 수</b>로 검증하며(선언 크기는 믿지 않는다), 위반이면 방금 쓴 파일을 지우고
- * {@link EgovUploadRejectedException} 을 던진다 — 부분 저장물은 남지 않는다.</p>
- *
- * <p><b>재검증 두 형태.</b> {@link #resolve(String, String)}(루트 키 + 저장명)가 권장 형태이고,
- * {@link #resolve(String)}(보관된 전체 경로)는 전체 경로를 DB 컬럼에 보관해 온 관행을 이전 기간
- * 동안 수용하기 위한 것이다. 두 형태 모두 루트 밖이면 거부한다. 재검증은 경로 포함 여부만
- * 판정하며 파일 존재 여부는 호출자가 본다.</p>
- *
- * <p><b>한계.</b> 저장 시점의 경로 검증은 어휘적(lexical) 정규화 기반이지만 저장명이 무작위라 링크를 미리 심을
- * 자리가 없고, 읽기·삭제 시점에는 실재하는 경로의 <b>실경로</b>가 루트 안인지 다시 확인하므로 루트 안에
- * 심긴 심볼릭 링크를 따라 밖을 읽거나 지우지 않는다. 저장은 루트 바로 아래 평면 배치이며, 하위
- * 디렉터리 단위로 나누려면 그 디렉터리를 별도 루트로 등록한다.</p>
  *
  * <pre>
  * &lt;&lt; 개정이력(Modification Information) &gt;&gt;
  *
  *  수정일        수정자        수정내용
  *  ----------  --------    ---------------------------
- *  2026.09.02  실행환경팀     최초 생성 (공통컴포넌트
- *                            EgovFileMngUtil.parseFileInf 의 조립 역할을 차용하되
- *                            문자 삭제형 경로 방어·시각 기반 저장명·다운로드 시 DB 경로
- *                            무검증을 부품 위임으로 재구성 — 코드 이식 아님)
+ *  2026.09.02  실행환경팀     최초 생성
  * </pre>
  *
  * @author 실행환경 개발팀
@@ -97,7 +55,7 @@ import org.egovframe.rte.fdl.filehandling.EgovFiles;
  */
 public final class EgovFileStore {
 
-	/** 이름·확장자만으로 판정되는 정책 사유 — 크기를 모르는 시점의 선행 검사에 쓴다. */
+	/** 크기 기록 전 선행 검사에 쓰는 이름·확장자 정책 사유. */
 	private static final Set<EgovUploadPolicy.Reason> NAME_REASONS = Collections.unmodifiableSet(EnumSet.of(
 			EgovUploadPolicy.Reason.NO_FILENAME, EgovUploadPolicy.Reason.INVALID_FILENAME,
 			EgovUploadPolicy.Reason.NO_EXTENSION, EgovUploadPolicy.Reason.EXTENSION_NOT_ALLOWED));
@@ -176,19 +134,12 @@ public final class EgovFileStore {
 
 	// ---------------------------------------------------------------- resolve
 
-	/**
-	 * 루트 키 + 저장명으로 읽기 경로를 확정한다(권장 형태). 루트 밖이거나, 실재하는 경로가 심볼릭 링크를
-	 * 거쳐 루트 밖을 가리키면 {@link IllegalArgumentException}.
-	 */
+	/** 루트 키와 저장명으로 읽기 경로를 확정한다. 루트 밖이면 {@link IllegalArgumentException}. */
 	public Path resolve(String rootKey, String storedName) {
 		return requireRealPathInside(EgovFiles.resolveSecurely(rootOf(rootKey), storedName));
 	}
 
-	/**
-	 * 보관된 전체 경로 문자열을 허용 루트 전체에 대해 재검증한다(이전 기간 호환 형태).
-	 * 루트 밖·해석 불가·널 바이트이거나, 실재하는 경로가 심볼릭 링크를 거쳐 루트 밖을 가리키면
-	 * {@link IllegalArgumentException}.
-	 */
+	/** 보관된 전체 경로를 허용 루트 기준으로 재검증한다(호환용). 루트 밖이면 {@link IllegalArgumentException}. */
 	public Path resolve(String storedPath) {
 		return requireRealPathInside(EgovFiles.requireContainedIn(storedPath, rootArray()));
 	}
@@ -201,12 +152,12 @@ public final class EgovFileStore {
 
 	// ----------------------------------------------------------------- delete
 
-	/** 검증 뒤 삭제한다. 지운 파일이 있으면 true, 이미 없으면 false. 루트 밖이거나 링크를 거치면 예외. */
+	/** 검증 뒤 삭제한다. 삭제했으면 true, 파일이 없으면 false. */
 	public boolean delete(String rootKey, String storedName) {
 		return deleteVerified(resolve(rootKey, storedName));
 	}
 
-	/** 보관된 전체 경로를 검증 뒤 삭제한다. 루트 밖이면 예외이며 파일시스템에 영향이 없다. */
+	/** 보관된 전체 경로를 검증 뒤 삭제한다. */
 	public boolean delete(String storedPath) {
 		return deleteVerified(resolve(storedPath));
 	}
@@ -235,10 +186,7 @@ public final class EgovFileStore {
 
 	// --------------------------------------------------------------- internal
 
-	/**
-	 * 어휘적 봉쇄를 통과한 경로가 <b>실재</b>하면 실경로로도 허용 루트 안인지 재확인한다 — 루트 안에 미리 심긴
-	 * 심볼릭 링크를 따라 밖을 읽거나 지우는 일을 막는다. 아직 없는 경로는 어휘적 검사로 충분하다.
-	 */
+	/** 실재하는 경로는 실경로가 허용 루트 안인지 재확인한다(심볼릭 링크 우회 방지). */
 	private Path requireRealPathInside(Path lexical) {
 		if (!Files.exists(lexical, LinkOption.NOFOLLOW_LINKS)) {
 			return lexical;
@@ -274,7 +222,7 @@ public final class EgovFileStore {
 		return roots.values().toArray(new Path[0]);
 	}
 
-	/** 크기를 모르는 시점의 선행 검사 — 이름·확장자 사유만 정책에 묻는다(크기 사유는 기록 후 판정). */
+	/** 기록 전 이름·확장자만 정책으로 검사한다. */
 	private void precheckName(String originalName) {
 		if (policy == null) {
 			return;
@@ -332,7 +280,7 @@ public final class EgovFileStore {
 		private Builder() {
 		}
 
-		/** 허용 루트를 등록한다. 같은 키를 다시 등록하면 예외(설정 중복은 실수다). */
+		/** 허용 루트를 등록한다. 키가 중복되면 예외. */
 		public Builder root(String key, Path directory) {
 			if (key == null || key.trim().isEmpty()) {
 				throw new IllegalArgumentException("root key must not be null or empty");

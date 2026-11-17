@@ -19,25 +19,15 @@ import java.nio.file.Path;
 import java.util.Objects;
 
 /**
- * {@link EgovFileStore} 가 파일을 저장한 결과를 담는 <b>불변 값</b>.
- *
- * <p><b>NOTE:</b> 애플리케이션은 이 값에서 <b>루트 키와 저장명</b>을 보관해 두었다가
- * 다운로드 시 {@link EgovFileStore#resolve(String, String)} 로 경로를 다시 확정한다.
- * 원본 이름은 화면 표시·{@code Content-Disposition} 용도로만 보관하고 경로에는 쓰지
- * 않는다(저장 경로에는 확장자 외에 원본 이름의 어떤 부분도 들어가지 않는다).</p>
- *
- * <pre>
- * EgovStoredFile stored = store.store(in, file.getOriginalFilename());
- * attachRepository.save(new Attach(stored.getRootKey(), stored.getStoredName(),
- *                                  stored.getOriginalName(), stored.getSize()));
- * </pre>
+ * {@link EgovFileStore}의 저장 결과를 담는 불변 값 객체.
+ * 루트 키와 저장명을 보관했다가 다운로드 시 {@link EgovFileStore#resolve(String, String)}로 경로를 재확정한다.
  *
  * <pre>
  * &lt;&lt; 개정이력(Modification Information) &gt;&gt;
  *
  *  수정일        수정자        수정내용
  *  ----------  --------    ---------------------------
- *  2026.09.02  실행환경팀     최초 생성 (저장 결과 값 객체)
+ *  2026.09.02  실행환경팀     최초 생성
  * </pre>
  *
  * @author 실행환경 개발팀
@@ -64,7 +54,7 @@ public final class EgovStoredFile {
 		return rootKey;
 	}
 
-	/** 새로 만든 저장 파일명(루트 바로 아래, 확장자 보존). DB 에 보관하는 값이다. */
+	/** 새로 만든 저장 파일명(확장자 보존). */
 	public String getStoredName() {
 		return storedName;
 	}
@@ -74,7 +64,7 @@ public final class EgovStoredFile {
 		return path;
 	}
 
-	/** 호출자가 준 원본 이름 그대로(null 가능). 경로에는 쓰이지 않는다. */
+	/** 호출자가 준 원본 이름(null 가능). */
 	public String getOriginalName() {
 		return originalName;
 	}

@@ -21,25 +21,14 @@ import java.util.Map;
 
 /**
  * 세션에 보관되는 중복 제출 방지 토큰 저장소.
- *
- * <p><b>이 클래스의 존재 이유는 원자성이다.</b> 토큰 검증은 "값이 같은지 확인하고 지운다"는
- * 복합 연산이라, 확인과 삭제 사이에 다른 요청이 끼어들면 <b>둘 다 통과</b>한다 —
- * 바로 이 기능이 막으려던 상황이다. 따라서 모든 상태 변경은 이 객체를 모니터로 삼아
- * {@code synchronized} 안에서 수행한다.</p>
- *
- * <p>세션당 토큰 수는 {@link #maxTokens} 로 제한한다. 화면마다 다른 토큰 키를 쓰는 앱에서
- * 토큰이 무한정 쌓여 세션이 비대해지는 것을 막기 위함이며, 초과 시 <b>가장 오래 전에 발급된
- * 토큰부터</b> 제거한다({@link LinkedHashMap} 삽입 순서).</p>
- *
- * <p>세션 직렬화·복제(클러스터) 환경을 고려해 {@link Serializable} 이다.</p>
+ * 토큰 확인과 소비를 synchronized로 원자 처리하며, 토큰 수 상한 초과 시 가장 오래된 토큰부터 제거한다.
  *
  * <pre>
  * &lt;&lt; 개정이력(Modification Information) &gt;&gt;
  *
  *  수정일        수정자        수정내용
  *  ----------  --------    ---------------------------
- *  2026.09.01  실행환경팀     최초 생성 (원본의 비동기화 HashMap + check-then-act 를
- *                            원자 연산으로 재구성, 세션당 토큰 수 상한 도입)
+ *  2026.09.01  실행환경팀     최초 생성
  * </pre>
  *
  * @author 실행환경 개발팀
@@ -68,8 +57,7 @@ public class EgovSubmitTokenStore implements Serializable {
 	}
 
 	/**
-	 * 토큰을 발급해 보관하고 반환한다. 같은 키에 이미 토큰이 있으면 <b>새 값으로 교체</b>한다
-	 * (화면을 다시 열면 이전 화면의 토큰은 무효가 된다).
+	 * 토큰을 보관하고 반환한다. 같은 키에 토큰이 있으면 새 값으로 교체한다.
 	 *
 	 * @param tokenKey 토큰 키
 	 * @param token    발급할 토큰 값
@@ -79,7 +67,7 @@ public class EgovSubmitTokenStore implements Serializable {
 		tokens.remove(tokenKey);
 		tokens.put(tokenKey, token);
 		while (tokens.size() > maxTokens) {
-			// LinkedHashMap 은 삽입 순서를 유지하므로 첫 항목이 가장 오래된 토큰이다
+			// 삽입 순서상 첫 항목이 가장 오래된 토큰
 			String oldest = tokens.keySet().iterator().next();
 			tokens.remove(oldest);
 		}
@@ -87,8 +75,7 @@ public class EgovSubmitTokenStore implements Serializable {
 	}
 
 	/**
-	 * 토큰이 일치하면 <b>제거하고</b> true 를 반환한다 — 확인과 제거가 한 임계 구역에서
-	 * 일어나므로 동시 요청 중 <b>정확히 하나만</b> true 를 받는다.
+	 * 토큰이 일치하면 제거하고 true를 반환한다(동시 요청 중 하나만 true).
 	 *
 	 * @param tokenKey 토큰 키
 	 * @param token    요청이 제시한 토큰 값

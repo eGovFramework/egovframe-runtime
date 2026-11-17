@@ -2,8 +2,8 @@
 
 **Foundation Layer XML 모듈**입니다. JAXP **DOM/SAX** 파서로 XML 문서의 well-formed 검사와 XML Schema 검증을 수행하고, XPath 조회와 엘리먼트 추가·수정·삭제·신규 XML 생성 등 조작 기능을 `AbstractXMLUtility` 한 곳에 모아 제공합니다. DOM/SAX 검증 서비스는 팩토리(`EgovDOMFactoryServiceImpl`, `EgovSAXFactoryServiceImpl`)를 통해 Spring 빈으로 주입받아 사용합니다. 다른 실행환경 모듈이 이 모듈에 의존하지는 않습니다.
 
-- **Artifact**: `org.egovframe.rte:org.egovframe.rte.fdl.xml:4.3.1`
-- **Runtime**: Java 1.8 / Spring Framework 5.3.39-egov.1 (`spring-context-support`) / JAXP (JDK 내장)
+- **Artifact**: `org.egovframe.rte:org.egovframe.rte.fdl.xml:4.3.2`
+- **Runtime**: Java 1.8 / Spring Framework 5.3.39-egov.2 (`spring-context-support`) / JAXP (JDK 내장)
 - **실행환경 의존**: `org.egovframe.rte.fdl.logging`
 
 ---
@@ -65,12 +65,12 @@ src/main/java/org/egovframe/rte/fdl/xml/
 
 | 라이브러리 | 버전 | scope / 비고 |
 |---|---|---|
-| `org.egovframe.rte:org.egovframe.rte.fdl.logging` | 4.3.1 | compile. Log4j 2 / SLF4J 전이 |
-| `org.springframework:spring-context-support` | 5.3.39-egov.1 | compile (commons-logging 제외) |
+| `org.egovframe.rte:org.egovframe.rte.fdl.logging` | 4.3.2 | compile. Log4j 2 / SLF4J 전이 |
+| `org.springframework:spring-context-support` | 5.3.39-egov.2 | compile (commons-logging 제외) |
 | `javax.annotation:javax.annotation-api` | 1.3.2 | compile |
 | `jaxen:jaxen` | 2.0.0 | test. XPath 예제 |
 | `net.sf.ehcache:ehcache` | 2.10.9.2 | test (slf4j-api 제외). `ehcache` 패키지 캐시 연동 예제 |
-| `spring-test` / `junit` | 5.3.39-egov.1 / 4.13.2 | test |
+| `spring-test` / `junit` | 5.3.39-egov.2 / 4.13.2 | test |
 
 버전은 모두 루트 `pom.xml`의 `dependencyManagement`에서 관리하며 모듈 POM에는 선언하지 않습니다. XML 파싱 자체는 JDK 내장 JAXP(DOM/SAX/XPath/Transformer)를 사용합니다.
 
@@ -163,11 +163,11 @@ mvn test -pl Foundation/org.egovframe.rte.fdl.xml
 <dependency>
     <groupId>org.egovframe.rte</groupId>
     <artifactId>org.egovframe.rte.fdl.xml</artifactId>
-    <version>4.3.1</version>
+    <version>4.3.2</version>
 </dependency>
 ```
 
-부모 POM(`org.egovframe.boot.starter.parent` 또는 `org.egovframe.web.config.parent` 4.3.1)을 상속하면 `<version>`을 생략할 수 있습니다. `-egov.1` 포크 아티팩트를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소 등록이 필요합니다.
+부모 POM(`org.egovframe.boot.starter.parent` 또는 `org.egovframe.web.config.parent` 4.3.2)을 상속하면 `<version>`을 생략할 수 있습니다. `-egov.2` 포크 아티팩트를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소 등록이 필요합니다.
 
 ---
 

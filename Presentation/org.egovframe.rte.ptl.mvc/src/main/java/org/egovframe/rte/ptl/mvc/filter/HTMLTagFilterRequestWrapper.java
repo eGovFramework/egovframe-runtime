@@ -28,11 +28,8 @@ import java.util.Set;
 /**
  * HTMLTagFilterRequestWrapper.java
  *
- * <p>요청 파라미터의 HTML 특수문자를 엔티티로 인코딩하는 래퍼. 기본 동작(인자 없는 생성자)은
- * 모든 {@code < > & " '} 를 인코딩하며, {@link HTMLTagFilter}의 초기화 파라미터로
- * <b>허용 태그</b>(속성 없는 {@code <p>}·{@code </p>}·{@code <br/>} 형태만 통과)와
- * <b>리치텍스트 우회 파라미터</b>(인코딩 전체 우회 — 저장·출력 시점에 화이트리스트
- * HTML 정제가 전제)를 지정할 수 있다.</p>
+ * <p>요청 파라미터의 HTML 특수문자를 엔티티로 인코딩하는 래퍼.
+ * 허용 태그(속성 없는 형태만)와 인코딩을 우회할 리치텍스트 파라미터를 지정할 수 있다.</p>
  *
  * @author 실행환경 개발팀 함철
  * @version 1.0
@@ -42,15 +39,13 @@ import java.util.Set;
  * 수정일		수정자				수정내용
  * ----------------------------------------------
  * 2009.05.30	함철				최초 생성
- * 2026.10.25	실행환경 개발팀		허용 태그·리치텍스트 우회 목록 지원(공통컴포넌트
- *                              분기 기능을 하드코딩 없이 설정형으로 승격 — &amp; 인코딩 유지,
- *                              사본과 달리 원본 배열·맵은 변조하지 않는다)
+ * 2026.10.25	실행환경 개발팀		허용 태그·리치텍스트 우회 목록 지원
  * </pre>
  * @since 2009.06.01
  */
 public class HTMLTagFilterRequestWrapper extends HttpServletRequestWrapper {
 
-    /** 인코딩하지 않고 통과시킬 허용 태그 이름(소문자) — 속성이 붙으면 통과하지 않는다. */
+    /** 인코딩하지 않고 통과시킬 허용 태그 이름(소문자, 속성이 붙으면 통과하지 않음). */
     private final Set<String> allowedTagNames;
 
     /** 인코딩을 통째로 우회하는 리치텍스트 파라미터명. */
@@ -61,11 +56,10 @@ public class HTMLTagFilterRequestWrapper extends HttpServletRequestWrapper {
     }
 
     /**
-     * 허용 태그·리치텍스트 우회 목록을 받는 생성자. 두 목록이 비어 있으면
-     * 기존 생성자와 동작이 완전히 같다.
+     * 허용 태그·리치텍스트 우회 목록을 받는 생성자. 두 목록이 비어 있으면 기본 생성자와 같다.
      *
      * @param request                요청
-     * @param allowedTagNames        허용 태그 이름 목록(예: {@code p}, {@code br} — 대소문자 무관)
+     * @param allowedTagNames        허용 태그 이름 목록(예: {@code p}, {@code br}, 대소문자 무관)
      * @param richTextParameterNames 인코딩을 우회할 파라미터명 목록
      */
     public HTMLTagFilterRequestWrapper(HttpServletRequest request, Set<String> allowedTagNames,
@@ -131,12 +125,8 @@ public class HTMLTagFilterRequestWrapper extends HttpServletRequestWrapper {
     }
 
     /**
-     * XSS 방지를 위해 파라미터 값을 HTML 엔티티로 이스케이프.
-     * null 입력 시 null 반환 (NPE 방지).
-     *
-     * <p>허용 태그가 설정된 경우, 속성 없는 여닫는 형태({@code <p>}·{@code </p>}·{@code <br/>}·
-     * {@code <br />})만 원문 그대로 통과한다 — 속성이 하나라도 붙으면({@code <p onclick=…>})
-     * 통과하지 않는다.</p>
+     * XSS 방지를 위해 파라미터 값을 HTML 엔티티로 이스케이프한다(null이면 null 반환).
+     * 허용 태그는 속성 없는 여닫는 형태({@code <p>}·{@code </p>}·{@code <br/>})만 그대로 통과한다.
      */
     public String getSafeParamData(String value) {
         if (value == null) {
@@ -181,9 +171,7 @@ public class HTMLTagFilterRequestWrapper extends HttpServletRequestWrapper {
     }
 
     /**
-     * {@code ltIndex}({@code '<'} 위치)에서 시작하는 부분이 허용 태그의 온전한 여닫는 형태이면
-     * 닫는 {@code '>'} 의 인덱스를, 아니면 -1 을 반환한다. 문자열 끝에 걸친 태그도 정상 판정한다
-     * (공통컴포넌트 사본은 끝 경계에서 {@code &lt;p>} 혼종을 만드는 버그가 있었다).
+     * {@code ltIndex} 위치가 허용 태그의 온전한 형태이면 닫는 {@code '>'}의 인덱스를, 아니면 -1을 반환한다.
      */
     private int matchAllowedTag(String value, int ltIndex) {
         if (allowedTagNames.isEmpty()) {

@@ -78,7 +78,6 @@ public class EgovCryptoConfig {
      * 환경설정 Property 경로 setter
      *
      * @param cryptoPropertyLocation 환경설정Property경로
-     * @return void
      */
     public void setCryptoPropertyLocation(String cryptoPropertyLocation) {
         this.cryptoPropertyLocation = cryptoPropertyLocation;
@@ -98,7 +97,6 @@ public class EgovCryptoConfig {
      * Definition 항목(계정명)에 대한 setter
      *
      * @param username 계정명
-     * @return void
      */
     public void setUsername(String username) {
         this.username = username;
@@ -118,7 +116,6 @@ public class EgovCryptoConfig {
      * 데이터베이스 접속 항목(비밀번호)에 대한 setter
      *
      * @param password 비밀번호
-     * @return void
      */
     public void setPassword(String password) {
         this.password = password;
@@ -138,7 +135,6 @@ public class EgovCryptoConfig {
      * 데이터베이스 접속 항목(URL)에 대한 getter
      *
      * @param url 접속경로
-     * @return void
      */
     public void setUrl(String url) {
         this.url = url;
@@ -158,7 +154,6 @@ public class EgovCryptoConfig {
      * Crypto 사용여부에 대한 setter
      *
      * @param crypto Crypto사용여부
-     * @return void
      */
     public void setCrypto(boolean crypto) {
         this.crypto = crypto;
@@ -178,7 +173,6 @@ public class EgovCryptoConfig {
      * 초기화 여부에 대한 setter
      *
      * @param initial 초기화여부
-     * @return void
      */
     public void setInitial(boolean initial) {
         this.initial = initial;
@@ -188,7 +182,6 @@ public class EgovCryptoConfig {
      * Crypto 계정 알고리즘 지정에 대한 getter
      *
      * @param
-     * @return void
      */
     public String getAlgorithm() {
         return algorithm;
@@ -198,7 +191,6 @@ public class EgovCryptoConfig {
      * Crypto 계정 알고리즘 지정에 대한 setter
      *
      * @param algorithm 계정 암호화 알고리즘(MD5, SHA-1, SHA-256)
-     * @return String
      */
     public void setAlgorithm(String algorithm) {
         this.algorithm = algorithm;
@@ -218,7 +210,6 @@ public class EgovCryptoConfig {
      * Crypto 알고리즘 키에 대한 setter
      *
      * @param algorithmKey 알고리즘키
-     * @return void
      */
     public void setAlgorithmKey(String algorithmKey) {
         this.algorithmKey = algorithmKey;
@@ -238,7 +229,6 @@ public class EgovCryptoConfig {
      * Crypto 알고리즘 키 Hash에 대한 setter
      *
      * @param algorithmKeyHash 알고리즘키Hash코드
-     * @return void
      */
     public void setAlgorithmKeyHash(String algorithmKeyHash) {
         this.algorithmKeyHash = algorithmKeyHash;
@@ -258,7 +248,6 @@ public class EgovCryptoConfig {
      * Crypto 블럭 사이즈에 대한 setter
      *
      * @param cryptoBlockSize 블럭사이즈
-     * @return void
      */
     public void setCryptoBlockSize(int cryptoBlockSize) {
         this.cryptoBlockSize = cryptoBlockSize;

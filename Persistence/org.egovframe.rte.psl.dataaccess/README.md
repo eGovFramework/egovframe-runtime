@@ -5,8 +5,8 @@ MyBatis용 공통 부모 클래스 `EgovAbstractMapper`와 `@Mapper` 스캔 설�
 현재 Spring Framework가 제공하지 않는 `org.springframework.orm.ibatis` 패키지를 대체하는 `org.egovframe.rte.psl.orm.ibatis` 호환 계층, 타입 핸들러, `EgovMap` 유틸리티를 제공합니다.
 `org.egovframe.rte.psl.data.jpa`, `org.egovframe.rte.bat.core`, `org.egovframe.rte.fdl.excel` 모듈이 이 모듈에 의존합니다.
 
-- **Artifact**: `org.egovframe.rte:org.egovframe.rte.psl.dataaccess:4.3.1`
-- **Runtime**: Java 1.8 / Spring Framework 5.3.39-egov.1 / MyBatis 3.5.16 / MyBatis-Spring 2.1.2 / iBatis 2.3.4.726 (javax API 기반)
+- **Artifact**: `org.egovframe.rte:org.egovframe.rte.psl.dataaccess:4.3.2`
+- **Runtime**: Java 1.8 / Spring Framework 5.3.39-egov.2 / MyBatis 3.5.16 / MyBatis-Spring 2.1.2 / iBatis 2.3.4.726 (javax API 기반)
 - **실행환경 의존**: `org.egovframe.rte.fdl.logging`
 
 ---
@@ -86,15 +86,15 @@ src/main/java/org/egovframe/rte/psl/
 
 | 라이브러리 | 버전 | scope/비고 |
 |---|---|---|
-| `org.egovframe.rte:org.egovframe.rte.fdl.logging` | 4.3.1 | compile |
-| `org.springframework:spring-context`, `spring-orm` | 5.3.39-egov.1 | compile (commons-logging 제외) |
+| `org.egovframe.rte:org.egovframe.rte.fdl.logging` | 4.3.2 | compile |
+| `org.springframework:spring-context`, `spring-orm` | 5.3.39-egov.2 | compile (commons-logging 제외) |
 | `org.mybatis:mybatis` | 3.5.16 | compile |
 | `org.mybatis:mybatis-spring` | 2.1.2 | compile |
 | `org.apache.ibatis:ibatis-sqlmap` | 2.3.4.726 | compile |
 | `javax:javaee-api` | 8.0.1 | compile |
 | `javax.annotation:javax.annotation-api` | 1.3.2 | compile |
 | `org.apache.commons:commons-collections4` | 4.4 | compile (`EgovMap`) |
-| `org.springframework:spring-test`, `junit`, `easymock` | 5.3.39-egov.1 / 4.13.2 / 5.2.0 | test |
+| `org.springframework:spring-test`, `junit`, `easymock` | 5.3.39-egov.2 / 4.13.2 / 5.2.0 | test |
 | `org.apache.commons:commons-dbcp2`, `commons-lang3` | 2.13.0 / 3.20.0 | test |
 | `org.hsqldb:hsqldb` (`jdk8` 분류자), `opensymphony:oscache` | 2.7.3 / 2.4.1 | test (인메모리 DB, iBatis cacheModel 테스트) |
 
@@ -235,12 +235,12 @@ mvn test -pl Persistence/org.egovframe.rte.psl.dataaccess
 <dependency>
     <groupId>org.egovframe.rte</groupId>
     <artifactId>org.egovframe.rte.psl.dataaccess</artifactId>
-    <version>4.3.1</version>
+    <version>4.3.2</version>
 </dependency>
 ```
 
-부모 POM(`org.egovframe.boot.starter.parent` 또는 `org.egovframe.web.config.parent` 4.3.1)을 상속하면 `<version>` 생략 가능.
-`-egov.1` 포크 아티팩트(Spring Framework 등)를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소 등록 필요.
+부모 POM(`org.egovframe.boot.starter.parent` 또는 `org.egovframe.web.config.parent` 4.3.2)을 상속하면 `<version>` 생략 가능.
+`-egov.2` 포크 아티팩트(Spring Framework 등)를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소 등록 필요.
 
 ---
 

@@ -5,8 +5,8 @@
 `ReactiveMongoTemplate`을 확장하여 `Mono`/`Flux` 기반 CRUD 메서드를 제공하는 `EgovMongoDbRepository`를 제공합니다.
 동기 방식은 [org.egovframe.rte.psl.data.mongodb](../org.egovframe.rte.psl.data.mongodb/README.md)를 사용합니다. 이 모듈에 의존하는 다른 실행환경 모듈은 없습니다.
 
-- **Artifact**: `org.egovframe.rte:org.egovframe.rte.psl.reactive.mongodb:4.3.1`
-- **Runtime**: Java 1.8 / Spring Framework 5.3.39-egov.1 / Spring Data MongoDB 3.4.18-egov.1 / MongoDB Driver 4.11.5 / Reactor Core 3.4.41
+- **Artifact**: `org.egovframe.rte:org.egovframe.rte.psl.reactive.mongodb:4.3.2`
+- **Runtime**: Java 1.8 / Spring Framework 5.3.39-egov.2 / Spring Data MongoDB 3.4.18-egov.1 / MongoDB Driver 4.11.5 / Reactor Core 3.4.41-egov.2
 - **실행환경 의존**: `org.egovframe.rte.fdl.logging`
 
 ---
@@ -56,14 +56,15 @@ src/test/java/org/egovframe/rte/psl/reactive/mongodb/repository/
 
 | 라이브러리 | 버전 | scope/비고 |
 |---|---|---|
-| `org.egovframe.rte:org.egovframe.rte.fdl.logging` | 4.3.1 | compile |
-| `org.springframework:spring-webflux`, `spring-context`, `spring-tx` | 5.3.39-egov.1 | compile |
-| `org.springframework.data:spring-data-mongodb` | 3.4.18-egov.1 | compile (Spring Data Commons 2.7.18-egov.1 전이) |
+| `org.egovframe.rte:org.egovframe.rte.fdl.logging` | 4.3.2 | compile |
+| `org.springframework:spring-webflux`, `spring-context`, `spring-tx` | 5.3.39-egov.2 | compile |
+| `org.springframework.data:spring-data-mongodb` | 3.4.18-egov.1 | compile |
+| `org.springframework.data:spring-data-commons` | 2.7.18-egov.2 | compile. 전이 의존성 버전 지정 — `spring-data-mongodb`가 가져오는 공식 2.7.18 대신 포크 버전 |
 | `org.mongodb:mongodb-driver-reactivestreams`, `mongodb-driver-core`, `mongodb-driver-sync` | 4.11.5 | compile (JDK 1.8에서 사용할 수 없는 `bson-record-codec`(class 61)은 루트 POM에서 제외) |
-| `io.projectreactor:reactor-core` | 3.4.41 | compile |
+| `io.projectreactor:reactor-core` | 3.4.41-egov.2 | compile |
 | `io.projectreactor:reactor-test`, `org.assertj:assertj-core` | 3.4.41 / 3.27.7 | test |
 | `org.projectlombok:lombok` | 1.18.36 | test (`Sample` 엔티티) |
-| `org.springframework:spring-test`, `junit`, `easymock`, `com.googlecode.log4jdbc:log4jdbc` | 5.3.39-egov.1 / 4.13.2 / 5.2.0 / 1.2 | test |
+| `org.springframework:spring-test`, `junit`, `easymock`, `com.googlecode.log4jdbc:log4jdbc` | 5.3.39-egov.2 / 4.13.2 / 5.2.0 / 1.2 | test |
 
 ---
 
@@ -161,12 +162,12 @@ mvn test -pl Persistence/org.egovframe.rte.psl.reactive.mongodb
 <dependency>
     <groupId>org.egovframe.rte</groupId>
     <artifactId>org.egovframe.rte.psl.reactive.mongodb</artifactId>
-    <version>4.3.1</version>
+    <version>4.3.2</version>
 </dependency>
 ```
 
-부모 POM(`org.egovframe.boot.starter.parent` 또는 `org.egovframe.web.config.parent` 4.3.1)을 상속하면 `<version>` 생략 가능.
-`-egov.1` 포크 아티팩트(Spring Framework, Spring Data Commons, Spring Data MongoDB)를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소 등록 필요.
+부모 POM(`org.egovframe.boot.starter.parent` 또는 `org.egovframe.web.config.parent` 4.3.2)을 상속하면 `<version>` 생략 가능.
+포크 아티팩트(Spring Framework·Spring Data Commons `-egov.2`, Spring Data MongoDB `-egov.1`)를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소 등록 필요.
 
 ---
 

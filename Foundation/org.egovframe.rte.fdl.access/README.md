@@ -2,8 +2,8 @@
 
 **Foundation 접근제어(Session 방식) 모듈**은 DB에 저장된 "권한(authority) - 보호자원(URL 패턴)" 매핑을 기동 시 읽어 와, Spring MVC `HandlerInterceptor`로 로그인 여부 확인과 URL 접근제한을 적용하는 라이브러리입니다. Spring Security를 사용하지 않고 HTTP 세션 속성만으로 인증·인가를 판단하며, `<egov-access:config>` 커스텀 네임스페이스 하나로 설정을 간소화합니다. Spring Boot 환경에서는 `org.egovframe.access.spring.boot.starter`가 이 모듈을 사용합니다.
 
-- **Artifact**: `org.egovframe.rte:org.egovframe.rte.fdl.access:4.3.1`
-- **Runtime**: Java 1.8 / Spring Framework 5.3.39-egov.1 (Spring MVC, JdbcTemplate) / javax.servlet-api 4.0.1
+- **Artifact**: `org.egovframe.rte:org.egovframe.rte.fdl.access:4.3.2`
+- **Runtime**: Java 1.8 / Spring Framework 5.3.39-egov.2 (Spring MVC, JdbcTemplate) / javax.servlet-api 4.0.1
 - **실행환경 의존**: `org.egovframe.rte.fdl.property`
 
 ---
@@ -48,9 +48,9 @@ src/main/java/org/egovframe/rte/fdl/access/
 
 src/main/resources/
 ├── META-INF/spring.handlers               # egov-access 네임스페이스 → EgovAccessConfigNameHandler
-├── META-INF/spring.schemas                # egov-access.xsd / egov-access-4.3.1.xsd 매핑
+├── META-INF/spring.schemas                # egov-access.xsd / egov-access-4.3.2.xsd 매핑
 ├── META-INF/spring/access/access-config.xml   # 파서가 로드하는 내부 Bean 정의
-└── org/egovframe/rte/fdl/access/config/egov-access-4.3.1.xsd
+└── org/egovframe/rte/fdl/access/config/egov-access-4.3.2.xsd
 ```
 
 ---
@@ -81,14 +81,16 @@ src/main/resources/
 
 | 라이브러리 | 버전 | scope/비고 |
 |---|---|---|
-| `org.egovframe.rte:org.egovframe.rte.fdl.property` | 4.3.1 | compile |
-| `spring-context-support`, `spring-webmvc` | 5.3.39-egov.1 | compile (`spring-jdbc`, `spring-web` 전이) |
+| `org.egovframe.rte:org.egovframe.rte.fdl.property` | 4.3.2 | compile |
+| `spring-context-support`, `spring-webmvc` | 5.3.39-egov.2 | compile (`spring-jdbc`, `spring-web` 전이) |
 | `javax.servlet:javax.servlet-api` | 4.0.1 | provided |
 | `javax.annotation:javax.annotation-api` | 1.3.2 | compile |
 | `com.mysql:mysql-connector-j` | 8.4.0 | compile |
-| `spring-test`, `junit`, `easymock`, `log4jdbc` | 5.3.39-egov.1 / 4.13.2 / 5.2.0 / 1.2 | test |
+| `com.google.protobuf:protobuf-java` | 3.25.5 | compile. 전이 의존성 버전 지정 — `mysql-connector-j`가 가져오는 3.25.1 대신 루트 POM 관리 버전 (CVE-2024-7254) |
+| `org.apache.commons:commons-lang3` | 3.20.0 | compile. 전이 의존성 버전 지정 — `commons-configuration2` 2.15.0이 요구하는 3.18 이상을 적용 프로젝트의 다른 경로(예: `commons-compress` 1.26.2의 3.14.0)보다 가까운 자리에서 정함 |
+| `spring-test`, `junit`, `easymock`, `log4jdbc` | 5.3.39-egov.2 / 4.13.2 / 5.2.0 / 1.2 | test |
 
-버전은 루트 POM(`org.egovframe.rte.root` 4.3.1)의 `dependencyManagement`에서 관리하며 모듈 POM은 버전을 선언하지 않습니다.
+버전은 루트 POM(`org.egovframe.rte.root` 4.3.2)의 `dependencyManagement`에서 관리하며 모듈 POM은 버전을 선언하지 않습니다.
 
 ---
 
@@ -101,7 +103,7 @@ src/main/resources/
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:egov-access="http://maven.egovframe.go.kr/schema/egov-access"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://maven.egovframe.go.kr/schema/egov-access http://maven.egovframe.go.kr/schema/egov-access/egov-access-4.3.1.xsd">
+       http://maven.egovframe.go.kr/schema/egov-access http://maven.egovframe.go.kr/schema/egov-access/egov-access-4.3.2.xsd">
 
     <egov-access:config id="egovAccessConfig"
         globalAuthen="session"
@@ -185,11 +187,11 @@ mvn test -pl Foundation/org.egovframe.rte.fdl.access
 <dependency>
     <groupId>org.egovframe.rte</groupId>
     <artifactId>org.egovframe.rte.fdl.access</artifactId>
-    <version>4.3.1</version>
+    <version>4.3.2</version>
 </dependency>
 ```
 
-부모 POM(`org.egovframe.boot.starter.parent` 또는 `org.egovframe.web.config.parent` 4.3.1)을 상속하면 `<version>`을 생략할 수 있습니다. `-egov.1` 포크 아티팩트(Spring Framework 등)를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소 등록이 필요합니다.
+부모 POM(`org.egovframe.boot.starter.parent` 또는 `org.egovframe.web.config.parent` 4.3.2)을 상속하면 `<version>`을 생략할 수 있습니다. `-egov.2` 포크 아티팩트(Spring Framework 등)를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소 등록이 필요합니다.
 
 ---
 

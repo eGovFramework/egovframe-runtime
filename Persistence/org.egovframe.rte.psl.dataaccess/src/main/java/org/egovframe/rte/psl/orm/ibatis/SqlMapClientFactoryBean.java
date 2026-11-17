@@ -46,18 +46,6 @@ import java.util.Properties;
  * the SqlMapClient can then be passed to iBATIS-based DAOs via dependency
  * injection.
  *
- * <p>Either {@link org.springframework.jdbc.datasource.DataSourceTransactionManager}
- * or {@link org.springframework.transaction.jta.JtaTransactionManager} can be
- * used for transaction demarcation in combination with a SqlMapClient,
- * with JTA only necessary for transactions which span multiple databases.
- *
- * <p>Allows for specifying a DataSource at the SqlMapClient level. This
- * is preferable to per-DAO DataSource references, as it allows for lazy
- * loading and avoids repeated DataSource references in every DAO.
- *
- * <p><b>Note:</b> As of Spring 2.5.5, this class (finally) requires iBATIS 2.3
- * or higher. The new "mappingLocations" feature requires iBATIS 2.3.2.
- *
  * @author Juergen Hoeller
  * @see #setConfigLocation
  * @see #setDataSource
@@ -126,12 +114,7 @@ public class SqlMapClientFactoryBean implements FactoryBean<SqlMapClient>, Initi
     /**
      * Set locations of iBATIS sql-map mapping files that are going to be
      * merged into the SqlMapClient configuration at runtime.
-     * <p>This is an alternative to specifying "&lt;sqlMap&gt;" entries
-     * in a sql-map-client config file. This property being based on Spring's
-     * resource abstraction also allows for specifying resource patterns here:
-     * e.g. "/myApp/*-map.xml".
-     * <p>Note that this feature requires iBATIS 2.3.2; it will not work
-     * with any previous iBATIS version.
+     * Alternative to "&lt;sqlMap&gt;" entries; resource patterns (e.g. "/myApp/*-map.xml") are supported.
      */
     public void setMappingLocations(Resource[] mappingLocations) {
         // 2020.08.31 유지보수 시큐어코딩(ES)-Private 배열에 Public 데이터 할당[CWE-496]
@@ -156,16 +139,7 @@ public class SqlMapClientFactoryBean implements FactoryBean<SqlMapClient>, Initi
     /**
      * Set the DataSource to be used by iBATIS SQL Maps. This will be passed to the
      * SqlMapClient as part of a TransactionConfig instance.
-     * <p>If specified, this will override corresponding settings in the SqlMapClient
-     * properties. Usually, you will specify DataSource and transaction configuration
-     * <i>either</i> here <i>or</i> in SqlMapClient properties.
-     * <p>Specifying a DataSource for the SqlMapClient rather than for each individual
-     * DAO allows for lazy loading, for example when using PaginatedList results.
-     * <p>With a DataSource passed in here, you don't need to specify one for each DAO.
-     * Passing the SqlMapClient to the DAOs is enough, as it already carries a DataSource.
-     * Thus, it's recommended to specify the DataSource at this central location only.
-     * <p>Thanks to Brandon Goodin from the iBATIS team for the hint on how to make
-     * this work with Spring's integration strategy!
+     * Overrides corresponding settings in the SqlMapClient properties.
      *
      * @see #setTransactionConfigClass
      * @see #setTransactionConfigProperties
@@ -180,17 +154,7 @@ public class SqlMapClientFactoryBean implements FactoryBean<SqlMapClient>, Initi
      * Set whether to use a transaction-aware DataSource for the SqlMapClient,
      * i.e. whether to automatically wrap the passed-in DataSource with Spring's
      * TransactionAwareDataSourceProxy.
-     * <p>Default is "true": When the SqlMapClient performs direct database operations
-     * outside of Spring's SqlMapClientTemplate (for example, lazy loading or direct
-     * SqlMapClient access), it will still participate in active Spring-managed
-     * transactions.
-     * <p>As a further effect, using a transaction-aware DataSource will apply
-     * remaining transaction timeouts to all created JDBC Statements. This means
-     * that all operations performed by the SqlMapClient will automatically
-     * participate in Spring-managed transaction timeouts.
-     * <p>Turn this flag off to get raw DataSource handling, without Spring transaction
-     * checks. Operations on Spring's SqlMapClientTemplate will still detect
-     * Spring-managed transactions, but lazy loading or direct SqlMapClient access won't.
+     * Default is "true" (direct SqlMapClient access also participates in Spring-managed transactions).
      *
      * @see #setDataSource
      * @see org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy
@@ -205,28 +169,7 @@ public class SqlMapClientFactoryBean implements FactoryBean<SqlMapClient>, Initi
     /**
      * Set the iBATIS TransactionConfig class to use. Default is
      * {@code com.ibatis.sqlmap.engine.transaction.external.ExternalTransactionConfig}.
-     * <p>Will only get applied when using a Spring-managed DataSource.
-     * An instance of this class will get populated with the given DataSource
-     * and initialized with the given properties.
-     * <p>The default ExternalTransactionConfig is appropriate if there is
-     * external transaction management that the SqlMapClient should participate
-     * in: be it Spring transaction management, EJB CMT or plain JTA. This
-     * should be the typical scenario. If there is no active transaction,
-     * SqlMapClient operations will execute SQL statements non-transactionally.
-     * <p>JdbcTransactionConfig or JtaTransactionConfig is only necessary
-     * when using the iBATIS SqlMapTransactionManager API instead of external
-     * transactions. If there is no explicit transaction, SqlMapClient operations
-     * will automatically start a transaction for their own scope (in contrast
-     * to the external transaction mode, see above).
-     * <p><b>It is strongly recommended to use iBATIS SQL Maps with Spring
-     * transaction management (or EJB CMT).</b> In this case, the default
-     * ExternalTransactionConfig is fine. Lazy loading and SQL Maps operations
-     * without explicit transaction demarcation will execute non-transactionally.
-     * <p>Even with Spring transaction management, it might be desirable to
-     * specify JdbcTransactionConfig: This will still participate in existing
-     * Spring-managed transactions, but lazy loading and operations without
-     * explicit transaction demaration will execute in their own auto-started
-     * transactions. However, this is usually not necessary.
+     * Only applied when using a Spring-managed DataSource; the default suits Spring transaction management.
      *
      * @see #setDataSource
      * @see #setTransactionConfigProperties

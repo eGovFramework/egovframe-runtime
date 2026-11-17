@@ -14,10 +14,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
- * {@link HTMLTagFilter} 초기화 파라미터의 <b>보안 경계</b> 회귀 검증(CWE-79 입력 필터).
- *
- * <p>기능 테스트({@link HTMLTagFilterTest})가 정상 동작을 다루고, 이 클래스는 세 설정
- * (allowedTags·richTextParameters·excludePaths)이 우회 입력에서 방어를 잃지 않는지 고정한다.</p>
+ * {@link HTMLTagFilter} 초기화 파라미터(allowedTags·richTextParameters·excludePaths)의 우회 방어 회귀 테스트(CWE-79).
  */
 public class HTMLTagFilterSecurityTest {
 
@@ -101,7 +98,7 @@ public class HTMLTagFilterSecurityTest {
         config.addInitParameter("excludePaths", "/api/*, /health");
         filter.init(config);
 
-        // 제외 대상이 "아닌" 경로들은 여전히 래핑(인코딩)돼야 한다 — 접미 트릭으로 필터를 우회할 수 없다
+        // 제외 대상이 아닌 경로는 여전히 인코딩돼야 한다(접미 트릭 우회 불가)
         String[] notExcluded = { "/apix/things", "/health-check", "/board/list", "/health/sub" };
         for (String path : notExcluded) {
             MockHttpServletRequest request = new MockHttpServletRequest("POST", path);

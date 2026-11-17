@@ -5,9 +5,9 @@
 세션 만료 쿠키 필터, 안전 기본값 쿠키 빌더, 요청 컨텍스트 파사드를 제공합니다.
 `org.egovframe.rte.fdl.cmmn`과 `spring-modules-validation`(0.9)에 의존하며, 실행환경의 다른 모듈은 이 모듈에 의존하지 않습니다.
 
-- **Artifact**: `org.egovframe.rte:org.egovframe.rte.ptl.mvc:4.3.1`
-- **Runtime**: Java 1.8 / Spring Framework 5.3.39-egov.1 (spring-webmvc) / javax.servlet-api 4.0.1 · javax.servlet.jsp-api 2.3.3 (provided) / Commons Validator 1.9.0
-- **실행환경 의존**: `org.egovframe.rte.fdl.cmmn` 4.3.1, `spring-modules-validation` 0.9
+- **Artifact**: `org.egovframe.rte:org.egovframe.rte.ptl.mvc:4.3.2`
+- **Runtime**: Java 1.8 / Spring Framework 5.3.39-egov.2 (spring-webmvc) / javax.servlet-api 4.0.1 · javax.servlet.jsp-api 2.3.3 (provided) / Commons Validator 1.9.0
+- **실행환경 의존**: `org.egovframe.rte.fdl.cmmn` 4.3.2, `spring-modules-validation` 0.9
 
 ---
 
@@ -126,14 +126,15 @@ src/main/resources/META-INF/
 
 | 라이브러리 | 버전 | scope/비고 |
 |---|---|---|
-| `org.egovframe.rte:org.egovframe.rte.fdl.cmmn` | 4.3.1 | compile. `EgovBizException`, `BaseException`, `FdlException` (commons-logging 제외) |
+| `org.egovframe.rte:org.egovframe.rte.fdl.cmmn` | 4.3.2 | compile. `EgovBizException`, `BaseException`, `FdlException` (commons-logging 제외) |
 | `org.egovframe.rte:spring-modules-validation` | 0.9 | compile. `FieldChecks`(`RteFieldChecks`의 부모), Valang/Commons Validator 연동 |
-| `org.springframework:spring-webmvc` | 5.3.39-egov.1 | compile (commons-logging 제외) |
+| `org.springframework:spring-webmvc` | 5.3.39-egov.2 | compile (commons-logging 제외) |
 | `javax.servlet:javax.servlet-api` | 4.0.1 | provided |
 | `javax.servlet.jsp:javax.servlet.jsp-api` | 2.3.3 | provided |
 | `javax.annotation:javax.annotation-api` | 1.3.2 | compile |
 | `commons-validator:commons-validator` | 1.9.0 | compile. `ValidatorAction`, `Field` (commons-logging 제외) |
-| `org.springframework:spring-test`, `junit:junit`, `org.easymock:easymock`, `org.antlr:antlr` | 5.3.39-egov.1 / 4.13.2 / 5.2.0 / 3.5 | test |
+| `commons-beanutils:commons-beanutils` | 1.11.0 | compile. 전이 의존성 버전 지정 — `commons-validator`가 가져오는 1.9.4 대신 루트 POM 관리 버전 (CVE-2025-48734, commons-logging 제외) |
+| `org.springframework:spring-test`, `junit:junit`, `org.easymock:easymock`, `org.antlr:antlr` | 5.3.39-egov.2 / 4.13.2 / 5.2.0 / 3.5 | test |
 
 버전은 모두 루트 POM `dependencyManagement`에서 관리되며 모듈 POM에는 선언하지 않습니다.
 
@@ -144,7 +145,7 @@ src/main/resources/META-INF/
 ### 페이지네이션 태그
 
 `PaginationManager` 빈을 등록하면 `type` 속성으로 렌더러를 고를 수 있습니다. 빈이 없으면 `DefaultPaginationRenderer`가 사용됩니다.
-(`PaginationManager` Javadoc 예시를 4.3.1 패키지명으로 옮긴 것입니다.)
+(`PaginationManager` Javadoc 예시를 현행 패키지명(`org.egovframe`)으로 옮긴 것입니다.)
 
 ```xml
 <bean id="imageRenderer" class="com.example.tag.ImagePaginationRenderer"/>
@@ -257,7 +258,7 @@ EgovRequestContext.getRequestUri().ifPresent(uri -> log.info("요청 {}", uri));
 mvn clean install -pl Presentation/org.egovframe.rte.ptl.mvc -am
 ```
 
-결과물: `target/org.egovframe.rte.ptl.mvc-4.3.1.jar`, `-sources.jar`, `-javadoc.jar`
+결과물: `target/org.egovframe.rte.ptl.mvc-4.3.2.jar`, `-sources.jar`, `-javadoc.jar`
 
 ## 테스트
 
@@ -276,12 +277,12 @@ mvn test -pl Presentation/org.egovframe.rte.ptl.mvc
 <dependency>
     <groupId>org.egovframe.rte</groupId>
     <artifactId>org.egovframe.rte.ptl.mvc</artifactId>
-    <version>4.3.1</version>
+    <version>4.3.2</version>
 </dependency>
 ```
 
-부모 POM(`org.egovframe.boot.starter.parent` 또는 `org.egovframe.web.config.parent` 4.3.1)을 상속하면 `<version>` 생략 가능.
-`-egov.1` 포크 아티팩트를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소 등록 필요.
+부모 POM(`org.egovframe.boot.starter.parent` 또는 `org.egovframe.web.config.parent` 4.3.2)을 상속하면 `<version>` 생략 가능.
+`-egov.2` 포크 아티팩트를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소 등록 필요.
 Servlet/JSP API는 `provided`이므로 적용 프로젝트의 WAS 또는 POM에서 제공해야 합니다.
 
 ---

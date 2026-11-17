@@ -400,7 +400,6 @@ public class ARIAEngine {
      *                beginning of the method execution.  At the end of method execution
      *                this will hold the decryption round keys.
      * @param keyBits the length of the master key
-     * @return
      */
     private static void doDecKeySetup(byte[] mk, int[] rk, int keyBits) {
         int a = 0, z;

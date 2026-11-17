@@ -37,46 +37,22 @@ import java.util.zip.ZipOutputStream;
 import org.egovframe.rte.fdl.filehandling.EgovFiles;
 
 /**
- * 디렉터리 아카이브 생성·해제(zip) — 경로 조작(Zip Slip)과 압축 폭탄을 봉쇄한 표준 구현.
- *
- * <p><b>NOTE:</b> 아카이브 해제는 <b>아카이브 안의 문자열이 파일시스템 경로가 되는</b> 지점이라
- * 경로 조작 공격(Zip Slip, CWE-22)의 표적이 된다. 모든 엔트리는
- * {@link EgovFiles#resolveSecurely(Path, String)}로 대상 디렉터리 내부임이 확정된 뒤에만
- * 만들어지며, 탈출·절대 경로·널 바이트 엔트리는 {@link IllegalArgumentException}으로 거부된다.
- * 엔트리 수·누적 크기는 {@link EgovExtractLimits}로 제한한다(기본 한도 적용).</p>
+ * 디렉터리 zip 생성·해제 유틸리티.
+ * 엔트리 경로는 대상 디렉터리 내부로 제한(Zip Slip 방지)하고, 엔트리 수·누적 크기는 {@link EgovExtractLimits}로 제한한다.
+ * JDK 표준({@code java.util.zip})만 사용하며 tar 형식은 제공하지 않는다.
  *
  * <pre>
- * long entries = EgovArchives.zipDirectory(dataDir, backupDir.resolve("data.zip"));
- *
- * EgovArchives.unzip(zipFile, restoreDir);                                  // UTF-8·기본 한도
- * EgovArchives.unzip(zipFile, restoreDir, Charset.forName("MS949"));        // 구형 윈도우 zip
- * EgovArchives.unzip(zipFile, restoreDir, StandardCharsets.UTF_8, EgovExtractLimits.unlimited()); // 신뢰 가능한 대용량 백업
+ * EgovArchives.zipDirectory(dataDir, backupDir.resolve("data.zip"));
+ * EgovArchives.unzip(zipFile, restoreDir);                              // UTF-8, 기본 한도
+ * EgovArchives.unzip(zipFile, restoreDir, Charset.forName("MS949"));    // 구형 윈도우 zip
  * </pre>
- *
- * <p><b>형식.</b> zip 은 JDK 표준({@code java.util.zip})만 쓰므로 추가 의존이 없다. 엔트리 이름은
- * 쓰기 시 UTF-8 로 기록하고, 읽기는 UTF-8 기본에 문자셋 오버로드를 제공한다(구형 윈도우·알집이
- * 만든 zip 은 엔트리 이름이 MS949 인 경우가 많다). 4.3.1 에는 commons-compress 의존이 없으므로
- * tar 형식은 제공하지 않는다.</p>
- *
- * <p><b>계약.</b> 생성 대상이 빈 디렉터리이면 조용히 빈 결과를 만드는 대신
- * {@link IllegalArgumentException}으로 정직하게 실패한다. 해제는 기존 파일을 대체하며, 실패
- * 시점까지 만든 파일은 남는다 — 신뢰 경계를 넘는 아카이브는 임시 디렉터리에 풀어 검증 후
- * {@link EgovFiles#move}로 옮기는 구성을 권장한다. 쓰기 직전에 실경로를
- * 재확인하므로, 대상 디렉터리에 미리 심긴 심볼릭 링크를 거치는 엔트리도 거부한다.</p>
- *
- * <p>공통컴포넌트 {@code EgovFileCmprs}·{@code BackupJob}의 결함을 해소한 재구성이다 —
- * 원본은 ① Zip Slip 방어가 블랙리스트 문자열 치환({@code filePathBlackList}) 한 줄이고
- * ② 이름과 달리 압축 생성 기능이 없으며({@code EgovFileCmprs}) ③ 아카이브 엔트리 이름에
- * <b>서버 절대 경로를 그대로 기록</b>하고({@code BackupJob}) ④ 빈 디렉터리를 만나면 예외 없이
- * {@code false}를 반환했다. 설계 목적만 차용하고 구현은 전량 재작성했다(코드 이식 아님).</p>
  *
  * <pre>
  * &lt;&lt; 개정이력(Modification Information) &gt;&gt;
  *
  *  수정일        수정자        수정내용
  *  ----------  --------    ---------------------------
- *  2026.10.25  실행환경팀     최초 생성 (5.1.0 EgovArchives 의 zip 압축·해제를 4.3.1 에 반영 —
- *                            Zip Slip·압축 폭탄 방어, tar 제외)
+ *  2026.10.25  실행환경팀     최초 생성 (5.1.0 기능 이식)
  * </pre>
  *
  * @author 실행환경 개발팀
@@ -92,8 +68,7 @@ public final class EgovArchives {
 	// ---------------------------------------------------------------- 생성
 
 	/**
-	 * 디렉터리 하위 전체(빈 하위 디렉터리 포함)를 zip 으로 만든다. 엔트리 이름은 원본 디렉터리
-	 * 기준 <b>상대 경로</b>이며 UTF-8 로 기록한다.
+	 * 디렉터리 하위 전체(빈 디렉터리 포함)를 zip으로 만든다. 엔트리 이름은 상대 경로(UTF-8)로 기록한다.
 	 *
 	 * @param sourceDir 아카이브할 디렉터리
 	 * @param zipFile   만들 zip 파일(부모 디렉터리는 자동 생성, 원본 디렉터리 밖이어야 함)
@@ -135,8 +110,7 @@ public final class EgovArchives {
 	}
 
 	/**
-	 * 엔트리 이름 문자셋을 지정해 zip 을 해제한다(기본 한도). 구형 윈도우·알집이 만든 zip 은
-	 * {@code Charset.forName("MS949")} 를 지정해야 한글 파일명이 깨지지 않는다.
+	 * 엔트리 이름 문자셋을 지정해 zip을 해제한다(기본 한도). 구형 윈도우 zip은 MS949를 지정한다.
 	 *
 	 * @return 처리한 엔트리 수
 	 * @see #unzip(Path, Path, Charset, EgovExtractLimits)
@@ -146,9 +120,7 @@ public final class EgovArchives {
 	}
 
 	/**
-	 * zip 을 대상 디렉터리에 해제한다 — 모든 엔트리는 대상 디렉터리 내부로 확정된 뒤에만
-	 * 만들어지고(Zip Slip 봉쇄), 실제 엔트리 수·실제 기록 바이트가 한도를 넘으면 쓰던 파일을 지우고 즉시 중단한다.
-	 * 쓰기 직전에는 실경로를 재확인해, 대상 디렉터리 안에 미리 심긴 심볼릭 링크를 따라 밖에 쓰는 일을 막는다.
+	 * zip을 대상 디렉터리에 해제한다. 엔트리는 대상 디렉터리 내부로 제한하며 한도 초과 시 즉시 중단한다.
 	 * 기존 파일은 대체한다.
 	 *
 	 * @param zipFile          해제할 zip 파일
@@ -204,10 +176,7 @@ public final class EgovArchives {
 		return source;
 	}
 
-	/**
-	 * 아카이브할 엔트리를 수집한다 — 파일과 <b>모든 하위 디렉터리</b>(빈 디렉터리 보존).
-	 * 빈 원본은 조용한 빈 결과 대신 예외로 정직하게 실패한다.
-	 */
+	/** 아카이브할 파일과 하위 디렉터리를 수집한다. 원본이 비었으면 예외. */
 	private static List<Path> collectEntries(Path source) {
 		List<Path> entries;
 		try (Stream<Path> walk = Files.walk(source)) {
@@ -221,13 +190,13 @@ public final class EgovArchives {
 		return entries;
 	}
 
-	/** 원본 디렉터리 기준 상대 경로 엔트리 이름 — 구분자는 {@code /}, 디렉터리는 {@code /} 접미. */
+	/** 원본 디렉터리 기준 상대 경로 엔트리 이름({@code /} 구분, 디렉터리는 {@code /} 접미). */
 	private static String entryName(Path source, Path path, boolean directory) {
 		String relative = source.relativize(path).toString().replace('\\', '/');
 		return directory ? relative + "/" : relative;
 	}
 
-	/** 엔트리 이름을 대상 디렉터리 내부로 확정한다 — Zip Slip 봉쇄 지점. */
+	/** 엔트리 이름을 대상 디렉터리 내부 경로로 확정한다(Zip Slip 방지). */
 	private static Path resolveEntryTarget(Path targetDir, String rawEntryName, Path archive) {
 		String name = rawEntryName.replace('\\', '/');
 		try {
@@ -238,11 +207,7 @@ public final class EgovArchives {
 		}
 	}
 
-	/**
-	 * 쓰기 직전 <b>실경로</b> 재확인 — 어휘적 봉쇄를 통과한 경로라도 대상 디렉터리 안에 미리 심긴 심볼릭 링크를
-	 * 거치면 밖에 쓰게 된다. 이미 존재하는 가장 깊은 구성요소가 링크이거나 그 실경로가 대상 디렉터리 실경로
-	 * 밖이면 거부한다. 아직 없는 구성요소는 이 확인 뒤에 직접 만들므로 링크일 수 없다.
-	 */
+	/** 쓰기 직전 실경로가 대상 디렉터리 안인지 재확인한다(심볼릭 링크 우회 방지). */
 	private static void requireRealPathInside(Path target, Path targetDir, Path targetDirReal,
 			String entryName, Path archive) throws IOException {
 		Path base = targetDir.toAbsolutePath().normalize();
@@ -270,10 +235,7 @@ public final class EgovArchives {
 		}
 	}
 
-	/**
-	 * 현재 엔트리 내용을 복사한다 — 헤더의 크기 선언이 아니라 <b>실제 기록 바이트</b>에 한도를 적용한다.
-	 * 한도를 넘으면 쓰던 파일을 지우고 예외를 던진다(거부한 엔트리의 부분 파일을 남기지 않는다).
-	 */
+	/** 엔트리 내용을 복사한다. 실제 기록 바이트가 한도를 넘으면 부분 파일을 지우고 예외를 던진다. */
 	private static long copyLimited(InputStream in, Path target, long totalSoFar,
 			EgovExtractLimits limits, Path archive) throws IOException {
 		long total = totalSoFar;
@@ -289,7 +251,7 @@ public final class EgovArchives {
 				out.write(buffer, 0, read);
 			}
 		} catch (IllegalArgumentException limitExceeded) {
-			// 한도 초과로 거부한 엔트리의 부분 파일은 남기지 않는다(앞서 정상 해제된 항목은 그대로 둔다)
+			// 한도 초과 엔트리의 부분 파일 삭제
 			Files.deleteIfExists(target);
 			throw limitExceeded;
 		}

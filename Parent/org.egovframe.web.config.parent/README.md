@@ -2,26 +2,27 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 [![Java](https://img.shields.io/badge/Java-1.8-orange.svg)](https://www.oracle.com/java/)
-[![eGovFrame](https://img.shields.io/badge/eGovFrame-4.3.1-green.svg)](https://www.egovframe.go.kr)
-[![Spring Framework](https://img.shields.io/badge/Spring%20Framework-5.3.39--egov.1-brightgreen.svg)](https://spring.io)
+[![eGovFrame](https://img.shields.io/badge/eGovFrame-4.3.2-green.svg)](https://www.egovframe.go.kr)
+[![Spring Framework](https://img.shields.io/badge/Spring%20Framework-5.3.39--egov.2-brightgreen.svg)](https://spring.io)
 
 ## 📋 개요
 
 Spring Boot를 사용하지 않는 웹 프로젝트(공통컴포넌트, 웹 템플릿 등)용 Maven Parent POM입니다. 5.x의 `egovframe-web-config-parent`에 대응합니다.
-실행환경 루트 POM(`org.egovframe.rte.root` 4.3.1)을 BOM으로 가져오고, 루트 POM이 관리하지 않는 웹 프로젝트용 라이브러리만 추가로 관리합니다.
+실행환경 루트 POM(`org.egovframe.rte.root` 4.3.2)을 BOM으로 가져오고, 루트 POM이 관리하지 않는 웹 프로젝트용 라이브러리만 추가로 관리합니다.
 
 | 항목 | 값 |
 |------|-----|
 | `groupId` | `org.egovframe.web` |
 | `artifactId` | `org.egovframe.web.config.parent` |
-| `version` | `4.3.1` |
+| `version` | `4.3.2` |
 | `packaging` | `pom` |
 | 상위 POM | 없음 |
 
 ## ✨ 주요 특징
 
 - **Java 1.8** — 관리 라이브러리는 Java 8에서 동작하는 버전(class 52 이하)
-- **실행환경 4.3.1 BOM import** — RTE 모듈 전체, Spring 5.3.39-egov.1 / Security 5.8.16-egov.1, Spring Data, Jackson, Log4j2/SLF4J, Netty, Jetty, DB 드라이버, Apache Commons, 테스트 라이브러리 등
+- **실행환경 4.3.2 BOM import** — RTE 모듈 전체, Spring 5.3.39-egov.2 / Security 5.8.16-egov.2, Spring Data, Jackson, Log4j2/SLF4J, Netty, Jetty, DB 드라이버, Apache Commons, 테스트 라이브러리 등
+- **Java EE 7 (Servlet 3.1)** — Servlet 3.1.0·JSP 2.3.3·WebSocket 1.1을 `provided`로 직접 선언해 루트 POM의 Servlet 4.0.1을 덮어씀 (Tomcat 8.x 등 Servlet 3.1 컨테이너 기준)
 - **웹 프로젝트 추가 라이브러리** — Spring Batch·LDAP, javax API, MariaDB, OAuth/SNS, UI/에디터, XML 유틸 등
 - **pluginManagement** — Compiler(`source`/`target` 1.8), WAR, PMD, Surefire, Javadoc, Deploy
 
@@ -31,13 +32,13 @@ Spring Boot를 사용하지 않는 웹 프로젝트(공통컴포넌트, 웹 템�
 
 - Java 8 이상
 - Maven 3.6 이상
-- 표준프레임워크 저장소 `https://maven.egovframe.go.kr/maven/` (`-egov.1` Spring 아티팩트)
+- 표준프레임워크 저장소 `https://maven.egovframe.go.kr/maven/` (Spring 포크 `-egov.2`, Spring Data MongoDB `-egov.1` 아티팩트)
 
 > ⚠️ 이 POM은 `<repositories>`를 선언하지 않으므로, 프로젝트 `pom.xml` 또는 `settings.xml`에 표준프레임워크 저장소를 등록하세요.
-> 실행환경 4.3.1이 저장소에 없으면 소스에서 먼저 설치합니다.
+> 실행환경 4.3.2가 저장소에 없으면 소스에서 먼저 설치합니다.
 >
 > ```bash
-> mvn -f egovframe-runtime-4.3.1/pom.xml install -DskipTests
+> mvn -f egovframe-runtime-4.3.2/pom.xml install -DskipTests
 > ```
 
 ### 사용 방법
@@ -46,7 +47,7 @@ Spring Boot를 사용하지 않는 웹 프로젝트(공통컴포넌트, 웹 템�
 <parent>
     <groupId>org.egovframe.web</groupId>
     <artifactId>org.egovframe.web.config.parent</artifactId>
-    <version>4.3.1</version>
+    <version>4.3.2</version>
 </parent>
 
 <repositories>
@@ -81,12 +82,23 @@ Spring Boot를 사용하지 않는 웹 프로젝트(공통컴포넌트, 웹 템�
 - 버전 속성 이름은 기존 프로젝트 속성(`org.egovframe.rte.version`, `spring.maven.artifact.version`)과 겹치지 않습니다. 기존 속성을 계속 참조하는 의존성은 이전 버전으로 남을 수 있으므로 `mvn dependency:tree`로 확인하세요.
 - MySQL 드라이버는 `com.mysql:mysql-connector-j`를 사용하세요. 구 좌표 `mysql:mysql-connector-java`는 8.0.33으로 고정됩니다.
 - HSQLDB 2.7.x 기본 JAR은 Java 11용이므로 `<classifier>jdk8</classifier>`를 지정하세요.
+- `org.egovframe.rte.psl.dataaccess`는 `javax:javaee-api:8.0.1`(Servlet 4.0 클래스 포함)을 compile 범위로 전이합니다. Servlet 3.1 기준으로 컴파일하고 WAR에 넣지 않으려면 exclusion 후 필요한 API(`javax.transaction-api` 등)만 선언하세요.
+- spring-test 5.3의 `MockHttpServletRequest`·`MockMvc`는 Servlet 4.0 API가 필요합니다. 테스트 프로파일에서 버전 속성만 바꾸세요.
+
+```xml
+<profile>
+    <id>test</id>
+    <properties>
+        <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
+    </properties>
+</profile>
+```
 
 ## 📦 관리 의존성 (`dependencyManagement`)
 
 ### 실행환경 BOM
 
-`org.egovframe.rte:org.egovframe.rte.root:4.3.1` (import) — RTE 모듈(`org.egovframe.rte.*` 24종 + `spring-modules-validation`)과 실행환경 관리 라이브러리.
+`org.egovframe.rte:org.egovframe.rte.root:4.3.2` (import) — RTE 모듈(`org.egovframe.rte.*` 24종 + `spring-modules-validation`)과 실행환경 관리 라이브러리.
 상세 버전은 [실행환경 루트 POM](../../pom.xml)을 참고하세요.
 
 ### 이 POM에서 추가 관리
@@ -95,7 +107,9 @@ Spring Boot를 사용하지 않는 웹 프로젝트(공통컴포넌트, 웹 템�
 |------|----------|------|
 | Spring | `spring-batch-core`, `spring-batch-infrastructure` | 4.3.10 |
 | | `spring-ldap-core` | 2.4.1 |
-| Java EE (javax) | `javax.websocket-api` | 1.1 |
+| Java EE (javax) | `javax.servlet-api` (provided, 루트 POM 4.0.1 덮어씀) | 3.1.0 |
+| | `javax.servlet.jsp-api` (provided) | 2.3.3 |
+| | `javax.websocket-api` (provided) | 1.1 |
 | | `javax.faces-api` | 2.3 |
 | | `javax.inject` | 1 |
 | | `org.glassfish:javax.json` | 1.1.4 |
@@ -145,10 +159,10 @@ Spring Boot를 사용하지 않는 웹 프로젝트(공통컴포넌트, 웹 템�
 
 ## 🔄 5.x와의 차이
 
-| 구분 | 4.3.1 (본 POM) | 5.x |
+| 구분 | 4.3.2 (본 POM) | 5.x |
 |------|----------------|-----|
 | Java | 1.8 | 17 |
-| Spring Framework | 5.3.39-egov.1 | 6.2.x |
+| Spring Framework | 5.3.39-egov.2 | 6.2.x |
 | Servlet API | `javax.*` | `jakarta.*` |
 | artifactId 형식 | `org.egovframe.web.config.parent`, `org.egovframe.rte.fdl.cmmn` | `egovframe-web-config-parent`, `egovframe-rte-fdl-cmmn` |
 
@@ -158,7 +172,7 @@ Spring Boot를 사용하지 않는 웹 프로젝트(공통컴포넌트, 웹 템�
 |------|---------------------|----------------------------|
 | 대상 | Spring Boot 애플리케이션 | Boot 미사용 웹(WAR) 애플리케이션 |
 | 상위 POM | `spring-boot-starter-parent` 2.7.18 | 없음 |
-| 공통 | 실행환경 4.3.1 BOM import | 실행환경 4.3.1 BOM import |
+| 공통 | 실행환경 4.3.2 BOM import | 실행환경 4.3.2 BOM import |
 
 ## 📚 참고 자료
 

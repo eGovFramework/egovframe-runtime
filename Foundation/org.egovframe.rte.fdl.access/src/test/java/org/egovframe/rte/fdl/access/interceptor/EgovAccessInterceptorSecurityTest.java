@@ -78,7 +78,7 @@ public class EgovAccessInterceptorSecurityTest {
 
     @Test
     public void 경로_중간의_컨텍스트_경로_문자열은_지우지_않는다() throws Exception {
-        // 종전 String.replace(contextPath, "") 는 "/public/app/x" 를 "/public/x" 로 바꿔 경로를 왜곡했다
+        // contextPath는 접두사 위치에서만 제거되어야 한다
         assertTrue(preHandle("/public" + CONTEXT_PATH + "/x.do"));
     }
 

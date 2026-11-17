@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.egovframe.rte</groupId>
         <artifactId>org.egovframe.rte.root</artifactId>
-        <version>4.3.1</version>
+        <version>4.3.2</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -90,6 +90,19 @@
             <groupId>org.antlr</groupId>
             <artifactId>antlr</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <!-- 전이 의존성 버전 지정 : 부모 POM(BOM) 없이 이 모듈을 쓰는 프로젝트에도 루트 POM 관리 버전 적용 -->
+        <dependency>
+            <!-- commons-validator 가 가져오는 commons-beanutils(1.9.4) 대신 루트 POM 관리 버전을 소비자에도 적용 (CVE-2025-48734) -->
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Test -->

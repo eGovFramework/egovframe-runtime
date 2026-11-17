@@ -34,7 +34,7 @@ public class EgovGeneralCryptoServiceImpl implements EgovGeneralCryptoService {
     private static final Logger LOGGER = LoggerFactory.getLogger(EgovGeneralCryptoServiceImpl.class);
 
     private final Base64 base64 = new Base64();
-    /** SHA-1/3중 DES 기반 — NIST 등에서 폐기 권고된 약한 알고리즘 조합. 하위 호환을 위해 기본값은 유지하되 사용 시 경고한다. */
+    /** 기본 알고리즘(SHA-1/3중 DES, 약한 조합). 하위 호환을 위해 유지하며 사용 시 경고한다. */
     private static final String DEFAULT_ALGORITHM = "PBEWithSHA1AndDESede";
     private String algorithm = DEFAULT_ALGORITHM;
     private volatile boolean defaultAlgorithmWarningLogged = false;

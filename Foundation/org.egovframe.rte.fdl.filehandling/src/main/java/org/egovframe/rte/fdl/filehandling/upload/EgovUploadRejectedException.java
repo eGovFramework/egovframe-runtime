@@ -17,15 +17,7 @@ package org.egovframe.rte.fdl.filehandling.upload;
 
 /**
  * 업로드 정책 위반으로 파일이 거부되었음을 알리는 예외.
- *
- * <p><b>NOTE:</b> 거부 <b>사유</b>({@link EgovUploadPolicy.Reason})를 담는다. 호출부가
- * 사유별로 다른 응답을 낼 수 있도록 하기 위해서다 — 크기 초과는 413, 확장자 불허는 400 처럼
- * 구분이 필요한 경우가 있다.</p>
- *
- * <p>메시지에는 <b>파일명을 넣지 않는다.</b> 사용자가 지어 보낸 값이 그대로 응답·로그에
- * 실리면 그 자체가 주입 경로가 되기 때문이다. 파일명이 필요하면 {@link #getFileName()} 으로
- * 꺼내 쓰되, 화면에 낼 때는 출력 인코딩을 거친다
- * ({@code fdl.string} 의 {@code EgovOutputEncoder}).</p>
+ * 거부 사유({@link EgovUploadPolicy.Reason})를 담으며, 메시지에는 파일명을 넣지 않는다(주입 방지).
  *
  * <pre>
  * &lt;&lt; 개정이력(Modification Information) &gt;&gt;
@@ -66,7 +58,7 @@ public class EgovUploadRejectedException extends RuntimeException {
 	}
 
 	/**
-	 * 거부된 파일명을 반환한다. <b>화면에 낼 때는 출력 인코딩을 거칠 것.</b>
+	 * 거부된 파일명을 반환한다. 화면 출력 시 인코딩을 거친다.
 	 *
 	 * @return 파일명({@code null} 일 수 있다)
 	 */

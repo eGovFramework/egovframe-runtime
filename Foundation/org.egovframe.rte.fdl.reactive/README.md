@@ -2,8 +2,8 @@
 
 **Foundation Layer 리액티브(Reactive) 모듈**입니다. **Spring WebFlux** 기반 서비스에서 공통으로 쓰는 두 가지 소형 빌딩 블록, 즉 Reactor `Context`의 값을 SLF4J MDC로 전파하는 `EgovMdcContextConfig`와 해시 기반 시퀀스(식별자) 생성기 `EgovSequenceGenerator`를 제공합니다. 다른 실행환경 모듈이 이 모듈에 의존하지는 않으며, WebFlux 적용 프로젝트에서 직접 사용합니다. 표현 계층의 WebFlux 확장(커스텀 어노테이션, 예외처리, 유효성검증)은 `ptl.reactive` 모듈에 있습니다.
 
-- **Artifact**: `org.egovframe.rte:org.egovframe.rte.fdl.reactive:4.3.1`
-- **Runtime**: Java 1.8 / Spring Framework 5.3.39-egov.1 (`spring-webflux`) / Reactor Core 3.4.41 / SLF4J 2.0.17
+- **Artifact**: `org.egovframe.rte:org.egovframe.rte.fdl.reactive:4.3.2`
+- **Runtime**: Java 1.8 / Spring Framework 5.3.39-egov.2 (`spring-webflux`) / Reactor Core 3.4.41-egov.2 / SLF4J 2.0.17
 - **실행환경 의존**: 없음
 
 ---
@@ -45,12 +45,12 @@ src/main/java/org/egovframe/rte/fdl/reactive/
 
 | 라이브러리 | 버전 | scope / 비고 |
 |---|---|---|
-| `org.springframework:spring-webflux` | 5.3.39-egov.1 | compile. `reactor-core` 3.4.41, `reactive-streams` 1.0.4 전이 |
-| `org.springframework:spring-context` | 5.3.39-egov.1 | compile |
+| `org.springframework:spring-webflux` | 5.3.39-egov.2 | compile. `reactor-core`(공식 3.4.41 대신 루트 POM 관리 3.4.41-egov.2), `reactive-streams` 1.0.4 전이 |
+| `org.springframework:spring-context` | 5.3.39-egov.2 | compile |
 | `org.slf4j:slf4j-api` | 2.0.17 | compile. `MDC`, `Logger` |
 | `javax:javaee-api` | 8.0.1 | compile. `@PostConstruct`, `@PreDestroy` |
 | `javax.servlet:javax.servlet-api` | 4.0.1 | provided |
-| `junit` / `easymock` / `powermock-module-junit4` / `powermock-api-easymock` | 4.13.2 / 5.2.0 / 2.0.9 / 2.0.9 | test |
+| `spring-test` / `junit` / `easymock` / `powermock-module-junit4` / `powermock-api-easymock` | 5.3.39-egov.2 / 4.13.2 / 5.2.0 / 2.0.9 / 2.0.9 | test |
 
 버전은 모두 루트 `pom.xml`의 `dependencyManagement`에서 관리하며 모듈 POM에는 선언하지 않습니다. 이 모듈은 로깅 구현체(`log4j-core` 등)를 포함하지 않으므로 적용 프로젝트에서 `fdl.logging` 또는 별도의 SLF4J 바인딩을 추가해야 MDC 값이 실제 로그에 출력됩니다.
 
@@ -120,11 +120,11 @@ mvn test -pl Foundation/org.egovframe.rte.fdl.reactive
 <dependency>
     <groupId>org.egovframe.rte</groupId>
     <artifactId>org.egovframe.rte.fdl.reactive</artifactId>
-    <version>4.3.1</version>
+    <version>4.3.2</version>
 </dependency>
 ```
 
-부모 POM(`org.egovframe.boot.starter.parent` 또는 `org.egovframe.web.config.parent` 4.3.1)을 상속하면 `<version>`을 생략할 수 있습니다. `-egov.1` 포크 아티팩트를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소 등록이 필요합니다.
+부모 POM(`org.egovframe.boot.starter.parent` 또는 `org.egovframe.web.config.parent` 4.3.2)을 상속하면 `<version>`을 생략할 수 있습니다. `-egov.2` 포크 아티팩트를 받으려면 `https://maven.egovframe.go.kr/maven/` 저장소 등록이 필요합니다.
 
 ---
 

@@ -38,7 +38,7 @@ import java.util.Map;
  * 2019.10.01	유지보수            최초 생성
  * 2021.02.01   유지보수            권한재설정 수정
  * 2024.03.29   유지보수            권한재설정(reload() method) 수정
- * 2026.10.25   실행환경 개발팀      reload() 시 목록 참조 원자 교체(갱신 중 빈 목록으로 접근 판정되는 구간 제거)
+ * 2026.10.25   실행환경 개발팀      reload() 시 목록 참조 원자 교체
  * </pre>
  * @since 2019.10.01
  */
@@ -68,9 +68,7 @@ public class AuthorityResourceMetadata {
     }
 
     public void reload() throws Exception {
-        // 새 리스트를 만들어 static 참조를 원자적으로 교체한다.
-        // 기존에는 clear()+addAll()로 제자리 변경해, 갱신 중인 요청이 빈(부분) 목록을 읽어 접근이 잘못 판정되거나
-        // 순회 중 ConcurrentModificationException 이 발생할 수 있었다.
+        // 갱신 중 빈 목록 노출을 막기 위해 새 리스트로 static 참조를 원자적으로 교체
         authorityList = new ArrayList<Map<String, Object>>(egovAccessService.getAuthorityUser());
         resourceMap = new ArrayList<Map<String, Object>>(egovAccessService.getRoleAndUrl());
 

@@ -1,9 +1,9 @@
-# 표준프레임워크 실행환경 4.3.1
+# 표준프레임워크 실행환경 4.3.2
 
-[![eGovFrame](https://img.shields.io/badge/eGovFrame-4.3.1-134F8C?labelColor=white&logo=data:image/svg%2Bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNzMuMjgyIDE3My4yODIiPjxwYXRoIGZpbGw9IiNmZmYiIGQ9Ik0xNzMuMjgyIDg2LjY1YzAgNDcuODQ0LTM4Ljc5NCA4Ni42MzItODYuNjQ2IDg2LjYzMkMzOC43OTkgMTczLjI4MiAwIDEzNC40OTQgMCA4Ni42NSAwIDM4Ljc4OCAzOC43OTkgMCA4Ni42MzYgMGM0Ny44NTIgMCA4Ni42NDYgMzguNzg4IDg2LjY0NiA4Ni42NSIvPjxwYXRoIGZpbGw9IiMwMDM3NjQiIGQ9Ik0xMjcuMzg5IDgwLjU5OGMtMTMuNzkxLTkuMzY1LTMxLjQzOS01LjU0Mi00MC43MTcgOC41MzMtNy43MiAxMS43NjctMTkuNDA1IDEzLjIzNS0yMy45MDYgMTMuMjM1LTE0Ljc1MSAwLTI0LjgyNC0xMC4zNjctMjcuODE4LTIxLjA5NWgtLjAxYy0uMDM5LS4xMDgtLjA1OS0uMi0uMDktLjMwNy0uMDI1LS4xMi0uMDU2LS4yMzMtLjA4OS0uMzY2LTEuMTc3LTQuNDY3LTEuNDY3LTYuNjA5LTEuNDY3LTExLjM2OCAwLTI1LjY1IDI2LjMyMS01NC4yMTMgNjQuMjE1LTU0LjIxMyAzOC44MjkgMCA2MS4wNSAyOS41NDUgNjYuNzggNDUuOTc5LS4xMDctLjI5NS0uMjA5LS41ODEtLjI5MS0uODc3LTExLjAxNS0zMi4xMjUtNDEuNDc0LTU1LjIxNi03Ny4zNTctNTUuMjE2LTQ1LjEzIDAtODEuNzI5IDM2LjU5LTgxLjcyOSA4MS43MzkgMCA0MC4zNTEgMjkuMTA4IDc0Ljg5MSA2OS40NzkgNzQuODkxIDMyLjE5NyAwIDUzLjg0Mi0xOC4wNTIgNjMuNzU3LTQyLjkzIDUuNDUtMTMuNjE0IDEuNTk1LTI5LjYwNS0xMC43NTctMzguMDA1Ii8%2BPHBhdGggZmlsbD0iI2U0MDMyZSIgZD0iTTE2NC43ODggNjIuNTg5Yy00Ljc3Ny0xNi4wMjYtMjcuMTUzLTQ3LjU3MS02Ny4yODItNDcuNTcxLTM3Ljg5NCAwLTY0LjIxNCAyOC41NjMtNjQuMjE0IDU0LjIxMiAwIDQuNzU5LjI5IDYuOTAxIDEuNDY2IDExLjM2OC0uNDg5LTEuOTUxLS43NC0zLjkwOC0uNzQtNS44MjMgMC0yNi43MjEgMjYuNzQxLTQ1LjIyNyA1NC4yNDgtNDUuMjI3IDM3LjIxOCAwIDY3LjM4OCAzMC4xNzQgNjcuMzg4IDY3LjM5IDAgMjkuMTczLTE2Ljc4NSA1NC40MzctNDEuMTc5IDY2LjU2NXYuMDIzYzMxLjQ1NS0xMS4zOTEgNTMuOTA4LTQxLjUxMiA1My45MDgtNzYuODg0IDAtOC4zNzgtMS4xMjctMTUuNzU5LTMuNTk1LTI0LjA1MyIvPjwvc3ZnPg%3D%3D)](https://www.egovframe.go.kr)
+[![eGovFrame](https://img.shields.io/badge/eGovFrame-4.3.2-134F8C?labelColor=white&logo=data:image/svg%2Bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNzMuMjgyIDE3My4yODIiPjxwYXRoIGZpbGw9IiNmZmYiIGQ9Ik0xNzMuMjgyIDg2LjY1YzAgNDcuODQ0LTM4Ljc5NCA4Ni42MzItODYuNjQ2IDg2LjYzMkMzOC43OTkgMTczLjI4MiAwIDEzNC40OTQgMCA4Ni42NSAwIDM4Ljc4OCAzOC43OTkgMCA4Ni42MzYgMGM0Ny44NTIgMCA4Ni42NDYgMzguNzg4IDg2LjY0NiA4Ni42NSIvPjxwYXRoIGZpbGw9IiMwMDM3NjQiIGQ9Ik0xMjcuMzg5IDgwLjU5OGMtMTMuNzkxLTkuMzY1LTMxLjQzOS01LjU0Mi00MC43MTcgOC41MzMtNy43MiAxMS43NjctMTkuNDA1IDEzLjIzNS0yMy45MDYgMTMuMjM1LTE0Ljc1MSAwLTI0LjgyNC0xMC4zNjctMjcuODE4LTIxLjA5NWgtLjAxYy0uMDM5LS4xMDgtLjA1OS0uMi0uMDktLjMwNy0uMDI1LS4xMi0uMDU2LS4yMzMtLjA4OS0uMzY2LTEuMTc3LTQuNDY3LTEuNDY3LTYuNjA5LTEuNDY3LTExLjM2OCAwLTI1LjY1IDI2LjMyMS01NC4yMTMgNjQuMjE1LTU0LjIxMyAzOC44MjkgMCA2MS4wNSAyOS41NDUgNjYuNzggNDUuOTc5LS4xMDctLjI5NS0uMjA5LS41ODEtLjI5MS0uODc3LTExLjAxNS0zMi4xMjUtNDEuNDc0LTU1LjIxNi03Ny4zNTctNTUuMjE2LTQ1LjEzIDAtODEuNzI5IDM2LjU5LTgxLjcyOSA4MS43MzkgMCA0MC4zNTEgMjkuMTA4IDc0Ljg5MSA2OS40NzkgNzQuODkxIDMyLjE5NyAwIDUzLjg0Mi0xOC4wNTIgNjMuNzU3LTQyLjkzIDUuNDUtMTMuNjE0IDEuNTk1LTI5LjYwNS0xMC43NTctMzguMDA1Ii8%2BPHBhdGggZmlsbD0iI2U0MDMyZSIgZD0iTTE2NC43ODggNjIuNTg5Yy00Ljc3Ny0xNi4wMjYtMjcuMTUzLTQ3LjU3MS02Ny4yODItNDcuNTcxLTM3Ljg5NCAwLTY0LjIxNCAyOC41NjMtNjQuMjE0IDU0LjIxMiAwIDQuNzU5LjI5IDYuOTAxIDEuNDY2IDExLjM2OC0uNDg5LTEuOTUxLS43NC0zLjkwOC0uNzQtNS44MjMgMC0yNi43MjEgMjYuNzQxLTQ1LjIyNyA1NC4yNDgtNDUuMjI3IDM3LjIxOCAwIDY3LjM4OCAzMC4xNzQgNjcuMzg4IDY3LjM5IDAgMjkuMTczLTE2Ljc4NSA1NC40MzctNDEuMTc5IDY2LjU2NXYuMDIzYzMxLjQ1NS0xMS4zOTEgNTMuOTA4LTQxLjUxMiA1My45MDgtNzYuODg0IDAtOC4zNzgtMS4xMjctMTUuNzU5LTMuNTk1LTI0LjA1MyIvPjwvc3ZnPg%3D%3D)](https://www.egovframe.go.kr)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue?logo=apache&logoColor=white)](https://www.apache.org/licenses/LICENSE-2.0.txt)
 [![Java](https://img.shields.io/badge/Java-1.8-orange?logo=openjdk&logoColor=white)](https://openjdk.org/projects/jdk8/)
-[![Spring Framework](https://img.shields.io/badge/Spring%20Framework-5.3.39--egov.1-brightgreen?logo=spring&logoColor=white)](https://spring.io/projects/spring-framework)
+[![Spring Framework](https://img.shields.io/badge/Spring%20Framework-5.3.39--egov.2-brightgreen?logo=spring&logoColor=white)](https://spring.io/projects/spring-framework)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-2.7.18-brightgreen?logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
 [![Maven](https://img.shields.io/badge/Maven-3.6+-red?logo=apachemaven&logoColor=white)](https://maven.apache.org/)
 
@@ -17,17 +17,20 @@
 - 실행환경 사용에 필수적이지 않은 서비스들은 [선택 서비스]로 분류하여 각 사업에서 선택적으로 적용할 수 있도록 제공
 - 핵심 서비스는 기본적으로 적용되며 선택 서비스는 각 사업의 필요에 맞게 개발환경을 통해 선택적으로 적용 가능
 
-### 실행환경 4.3.1 버전의 주요 특징
+### 실행환경 4.3.2 버전의 주요 특징
 
+- Spring 라이브러리를 `-egov.2`로 업데이트 (보안 수정 이식)
+  - Spring Framework `5.3.39-egov.2`, Spring Security `5.8.16-egov.2`, Spring Integration `5.5.20-egov.2`, Spring Data Commons `2.7.18-egov.2`
+  - Spring Data MongoDB는 `3.4.18-egov.1` 유지
+- Reactor Core `3.4.41-egov.2`, Micrometer(core · registry-statsd) `1.9.17-egov.2` 포크 적용 (보안 수정 이식)
+- Jackson `2.18.12`로 상향
+- 커스텀 네임스페이스 XSD를 4.3.2 버전으로 변경 (`egov-access-4.3.2.xsd`, `egov-crypto-4.3.2.xsd`, `egov-security-4.3.2.xsd`)
 - Spring Boot 2.7.18 지원
-- Spring Framework 5.3.39 버전으로 업그레이드 (보안 수정을 이식한 `5.3.39-egov.1` 포크 사용)
-- Spring Security 5.8.16 버전으로 업그레이드 (`5.8.16-egov.1` 포크 사용)
-- Spring Integration `5.5.20-egov.1`, Spring Data Commons `2.7.18-egov.1`, Spring Data MongoDB `3.4.18-egov.1` 포크 사용
 - 취약점 대응을 위한 서드파티 라이브러리 버전 정비 (아래 [의존성 변경 내역](#의존성-변경-내역) 참고)
 - 라이브러리·플러그인 버전을 루트 `pom.xml`의 `dependencyManagement`/`pluginManagement`에서 일괄 관리 (각 모듈 POM은 버전을 선언하지 않음)
-- Spring Boot 자동구성 스타터 3종(`org.egovframe.boot` 그룹)을 루트 POM의 모듈로 포함하여 실행환경과 같은 4.3.1 버전으로 관리
+- Spring Boot 자동구성 스타터 3종(`org.egovframe.boot` 그룹)을 루트 POM의 모듈로 포함하여 실행환경과 같은 4.3.2 버전으로 관리
 - 적용 프로젝트가 상속하는 부모 POM 2종(Boot 기반, Servlet 기반) 제공
-- `-egov.1` 포크 아티팩트는 표준프레임워크 Maven 저장소(`https://maven.egovframe.go.kr/maven/`)에서 받으며, 루트 POM에 저장소가 선언되어 있음
+- `-egov.*` 포크 아티팩트는 표준프레임워크 Maven 저장소(`https://maven.egovframe.go.kr/maven/`)에서 받으며, 루트 POM에 저장소가 선언되어 있음
 
 ## 실행환경 구성
 
@@ -72,7 +75,7 @@ org.egovframe.rte
      └─spring-modules-validation
 ```
 
-루트 POM(`org.egovframe.rte:org.egovframe.rte.root:4.3.1`)이 위 30개 모듈을 빌드합니다.
+루트 POM(`org.egovframe.rte:org.egovframe.rte.root:4.3.2`)이 위 30개 모듈을 빌드합니다.
 `Boot`와 `Parent`를 제외한 모듈의 groupId는 `org.egovframe.rte`이며, `spring-modules-validation`의 버전은 `0.9`로 고정되어 있습니다.
 
 ### 실행환경 구성 설명
@@ -115,16 +118,16 @@ org.egovframe.rte
 | 구분 | 버전 |
 |---|---|
 | Java | 1.8 (`java.version`), 컴파일 `release` 8 (`java.release.version`) |
-| Spring Framework / Security / Integration / Batch | 5.3.39-egov.1 / 5.8.16-egov.1 / 5.5.20-egov.1 / 4.3.10 |
+| Spring Framework / Security / Integration / Batch | 5.3.39-egov.2 / 5.8.16-egov.2 / 5.5.20-egov.2 / 4.3.10 |
 | Spring Boot (Boot Starter 모듈 전용) | 2.7.18 |
-| Spring Data Commons | 2.7.18-egov.1 |
+| Spring Data Commons | 2.7.18-egov.2 |
 | Spring Data (JPA / MongoDB / Redis / Cassandra / R2DBC) | 2.7.18 / 3.4.18-egov.1 / 2.7.18 / 3.4.18 / 1.5.18 |
-| Reactor Core / Reactive Streams | 3.4.41 / 1.0.4 |
+| Reactor Core / Reactive Streams | 3.4.41-egov.2 (`reactor-test`는 3.4.41) / 1.0.4 |
 | Hibernate / Validator | 5.6.15.Final / 6.2.5.Final |
 | MyBatis / MyBatis-Spring / iBatis | 3.5.16 / 2.1.2 / 2.3.4.726 |
-| Jackson / Netty | 2.18.11 / 4.1.138.Final |
+| Jackson / Netty | 2.18.12 / 4.1.138.Final |
 | Log4j2 / SLF4J | 2.25.5 / 2.0.17 |
-| Micrometer Core | 1.15.12 |
+| Micrometer (core / registry-statsd) | 1.9.17-egov.2 |
 | Apache CXF / Jetty / Neethi | 3.5.11 / 9.4.58.v20250814 / 3.2.2 |
 | Apache POI / JXLS / Commons Configuration2 | 5.4.0 / 2.14.0 / 2.15.0 |
 | MongoDB Driver / Cassandra Driver / Lettuce / r2dbc-h2 | 4.11.5 / 4.17.0 / 6.5.5.RELEASE / 0.9.1.RELEASE |
@@ -152,15 +155,25 @@ MongoDB 드라이버(`mongodb-driver-core`, `mongodb-driver-sync`, `mongodb-driv
 
 ### 의존성 변경 내역
 
-이전 배포본 대비 변경된 라이브러리입니다. 실행환경 루트 `pom.xml`의 `dependencyManagement`는 적용 프로젝트에 전달되지 않으므로,
-전이 의존성으로 들어오는 라이브러리는 적용 프로젝트에서 `mvn dependency:tree`로 버전을 확인하십시오. 부모 POM(`Parent`)을 상속하면 같은 버전이 적용됩니다.
+4.3.1 대비 4.3.2에서 변경된 라이브러리입니다. 그 외 라이브러리·플러그인 버전은 4.3.1과 같습니다.
+
+| 라이브러리 | 4.3.1 | 4.3.2 | 적용 위치 |
+|---|---|---|---|
+| Spring Framework | 5.3.39-egov.1 | 5.3.39-egov.2 | 루트 `spring-framework-bom` |
+| Spring Security | 5.8.16-egov.1 | 5.8.16-egov.2 | 루트 `spring-security-bom` |
+| Spring Integration | 5.5.20-egov.1 | 5.5.20-egov.2 | 루트 `spring-integration-bom` |
+| Spring Data Commons | 2.7.18-egov.1 | 2.7.18-egov.2 | 루트 (전이 의존성 버전 정렬) |
+| Reactor Core | 3.4.41 | 3.4.41-egov.2 | 루트 (CVE-2026-47857. `reactor-test`는 공식 3.4.41 유지) |
+| Micrometer Core / Registry StatsD | 1.16.7 | 1.9.17-egov.2 | 루트, `bat.core` (CVE-2026-40984, CVE-2026-59295, CVE-2026-59296. Spring Boot 2.7.18의 1.9 계열 유지) |
+| Jackson (core / databind / annotations) | 2.18.11 | 2.18.12 | 루트 `jackson-bom` (CVE-2026-110879) |
 
 | 라이브러리 | 변경 전 | 변경 후 | 적용 위치 |
 |---|---|---|---|
 | Jackson (core / databind / annotations) | 2.18.3 | 2.18.11 | 루트 `jackson-bom` |
 | Log4j2 (api / core / slf4j2-impl) | 2.24.3 | 2.25.5 | 루트 (`log4j-core`, `log4j-slf4j2-impl` 관리. `log4j-api`는 부모 POM에서 같은 버전으로 고정) |
 | Commons Configuration2 | 2.11.0 | 2.15.0 | 루트 (`fdl.property`. Commons Text 1.15.0, Commons Logging 1.3.6 전이 상향) |
-| Micrometer Core | 1.9.17 | 1.15.12 | 루트, `bat.core` (CVE-2026-40984, spring-batch-core 전이 의존성) |
+| Micrometer Core | 1.9.17 | 1.16.7 | 루트, `bat.core` (CVE-2026-40984, CVE-2026-59295, CVE-2026-59296. spring-batch-core 전이 의존성) |
+| Micrometer Registry StatsD | (미관리) | 1.16.7 | 루트 `dependencyManagement` 추가 (CVE-2026-59296. 부모 POM 사용 프로젝트에서 버전 없이 선언 가능) |
 | Spring Data Commons | 2.7.18 | 2.7.18-egov.1 | 루트 |
 | Reactive Streams | 1.0.3 | 1.0.4 | 루트 (`psl.reactive.cassandra` 전이 의존성) |
 | Jetty (server / http / io / util / security / continuation) | 9.4.57.v20241219 | 9.4.58.v20250814 | 루트 `jetty-bom` (`itl.webservice`) |
@@ -171,6 +184,33 @@ MongoDB 드라이버(`mongodb-driver-core`, `mongodb-driver-sync`, `mongodb-driv
 | H2 (test) | 2.1.210 | 2.2.220 | 루트 (`psl.reactive.r2dbc`의 r2dbc-h2 전이 의존성) |
 | c3p0 / mchange-commons-java (test) | 0.9.5.4 / 0.2.15 | 0.14.0 / 0.6.0 | 루트 (`bat.core`의 quartz 전이 의존성) |
 | AssertJ (test) | 3.27.3 | 3.27.7 | 루트 (`psl.reactive.*`. Byte Buddy 1.18.3 전이 상향) |
+
+#### 전이 의존성 버전 지정
+
+루트 POM의 `dependencyManagement`는 모듈 POM이 직접 선언한 의존성에만 적용됩니다. 부모 POM(BOM) 없이 실행환경 모듈을 쓰는 프로젝트에서도
+보안 수정 버전과 포크가 선택되도록, 모듈이 전이로 가져오던 아래 라이브러리를 각 모듈 POM에 버전 없이 직접 선언하였습니다(사용 프로젝트의 의존성 집합은 그대로이고 버전만 바뀝니다).
+
+| 모듈 | 직접 선언한 라이브러리 (루트 POM 관리 버전) |
+|---|---|
+| `bat.core` | `jackson-databind`·`-core`·`-annotations` 2.18.12, `reactor-core` 3.4.41-egov.2 |
+| `fdl.access` | `protobuf-java` 3.25.5, `commons-lang3` 3.20.0 |
+| `fdl.crypto`, `fdl.property` | `commons-lang3` 3.20.0 |
+| `fdl.filehandling` | `commons-lang3` 3.20.0 |
+| `itl.webservice` | `neethi` 3.2.2, Jetty 6종 9.4.58.v20250814 |
+| `psl.data.jpa`, `psl.data.mongodb`, `psl.reactive.mongodb` | `spring-data-commons` 2.7.18-egov.2 |
+| `psl.reactive.cassandra` | `spring-data-commons` 2.7.18-egov.2, Jackson 3종 2.18.12, Netty 7종 4.1.138.Final, `reactive-streams` 1.0.4 |
+| `psl.reactive.r2dbc` | `spring-data-commons` 2.7.18-egov.2, `spring-r2dbc` 5.3.39-egov.2 |
+| `psl.reactive.redis` | `spring-data-commons` 2.7.18-egov.2, `spring-oxm`·`spring-context-support` 5.3.39-egov.2, Netty 7종 4.1.138.Final |
+| `ptl.mvc` | `commons-beanutils` 1.11.0 |
+
+`fdl.excel`은 `jxls`·`jxls-poi`가 전이로 가져오는 `logback-core` 1.2.13(실행환경 미사용)을 제외하였습니다.
+또한 `jxls-reader`가 가져오는 `commons-digester3`의 분류자 `with-deps` jar는 commons-beanutils 1.8.3 · commons-logging 1.1.1 클래스를 내장하여 관리 버전(beanutils 1.11.0)과 클래스가 중복되므로,
+이를 제외하고 분류자 없는 `commons-digester3` 3.2를 직접 선언하였습니다(루트 POM `dependencyManagement`에 추가).
+`ptl.reactive`는 `json-simple` 1.1.1이 compile로 잘못 선언한 `junit`을 제외하였습니다(사용 프로젝트의 실행 classpath에 junit · hamcrest가 들어가지 않음).
+
+#### 소스 변경
+
+- `ptl.reactive`의 `EgovNullCheckValidation`이 `ConstraintValidator<EgovNullCheck, Object>`로 바뀌어 `@EgovNullCheck`를 숫자 필드(`Integer`, `int`, `Double` 등)에도 쓸 수 있습니다. 이전에는 `String`만 지원하여 숫자 필드에서 `HV000030`(`UnexpectedTypeException`)이 발생하였습니다.
 
 빌드 설정 변경: `maven-compiler-plugin`의 `release` 값을 `${java.version}`(1.8)에서 `${java.release.version}`(8)으로 변경하였습니다.
 `release` 옵션은 `1.8` 표기를 허용하지 않아 JDK 9 이상에서 빌드가 실패하던 문제를 수정한 것입니다. `maven-javadoc-plugin`도 같은 속성을 사용합니다.
@@ -186,29 +226,29 @@ MongoDB 드라이버(`mongodb-driver-core`, `mongodb-driver-sync`, `mongodb-driv
 <parent>
     <groupId>org.egovframe.boot</groupId>
     <artifactId>org.egovframe.boot.starter.parent</artifactId>
-    <version>4.3.1</version>
+    <version>4.3.2</version>
 </parent>
 
 <!-- Spring Boot를 사용하지 않는 웹 프로젝트 -->
 <parent>
     <groupId>org.egovframe.web</groupId>
     <artifactId>org.egovframe.web.config.parent</artifactId>
-    <version>4.3.1</version>
+    <version>4.3.2</version>
 </parent>
 ```
 
-두 부모 POM은 실행환경 루트 POM(`org.egovframe.rte.root` 4.3.1)을 BOM으로 가져와(`scope=import`) 버전을 관리합니다.
+두 부모 POM은 실행환경 루트 POM(`org.egovframe.rte.root` 4.3.2)을 BOM으로 가져와(`scope=import`) 버전을 관리합니다.
 실행환경 모듈 전체(Boot Starter 3종 포함)와 루트 POM이 관리하는 라이브러리(Spring 포크, Spring Data, Jackson, Log4j2, Netty, Jetty, DB 드라이버,
 Apache Commons, 테스트 라이브러리 등)의 버전이 그대로 적용되며, 부모 POM에는 루트 POM이 관리하지 않는 라이브러리만 선언합니다.
 따라서 부모 POM을 사용하려면 루트 POM(`org.egovframe.rte.root`)도 함께 저장소에 배포되어 있어야 합니다.
 BOM import는 루트 POM의 `<repositories>` 설정을 상속하지 않으므로, 적용 프로젝트의 `pom.xml` 또는 `settings.xml`에
-표준프레임워크 저장소(`https://maven.egovframe.go.kr/maven/`)를 등록해야 `-egov.1` 포크 아티팩트를 받을 수 있습니다.
+표준프레임워크 저장소(`https://maven.egovframe.go.kr/maven/`)를 등록해야 `-egov.*` 포크 아티팩트를 받을 수 있습니다.
 
 | 구분 | `org.egovframe.boot.starter.parent` | `org.egovframe.web.config.parent` |
 |---|---|---|
 | 부모 | `spring-boot-starter-parent` 2.7.18 | 없음 |
 | 실행환경 버전 | 루트 POM BOM import | 루트 POM BOM import |
-| 추가 관리 | Spring Cloud 2021.0.9, QueryDSL 5.0.0, AspectJ Tools 1.9.7, Commons Logging 1.3.6, Log4j API 2.25.5 (Boot Starter 3종은 루트 POM BOM으로 4.3.1 관리) | 공통컴포넌트·웹 템플릿 전용 라이브러리(Spring Batch 4.3.10, Spring LDAP 2.4.1, MariaDB 3.4.0, javax API, OAuth/SNS, UI/에디터 등), JAXB Runtime 2.3.5, istack-commons-runtime 3.0.12, Commons Logging 1.3.6, xmlbeans 5.3.0, Log4j API 2.25.5 |
+| 추가 관리 | Spring Cloud 2021.0.9, QueryDSL 5.0.0, AspectJ Tools 1.9.7, Commons Logging 1.3.6, Log4j API 2.25.5 (Boot Starter 3종은 루트 POM BOM으로 4.3.2 관리) | 공통컴포넌트·웹 템플릿 전용 라이브러리(Spring Batch 4.3.10, Spring LDAP 2.4.1, MariaDB 3.4.0, javax API, OAuth/SNS, UI/에디터 등), JAXB Runtime 2.3.5, istack-commons-runtime 3.0.12, Commons Logging 1.3.6, xmlbeans 5.3.0, Log4j API 2.25.5 |
 | Spring Boot 재정의 | 17개 속성 (아래 참고) | 해당 없음 |
 | pluginManagement | `maven-deploy-plugin` 3.1.4 | compiler 3.13.0(`source`/`target` 1.8), war 3.4.0, pmd 3.23.0, surefire 3.3.0, javadoc 3.7.0, deploy 3.1.4 |
 
@@ -228,7 +268,7 @@ BOM import는 루트 POM의 `<repositories>` 설정을 상속하지 않으므로
 - MySQL 드라이버는 루트 POM이 새 좌표 `com.mysql:mysql-connector-j`(8.4.0)만 관리합니다. 이전 좌표 `mysql:mysql-connector-java`는
   8.0.33으로 relocation되어 실행환경의 8.4.0보다 낮은 버전이 선택되므로, 이전 좌표를 사용하는 프로젝트는 새 좌표로 변경하십시오.
 - Servlet 기반 부모 POM의 `xmlbeans`는 실행환경(POI 5.4.0)에 맞춰 5.3.0으로 관리합니다. xmlbeans 2.x API를 직접 사용하는 코드는 확인이 필요합니다.
-- 4.3.1은 JDK 1.8 기반이므로 부모 POM이 관리하는 라이브러리는 Java 8에서 동작하는 버전(클래스 파일 major 52 이하)으로 정합니다.
+- 4.3.2는 JDK 1.8 기반이므로 부모 POM이 관리하는 라이브러리는 Java 8에서 동작하는 버전(클래스 파일 major 52 이하)으로 정합니다.
   BOM에 함께 포함된 일부 선택 모듈(`log4j-jpl`, `jetty-alpn-java-*`, `spring-security-saml2-service-provider`, `bson-record-codec`)은 Java 9 이상 전용이며,
   Java 8 애플리케이션에서는 사용하지 않습니다.
 - HSQLDB는 Java 8용 `jdk8` 분류자 항목을 루트 POM이 관리하며, Servlet 기반 부모 POM은 분류자 없는 항목(2.7.x는 Java 11용)을 관리하지 않습니다.
@@ -248,7 +288,7 @@ BOM import는 루트 POM의 `<repositories>` 설정을 상속하지 않으므로
 ### Maven
 
 - 요구사항: JDK 8 이상, Maven 3.6 이상
-- `-egov.1` 포크 아티팩트(Spring Framework, Spring Security, Spring Integration, Spring Data Commons, Spring Data MongoDB)는
+- 포크 아티팩트(Spring Framework·Security·Integration·Data Commons·Reactor Core·Micrometer `-egov.2`, Spring Data MongoDB `-egov.1`)는
   루트 POM에 선언된 표준프레임워크 저장소(`https://maven.egovframe.go.kr/maven/`)에서 받습니다.
 
 ```bash
@@ -262,7 +302,7 @@ mvn clean install -DskipTests
 mvn clean install -pl Foundation/org.egovframe.rte.fdl.cmmn -am
 ```
 
-빌드 결과물은 각 모듈의 `target/` 아래에 `<artifactId>-4.3.1.jar`, `-sources.jar`, `-javadoc.jar`로 생성됩니다.
+빌드 결과물은 각 모듈의 `target/` 아래에 `<artifactId>-4.3.2.jar`, `-sources.jar`, `-javadoc.jar`로 생성됩니다.
 부모 POM 2종(`Parent`)은 루트 POM과 함께 설치·배포되어야 적용 프로젝트에서 사용할 수 있습니다.
 
 ```bash
@@ -291,9 +331,9 @@ mvn test
 ## 참조
 
 1. [Contribution 가이드](https://github.com/eGovFramework/egovframe-runtime/wiki)
-2. [실행환경 위키가이드](https://www.egovframe.go.kr/wiki/doku.php?id=egovframework:rte4.3)
-3. [개발환경 다운로드](https://www.egovframe.go.kr/home/sub.do?menuNo=94)
-4. [실행환경 다운로드](https://www.egovframe.go.kr/home/sub.do?menuNo=92)
+2. [실행환경 위키가이드](https://egovframe.go.kr/docs/archive/egovframework/%EC%8B%A4%ED%96%89%ED%99%98%EA%B2%BD/rte4.3.html)
+3. [개발환경 다운로드](https://www.egovframe.go.kr/home/sub.do?menuNo=107)
+4. [실행환경 다운로드](https://www.egovframe.go.kr/home/sub.do?menuNo=106)
 5. [Boot Starter Parent README](Parent/org.egovframe.boot.starter.parent/README.md)
 6. [Web Config Parent README](Parent/org.egovframe.web.config.parent/README.md)
 
