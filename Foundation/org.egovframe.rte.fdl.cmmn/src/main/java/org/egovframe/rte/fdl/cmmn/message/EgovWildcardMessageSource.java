@@ -32,9 +32,8 @@ import org.springframework.core.io.support.ResourcePatternResolver;
  * basename 에 <b>와일드카드 패턴</b>을 쓸 수 있는 {@code MessageSource}.
  *
  * <p><b>NOTE:</b> Spring 의 {@link ReloadableResourceBundleMessageSource} 는 basename 을
- * 하나씩 나열해야 한다. 모듈이 늘 때마다 설정에 줄이 늘고, 빠뜨리면 그 모듈의 메시지만
- * 조용히 비어 버린다. 프로퍼티 로딩은 이미 {@code classpath*:} 패턴을 지원하는데
- * 메시지만 지원하지 않는 <b>비대칭</b>이 있었다.</p>
+ * 하나씩 나열해야 하므로, 빠뜨린 모듈의 메시지가 비어 버린다
+ * (프로퍼티 로딩의 {@code classpath*:} 패턴 지원과 <b>비대칭</b>).</p>
  *
  * <pre>
  * &lt;bean id="messageSource"
@@ -138,7 +137,7 @@ public class EgovWildcardMessageSource extends ReloadableResourceBundleMessageSo
 		try {
 			resources = resourcePatternResolver.getResources(pattern);
 		} catch (IOException e) {
-			// 원본은 이 지점을 debug 로그로 삼켰다 — 메시지가 비어도 원인을 찾을 수 없었다.
+			// 삼키지 않고 전파 (메시지 누락 원인 추적)
 			throw new UncheckedIOException("메시지 리소스 패턴을 해석하지 못했습니다: " + pattern, e);
 		}
 
@@ -166,8 +165,7 @@ public class EgovWildcardMessageSource extends ReloadableResourceBundleMessageSo
 	 * @return 로케일 접미를 제거한 이름
 	 */
 	protected String stripLocaleSuffix(String name) {
-		// 패턴이 접미 전체(언어+스크립트+국가+variant)를 한 번에 잡으므로 반복하지 않는다 —
-		// 반복하면 basename 자체가 로케일 형태일 때(예: "ko_KR") 과도하게 잘린다.
+		// 1회만 치환 : 패턴이 접미 전체를 한 번에 잡음 (반복 시 "ko_KR" 같은 basename 과도 절삭)
 		String stripped = LOCALE_SUFFIX.matcher(name).replaceFirst("");
 		return stripped.isEmpty() ? name : stripped;
 	}
@@ -222,7 +220,7 @@ public class EgovWildcardMessageSource extends ReloadableResourceBundleMessageSo
 				urls.add(url.endsWith("/") ? url : url + "/");
 			}
 		} catch (IOException e) {
-			// 루트를 얻지 못하면 relativeNameOf 가 종전 방식(마지막 일치)으로 폴백한다
+			// 루트를 얻지 못하면 relativeNameOf 가 종전 방식(마지막 일치)으로 폴백
 		}
 		return urls;
 	}

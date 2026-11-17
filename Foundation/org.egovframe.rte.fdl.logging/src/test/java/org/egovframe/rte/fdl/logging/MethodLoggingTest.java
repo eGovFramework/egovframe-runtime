@@ -25,9 +25,8 @@ public class MethodLoggingTest {
         vo.setSomeAttr("some");
 
         // AOP설정에 따라 MethodParameterLoggingAspect 클래스의 beforeLog메서드 내 로그 출력이 먼저 발생
-        // 아래 메소드 내에서 호출하는 logger는 log4j2.xml 에 존재하지 않으므로
-        // Named Hierarchy에 따라 이름이 가장 많이 매칭되는 "egovframework" 이름의 Logger설정을 따른다.
-        // DEBUG, INFO, WARN, ERROR, FATAL 에 대한 모든 로그가 출력됨
+        // 아래 메소드의 logger 는 log4j2.xml 에 없으므로 Named Hierarchy 상 "egovframework" Logger 설정 적용
+        // DEBUG, INFO, WARN, ERROR, FATAL 로그 모두 출력
         logTestService.executeSomeLogic(vo);
     }
 

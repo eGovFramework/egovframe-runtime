@@ -16,8 +16,7 @@ class EgovEscapableDelimitedLineTokenizerDollarTest {
     @Test
     void setDelimiter_dollar_doesNotThrow() {
         EgovEscapableDelimitedLineTokenizer tokenizer = new EgovEscapableDelimitedLineTokenizer();
-        // 수정 전에는 getRegexDelimiter()의 replaceAll("[$]","[$]")에서
-        // IllegalArgumentException: Illegal group reference 가 발생했다.
+        // 회귀 : getRegexDelimiter()의 replaceAll("[$]","[$]") → IllegalArgumentException(Illegal group reference)
         assertDoesNotThrow(() -> tokenizer.setDelimiter("$"),
                 "$ 구분자 설정이 예외를 던지면 안 된다");
     }

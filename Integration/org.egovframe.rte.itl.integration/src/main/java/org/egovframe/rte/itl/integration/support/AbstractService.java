@@ -258,9 +258,7 @@ class MessageSender extends Thread {
     public void run() {
         LOGGER.debug("### MessageSender run() MessageSender just Start");
         //2017.02.13 장동한 시큐어코딩(ES)-검사시점과 사용시점(TOCTOU)[CWE-367]
-        //synchronized(service) 대신 lockInterruptibly()를 사용해, 락을 기다리는 동안
-        //호출자가 이미 타임아웃으로 포기해 interrupt()를 건 경우 doSend를 시도하지 않고
-        //즉시 빠져나오도록 한다. (락이 지키는 검사~발송 원자성은 그대로 유지된다.)
+        //lockInterruptibly() : 타임아웃으로 interrupt된 호출자는 doSend 없이 즉시 종료 (검사~발송 원자성 유지)
         try {
             service.invocationLock.lockInterruptibly();
         } catch (InterruptedException e) {

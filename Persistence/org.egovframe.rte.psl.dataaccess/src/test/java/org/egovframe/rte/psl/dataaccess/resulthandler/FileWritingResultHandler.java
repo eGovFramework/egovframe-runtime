@@ -41,7 +41,7 @@ public class FileWritingResultHandler implements ResultHandler {
     @PostConstruct
     public void init() throws IOException {
         this.file = new File("./target/test-output/" + schemaProperties.getProperty("outResultFile"));
-        // 산출물은 빌드 디렉터리에 만든다. 소스 트리에 쓰면 추적 중인 파일이 더러워진다.
+        // 산출물은 빌드 디렉터리에 생성 (소스 트리 오염 방지)
         this.file.getParentFile().mkdirs();
         if (this.file.exists()) {
             this.file.delete();

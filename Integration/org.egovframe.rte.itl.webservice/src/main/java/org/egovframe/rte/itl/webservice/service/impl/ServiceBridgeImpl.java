@@ -99,7 +99,7 @@ public class ServiceBridgeImpl implements ServiceBridge {
     @SuppressWarnings("unchecked")
     public Object doService(Map<String, Object> params) {
         LOGGER.debug("### ServiceBridgeImpl doService() Start ");
-        // requestMessage를 parsing, 최대한 가능한 부분을 parsing한다.
+        // requestMessage parsing, 가능한 부분까지 최대한 parsing
         LOGGER.debug("### ServiceBridgeImpl doService() : Parse Request Message");
         EgovIntegrationMessageHeader requestHeader = null;
         Map<String, Object> requestBody = new HashMap<String, Object>();
@@ -215,7 +215,7 @@ public class ServiceBridgeImpl implements ServiceBridge {
         }
 
         // 전체 실패
-        // 헤더부만 찾아서 헤더만 넘긴다.
+        // 헤더부만 찾아 헤더만 전달
         ServiceParamInfo headerParamInfo = null;
         for (ServiceParamInfo paramInfo : serviceEndpointInfo.getParamInfos()) {
             if (paramInfo.getType() == EgovWebServiceMessageHeader.TYPE) {

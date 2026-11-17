@@ -103,12 +103,12 @@ public class EgovJdbcCodeLoader implements EgovCodeLoader {
 
 	@Override
 	public List<EgovCode> loadAll() {
-		// DataAccessException(unchecked)은 그대로 전파한다 — 침묵 실패 금지.
+		// DataAccessException(unchecked)은 그대로 전파 — 침묵 실패 금지
 		return jdbcTemplate.query(sql, EgovJdbcCodeLoader::extractAll);
 	}
 
 	private static List<EgovCode> extractAll(ResultSet rs) throws SQLException {
-		// 컬럼 구성은 결과셋 전체에서 같으므로 메타데이터는 한 번만 읽는다.
+		// 컬럼 구성은 결과셋 전체 동일 — 메타데이터 1회만 조회
 		Set<String> columns = columnLabelsOf(rs.getMetaData());
 		requireColumns(columns);
 

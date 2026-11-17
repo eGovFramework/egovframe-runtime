@@ -110,47 +110,43 @@ public class ExceptionTransfer {
          * 하지만 실제 현장에서 그렇게 나누는 경우는 없다.
          * 클래스 정보로만 패턴 분석을 통해 Handler 로 연결해주는 고리 역할 수행을 하게 된다.
          */
-        //EgovBizException 이 발생시
+        //EgovBizException 발생 시
         if (exception instanceof EgovBizException) {
             LOGGER.debug("Exception case :: EgovBizException ");
             EgovBizException be = (EgovBizException) exception;
-            //wrapp 된 Exception 있는 경우 error 원인으로 출력해준다.
+            //wrap 된 Exception 이 있으면 error 원인으로 출력
             if (be.getWrappedException() != null) {
                 Throwable throwable = be.getWrappedException();
                 getLog(clazz).error(be.getMessage(), throwable);
             } else {
                 getLog(clazz).error(be.getMessage(), be.getCause());
             }
-            // Exception Handler 에 발생된 Package 와 Exception 설정. (runtime 이 아닌 ExceptionHandlerService를 실행함)
+            // Exception Handler 에 발생 Package 와 Exception 설정 (runtime 이 아닌 ExceptionHandlerService 실행)
             processHandling(clazz, signature.getName(), be, pm, exceptionHandlerServices);
             throw be;
-            //RuntimeException 이 발생시 내부에서 DataAccessException 인 경우 는 별도록 throw 하고 있다.
+            //RuntimeException 발생 시 내부 DataAccessException 인 경우는 별도로 throw
         } else if (exception instanceof RuntimeException) {
             LOGGER.debug("RuntimeException case :: RuntimeException ");
             RuntimeException be = (RuntimeException) exception;
             getLog(clazz).error(be.getMessage(), be.getCause());
-            // Exception Handler 에 발생된 Package 와 Exception 설정.
+            // Exception Handler 에 발생 Package 와 Exception 설정
             processHandling(clazz, signature.getName(), exception, pm, exceptionHandlerServices);
             if (be instanceof DataAccessException) {
                 LOGGER.debug("RuntimeException case :: DataAccessException ");
                 DataAccessException sqlEx = (DataAccessException) be;
-                // DataAccessException 메시지는 SQL 구문·테이블/컬럼명·드라이버 오류 등 내부 정보를
-                // 담고 있는 경우가 많다. 원본은 위 getLog(clazz).error(...)로 이미 서버 로그에
-                // 남겼으므로, 상위로 전파되는 메시지는 일반화해 CWE-209(오류 메시지를 통한 정보노출)를
-                // 방지한다. cause로 원본을 보존해 DataAccessException 타입 계약(상위 catch 호환)은 유지한다.
+                // SQL·테이블/컬럼명 등 내부 정보 노출 방지 : 메시지 일반화 (CWE-209, 원본은 서버 로그·cause 로 보존)
                 throw new DataAccessException("A data access error occurred. See server log for details.", sqlEx) {
                 };
             }
             throw be;
-            //실행환경 확장모듈에서 발생한 Exception (요청: 공통모듈) :: 후처리로직 실행하지 않음.
+            //실행환경 확장모듈에서 발생한 Exception (요청: 공통모듈) :: 후처리로직 미실행
         } else if (exception instanceof FdlException) {
             LOGGER.debug("FdlException case :: FdlException ");
             FdlException fe = (FdlException) exception;
             getLog(clazz).error(fe.getMessage(), fe.getCause());
             throw fe;
         } else {
-            //그외에 발생한 Exception 을  BaseException (메세지: fail.common.msg) 로  만들어 변경 던진다.
-            //후처리로직 실행하지 않음.
+            //그외 Exception : BaseException (fail.common.msg) 로 변환, 후처리로직 미실행
             LOGGER.debug("case :: Exception ");
             getLog(clazz).error(exception.getMessage(), exception.getCause());
             throw processException(clazz, "fail.common.msg", new String[]{}, exception, locale);
@@ -220,8 +216,7 @@ public class ExceptionTransfer {
         if (exceptionHandlerServices == null) {
             return;
         }
-        // 발생 위치를 파라미터로 전달한다. 싱글톤 매니저 빈의 상태(setPackageName)를 바꾸는 방식은
-        // 동시 요청 간에 발생 위치가 섞인다.
+        // 발생 위치는 파라미터로 전달 (싱글톤 빈 상태 변경 시 동시 요청 간 혼선)
         String packageName = clazz.getCanonicalName() + "." + methodName;
         for (ExceptionHandlerService ehm : exceptionHandlerServices) {
             // 2026.02.28 KISA 보안취약점 조치

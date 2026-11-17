@@ -149,7 +149,7 @@ public class EgovJdbcUserDetailsManager extends JdbcUserDetailsManager {
             throw new UsernameNotFoundException(messages.getMessage("### EgovJdbcUserDetailsManager.noAuthority", new Object[]{username}, "User {0} has no GrantedAuthority"));
         }
 
-        // RoleHierarchyImpl 에서 저장한 Role Hierarchy 정보가 저장된다.
+        // RoleHierarchyImpl 기반 Role Hierarchy 반영 권한 조회
         Collection<? extends GrantedAuthority> authorities = roleHierarchy.getReachableGrantedAuthorities(dbAuths);
 
         // JdbcDaoImpl 클래스의 createUserDetails 메소드 재정의

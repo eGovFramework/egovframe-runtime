@@ -293,7 +293,7 @@ final class TimeBasedUUIDGenerator {
     public static final UUID generateIdFromTimestamp(long currentTimeMillis, long hostId) {
         long node = (hostId != 0L ? hostId : HOST_IDENTIFIER) & NODE_MASK;
         if (node == 0L) {
-            // RFC 5.1: IEEE 주소를 구할 수 없으면 random 으로 생성한 node 를 사용한다
+            // RFC 5.1: IEEE 주소를 구할 수 없으면 random 생성 node 사용
             node = RANDOM_NODE;
         }
 
@@ -302,8 +302,7 @@ final class TimeBasedUUIDGenerator {
             // RFC 5.1: UUIDv1 timestamp = 1582-10-15 UTC 자정부터의 100ns count
             timestamp = currentTimeMillis * 10_000L + UUID_EPOCH_TICKS;
             if (timestamp <= lastTime) {
-                // 동일 시각 연속 생성 또는 system clock 후퇴 시 마지막 timestamp 를 재사용해
-                // 100ns 단위로 논리적 증가시켜 단일 JVM 내 유일성을 보장한다 (RFC 6.1, 6.2)
+                // 동일 시각 연속 생성·clock 후퇴 시 마지막 timestamp + 100ns : 단일 JVM 내 유일성 (RFC 6.1, 6.2)
                 timestamp = lastTime + 1;
             }
             lastTime = timestamp;

@@ -44,8 +44,7 @@ public class EgovARIACryptoServiceImpl implements EgovARIACryptoService {
     }
 
     public void setBlockSize(int blockSize) {
-        // blockSize가 0이면 encrypt(File)의 read 루프가 종료되지 않아 무한 루프에 빠지고(CWE-835),
-        // 음수이면 버퍼 할당에서 예외가 발생하므로 양수만 허용한다.
+        // 양수만 허용 : 0 이면 encrypt(File) read 무한 루프 (CWE-835), 음수면 버퍼 할당 예외
         if (blockSize <= 0) {
             throw new IllegalArgumentException("blockSize must be a positive number: " + blockSize);
         }

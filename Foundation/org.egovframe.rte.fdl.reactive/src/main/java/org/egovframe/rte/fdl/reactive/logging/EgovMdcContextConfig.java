@@ -35,10 +35,8 @@ import java.util.stream.Collectors;
  *
  * <p>Desc.: MDC 서비스를 위한 Sequence 구현 클래스</p>
  *
- * <p><b>보안 주의:</b> Reactor {@link Context}에 담긴 모든 key-value를 필터링 없이 그대로 MDC(로그)에
- * 복사한다. 세션ID·인증 토큰·개인정보 등 민감한 값을 Reactor Context에 저장하는 관행이 있다면 로그에
- * 그대로 노출될 수 있다(CWE-532). 민감한 키를 로그에서 제외하려면 {@link #setExcludedKeys(Set)}으로
- * 지정하라(기본값은 빈 집합=제외 없음, 기존 동작과 동일).</p>
+ * <p><b>보안 주의:</b> Reactor {@link Context}의 모든 key-value를 그대로 MDC(로그)에 복사 :
+ * 세션ID·토큰·개인정보 노출 우려(CWE-532). 민감 키는 {@link #setExcludedKeys(Set)}로 제외 (기본 빈 집합=제외 없음)</p>
  *
  * @author 유지보수
  * @version 1.0
@@ -59,8 +57,7 @@ public class EgovMdcContextConfig {
     private static volatile Set<String> excludedKeys = Collections.emptySet();
 
     /**
-     * 민감정보가 담길 수 있는 Reactor Context 키를 MDC(로그) 복사 대상에서 제외하려면 이 메서드로
-     * 지정한다. null 또는 빈 집합을 넘기면 제외 목록이 해제된다(기본값).
+     * MDC(로그) 복사에서 제외할 민감 Reactor Context 키 지정 (null·빈 집합이면 제외 해제, 기본값).
      *
      * @param keys 로그에서 제외할 Context 키 집합
      */

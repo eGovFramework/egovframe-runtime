@@ -36,12 +36,12 @@ public class AnsiX923Padding implements CryptoPadding {
         if (paddingCnt != 0) {
             paddingResult = new byte[source.length + (blockSize - paddingCnt)];
             System.arraycopy(source, 0, paddingResult, 0, source.length);
-            // 패딩해야 할 갯수 - 1 (마지막을 제외)까지 0x00 값을 추가한다.
+            // 패딩 개수 - 1 (마지막 제외)까지 0x00 추가
             int addPaddingCnt = blockSize - paddingCnt;
             for (int i = 0; i < addPaddingCnt; i++) {
                 paddingResult[source.length + i] = PADDING_VALUE;
             }
-            // 마지막 패딩 값은 패딩 된 Count를 추가한다.
+            // 마지막 패딩 값으로 패딩된 count 추가
             paddingResult[paddingResult.length - 1] = (byte) addPaddingCnt;
         } else {
             paddingResult = source;
@@ -59,7 +59,7 @@ public class AnsiX923Padding implements CryptoPadding {
     public byte[] removePadding(byte[] source, int blockSize) {
         byte[] paddingResult = null;
         boolean isPadding = false;
-        // 패딩 된 count를 찾는다.
+        // 패딩된 count 조회
         int lastValue = source[source.length - 1];
         if (lastValue < (blockSize - 1)) {
             int zeroPaddingCount = lastValue - 1;
@@ -71,7 +71,7 @@ public class AnsiX923Padding implements CryptoPadding {
             }
             isPadding = true;
         } else {
-            // 마지막 값이 block size 보다 클 경우 패딩 된것이 없음.
+            // 마지막 값이 block size 보다 크면 패딩 없음
             isPadding = false;
         }
         //padding length 1에 대한 보정 2019.01.02 modify by jdh

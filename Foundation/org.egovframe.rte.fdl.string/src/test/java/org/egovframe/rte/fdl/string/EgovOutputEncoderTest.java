@@ -27,9 +27,8 @@ import org.junit.jupiter.api.Test;
 /**
  * {@link EgovOutputEncoder} 단위 테스트.
  *
- * <p>일반 동작 검증과 함께 <b>공통컴포넌트 원본(EgovWebUtil)의 결함을 회귀로 고정</b>한다 —
- * 마침표 훼손, 공백 문자열 소실, {@code &apos;} 의 HTML4 미지원, 따옴표 없는 속성 무방비.
- * 원본 구현이라면 실패할 단언들이다.</p>
+ * <p>일반 동작 + <b>공통컴포넌트 원본(EgovWebUtil) 결함 회귀 고정</b>
+ * (마침표 훼손, 공백 문자열 소실, {@code &apos;} HTML4 미지원, 따옴표 없는 속성 무방비)</p>
  *
  * <pre>
  * &lt;&lt; 개정이력(Modification Information) &gt;&gt;
@@ -45,8 +44,7 @@ import org.junit.jupiter.api.Test;
 class EgovOutputEncoderTest {
 
 	/**
-	 * 제어문자·특수문자는 <b>소스에 리터럴로 두지 않고</b> 코드포인트로 선언한다 —
-	 * 편집기·도구가 실제 줄바꿈으로 취급하거나 파일이 바이너리로 인식되는 것을 막는다.
+	 * 제어문자·특수문자는 <b>코드포인트로 선언</b> (리터럴은 줄바꿈 취급·바이너리 인식 우려)
 	 */
 	private static final String JS_LINE_SEPARATOR = String.valueOf((char) 0x2028);
 

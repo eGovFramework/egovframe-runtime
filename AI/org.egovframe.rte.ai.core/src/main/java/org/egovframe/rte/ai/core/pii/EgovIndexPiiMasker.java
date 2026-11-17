@@ -31,8 +31,7 @@ import java.util.regex.Pattern;
  * 카드로 보지 않음), 인증키는 값이 자격증명처럼 보일 때만(6자 이상·한글 없음·숫자/기호 포함). 결과는 치환 텍스트와 유형별
  * <b>건수만</b>이며 값·표본은 어디에도 남지 않는다.</p>
  *
- * <p>참고 샘플은 주민등록번호 체크섬을 재구현해 신형 번호를 놓쳤고 이를 주석으로 자인했다 — 같은 패키지의
- * {@link EgovRrnRules} 값 규칙(형식 검증 / 레거시 검증번호)에 위임해 교정했다.</p>
+ * <p>주민등록번호 판정은 {@link EgovRrnRules} 값 규칙(형식 검증 / 레거시 검증번호)에 위임 (체크섬 재구현 시 신형 번호 미탐).</p>
  *
  * <pre>
  * EgovIndexPiiMasker masker = EgovIndexPiiMasker.builder().build();          // 주민·카드·인증키 기본 활성

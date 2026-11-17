@@ -50,7 +50,7 @@ public class EgovBatchRunnerFunctionalTests {
         String jobName = "batchRunnerTestJob";
         Properties jobParameters = egovBatchRunner.createUniqueJobParameters();
 
-        // Batch Job을 시작한다.
+        // Batch Job 시작
         long executionId = egovBatchRunner.start(jobName, jobParameters);
 
         assertEquals(jobName, egovBatchRunner.getJobInstance(executionId).getJobName());
@@ -59,17 +59,17 @@ public class EgovBatchRunnerFunctionalTests {
         String actualParameters = egovBatchRunner.getJobOperator().getParameters(executionId);
         assertTrue(actualParameters.contains("timestamp=" + jobParameters.getProperty("timestamp")));
 
-        // Batch Job을 정지시킨다.
+        // Batch Job 정지
         stopAndCheckStatus(executionId);
 
-        // Batch Job을 재시작한다.
+        // Batch Job 재시작
         long resumedExecutionId = egovBatchRunner.restart(executionId);
 
         // 재시작된 Job의 Parameters 확인
         String resumedParameters = egovBatchRunner.getJobOperator().getParameters(resumedExecutionId);
         assertTrue(resumedParameters.contains("timestamp=" + jobParameters.getProperty("timestamp")));
 
-        // Batch Job을 정지시킨다.
+        // Batch Job 정지
         stopAndCheckStatus(resumedExecutionId);
     }
 

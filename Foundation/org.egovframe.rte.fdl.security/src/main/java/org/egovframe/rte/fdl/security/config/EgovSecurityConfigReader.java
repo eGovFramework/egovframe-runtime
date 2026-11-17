@@ -61,8 +61,7 @@ public class EgovSecurityConfigReader {
 
     /**
      * 지정된 경로의 설정 파일을 읽어 EgovSecurityConfig 객체를 반환.
-     * ResourceLoader가 있으면 먼저 사용(테스트 등 Spring 컨텍스트에서 해당 컨텍스트 classpath 기준으로 로드),
-     * 없거나 실패 시 context classloader → 파일 순으로 시도하고, 모두 실패 시 기본 설정을 반환한다.
+     * 조회 순서 : ResourceLoader(컨텍스트 classpath 기준) → context classloader → 파일 (모두 실패 시 기본 설정 반환)
      */
     public EgovSecurityConfig readConfig() {
         String path = configPath != null ? configPath : DEFAULT_CONFIG_PATH;
@@ -95,8 +94,7 @@ public class EgovSecurityConfigReader {
                 try (InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
                     props.load(reader);
                 }
-                // 파일에 명시되지 않은 키(sniff, xssProtection 등)는 안전한 기본값을 유지하도록
-                // 빈 인스턴스가 아니라 createDefaultConfig()를 베이스로 덮어쓴다.
+                // 미명시 키(sniff, xssProtection 등) 안전 기본값 유지 : createDefaultConfig() 위에 덮어씀
                 return mapPropertiesToBean(props, createDefaultConfig());
             }
         } catch (IOException e) {
@@ -118,7 +116,7 @@ public class EgovSecurityConfigReader {
     }
 
     // 2026.02.28 KISA 보안취약점 조치
-    // properties 설정 파일을 읽어 기존 bean(기본값이 채워진 상태) 위에 덮어쓴다.
+    // properties 설정 파일 값을 기본값이 채워진 bean 위에 덮어씀
     private static EgovSecurityConfig mapPropertiesToBean(Properties props, EgovSecurityConfig bean) {
         for (String key : props.stringPropertyNames()) {
             String value = props.getProperty(key);

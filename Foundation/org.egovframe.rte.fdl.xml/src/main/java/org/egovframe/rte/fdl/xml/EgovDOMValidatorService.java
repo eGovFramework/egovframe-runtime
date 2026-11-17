@@ -51,7 +51,7 @@ public class EgovDOMValidatorService extends AbstractXMLUtility {
     private static final Logger LOGGER = LoggerFactory.getLogger(EgovDOMValidatorService.class);
 
     /**
-     * 기본 저장 경로를 직접 주입받는 생성자 — 설정 파일과 Spring 컨텍스트 없이 동작한다.
+     * 기본 저장 경로 직접 주입 생성자 (설정 파일·Spring 컨텍스트 불필요).
      *
      * @param savedPath 경로를 지정하지 않은 저장 API 의 기본 위치(경로 구분자로 끝나야 한다)
      */

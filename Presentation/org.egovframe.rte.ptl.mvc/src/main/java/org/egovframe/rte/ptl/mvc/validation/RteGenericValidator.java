@@ -54,8 +54,7 @@ public final class RteGenericValidator implements Serializable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RteGenericValidator.class);
 
-    // 성능: 상수 정규식은 매 호출마다 컴파일하지 않고 클래스 로딩 시 1회만 컴파일한다.
-    // (특수문자 집합 ~!@#$%^&*? 은 고정이므로 조합 검증 패턴도 상수다.)
+    // 성능 : 상수 정규식은 클래스 로딩 시 1회 컴파일 (특수문자 집합 ~!@#$%^&*? 고정)
     private static final String ALLOWED_SPECIAL_CHAR = "~!@#$%^&*?";
     private static final Pattern HTML_TAG_PATTERN = Pattern.compile("<[^<|>]*>");
     /** 순수 한글(자모 ㄱ-ㅎ·ㅏ-ㅣ + 완성형 가-힣) 판정 패턴 */

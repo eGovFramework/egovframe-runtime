@@ -22,8 +22,7 @@ import java.sql.SQLException;
 /**
  * log4j2의 JDBCAppender에서 사용하는 Connection 객체를 생성해주는 클래스
  *
- * <p>Spring의 DataSource를 주입받아 싱글톤으로 사용되며,
- * JDBCAppender가 Connection 객체를 사용할 수 있도록 getDatabaseConnection() 메서드를 제공한다.</p>
+ * <p>Spring DataSource 주입 싱글톤 (JDBCAppender 용 getDatabaseConnection() 제공)</p>
  *
  * @author Daniela Kwon
  * @version 3.0

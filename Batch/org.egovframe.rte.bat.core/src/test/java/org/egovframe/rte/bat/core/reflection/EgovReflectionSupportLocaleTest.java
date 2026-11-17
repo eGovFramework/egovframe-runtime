@@ -69,7 +69,7 @@ public class EgovReflectionSupportLocaleTest {
         }
     }
 
-    /** getter map 을 만들고 id 값을 읽는다. 수정 전에는 map 에 null 이 담겨 invoke 에서 NPE 가 난다. */
+    /** getter map 을 만들고 id 값을 읽는다 (회귀 : map 에 null 이 담겨 invoke NPE). */
     private Object readIdUnderCurrentLocale() {
         EgovReflectionSupport<LocaleVo> support = new EgovReflectionSupport<LocaleVo>();
         LocaleVo item = new LocaleVo("egov");

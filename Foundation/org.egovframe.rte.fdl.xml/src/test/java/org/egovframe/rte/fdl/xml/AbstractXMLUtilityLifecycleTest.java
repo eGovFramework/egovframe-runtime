@@ -15,8 +15,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * 저장 경로를 직접 주입하는 생성자가 설정 파일·Spring 컨텍스트 없이 동작하는지 검증한다.
- * 기본 생성자(egovxmlCfg.xml 에서 경로를 읽고 컨텍스트를 바로 닫는 경로)는 기존 테스트가 회귀 검증한다.
+ * 저장 경로 직접 주입 생성자가 설정 파일·Spring 컨텍스트 없이 동작하는지 검증한다.
+ * (기본 생성자 경로는 다른 테스트에서 회귀 검증)
  */
 public class AbstractXMLUtilityLifecycleTest {
 
@@ -68,7 +68,7 @@ public class AbstractXMLUtilityLifecycleTest {
 
     @Test
     public void testDefaultConstructorStillReadsConfiguredPath() throws Exception {
-        // 설정 파일 경로로 만든 인스턴스도 종전처럼 동작한다(컨텍스트는 읽은 뒤 바로 닫힌다)
+        // 설정 파일 기반 인스턴스도 동일 동작 (컨텍스트는 읽은 뒤 바로 닫힘)
         EgovDOMValidatorService dom = new EgovDOMValidatorService();
         dom.setXML("<c/>");
         assertTrue(dom.parse(false));

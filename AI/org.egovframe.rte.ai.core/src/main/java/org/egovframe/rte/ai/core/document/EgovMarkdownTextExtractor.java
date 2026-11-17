@@ -48,8 +48,8 @@ public final class EgovMarkdownTextExtractor implements EgovTextExtractor {
 	public static final String ID_PREFIX = "md";
 
 	private static final Pattern HEADER = Pattern.compile("(?m)^#{1,6}\\s");
-	// 링크·이미지 판정은 메타데이터용이라 길이를 묶는다 — 무한 [^\]]* 는 '[' 10만 개 문서에서 2차 시간 폭발
-	// (Find Security Bugs REDOS 지적 → 실측 3초 초과, 2026-09-07 보안 재점검). 개행을 넘지 않고 텍스트 512자·URL 2,048자 이내.
+	// 링크·이미지 판정(메타데이터용) 길이 제한 : 개행 불허, 텍스트 512자·URL 2,048자 이내
+	// (무제한 [^\]]* 는 '[' 10만 개 문서에서 2차 시간 폭발 — Find Security Bugs REDOS, 2026-09-07 보안 재점검)
 	private static final Pattern LINK = Pattern.compile("\\[[^\\]\\n]{0,512}+\\]\\([^)\\n]{0,2048}+\\)");
 	private static final Pattern IMAGE = Pattern.compile("!\\[[^\\]\\n]{0,512}+\\]\\([^)\\n]{0,2048}+\\)");
 

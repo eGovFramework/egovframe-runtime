@@ -129,7 +129,7 @@ public final class EgovJdbcChatMemoryStore implements ChatMemoryStore {
 			throw new IllegalArgumentException("memoryId 는 비어 있을 수 없습니다");
 		}
 		if (!MEMORY_ID.matcher(key).matches()) {
-			// 클라이언트가 보낸 값이 그대로 저장 키가 되는 자리 — 형식을 강제해 공백·개행·구분자 섞인 키를 막는다(입력값 비반사)
+			// 클라이언트 값이 그대로 저장 키가 되는 자리 — 형식 강제로 공백·개행·구분자 섞인 키 차단(입력값 비반사)
 			throw new IllegalArgumentException("memoryId 는 영숫자·._:@- 로 된 128자 이내 값이어야 합니다");
 		}
 		return key;

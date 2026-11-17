@@ -29,7 +29,7 @@
 
 ### egovframe-boot-starter-parent 사용 시
 
-`egovframe-boot-starter-parent` 5.1.0 을 parent 로 사용하면 이 스타터가 **자동으로 포함**됩니다(access · crypto · logging · security 4종). 이 경우 아무 설정 없이도 요청 로깅이 동작하므로, 사용하지 않으려면 `org.egovframe.logging.enabled=false` 로 끄세요.
+`egovframe-boot-starter-parent` 5.1.0 이 이 스타터의 버전을 관리하므로 `<version>` 없이 선언할 수 있습니다. 선언하면 아무 설정 없이도 요청 로깅이 동작하므로, 사용하지 않으려면 `org.egovframe.logging.enabled=false` 로 끄세요.
 
 ### Maven
 

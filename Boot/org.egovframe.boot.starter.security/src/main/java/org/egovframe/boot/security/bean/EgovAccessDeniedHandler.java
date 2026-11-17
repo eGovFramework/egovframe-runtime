@@ -65,7 +65,7 @@ public class EgovAccessDeniedHandler implements AccessDeniedHandler {
             return;
         }
 
-        // 목적지를 하나로 정해 forward 는 한 번만 수행(두 번째 forward 는 커밋된 응답에서 IllegalStateException)
+        // 목적지 하나로 확정해 forward 1회만 수행(두 번째 forward 는 커밋된 응답에서 IllegalStateException)
         boolean isCsrfFailure = accessDeniedException instanceof InvalidCsrfTokenException
                 || accessDeniedException instanceof MissingCsrfTokenException;
         String targetUrl = isCsrfFailure ? properties.getCsrfAccessDeniedUrl() : properties.getAccessDeniedUrl();

@@ -66,7 +66,7 @@ public class EgovFieldExtractorTest {
 
     @Test
     public void testExtractRespectsCustomNamesOrder() {
-        // names 배열 순서대로 추출되어야 한다.
+        // names 배열 순서대로 추출
         EgovFieldExtractor<SampleVO> extractor = newExtractor("amount", "id");
 
         Object[] actual = extractor.extract(new SampleVO("A001", "홍길동", 1000));
@@ -76,7 +76,7 @@ public class EgovFieldExtractorTest {
 
     @Test
     public void testExtractHandlesNullField() {
-        // getter 가 null 을 반환하는 필드는 결과 배열에도 null 로 담긴다.
+        // getter 가 null 반환하는 필드는 결과 배열에도 null
         EgovFieldExtractor<SampleVO> extractor = newExtractor("id", "name", "amount");
 
         Object[] actual = extractor.extract(new SampleVO("A001", null, null));

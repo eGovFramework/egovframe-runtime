@@ -9,7 +9,7 @@
         <setting name="multipleResultSetsEnabled" value="true"/>
         <setting name="useColumnLabel" value="true"/>
         <setting name="useGeneratedKeys" value="false"/>
-        <setting name="defaultExecutorType" value="BATCH"/> <!-- 이 설정으로 batch 처리가 가능하다. -->
+        <setting name="defaultExecutorType" value="BATCH"/> <!-- batch 처리 활성화 -->
         <setting name="defaultStatementTimeout" value="25000"/>
     </settings>
 

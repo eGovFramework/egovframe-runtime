@@ -43,7 +43,7 @@ class TypedLookupConversionTest {
         assertTrue(list.contains(Integer.valueOf(1)));
         assertEquals(0, list.indexOf(Integer.valueOf(1)));
         assertEquals(2, list.lastIndexOf(Integer.valueOf(3)));
-        // 변환 후 형태로 물어도 결과는 같다
+        // 변환 후 형태로 조회해도 결과 동일
         assertTrue(list.contains(Long.valueOf(1L)));
     }
 

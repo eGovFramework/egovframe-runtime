@@ -68,7 +68,7 @@ public class EgovAccessConfiguration implements WebMvcConfigurer {
         if ("session".equals(properties.getGlobalAuthen())) {
             // 미지정 시 전체 경로(/**) : REST 방식 URL 기준
             String mappingPath = StringUtils.hasText(properties.getMappingPath()) ? properties.getMappingPath().trim() : DEFAULT_MAPPING_PATH;
-            // 빈 항목은 무시하고, 로그인·접근거부 URL 은 리다이렉트 반복을 막기 위해 항상 제외
+            // 빈 항목 무시, 로그인·접근거부 URL 은 항상 제외(리다이렉트 반복 방지)
             String excludeList = properties.getExcludeList();
             List<String> excludePatterns = Stream.concat(
                             StringUtils.hasText(excludeList) ? Stream.of(excludeList.split(",")) : Stream.empty(),

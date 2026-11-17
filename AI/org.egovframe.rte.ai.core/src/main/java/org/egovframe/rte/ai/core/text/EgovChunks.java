@@ -24,9 +24,8 @@ import org.egovframe.rte.ai.core.text.EgovKoreanSentences.Span;
 /**
  * 청킹 결과 — 원문 offset 구간 목록과 <b>한도 도달 여부</b>.
  *
- * <p>최대 청크 수에 걸려 뒷부분이 처리되지 않았으면 {@link #truncated()} 가 참이다. 참고 샘플은 이 경우 WARN 로그만
- * 남기고 문서를 "색인 완료"로 기록해 버려진 뒷부분이 파일을 고치기 전까지 다시 처리되지 않았다 — 호출 측이 결과에서
- * 이 사실을 읽어 예외를 내거나 문서를 나누도록 값으로 드러낸다.</p>
+ * <p>최대 청크 수에 걸려 뒷부분이 처리되지 않았으면 {@link #truncated()} 가 참이다 — 호출 측이 예외를 내거나 문서를
+ * 나누도록 값으로 노출 (WARN 로그만으로는 잘린 뒷부분이 "색인 완료"로 묻힘).</p>
  *
  * <pre>
  * &lt;&lt; 개정이력(Modification Information) &gt;&gt;

@@ -23,8 +23,7 @@ import java.util.Objects;
 /**
  * 문서 본문 해시 — UTF-8 바이트의 SHA-256 16진(64자). 변경 감지 키로 쓴다.
  *
- * <p>참고 샘플은 commons-codec MD5 를 썼다. 보안 결함은 아니지만(변경 감지 용도) 공공 감사에서 MD5 는 설명 비용이 들고
- * 의존이 하나 늘므로 JDK SHA-256 으로 교체했다.</p>
+ * <p>MD5(commons-codec) 대신 JDK SHA-256 사용 (보안 결함은 아니나 공공 감사 설명 비용·추가 의존 제거).</p>
  *
  * <pre>
  * &lt;&lt; 개정이력(Modification Information) &gt;&gt;

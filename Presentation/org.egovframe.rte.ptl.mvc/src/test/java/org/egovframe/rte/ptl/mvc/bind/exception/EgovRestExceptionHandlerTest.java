@@ -34,7 +34,7 @@ public class EgovRestExceptionHandlerTest {
     @Test
     @SuppressWarnings("unchecked")
     public void 제약위반은_400과_필드오류_목록으로_응답하고_거부된_값은_싣지_않는다() {
-        // 종전에는 Exception 폴백으로 500 이 되던 정합성 결함 — 400 계약의 회귀 고정
+        // 400 계약 회귀 고정 (Exception 폴백 500 방지)
         org.springframework.validation.BindException bindException =
                 new org.springframework.validation.BindException(new Object(), "memberDto");
         bindException.addError(new org.springframework.validation.FieldError("memberDto", "email",
@@ -92,7 +92,7 @@ public class EgovRestExceptionHandlerTest {
                 resolvingHandler.handleBindException(bindException).getBody().getProperties().get("errors");
 
         assertEquals("해석된 이메일 오류 메시지", errors.get(0).get("message"), "코드 해석 우선");
-        // 미연동(기본 핸들러)은 기본 메시지로 완결 — 위 제약위반 테스트가 함께 증명한다
+        // 미연동(기본 핸들러)은 기본 메시지로 완결 — 위 제약위반 테스트가 함께 증명
     }
 
     /** ConstraintViolation 테스트 스텁 — 핸들러가 쓰는 propertyPath(toString)·message 만 실값 */
@@ -131,7 +131,7 @@ public class EgovRestExceptionHandlerTest {
             ProblemDetail problem = response.getBody();
             assertNotNull(problem);
             assertEquals("Internal Server Error", problem.getTitle());
-            // 내부 정보(접속 문자열·테이블명 등)가 응답에 노출되면 안 된다
+            // 내부 정보(접속 문자열·테이블명 등) 응답 노출 금지
             assertFalse(problem.getDetail().contains("oracle"));
             assertFalse(problem.getDetail().contains("EGOV_SECRET"));
         }

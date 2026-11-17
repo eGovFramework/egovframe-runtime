@@ -154,8 +154,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- spring-batch-integration 이 가져오는 spring-integration-core 를 spring.integration.version 으로 고정
-             (부모 pom 의 BOM 은 소비자 프로젝트에 전파되지 않음) -->
+        <!-- spring-integration-core : spring.integration.version 고정 (부모 BOM 은 소비자에 전파되지 않음) -->
         <dependency>
             <groupId>org.springframework.integration</groupId>
             <artifactId>spring-integration-core</artifactId>
@@ -185,6 +184,22 @@
                     <artifactId>spring-tx</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-commons</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-commons</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-observation</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>

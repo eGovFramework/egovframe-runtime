@@ -63,7 +63,7 @@ public class EgovUuidV7GnrServiceTest {
 
         assertTrue(id.signum() > 0);
         assertTrue(id.toBigInteger().bitLength() <= 128, "128비트 안이어야 한다: " + id);
-        // 상위 64비트를 다시 꺼내면 버전 7 이어야 한다
+        // 상위 64비트를 다시 꺼내도 버전 7
         BigInteger high = id.toBigInteger().shiftRight(64);
         assertEquals(7, high.shiftRight(12).and(BigInteger.valueOf(0xF)).intValue());
     }

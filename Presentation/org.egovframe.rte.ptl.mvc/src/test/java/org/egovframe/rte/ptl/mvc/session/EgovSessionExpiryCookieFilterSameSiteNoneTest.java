@@ -22,7 +22,7 @@ class EgovSessionExpiryCookieFilterSameSiteNoneTest {
 	@DisplayName("sameSite=None 인데 요청이 비보안이어도 체인은 계속 호출된다(부가 쿠키 발급 실패가 요청을 막지 않는다)")
 	void SameSite_None_비보안_요청에도_체인은_계속된다() throws Exception {
 		MockFilterConfig config = new MockFilterConfig();
-		config.addInitParameter("sameSite", "None"); // 유효한 값이라 init() 은 통과한다
+		config.addInitParameter("sameSite", "None"); // 유효한 값이라 init() 통과
 		EgovSessionExpiryCookieFilter filter = new EgovSessionExpiryCookieFilter();
 		filter.init(config);
 

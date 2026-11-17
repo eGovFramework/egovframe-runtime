@@ -204,7 +204,7 @@ public class SecuredObjectDAO {
 
             List<ConfigAttribute> configList = new LinkedList<>();
 
-            // 같은 자원의 권한은 연속으로 조회되므로 직전 자원과 같으면 권한 목록에 이어 붙인다.
+            // 같은 자원의 권한은 연속 조회 — 직전 자원과 같으면 권한 목록에 추가
             if (!ObjectUtils.isEmpty(preResource) && presentResourceStr.equals(preResource)) {
                 List<ConfigAttribute> preAuthList = resourcesMap.get(preKey);
                 presentResource = preKey;

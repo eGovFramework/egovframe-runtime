@@ -164,7 +164,7 @@ public class FilehandlingServiceTest {
         // 새로고침
         cachedFolder.refresh();
 
-        // 파일이 존재함
+        // 파일 존재
         fos = cachedFolder.getChildren();
         assertTrue(contains(fos, "file1.txt"));
     }
@@ -191,7 +191,7 @@ public class FilehandlingServiceTest {
             EgovFileUtil.delete(new File(absoluteFilePath));
         }
 
-        // absoluteFilePath는 java.io.tmpdir 기반의 신뢰된 경로이므로 File 오버로드를 사용한다.
+        // absoluteFilePath는 java.io.tmpdir 기반 신뢰 경로 — File 오버로드 사용
         EgovFileUtil.writeFile(new File(absoluteFilePath), text, "UTF-8");
         assertTrue(EgovFileUtil.isExistsFile(absoluteFilePath));
     }
@@ -217,7 +217,7 @@ public class FilehandlingServiceTest {
     @Test
     public void testReadFileWithAbsolutePath() throws IOException {
         if (!EgovFileUtil.isExistsFile(absoluteFilePath)) {
-            // absoluteFilePath는 java.io.tmpdir 기반의 신뢰된 경로이므로 File 오버로드를 사용한다.
+            // absoluteFilePath는 java.io.tmpdir 기반 신뢰 경로 — File 오버로드 사용
         EgovFileUtil.writeFile(new File(absoluteFilePath), text, "UTF-8");
         }
         assertEquals(EgovFileUtil.readFile(new File(absoluteFilePath), "UTF-8"), text);
@@ -383,7 +383,7 @@ public class FilehandlingServiceTest {
     @Test
     public void testCpWithAbsolutePath() throws IOException {
         if (!EgovFileUtil.isExistsFile(absoluteFilePath)) {
-            // absoluteFilePath는 java.io.tmpdir 기반의 신뢰된 경로이므로 File 오버로드를 사용한다.
+            // absoluteFilePath는 java.io.tmpdir 기반 신뢰 경로 — File 오버로드 사용
         EgovFileUtil.writeFile(new File(absoluteFilePath), text, "UTF-8");
         }
 
@@ -580,7 +580,7 @@ public class FilehandlingServiceTest {
         String testFolder = FilehandlingServiceTest.class.getResource(".").getPath();
         LOGGER.debug("testFolder = {}", testFolder);
         FileSystemManager manager = VFS.getManager();
-        // testFolder는 클래스 리소스 경로 기반의 신뢰된 절대경로이므로 File 오버로드를 사용한다.
+        // testFolder는 클래스 리소스 경로 기반 신뢰 절대경로 — File 오버로드 사용
         EgovFileUtil.writeFile(new File(testFolder, "file1.txt"), text, "UTF-8");
 
         /*

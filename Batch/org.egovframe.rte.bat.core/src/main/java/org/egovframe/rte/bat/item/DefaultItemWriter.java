@@ -268,7 +268,7 @@ public class DefaultItemWriter<T> implements ItemStreamWriter<T> {
     }
 
     // 2026.03.24 KISA 보안취약점 조치
-    // makeItemWriter 초기화 실패 시 생성된 writer의 자원을 해제한다.
+    // makeItemWriter 초기화 실패 시 생성된 writer 자원 해제
     private void closeWriterOnFailure() {
         if (this.writer != null) {
             try {

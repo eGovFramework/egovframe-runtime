@@ -91,7 +91,7 @@ public class EgovRestExceptionHandlerSecurityTest {
 
     @Test
     public void 형_변환_실패의_거부된_값과_자바_타입명은_응답에_실리지_않는다() throws Exception {
-        // Spring 의 typeMismatch 기본 메시지는 "Failed to convert ... 'java.lang.String' ... For input string: \"...\"" 이다
+        // Spring 의 typeMismatch 기본 메시지: "Failed to convert ... 'java.lang.String' ... For input string: \"...\""
         ResponseEntity<ProblemDetail> response = dispatch(typeMismatch("<script>alert(1)</script>"));
 
         assertEquals(400, response.getStatusCode().value());
@@ -121,9 +121,7 @@ public class EgovRestExceptionHandlerSecurityTest {
 
     @Test
     public void 단일_값_형_변환_실패도_바인딩_경로처럼_typeMismatch_코드의_0을_필드명으로_치환한다() throws Exception {
-        // 클래스 javadoc: 단일 값 TypeMismatchException 도 MessageSource 의 typeMismatch 코드를 쓴다.
-        // resolveMessage 가 바인딩 경로에서 쓰는 것과 같은 해석(필드명 인자)이어야 {0} 을 담은 메시지에서
-        // 원문 "{0}" 이 응답에 새지 않는다.
+        // 단일 값 TypeMismatchException 도 typeMismatch 코드 사용 : 바인딩 경로와 같은 필드명 인자 해석 (원문 "{0}" 누출 방지)
         StaticMessageSource messageSource = new StaticMessageSource();
         messageSource.addMessage("typeMismatch", LocaleContextHolder.getLocale(), "{0} 형식이 올바르지 않습니다");
         handler.setMessageSource(messageSource);

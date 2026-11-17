@@ -47,7 +47,7 @@ public class EgovServiceExceptionTest {
     public void messageIsPropagatedToThrowable() {
         RuntimeException re = new EgovServiceException(EgovErrorCode.SERVICE_UNAVAILABLE, "failed");
 
-        // 수정 전에는 super(message)를 호출하지 않아 null 이었음(개선 입증)
+        // super(message) 전달 확인 (null 아님)
         assertEquals("failed", re.getMessage());
     }
 

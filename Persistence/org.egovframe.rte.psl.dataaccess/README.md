@@ -3,7 +3,7 @@
 **영속성(Persistence)** 계층의 핵심으로, **MyBatis**와 레거시 **iBatis(sqlMap)** 을 함께 지원합니다. `EgovAbstractMapper`·`EgovAbstractDAO`, 타입 핸들러, iBatis `SqlMapClientTemplate` 호환 계층을 제공합니다.
 
 - **Artifact**: `org.egovframe.rte:egovframe-rte-psl-dataaccess:5.1.0`
-- **Runtime**: Java 17 / Spring Framework 6.x / MyBatis 3.x / Jakarta Persistence API
+- **Runtime**: Java 17 / Spring Framework 6.x / MyBatis 3.x · mybatis-spring 3.x / iBatis 2.x(레거시)
 
 ---
 

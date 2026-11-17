@@ -26,9 +26,9 @@ import java.util.regex.Pattern;
 /**
  * 프롬프트 템플릿 레지스트리 — 키로 원문을 찾고 <code>{변수}</code> 플레이스홀더를 치환한다.
  *
- * <p>설정(예: Boot <code>egov.ai.prompt.templates.*</code>)에서 만든 맵으로 생성하며 이후 불변이다. <b>미등록 키는 예외</b>다 —
- * 참고 샘플은 빈 문자열을 돌려줘 빈 프롬프트가 조용히 모델에 전달될 수 있었다. 변수 값이 null 이면 빈 문자열로 치환하고,
- * 변수가 주어지지 않은 플레이스홀더는 그대로 둔다(호출 측이 단계적으로 채울 수 있게).</p>
+ * <p>설정(예: Boot <code>egov.ai.prompt.templates.*</code>)에서 만든 맵으로 생성하며 이후 불변이다. <b>미등록 키는 예외</b>다
+ * (빈 프롬프트의 무증상 모델 전달 방지). 변수 값이 null 이면 빈 문자열로 치환하고, 변수가 주어지지 않은 플레이스홀더는
+ * 그대로 둔다(단계적 채움용).</p>
  *
  * <pre>
  * EgovPromptTemplates templates = EgovPromptTemplates.of(Map.of("context-based", "다음 맥락으로 답하라: {context}"));
@@ -107,8 +107,8 @@ public final class EgovPromptTemplates {
 		if (variables == null || variables.isEmpty()) {
 			return template;
 		}
-		// 원본 템플릿의 플레이스홀더만 한 번의 패스로 치환한다 — 값 안의 {다른변수} 는 재해석하지 않는다.
-		// (순차 replace 는 사용자 입력에 든 {context} 가 다음 변수 치환에 걸려 다른 변수를 끌어왔다 — CWE-1336, 2026-09-07 보안 재점검)
+		// 원본 템플릿 플레이스홀더만 단일 패스 치환 (값 안의 {다른변수} 재해석 안 함)
+		// 순차 replace 시 사용자 입력의 {context} 가 다음 치환에 걸림 (CWE-1336, 2026-09-07 보안 재점검)
 		Matcher matcher = PLACEHOLDER.matcher(template);
 		StringBuilder out = new StringBuilder(template.length() + 64);
 		while (matcher.find()) {

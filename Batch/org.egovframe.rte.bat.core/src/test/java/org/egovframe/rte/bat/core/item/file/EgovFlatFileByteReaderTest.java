@@ -39,7 +39,7 @@ public class EgovFlatFileByteReaderTest {
 
     @Test
     void readLine_returnsActualBytesRead_forShorterFinalRecord() throws Exception {
-        // 첫 레코드는 length(5)+CRLF(2)=7바이트를 꽉 채우고, 마지막 레코드는 3바이트뿐인 상황을 재현한다.
+        // 첫 레코드는 length(5)+CRLF(2)=7바이트를 꽉 채우고 마지막 레코드는 3바이트뿐인 상황 재현
         byte[] content = "AAAAA\r\nBB\n".getBytes(StandardCharsets.US_ASCII);
 
         List<byte[]> capturedLines = new ArrayList<>();
@@ -76,9 +76,8 @@ public class EgovFlatFileByteReaderTest {
 
     @Test
     void executionContextKeyMustNotCollideWithFlatFileItemReader() throws Exception {
-        // TaskletStep 은 Step 에 등록된 ItemStream 들을 CompositeItemStream 하나로 묶어
-        // 같은 ExecutionContext 에 재시작 상태를 저장한다.
-        // 표준 FlatFileItemReader 가 함께 등록된 Step 을 재현한다.
+        // TaskletStep 은 ItemStream 들을 CompositeItemStream 으로 묶어 같은 ExecutionContext 에 재시작 상태 저장
+        // → 표준 FlatFileItemReader 와 함께 등록된 Step 재현
         EgovFlatFileByteReader<String> byteReader = newByteReader();
         FlatFileItemReader<String> flatFileReader = newFlatFileReader();
 
@@ -95,7 +94,7 @@ public class EgovFlatFileByteReaderTest {
         stepStreams.update(executionContext);
         stepStreams.close();
 
-        // 재시작: 저장된 ExecutionContext 로 두 reader 를 다시 연다.
+        // 재시작: 저장된 ExecutionContext 로 두 reader 재오픈
         EgovFlatFileByteReader<String> restartedByteReader = newByteReader();
         FlatFileItemReader<String> restartedFlatFileReader = newFlatFileReader();
         restartedByteReader.open(executionContext);

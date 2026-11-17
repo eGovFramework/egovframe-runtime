@@ -4,7 +4,7 @@
 
 - **Artifact**: `org.egovframe.rte:egovframe-rte-ptl-mvc:5.1.0`
 - **Runtime**: Java 17 / Spring WebMVC / Jakarta Servlet·JSP
-- **의존**: `egovframe-rte-fdl-cmmn`
+- **의존**: `egovframe-rte-fdl-cmmn`, `egovframe-rte-fdl-filehandling`
 
 ---
 
@@ -12,7 +12,9 @@
 
 - **공공 UI 패턴**: `PaginationTag`, `PaginationInfo`, 렌더러 플러그인
 - **보안·품질**: `HTMLTagFilter`로 요청 파라미터 XSS 완화 패턴
-- **검증**: `RteGenericValidator`, 어노테이션 예외 핸들러 베이스
+- **출력 정제**: `EgovHtmlSanitizer`(jsoup 파서 기반 화이트리스트, jsoup 은 optional — 사용 시 앱에서 직접 선언)
+- **검증**: `RteGenericValidator`, 어노테이션 예외 핸들러 베이스, REST 예외 핸들러 `EgovRestExceptionHandler`(RFC 9457 ProblemDetail)
+- **웹 편의**: 요청 컨텍스트(`EgovRequestContext`), 안전 쿠키(`EgovCookies`), 세션 만료 쿠키 필터, 중복 제출 방지 토큰, 업로드 검증(`EgovMultipartFiles`, `EgovValidatingMultipartResolver`)
 
 ---
 
@@ -23,18 +25,28 @@ org/egovframe/rte/ptl/mvc/
 ├── validation/
 │   └── RteGenericValidator.java
 ├── bind/exception/
-│   └── AbstractAnnotationExceptionHandler.java
+│   ├── AbstractAnnotationExceptionHandler.java
+│   └── EgovRestExceptionHandler.java
+├── context/                # EgovRequestContext
+├── cookie/                 # EgovCookies
 ├── filter/
 │   ├── HTMLTagFilter.java
-│   └── HTMLTagFilterRequestWrapper.java
+│   ├── HTMLTagFilterRequestWrapper.java
+│   ├── EgovHtmlSanitizer.java
+│   └── EgovHtmlSanitizePolicy.java
+├── session/                # EgovSessionExpiry, EgovSessionExpiryCookieFilter
+├── token/                  # EgovSubmitTokens, EgovSubmitTokenStore, EgovSubmitTokenException
+├── upload/                 # EgovMultipartFiles, EgovValidatingMultipartResolver
 └── tags/ui/
     ├── PaginationTag.java
+    ├── SubmitTokenTag.java
     └── pagination/
         ├── PaginationInfo.java
         ├── PaginationManager.java
         ├── PaginationRenderer.java
         ├── DefaultPaginationManager.java
         ├── DefaultPaginationRenderer.java
+        ├── MessageSourcePaginationRenderer.java
         ├── AbstractPaginationRenderer.java
         └── AbstractKrdsPaginationRenderer.java
 ```
@@ -49,6 +61,11 @@ org/egovframe/rte/ptl/mvc/
 | **KRDS** | `AbstractKrdsPaginationRenderer` — 디자인 시스템 연동 훅 |
 | **필터** | `HTMLTagFilter` — 지정 태그 제거/이스케이프 |
 | **검증** | `RteGenericValidator` — 폼/커맨드 객체 검증 보조 |
+| **REST 예외** | `EgovRestExceptionHandler` — RFC 9457(ProblemDetail) 기본 예외 응답 |
+| **출력 정제** | `EgovHtmlSanitizer` — 신뢰할 수 없는 HTML 의 XSS 요소 제거 |
+| **중복 제출 방지** | `EgovSubmitTokens` + `SubmitTokenTag` — 세션 기반 제출 토큰 |
+| **업로드 검증** | `EgovMultipartFiles`, `EgovValidatingMultipartResolver` — `EgovUploadPolicy` 적용 |
+| **세션·쿠키** | `EgovSessionExpiryCookieFilter`, `EgovCookies` — 세션 만료 쿠키, 안전 기본값 쿠키 |
 
 ---
 

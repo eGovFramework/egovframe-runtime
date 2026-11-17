@@ -3,7 +3,7 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 [![Java](https://img.shields.io/badge/Java-17-orange.svg)](https://www.oracle.com/java/)
 [![eGovFrame](https://img.shields.io/badge/eGovFrame-5.1.0-green.svg)](https://www.egovframe.go.kr)
-[![Spring Framework](https://img.shields.io/badge/Spring%20Framework-6.2.19-brightgreen.svg)](https://spring.io)
+[![Spring Framework](https://img.shields.io/badge/Spring%20Framework-6.2.19--egov.2-brightgreen.svg)](https://spring.io)
 
 ## 📋 개요
 
@@ -26,12 +26,12 @@
 - **Maven BOM** – `dependencyManagement` import로 버전 통합 관리
 - **eGovFrame RTE 5.1.0** – 배치·FDL·ITL·PSL·PTL 전 모듈 버전 관리
 - **Java 17** (`maven-compiler-plugin` `release` 17), 인코딩 UTF-8
-- **Spring Framework 6.2.19** – `egovframe-rte-root` 5.1.0 BOM import로 Spring Security(6.5.11-egov.1)·Batch(5.2.6)·Data(2025.0.13)·Integration(6.5.10-egov.1)·Micrometer·Reactor 등을 함께 관리
-- **Jakarta EE 9** – Servlet 5.0, JSP 3.0, EL 4.0, JSTL 2.0, Validation 3.0, WebSocket 2.0, JSON-P 2.0/JSON-B 2.0, Mail 2.0, JAXB 3.0, Faces 3.0 등 (Tomcat 10.0 등 Servlet 5.0 컨테이너 기준)
+- **Spring Framework 6.2.19-egov.2** – `jaxb-bom` 3.0.2 를 먼저 import 한 뒤 `egovframe-rte-root` 5.1.0 BOM import로 Spring Security(6.5.11-egov.2)·Batch(5.2.6-egov.2)·Data(2025.0.13, JPA 3.5.13-egov.2)·Integration(6.5.10-egov.2)·Micrometer(1.15.12, `commons`·`observation`·`core`·`registry-statsd` 는 1.15.12-egov.2)·Reactor(2024.0.18)·Reactor Netty(1.2.18) 등을 함께 관리
+- **Jakarta EE 9.1** – Servlet 5.0, JSP 3.0, EL 4.0, JSTL 2.0, Validation 3.0, WebSocket 2.0, JSON-P 2.0/JSON-B 2.0, Mail 2.0, JAXB 3.0, Faces 3.0 등 (Tomcat 10.0 등 Servlet 5.0 컨테이너 기준, `egovframe-rte-root` 의 EE 10 버전을 직접 선언으로 재정의)
 - **DB 드라이버** – MySQL Connector/J, MariaDB, PostgreSQL, HSQLDB (본 BOM에 명시된 범위)
 - **Spring Boot 비의존** – Spring Boot·Spring Cloud 및 Boot 스타터/autoconfigure 아티팩트는 관리 대상에서 제외
 - Jackson, **SLF4J + Log4j2**, Apache Commons, HTTP Client 5, JAX-WS 등
-- **Spring AI** – `1.1.8` (Boot 비의존 아티팩트만 개별 관리, `.m2`에 egov 빌드가 있는 `spring-ai-commons`·`model`·`pdf-document-reader`·`template-st`·`transformers`는 `1.1.8-egov.1`)
+- **Spring AI** – `1.1.8` (Boot 비의존 아티팩트 65종 개별 관리, egov 빌드 5종 `spring-ai-commons`·`model`·`pdf-document-reader`·`template-st`·`transformers`는 `1.1.8-egov.1`)
 - **LangChain4j** – `1.18.1`, beta 모듈 `1.18.1-beta28` (Boot 스타터 제외, 개별 관리)
 - **ONNX Runtime** `1.20.0`, **HuggingFace Tokenizers** `0.32.0`
 - **pluginManagement** – Compiler, WAR, PMD, Surefire, Javadoc 플러그인 버전 고정
@@ -141,13 +141,14 @@ Spring Boot를 쓰지 않는 **웹(MVC)** 프로젝트 `pom.xml`에서 BOM을 im
 
 ### Jakarta / 웹
 
-Jakarta EE 9 기준 : Servlet(`jakarta.servlet-api` 5.0.0)·JSP(3.0.0)·EL(4.0.0)·JSTL(`jakarta.servlet.jsp.jstl-api` 2.0.0)·Validation(3.0.2, Hibernate Validator 7.0.5.Final)·WebSocket(2.0.0)·JSON(JSON-P 2.0.1, JSON-B 2.0.0)·Mail(`com.sun.mail:jakarta.mail` 2.0.1)·JAXB(3.0)·JAX-WS(3.0)·Faces(3.0.0)·Annotation(2.0.0)·Inject 등 (버전은 `pom.xml` properties 참고)
+Jakarta EE 9.1 기준 : Servlet(`jakarta.servlet-api` 5.0.0)·JSP(3.0.0)·EL(4.0.0)·JSTL(`jakarta.servlet.jsp.jstl-api` 2.0.0)·Validation(3.0.2, Hibernate Validator 7.0.5.Final)·WebSocket(2.0.0)·JSON(JSON-P 2.0.1, JSON-B 2.0.0)·Mail(`com.sun.mail:jakarta.mail` 2.0.1)·JAXB(API 3.0.1, `jaxb-bom` 3.0.2 — `egovframe-rte-root` 의 4.x 보다 먼저 import)·JAX-WS(3.0)·Faces(3.0.0)·Annotation(2.0.0)·Inject 등 (버전은 `pom.xml` properties 참고)
 
 > JPA(`jakarta.persistence-api`)·Hibernate ORM 은 `egovframe-rte-root` 버전을 유지합니다. WAS 가 제공하지 않는 애플리케이션 내장 라이브러리이며, Spring Data JPA 가 Hibernate 6.6 을 요구하기 때문입니다.
 
 ### Spring
 
-- Spring Framework (**6.2.19**), Spring Security (**6.5.11-egov.1**), Spring Batch (**5.2.6**), Spring Data (**2025.0.13**), Spring Integration (**6.5.10-egov.1**) — `egovframe-rte-root` import
+- Spring Framework (**6.2.19-egov.2**), Spring Security (**6.5.11-egov.2**), Spring Batch (**5.2.6-egov.2**), Spring Data (**2025.0.13**, JPA **3.5.13-egov.2**), Spring Integration (**6.5.10-egov.2**) — `egovframe-rte-root` import
+- Micrometer (**1.15.12**, `commons`·`observation`·`core`·`registry-statsd` 는 **1.15.12-egov.2**, 이 BOM 에서도 직접 선언), Reactor BOM (**2024.0.18**), Reactor Netty (**1.2.18**) — `egovframe-rte-root` import
 - `spring-ldap-core` (**3.3.8**)
 
 ### DB (본 BOM에 정의된 드라이버)
@@ -163,14 +164,14 @@ Jakarta EE 9 기준 : Servlet(`jakarta.servlet-api` 5.0.0)·JSP(3.0.0)·EL(4.0.0
 
 | 영역 | 예시 |
 |------|------|
-| JSON/XML | Jackson **2.22.3**, Hibernate Validator, Yasson **2.0.4**, Parsson, JSON-Simple **1.1.1**, XMLBeans, ANTLR4 |
+| JSON/XML | Jackson **2.21.8**, Hibernate Validator, Yasson **2.0.4**, Parsson, JSON-Simple **1.1.1**, XMLBeans, ANTLR4 |
 | 로깅 | Log4j **2.26.1**, SLF4J **2.0.20**, log4jdbc |
 | Commons | BeanUtils, Codec, Compress, DBCP2, Email/FileUpload(Jakarta), IO, Lang3, Net, Pool2 |
 | HTTP/WS | HttpClient5 **5.6.1**, Jakarta WebSocket **2.0.0**, JAX-WS RT, JAX-RPC, JMS API 등 |
 | UI/도구 | CKEditor Java Core, Batik, Ajaxtags |
 | OAuth/SNS | ScribeJava, Twitter4j **4.0.7**(common-components 의 `twitter4j.JSONObject` 사용과 호환되는 버전) |
 | LDAP | LDAP SDK |
-| 테스트/빌드 | JUnit 4 / JUnit 6.1.3, Selenium 4.44.0, JavaParser, Lombok 1.18.48 |
+| 테스트/빌드 | JUnit 4 / JUnit 5.12.2, Selenium 4.44.0, JavaParser, Lombok 1.18.48 |
 | EMS/레거시 | sndng-mail, soap, xalan |
 | Spring AI | `spring-ai-*` **1.1.8** (Boot 비의존 65종 개별 관리), egov 빌드 5종 **1.1.8-egov.1** |
 | LangChain4j | **1.18.1** / beta **1.18.1-beta28** (Boot 스타터 제외 101종 개별 관리) — `langchain4j-bom` import 없음 |

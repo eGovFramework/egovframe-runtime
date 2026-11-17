@@ -23,7 +23,7 @@ class EgovRediSearchLexicalSearchTest {
 		assertEquals(List.of("신청", "변경"), EgovRediSearchQueries.tokenize("신청   변경 신청"));
 		assertEquals(List.of(), EgovRediSearchQueries.tokenize(null));
 		assertEquals(List.of(), EgovRediSearchQueries.tokenize("   "));
-		// 어절 수 상한 — 수만 개 어절이 중위(*t*) OR 질의 하나로 조립돼 RediSearch 를 잠그지 못하게 한다(CWE-400, 2026-09-07 4차 점검)
+		// 어절 수 상한 : 대량 어절 중위(*t*) OR 질의로 인한 RediSearch 잠김 방지 (CWE-400, 2026-09-07 4차 점검)
 		String flood = java.util.stream.IntStream.range(0, 500).mapToObj(i -> "t" + i).collect(java.util.stream.Collectors.joining(" "));
 		assertTrue(EgovRediSearchQueries.tokenize(flood).size() <= 32, "어절 수는 32 이내로 잘라야 한다");
 		assertEquals("t0", EgovRediSearchQueries.tokenize(flood).get(0), "앞쪽 어절을 남긴다");

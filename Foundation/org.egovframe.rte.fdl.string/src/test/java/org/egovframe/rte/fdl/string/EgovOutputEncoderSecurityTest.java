@@ -31,14 +31,10 @@ import org.junit.jupiter.api.Test;
 /**
  * {@link EgovOutputEncoder} 의 <b>XSS 방어 완전성</b> 회귀 검증.
  *
- * <p>기능 테스트({@link EgovOutputEncoderTest})가 대표 사례를 다루고, 이 클래스는 두 가지를 맡는다.
- * 첫째, <b>BMP 65,536자 전수</b>에 대해 컨텍스트별 불변식(위험 문자가 원시 형태로 남지 않는다 ·
- * 이스케이프 형식이 유효하다 · 디코딩하면 원문으로 돌아온다)을 고정한다 — 빠진 문자가 하나라도
- * 생기면 실패한다. 둘째, 공격에 실제로 쓰이는 이탈 페이로드를 컨텍스트별로 모아 두고 새 우회
- * 기법이 알려지면 한 줄을 더한다.</p>
+ * <p>① <b>BMP 65,536자 전수</b> 컨텍스트별 불변식 (위험 문자 원시 잔존 없음 · 유효 이스케이프 · 디코딩 왕복)
+ * ② 컨텍스트별 실제 이탈 페이로드 모음 (새 우회 기법은 한 줄 추가)</p>
  *
- * <p>인코딩이 <b>해결하지 않는 것</b>(URL 스킴 · 템플릿 리터럴)도 계약으로 고정해, 호출부가
- * 인코딩만으로 충분하다고 오해하지 않도록 한다.</p>
+ * <p>인코딩이 <b>해결하지 않는 것</b>(URL 스킴 · 템플릿 리터럴)도 계약으로 고정</p>
  *
  * <pre>
  * &lt;&lt; 개정이력(Modification Information) &gt;&gt;
@@ -122,7 +118,7 @@ class EgovOutputEncoderSecurityTest {
 		void forUrl_전수_왕복() {
 			for (int c = 0; c <= 0xFFFF; c++) {
 				if (Character.isSurrogate((char) c)) {
-					continue; // 단독 서로게이트는 문자열로서 유효하지 않다 — 쌍은 아래에서 따로 본다
+					continue; // 단독 서로게이트는 유효하지 않은 문자열 — 쌍은 아래에서 별도 검증
 				}
 				String in = String.valueOf((char) c);
 				String out = EgovOutputEncoder.forUrl(in);
@@ -221,7 +217,7 @@ class EgovOutputEncoderSecurityTest {
 			String value = "');alert(1);//";
 			String attr = EgovOutputEncoder.forHtml(EgovOutputEncoder.forJavaScript(value));
 			assertNoRaw(attr, "<>\"'", -1);
-			// 브라우저는 속성값의 문자 참조를 먼저 푼 뒤 스크립트로 넘긴다
+			// 브라우저는 속성값의 문자 참조를 먼저 디코딩한 뒤 스크립트로 전달
 			String seenByScript = decodeEntities(attr);
 			assertEquals(BS + "');alert(1);" + BS + "/" + BS + "/", seenByScript);
 			assertEquals(value, decodeJavaScript(seenByScript), "스크립트 엔진이 리터럴 하나로 읽는다");

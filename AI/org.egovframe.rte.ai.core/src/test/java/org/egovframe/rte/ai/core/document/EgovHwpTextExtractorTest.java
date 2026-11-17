@@ -80,7 +80,7 @@ class EgovHwpTextExtractorTest {
 		for (String line : extracted.split("\n")) {
 			assertFalse(line.trim().startsWith("|"), line);
 		}
-		// hwplib 기본 추출은 행 관계를 잃는다(보완의 근거) — 글자 자체는 같다
+		// hwplib 기본 추출은 행 관계 소실(보완 근거) — 글자 자체는 동일
 		String plain = stripControl(TextExtractor.extract(sampleDocument(), TextExtractMethod.AppendControlTextAfterParagraphText));
 		assertTrue(plain.contains("주민등록등본400원즉시"));
 		assertEquals(plain, extracted.replace("\n", "").replace(" | ", ""));

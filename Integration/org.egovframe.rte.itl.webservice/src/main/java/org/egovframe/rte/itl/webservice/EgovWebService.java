@@ -123,7 +123,7 @@ public class EgovWebService extends AbstractService {
     protected EgovIntegrationMessage doSend(EgovIntegrationMessage requestMessage) {
         LOGGER.debug("### EgovWebService doSend (requestMessage = {})", requestMessage);
 
-        // 연계가 가능한지 체크한다.
+        // 연계 가능 여부 확인
         if (!integrationDefinition.isUsing()) {
             LOGGER.debug("### EgovWebService doSend() Integration (id = \"{}\") is not usable", id);
             return new EgovWebServiceMessage(new EgovWebServiceMessageHeader(defaultHeader) {
@@ -133,7 +133,7 @@ public class EgovWebService extends AbstractService {
             });
         }
 
-        // 연계 가능한 시간인지 체크한다.
+        // 연계 가능 시간 확인
         boolean validFrom = true;
         boolean validTo = true;
         Calendar now = Calendar.getInstance();
@@ -156,7 +156,7 @@ public class EgovWebService extends AbstractService {
             });
         }
 
-        // 대상 서비스가 사용 가능한지 체크한다.
+        // 대상 서비스 사용 가능 여부 확인
         if (!integrationDefinition.getProvider().isUsing()) {
             LOGGER.debug("### EgovWebService doSend() Integration (id = \"{}\")'s provider service is not usable", id);
             return new EgovWebServiceMessage(new EgovWebServiceMessageHeader(defaultHeader) {

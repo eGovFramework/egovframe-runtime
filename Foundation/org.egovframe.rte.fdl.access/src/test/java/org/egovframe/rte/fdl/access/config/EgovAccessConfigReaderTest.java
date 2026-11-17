@@ -17,8 +17,7 @@ public class EgovAccessConfigReaderTest {
 
     @Test
     public void testReadConfigAppliesKeysUnderTurkishLocale(@TempDir Path tempDir) throws IOException {
-        // 터키어 로케일에서는 "id".substring(0, 1).toUpperCase()가 점 있는 'İ'(U+0130)가 되어
-        // setter 이름이 "setİd"로 만들어지고, findSetter가 null을 돌려주면서 이 키가 조용히 무시된다.
+        // 터키어 로케일 : "id" 대문자화 시 'İ'(U+0130) → "setİd" 로 setter 미발견, 키 무시 방지
         Locale original = Locale.getDefault();
         try {
             Locale.setDefault(Locale.forLanguageTag("tr-TR"));

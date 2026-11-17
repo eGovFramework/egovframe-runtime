@@ -42,8 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * EgovExceptionHandler — Spring 표준 예외 상태 보존·입력 검증 400·형 불일치 E002·MessageSource opt-in·
  * 커밋된 응답 불간섭 검증.
  *
- * <p>종전에는 모든 예외를 먼저 받는 처리기(@Order(-3))가 405·415·400·404 를 500 으로 바꿨다(처리기가 없으면
- * Spring 이 올바른 4xx 를 준다). 같은 요청을 처리기 유무 두 클라이언트에 보내 비교한다.</p>
+ * <p>처리기(@Order(-3))가 405·415·400·404 를 500 으로 바꾸지 않는지, 처리기 유무 두 클라이언트 응답 비교.</p>
  */
 public class EgovExceptionHandlerStandardErrorTest {
 

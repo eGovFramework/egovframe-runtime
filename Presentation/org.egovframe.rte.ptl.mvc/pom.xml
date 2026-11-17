@@ -29,7 +29,7 @@
             <groupId>org.egovframe.rte</groupId>
             <artifactId>egovframe-rte-fdl-cmmn</artifactId>
         </dependency>
-        <!-- 업로드 검증 정책(EgovUploadPolicy)과 안전 경로 해석(EgovFiles)을 쓴다. -->
+        <!-- 업로드 검증 정책(EgovUploadPolicy)·안전 경로 해석(EgovFiles) 사용 -->
         <dependency>
             <groupId>org.egovframe.rte</groupId>
             <artifactId>egovframe-rte-fdl-filehandling</artifactId>
@@ -47,8 +47,7 @@
         </dependency>
 
         <!-- Jakarta APIs -->
-        <!-- EgovRestExceptionHandler 가 제약 위반(ConstraintViolationException)을 해석하는 데 쓴다.
-             구현체는 애플리케이션이 선택한다(hibernate-validator 등). -->
+        <!-- EgovRestExceptionHandler 제약 위반 해석용 (구현체는 앱 선택) -->
         <dependency>
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
@@ -87,8 +86,7 @@
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
         </dependency>
-        <!-- EgovHtmlSanitizer 전용 - optional 이므로 전이되지 않는다.
-             정제 기능을 쓰는 애플리케이션만 jsoup 을 직접 선언하면 된다. -->
+        <!-- EgovHtmlSanitizer 전용 (optional, 사용 시 앱에서 직접 선언) -->
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
@@ -116,22 +114,21 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- EgovRestExceptionHandler 테스트가 응답 JSON 을 파싱하는 데 쓴다. 버전은 jackson-bom 이 관리한다. -->
+        <!-- 테스트 : 응답 JSON 파싱 (버전은 jackson-bom 관리) -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <scope>test</scope>
         </dependency>
 
-        <!-- EgovRestExceptionHandler 는 Spring Security 예외를 클래스명으로만 참조하므로 테스트에서만 필요하다. -->
+        <!-- 테스트 : Spring Security 예외 검증 (본 코드는 클래스명만 참조) -->
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
             <scope>test</scope>
         </dependency>
 
-        <!-- 프레임워크 내장 메서드 파라미터 검증(HandlerMethodValidationException) 테스트용 Bean Validation 구현체.
-             구현체 선택은 애플리케이션 몫이므로 테스트 스코프로만 둔다. -->
+        <!-- 테스트 : HandlerMethodValidationException 검증용 Bean Validation 구현체 -->
         <dependency>
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>

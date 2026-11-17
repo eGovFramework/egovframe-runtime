@@ -17,17 +17,15 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * {@link TypeLoaderUsingMetadata} 의 동시 {@code getType} 호출에 대한 캐시 안전성을 검증한다.
  *
- * <p>{@code typePool} 은 싱글톤 빈에서 여러 스레드가 {@code getType} 으로 공유하는데, 이전
- * 구현은 동기화 없는 {@code HashMap} 을 검사 후 갱신해 콜드 캐시에 동시 진입하면 맵 손상이나
- * 스레드별로 서로 다른 인스턴스 반환이 발생할 수 있었다. {@code ConcurrentHashMap} 과
- * {@code putIfAbsent} 적용 후, 동시 호출이 예외 없이 동일한 정본 인스턴스를 반환함을 검증한다.</p>
+ * <p>{@code typePool} 은 여러 스레드가 공유 ({@code ConcurrentHashMap} + {@code putIfAbsent}) :
+ * 동시 호출 시 예외 없이 동일한 정본 인스턴스 반환 검증.</p>
  */
 class TypeLoaderUsingMetadataConcurrencyTest {
 
     @Test
     @DisplayName("동일 타입을 동시에 load해도 예외 없이 같은 정본 인스턴스를 반환한다")
     void concurrentGetTypeReturnsCanonicalInstance() throws Exception {
-        // boolean[] 는 리스트-원시 타입이라 RecordTypeDefinitionDao 없이 캐싱 경로를 탄다.
+        // boolean[] : 리스트-원시 타입 (RecordTypeDefinitionDao 없이 캐싱 경로)
         TypeLoaderUsingMetadata loader = new TypeLoaderUsingMetadata();
 
         int threads = 16;

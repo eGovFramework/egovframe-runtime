@@ -27,14 +27,14 @@ import java.security.Principal;
  * 리액티브 요청의 사용자 ID 를 Reactor Context 와 교환 속성에 싣는 필터.
  *
  * <p>Spring Security 리액티브 {@code WebFilterChainProxy}(순서 -100) <b>뒤</b>(기본 순서 {@value #DEFAULT_ORDER})에서
- * {@link ServerWebExchange#getPrincipal()} 의 이름을 읽어 ① 교환 속성 {@link EgovReactiveWebAccessLogFilter#ATTR_USER_ID} 와
- * ② 하류 Reactor Context 키 {@value #USER_ID_KEY} 에 넣는다. Principal 이 없거나 이름이 비어 있으면 {@value #ANONYMOUS_USER} 를 넣는다.</p>
+ * {@link ServerWebExchange#getPrincipal()} 이름을 ① 교환 속성 {@link EgovReactiveWebAccessLogFilter#ATTR_USER_ID} 와
+ * ② 하류 Reactor Context 키 {@value #USER_ID_KEY} 에 저장 (Principal 없음·빈 이름이면 {@value #ANONYMOUS_USER})</p>
  *
  * <ul>
- *   <li>① 로 {@link EgovReactiveWebAccessLogFilter} 의 {@code userId=} 가 채워진다(접근로그 필터는 {@code doFinally} 에서 속성을 읽는다)</li>
- *   <li>② 는 {@link EgovMdcContextConfig}(Context → MDC 복사 훅)가 설치돼 있으면 로그 MDC {@code userId} 로도 복사되어, 로그 패턴
- *       {@code %X{userId}} 와 {@code ReactiveAuditorAware} 구현이 같은 값을 본다 — 서블릿 스택의 MDC {@code userId} 관례와 같은 키다</li>
- *   <li>Spring Security 에 대한 코드 의존은 없다 — 사용자 원천은 {@code Principal} 이며, 인증 프레임워크가 무엇이든 교환에 Principal 을 실어 두면 동작한다</li>
+ *   <li>① : {@link EgovReactiveWebAccessLogFilter} 의 {@code userId=} 값 (접근로그 필터는 {@code doFinally} 에서 읽음)</li>
+ *   <li>② : {@link EgovMdcContextConfig}(Context → MDC 복사 훅) 설치 시 MDC {@code userId} 로 복사
+ *       ({@code %X{userId}}·{@code ReactiveAuditorAware} 공용, 서블릿 스택과 같은 키)</li>
+ *   <li>Spring Security 코드 의존 없음 (사용자 원천은 {@code Principal}, 인증 프레임워크 무관)</li>
  * </ul>
  *
  * <p>빈으로 등록해야 동작한다.</p>
@@ -81,7 +81,7 @@ public class EgovReactiveUserIdWebFilter implements WebFilter, Ordered {
     }
 
     /**
-     * 필터 순서를 설정한다(기본 {@value #DEFAULT_ORDER} — 인증 필터 체인 뒤에 두어야 Principal 이 보인다).
+     * 필터 순서 설정 (기본 {@value #DEFAULT_ORDER}, 인증 필터 체인 뒤여야 Principal 이 보임).
      */
     public void setOrder(int order) {
         this.order = order;

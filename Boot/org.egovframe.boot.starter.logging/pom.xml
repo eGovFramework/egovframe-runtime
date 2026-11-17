@@ -2,8 +2,7 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
 
-    <!-- egovframe-boot-starter-parent(spring-boot-starter-parent) 대신 실행환경 루트 POM 을 부모로 사용.
-         라이브러리·플러그인 버전은 루트 POM(properties / dependencyManagement / pluginManagement)에서 일괄 관리 -->
+    <!-- 부모 : 실행환경 루트 POM (라이브러리·플러그인 버전 일괄 관리) -->
     <parent>
         <groupId>org.egovframe.rte</groupId>
         <artifactId>egovframe-rte-root</artifactId>
@@ -60,7 +59,7 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- Test : JUnit 버전은 루트 POM 의 junit-bom 으로 jupiter · platform 이 함께 정렬됨 -->
+        <!-- Test : JUnit 버전은 루트 junit-bom 관리 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -70,8 +69,7 @@
 
     <build>
         <plugins>
-            <!-- 루트 POM 의 annotationProcessorPaths(lombok)에 Boot 메타데이터 프로세서를 추가(append).
-                 annotationProcessorPaths 를 지정하면 classpath 탐색이 꺼지므로 두 프로세서를 모두 명시해야 함 -->
+            <!-- annotationProcessorPaths : 루트 lombok 에 Boot 메타데이터 프로세서 추가 (지정 시 classpath 탐색 해제 → 둘 다 명시) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

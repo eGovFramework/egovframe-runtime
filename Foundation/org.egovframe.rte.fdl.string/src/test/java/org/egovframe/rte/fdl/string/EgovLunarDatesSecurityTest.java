@@ -28,10 +28,8 @@ import org.junit.jupiter.api.Test;
 /**
  * {@link EgovLunarDates} 의 <b>입력 범위 검증</b> 회귀 검증.
  *
- * <p>양력·음력 날짜는 화면 입력이 그대로 들어오는 값이다. 지원 범위 밖의 연도에서 ICU 달력은
- * 예외 없이 <b>틀린 날짜</b>를 돌려주거나(±580만 년 밖: 시각을 한계값으로 고정, 64032년 이후:
- * 왕복 불일치) 내부 필드 오류를 던진다. 이 클래스는 그런 입력이 <b>즉시, 범위를 말하는 예외</b>로
- * 닫히고, 범위 안에서는 왕복이 성립함을 고정한다.</p>
+ * <p>범위 밖 연도에서 ICU 는 <b>틀린 날짜</b>(±580만 년 밖 한계값 고정, 64032년 이후 왕복 불일치) 또는
+ * 내부 필드 오류 : <b>범위를 알리는 즉시 예외</b>와 범위 내 왕복 성립을 고정</p>
  *
  * <pre>
  * &lt;&lt; 개정이력(Modification Information) &gt;&gt;
@@ -84,7 +82,7 @@ class EgovLunarDatesSecurityTest {
 			for (LocalDate solar : List.of(LocalDate.of(year, 1, 1), LocalDate.of(year, 6, 15), LocalDate.of(year, 12, 31))) {
 				EgovLunarDate lunar = EgovLunarDates.toLunar(solar);
 				if (lunar.getYear() < 1 || lunar.getYear() > 9999) {
-					continue; // 양력 1년 초·9999년 말은 음력 연도가 범위 밖이라 역변환 입력이 될 수 없다
+					continue; // 양력 1년 초·9999년 말은 음력 연도 범위 밖 (역변환 불가)
 				}
 				assertEquals(solar, EgovLunarDates.toSolar(lunar), "왕복 불일치: " + solar + " -> " + lunar);
 				checked++;

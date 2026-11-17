@@ -115,30 +115,30 @@ public class EgovDelimitedLineTokenizer extends EgovAbstractLineTokenizer {
 
         while (lastCut != length && lastCut != -1) {
             delimiterIndex = line.indexOf(delimiter, beginIndex);
-            // 문자열에 quotation 문자열을 체크한다
+            // 문자열 내 quotation 확인
             if (quoteIndex == -1) {
                 lastCut = (delimiterIndex != -1 ? delimiterIndex : length);
                 tokens.add(line.substring(beginIndex, lastCut));
                 beginIndex = lastCut + delimiter.length();
             } else {
                 if (quoteIndex < delimiterIndex) {
-                    // delimiter보다 앞에 있는 quotation을 발견했을 경우, 이는 첫 quotation(여는 quotation)이므로 다음 quotation(닫는 quotation)을 찾는다.
+                    // delimiter 앞의 quotation = 여는 quotation → 닫는 quotation 탐색
                     endQuoteIndex = line.indexOf(quoteCharacter, quoteIndex + 1);
                     if (endQuoteIndex != -1) {
-                        // 닫는 quotation을 발견했으면 하나의 token 으로 처리한다.
+                        // 닫는 quotation 발견 시 하나의 token 으로 처리
                         tokens.add(line.substring(quoteIndex + 1, endQuoteIndex));
-                        // 마지막 token 인지 체크하여 마지막 token 이라면 끝내고, 아니라면 마지막 자른 위치를 닫는 quotation 문자열 다음 식별자로 한다.
+                        // 마지막 token 이 아니면 자른 위치를 닫는 quotation 다음 delimiter 로
                         if (line.indexOf(quoteCharacter, endQuoteIndex) != -1) {
                             lastCut = line.indexOf(delimiter, endQuoteIndex);
                             beginIndex = lastCut + delimiter.length();
                         }
                     } else {
-                        // 닫는 quotation이 없다면 모든 token 을 하나로 처리한다.
+                        // 닫는 quotation 이 없으면 모든 token 을 하나로 처리
                         lastCut = length;
                         tokens.add(line.substring(beginIndex, lastCut));
                     }
                 } else {
-                    // quotation이 delimiter보다 뒤에 있으면 해당 delimiter를 기준으로 자른다.
+                    // quotation 이 delimiter 보다 뒤에 있으면 해당 delimiter 기준으로 분리
                     lastCut = (delimiterIndex != -1 ? delimiterIndex : length);
                     tokens.add(line.substring(beginIndex, lastCut));
                     beginIndex = lastCut + delimiter.length();

@@ -145,7 +145,7 @@ public class HTMLTagFilterTest {
 
     @Test
     public void 허용_태그가_있어도_앰퍼샌드는_계속_인코딩한다_사본의_주석_처리와_대조() throws IOException, ServletException {
-        // 공통컴포넌트 사본은 & 인코딩이 주석 처리되어 &lt; 선인코딩 입력이 그대로 통과했다
+        // 공통컴포넌트 사본 대조 : & 인코딩 주석 처리로 &lt; 선인코딩 입력 통과
         HTMLTagFilter filter = new HTMLTagFilter();
         MockFilterConfig config = new MockFilterConfig();
         config.addInitParameter("allowedTags", "p");

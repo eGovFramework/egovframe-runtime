@@ -326,8 +326,7 @@ class EgovJdbcBatchWriteReflectionTest {
         assertNotNull(sqlTypeCacheHolder(writer));
         assertEquals(SampleVo.class, cachedItemClass(writer));
 
-        // 이질 item 클래스 -> 재산출. (메서드맵은 클래스당 1회 생성 정책이므로
-        //  사전 정책과 무관하게 캐시 무효화만 검증하기 위해 fresh spy 로 교체)
+        // 이질 item 클래스 -> 재산출 (캐시 무효화만 검증하도록 fresh spy 로 교체)
         CountingReflectionSupport<Object> counting2 = new CountingReflectionSupport<>();
         reflectorField.set(writer, counting2);
 
@@ -371,14 +370,12 @@ class EgovJdbcBatchWriteReflectionTest {
 
     // ---------------------------------------------------------------------
     // Test D: 멀티스레드 동시 청크에서 sqlTypes torn-read 부재 (회귀 가드)
-    // 서로 다른 item 클래스의 청크를 두 스레드가 인터리빙하며 write 해도,
-    // 각 호출이 받는 sqlTypes 는 항상 자기 item 클래스의 것과 일치해야 한다.
+    // 이질 item 클래스 청크를 인터리빙 write 해도 sqlTypes 는 자기 클래스 것과 일치
     // ---------------------------------------------------------------------
 
     @Test
     void concurrentChunksOfDifferentClassesNeverTearSqlTypes() throws Exception {
-        // 클래스별로 식별 가능한 sqlTypes 를 돌려주고, 산출-발행 사이 창을 넓히는 stub reflector.
-        // (실 reflection 의 methodMap/클래스당 제약과 무관하게 캐시 원자성만 격리 검증)
+        // 클래스별 식별 가능한 sqlTypes 반환 + 산출-발행 사이 창을 넓히는 stub reflector (캐시 원자성만 격리 검증)
         EgovReflectionSupport<Object> stub = new EgovReflectionSupport<>() {
             @Override
             public String[] getSqlTypeArray(String[] params, Object item) {

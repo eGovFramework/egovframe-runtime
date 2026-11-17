@@ -35,7 +35,7 @@ public class RteGenericValidatorCoverageTest {
     public void isKoreanReturnsTrueOnlyForHangul() {
         assertTrue(RteGenericValidator.isKorean("한글"));
         assertTrue(RteGenericValidator.isKorean("가나다라"));
-        // 영문/숫자/혼합은 한글이 아니다.
+        // 영문/숫자/혼합은 한글 아님
         assertFalse(RteGenericValidator.isKorean("abc"));
         assertFalse(RteGenericValidator.isKorean("한a"));
         assertFalse(RteGenericValidator.isKorean("한글123"));
@@ -45,7 +45,7 @@ public class RteGenericValidatorCoverageTest {
     public void isEnglishReturnsTrueOnlyForLetters() {
         assertTrue(RteGenericValidator.isEnglish("abcDEF"));
         assertTrue(RteGenericValidator.isEnglish("Hello"));
-        // 숫자/한글/공백이 섞이면 영문이 아니다.
+        // 숫자/한글/공백이 섞이면 영문 아님
         assertFalse(RteGenericValidator.isEnglish("abc1"));
         assertFalse(RteGenericValidator.isEnglish("ab cd"));
         assertFalse(RteGenericValidator.isEnglish("한글"));
@@ -53,17 +53,17 @@ public class RteGenericValidatorCoverageTest {
 
     @Test
     public void isHtmlTagReturnsFalseWhenTagPresent() {
-        // 태그가 존재하면 false(=태그 미포함 아님), 없으면 true 를 반환한다.
+        // 태그가 있으면 false(=태그 미포함 아님), 없으면 true
         assertFalse(RteGenericValidator.isHtmlTag("<div>hello</div>"));
         assertFalse(RteGenericValidator.isHtmlTag("text <b> bold"));
         assertTrue(RteGenericValidator.isHtmlTag("plain text without tag"));
-        // '<'...'>' 쌍이 없으면(부등호만 존재) 태그로 보지 않는다.
+        // '<'...'>' 쌍이 없으면(부등호만 존재) 태그로 보지 않음
         assertTrue(RteGenericValidator.isHtmlTag("2 > 1 and 3 > 2"));
     }
 
     @Test
     public void isMoreThan2CharTypeCombRequiresLetterDigitSpecial() {
-        // 영문 + 숫자 + 특수문자(~!@#$%^&*?) 조합.
+        // 영문 + 숫자 + 특수문자(~!@#$%^&*?) 조합
         assertTrue(RteGenericValidator.isMoreThan2CharTypeComb("abc12!"));
         assertTrue(RteGenericValidator.isMoreThan2CharTypeComb("a1@"));
         // 세 종류 미충족 또는 허용되지 않는 문자(한글/공백) 포함 시 false.

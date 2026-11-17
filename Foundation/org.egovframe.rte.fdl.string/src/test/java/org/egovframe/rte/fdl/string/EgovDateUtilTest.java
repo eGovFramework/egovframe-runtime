@@ -175,8 +175,7 @@ public class EgovDateUtilTest {
     }
 
     /**
-     * [Flow #-4-1] Positive Case : getFullAge() 의 세기 접두/생일 경과 분기를 고정하는 characterization 테스트.
-     * 현재 동작을 그대로 명세화한다(소스 무변경).
+     * [Flow #-4-1] Positive Case : getFullAge() 의 세기 접두/생일 경과 분기 characterization 테스트.
      */
     @Test
     public void testGetFullAgeCenturyPrefix() throws ParseException {
@@ -206,8 +205,7 @@ public class EgovDateUtilTest {
     }
 
     /**
-     * [Flow #-4-2] Positive Case : 외국인등록번호 세대코드 5·6(1900년대)과 7·8(2000년대)도 만 나이가 계산된다.
-     * (이전에는 세기를 정하지 못해 0 을 돌려줬다.)
+     * [Flow #-4-2] Positive Case : 외국인등록번호 세대코드 5·6(1900년대)과 7·8(2000년대)도 만 나이 계산.
      */
     @Test
     public void testGetFullAgeForeignerGenerationCodes() throws ParseException {
@@ -223,8 +221,7 @@ public class EgovDateUtilTest {
     }
 
     /**
-     * [Flow #-4-2-1] Negative Case : 해석할 수 없는 입력은 0 대신 IllegalArgumentException 이다.
-     * (이전에는 전부 0 을 돌려줘 "0세"와 "계산 실패"를 구분할 수 없었다.)
+     * [Flow #-4-2-1] Negative Case : 해석할 수 없는 입력은 0 대신 IllegalArgumentException ("0세"와 "계산 실패" 구분).
      */
     @Test
     public void testGetFullAgeRejectsUnparseableInput() {
@@ -233,7 +230,7 @@ public class EgovDateUtilTest {
         // socialNo == null / 7자리 미만
         assertThrows(IllegalArgumentException.class, () -> EgovDateUtil.getFullAge(null, "20200101"));
         assertThrows(IllegalArgumentException.class, () -> EgovDateUtil.getFullAge("770101", "20200101"));
-        // 세대코드 자리가 숫자가 아님(구분자가 포함된 형식은 원래 지원하지 않았다)
+        // 세대코드 자리가 숫자가 아님 (구분자 포함 형식 미지원)
         assertThrows(IllegalArgumentException.class, () -> EgovDateUtil.getFullAge("770101-1234567", "20200101"));
         assertThrows(IllegalArgumentException.class, () -> EgovDateUtil.getFullAge("770101a234567", "20200101"));
         // 생년월일 자리가 숫자가 아님
@@ -261,10 +258,10 @@ public class EgovDateUtilTest {
      */
     @Test
     public void testGetCurrentFullAgeDelegation() throws ParseException {
-        // 현재 일자를 같은 방식으로 만들어 getFullAge() 에 넘긴 값과 같아야 한다.
+        // 현재 일자를 같은 방식으로 만들어 getFullAge() 에 넘긴 값과 동일해야 함
         String today = EgovDateUtil.getCurrentYearAsString() + EgovDateUtil.getCurrentMonthAsString() + EgovDateUtil.getCurrentDayAsString();
         assertEquals(EgovDateUtil.getFullAge("8001015000000", today), EgovDateUtil.getCurrentFullAge("8001015000000"));
-        // 세대코드 5(1900년대 외국인)는 이제 실제 나이가 나온다 — 1980년생은 2020년 이후 40세 이상
+        // 세대코드 5(1900년대 외국인) : 1980년생은 2020년 이후 40세 이상
         assertTrue(EgovDateUtil.getCurrentFullAge("8001015000000") >= 40);
     }
 
@@ -326,10 +323,10 @@ public class EgovDateUtilTest {
      */
     @Test
     public void testTimeCountUnknownLengthMessage() {
-        // 길이가 4, 8, 12, 14, 17 중 어느 것도 아니면 형식을 정할 수 없어 ParseException 이 난다.
+        // 길이가 4, 8, 12, 14, 17 이 아니면 ParseException
         ParseException e = assertThrows(ParseException.class, () -> EgovDateUtil.getTimeCount("2009040112", "2009040113"));
 
-        // 형제인 dateFormatCheck() 과 같이 어긋난 입력값을 알려야 한다.
+        // dateFormatCheck() 와 같이 메시지에 입력값 포함
         assertTrue(e.getMessage().contains("2009040112"), "예외 메시지: " + e.getMessage());
     }
 
@@ -354,9 +351,8 @@ public class EgovDateUtilTest {
     }
 
     /**
-     * [Flow #-7-1] Negative Case : 미인식 요일이 입력되면 무한루프 대신 IllegalArgumentException 을 던진다.
-     * (수정 전에는 sYoil 집합에 없는 요일이 들어오면 while 루프가 영원히 종료되지 않아 무한루프에 빠졌다.)
-     * 무한루프 회귀를 막기 위해 timeout 을 건다.
+     * [Flow #-7-1] Negative Case : 미인식 요일은 무한루프 대신 IllegalArgumentException.
+     * (sYoil 집합 밖 요일이면 while 루프 무한루프, 회귀 방지용 timeout)
      */
     @Test
     @Timeout(value = 5, unit = TimeUnit.SECONDS)

@@ -209,23 +209,23 @@ public class EgovCommandLineRunner {
     public int start(String jobPath, String jobIdentifier, String[] parameters, Set<String> opts) {
 
         try (ConfigurableApplicationContext context = new ClassPathXmlApplicationContext(jobPath)) {
-            // 새로운 ApplicationContext를 생성한다.
+            // 생성된 ApplicationContext 의 빈을 이 runner 에 autowire(byType)
             context.getAutowireCapableBeanFactory().autowireBeanProperties(this, AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, false);
 
             Assert.state(launcher != null, "A JobLauncher must be provided.  Please add one to the configuration.");
-            // 기존의 Batch Job을 재시작하거나, 다음 Batch Job을 실행하기 전에 JobExplorer가 있는지 체크한다.
+            // -restart / -next 실행 시 JobExplorer 필수
             if (opts.contains("-restart") || opts.contains("-next")) {
                 Assert.state(jobExplorer != null, "A JobExplorer must be provided for a restart or start next operation. Please add one to the configuration.");
             }
 
-            // Job의 이름을 세팅한다.
+            // Job 이름 설정
             String jobName = jobIdentifier;
 
-            // JobParameters를 생성한다.
+            // JobParameters 생성
             JobParameters jobParameters = jobParametersConverter.getJobParameters(StringUtils.splitArrayElementsIntoProperties(parameters, "="));
             Assert.isTrue(ObjectUtils.isEmpty(parameters) || !jobParameters.isEmpty(), "Invalid JobParameters " + Arrays.asList(parameters) + ". If parameters are provided they should be in the form name=value (no whitespace).");
 
-            // Batch Job을 정지한다.
+            // Batch Job 정지
             if (opts.contains("-stop")) {
                 List<JobExecution> jobExecutions = getRunningJobExecutions(jobIdentifier);
                 if (jobExecutions == null) {
@@ -238,7 +238,7 @@ public class EgovCommandLineRunner {
                 return exitCodeMapper.intValue(ExitStatus.COMPLETED.getExitCode());
             }
 
-            // 정지된 Batch Job의 상태를 abandon으로 변경한다.
+            // 정지된 Batch Job 상태를 abandon 으로 변경
             if (opts.contains("-abandon")) {
                 List<JobExecution> jobExecutions = getStoppedJobExecutions(jobIdentifier);
                 if (jobExecutions == null) {
@@ -251,7 +251,7 @@ public class EgovCommandLineRunner {
                 return exitCodeMapper.intValue(ExitStatus.COMPLETED.getExitCode());
             }
 
-            // Batch Job을 재시작한다.
+            // Batch Job 재시작
             if (opts.contains("-restart")) {
                 JobExecution jobExecution = getLastFailedJobExecution(jobIdentifier);
                 if (jobExecution == null) {
@@ -262,14 +262,14 @@ public class EgovCommandLineRunner {
             }
 
             Job job;
-            // JobLocator가 있으면 Job을 가져오고 null이면 ApplicationContext에서 Job을 가져온다.
+            // JobLocator 가 있으면 JobLocator, 없으면 ApplicationContext 에서 Job 조회
             if (jobLocator != null) {
                 job = jobLocator.getJob(jobName);
             } else {
                 job = (Job) context.getBean(jobName);
             }
 
-            // 다음 Batch Job을 실행하기 위한 Job Parameters를 생성한다.
+            // 다음 Batch Job 실행용 JobParameters 생성
             if (opts.contains("-next")) {
                 JobParameters nextParameters = getNextJobParameters(job);
                 Map<String, JobParameter<?>> map = new HashMap<>(nextParameters.getParameters());
@@ -277,7 +277,7 @@ public class EgovCommandLineRunner {
                 jobParameters = new JobParameters(map);
             }
 
-            // Batch Job을 실행한다.
+            // Batch Job 실행
             JobExecution jobExecution = launcher.run(job, jobParameters);
             return exitCodeMapper.intValue(jobExecution.getExitStatus().getExitCode());
         } catch (NullPointerException | JobParametersNotFoundException | JobInstanceAlreadyCompleteException |
@@ -307,8 +307,7 @@ public class EgovCommandLineRunner {
         }
 
         List<JobExecution> executions = new ArrayList<JobExecution>();
-        // 페이징 offset은 호출마다 0에서 시작해야 한다. static 필드로 두면 이전 호출의 누적값이 남아
-        // (restart 처리가 이 메서드를 실패·실행중·완료 판정으로 반복 호출) 오래된 offset부터 조회해 빈 결과를 얻는다.
+        // 페이징 offset 은 호출마다 0부터 (static 이면 restart 판정의 반복 호출 시 누적값이 남아 빈 결과)
         int start = 0;
         List<JobInstance> lastInstances = jobExplorer.getJobInstances(jobIdentifier, start, EXE_COUNT);
         while (!lastInstances.isEmpty()) {

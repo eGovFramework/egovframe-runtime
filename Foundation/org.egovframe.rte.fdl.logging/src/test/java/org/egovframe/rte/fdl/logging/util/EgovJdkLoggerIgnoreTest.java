@@ -15,9 +15,7 @@ import org.junit.jupiter.api.Test;
 /**
  * ignore 로 넘긴 메시지가 기본 설정에서 기록되지 않는지 확인한다.
  *
- * <p>Level.OFF 는 임계값으로 쓸 때만 "끄기"이고, 레코드 수준으로 쓰면 intValue 가
- * Integer.MAX_VALUE 라 어떤 로거 임계값도 걸러내지 못한다. 기록이 불필요하다고 넘긴 메시지가
- * 오히려 가장 높은 심각도로 남는다.</p>
+ * <p>Level.OFF 는 임계값일 때만 "끄기" (레코드 수준이면 intValue=Integer.MAX_VALUE 라 최고 심각도로 기록됨)</p>
  */
 class EgovJdkLoggerIgnoreTest {
 
@@ -35,12 +33,12 @@ class EgovJdkLoggerIgnoreTest {
 
             @Override
             public void flush() {
-                // 세는 것이 전부라 할 일이 없다
+                // 카운트만 하므로 처리 없음
             }
 
             @Override
             public void close() {
-                // 세는 것이 전부라 할 일이 없다
+                // 카운트만 하므로 처리 없음
             }
         };
         counter.setLevel(Level.ALL);

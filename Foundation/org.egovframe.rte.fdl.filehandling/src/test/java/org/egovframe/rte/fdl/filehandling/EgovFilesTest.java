@@ -246,7 +246,7 @@ public class EgovFilesTest {
     @DisabledOnOs(OS.WINDOWS)
     public void POSIX에서는_역슬래시가_일반_문자라_기준_안의_파일명이_된다() {
         Path base = tempDir.resolve("base");
-        // 탈출이 아니라 그런 이름의 파일 하나로 해석된다 — 기준 디렉터리 밖으로 나가지 않는다.
+        // 탈출이 아닌 해당 이름의 파일 하나로 해석 — 기준 디렉터리 밖으로 나가지 않음
         Path resolved = EgovFiles.resolveSecurely(base, "..\\escape.txt");
         assertTrue(resolved.startsWith(base.toAbsolutePath().normalize()),
                 "역슬래시 입력도 기준 디렉터리 안에 머문다");
@@ -260,11 +260,11 @@ public class EgovFilesTest {
         Path outside = Files.createDirectories(tempDir.resolve("outside"));
         Files.createSymbolicLink(base.resolve("link"), outside);
 
-        // 어휘적 정규화라 링크 경유 경로는 통과한다(javadoc 에 명시된 계약).
+        // 어휘적 정규화이므로 링크 경유 경로는 통과(javadoc 명시 계약)
         Path viaLink = EgovFiles.resolveSecurely(base, "link/secret.txt");
         assertTrue(EgovFiles.isContainedIn(viaLink, base), "어휘적으로는 기준 안으로 판정된다");
 
-        // 실경로로 확정하면 기준 밖임이 드러난다 — 봉쇄가 필요하면 이 단계를 덧붙여야 한다.
+        // 실경로 확정 시 기준 밖임이 드러남 — 봉쇄 필요 시 이 단계 추가
         Files.write(outside.resolve("secret.txt"), "x".getBytes(StandardCharsets.UTF_8));
         assertFalse(viaLink.toRealPath().startsWith(base.toRealPath()),
                 "실경로 기준으로는 기준 디렉터리 밖이다");

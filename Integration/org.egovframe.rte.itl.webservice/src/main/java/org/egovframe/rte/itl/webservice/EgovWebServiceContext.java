@@ -477,7 +477,7 @@ public class EgovWebServiceContext implements EgovIntegrationContext, Applicatio
             }
             LOGGER.debug("### EgovWebServiceContext initClient() ResponseMessageType = {}", responseType);
 
-            // ServiceEndpointInterface 정보를 생성한다.
+            // ServiceEndpointInterface 정보 생성
             ServiceEndpointInterfaceInfo serviceEndpointInterfaceInfo = null;
             try {
                 serviceEndpointInterfaceInfo = new ServiceEndpointInterfaceInfoImpl(webServiceClientDefinition, requestType, responseType);

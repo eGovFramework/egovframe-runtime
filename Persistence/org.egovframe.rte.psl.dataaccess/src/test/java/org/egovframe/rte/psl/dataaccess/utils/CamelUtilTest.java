@@ -20,8 +20,7 @@ public class CamelUtilTest {
     }
 
     /**
-     * 빈 문자열은 charAt(0)에서, null은 indexOf 호출에서 예외가 발생하던 것을
-     * 그대로 반환하도록 가드를 추가했다.
+     * 빈 문자열·null : 예외 없이 그대로 반환.
      */
     @Test
     public void testConvert2CamelCaseEmptyAndNull() {

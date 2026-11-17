@@ -42,7 +42,7 @@ public class EgovAccessUtil {
     // thread-safe 하므로 공유
     private static final AntPathMatcher ANT_PATH_MATCHER = new AntPathMatcher();
 
-    // 정규식 컴파일 결과 캐시(키는 설정된 권한 URL 패턴이므로 크기가 제한됨)
+    // 정규식 컴파일 결과 캐시(키 = 설정된 권한 URL 패턴 — 크기 제한됨)
     private static final ConcurrentMap<String, Pattern> PATTERN_CACHE = new ConcurrentHashMap<>();
 
     public static boolean antMatcher(String pattern, String inputString) {

@@ -191,7 +191,7 @@ public class EgovCodeCache {
 			for (EgovCode code : sorted) {
 				EgovCode duplicated = index.put(code.getCode(), code);
 				if (duplicated != null) {
-					// (그룹, 코드) 중복은 원천 데이터 결함이다 — 한쪽을 조용히 덮지 않는다.
+					// (그룹, 코드) 중복은 원천 데이터 결함 — 한쪽을 조용히 덮어쓰지 않음
 					throw new IllegalStateException("duplicate code in group '"
 							+ code.getGroupId() + "': " + code.getCode());
 				}

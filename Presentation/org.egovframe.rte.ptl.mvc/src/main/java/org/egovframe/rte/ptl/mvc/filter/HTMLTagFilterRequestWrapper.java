@@ -182,8 +182,8 @@ public class HTMLTagFilterRequestWrapper extends HttpServletRequestWrapper {
 
     /**
      * {@code ltIndex}({@code '<'} 위치)에서 시작하는 부분이 허용 태그의 온전한 여닫는 형태이면
-     * 닫는 {@code '>'} 의 인덱스를, 아니면 -1 을 반환한다. 문자열 끝에 걸친 태그도 정상 판정한다
-     * (공통컴포넌트 사본은 끝 경계에서 {@code &lt;p>} 혼종을 만드는 버그가 있었다).
+     * 닫는 {@code '>'} 의 인덱스를, 아니면 -1 을 반환한다. 문자열 끝에 걸친 태그도 정상 판정
+     * (끝 경계 {@code &lt;p>} 혼종 방지).
      */
     private int matchAllowedTag(String value, int ltIndex) {
         if (allowedTagNames.isEmpty()) {

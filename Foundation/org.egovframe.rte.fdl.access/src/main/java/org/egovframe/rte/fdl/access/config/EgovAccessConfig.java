@@ -18,7 +18,7 @@ package org.egovframe.rte.fdl.access.config;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * egov-access schema namespace 처리를 담당하는 bean 클래스
+ * egov-access properties 설정 정보를 보관하는 bean 클래스
  *
  * <p>Desc.: 설정 간소화 처리에 사용되는 bean으로 설정에 대한 정보를 보관</p>
  *

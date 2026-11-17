@@ -22,10 +22,8 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * 테스트 시 globals.properties의 Globals.SecurityConfigPath 값을 읽어
- * 해당 경로의 프로퍼티로 EgovSecurityConfig 빈을 생성한다.
- * (globals.properties → SecurityConfigPath → 해당 경로 설정 파일 로드)
- * EgovSecurityConfiguration의 egovSecurityConfig 대신 이 빈이 사용되도록 @Primary 적용.
+ * globals.properties 의 Globals.SecurityConfigPath 설정 파일로 EgovSecurityConfig 빈 생성
+ * (egovSecurityConfig 대신 사용되도록 @Primary).
  * <p>
  * 테스트에서 BeanIds.AUTHENTICATION_MANAGER, FilterChainProxy, delegatingMethodSecurityMetadataSource
  * 이름으로 조회할 수 있도록 테스트 전용 빈/별칭만 등록한다. (실제 서비스 설정에는 영향 없음)
@@ -62,8 +60,7 @@ public class EgovSecurityTestConfig {
     }
 
     /**
-     * 테스트에서 BeanIds.AUTHENTICATION_MANAGER 이름으로 조회할 수 있도록
-     * authenticationManager 빈에 대한 별칭만 등록. (동일 타입 빈 중복 방지)
+     * BeanIds.AUTHENTICATION_MANAGER 조회용 authenticationManager 별칭 등록 (동일 타입 빈 중복 방지)
      */
     @Bean
     public static BeanDefinitionRegistryPostProcessor testSecurityBeanAliasRegistrar() {

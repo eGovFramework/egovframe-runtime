@@ -11,10 +11,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * EgovResourceVariable 의 뮤텍스 일관성 테스트.
  *
- * <p>이 클래스는 map 필드를 뮤텍스로 삼아 8개 메서드를 synchronized (this.map) 으로 잠근다.
- * 과거 setClear 는 뮤텍스로 쓰이는 객체 자체를 새 HashMap 으로 교체해, 잠금 표현식을 이미
- * 평가한 스레드와 그 뒤에 진입한 스레드가 서로 다른 모니터를 들고 같은 맵을 고칠 수 있었다.
- * 형제 경로인 setPros 는 map.clear 로 제자리 비우기를 한다. 본 테스트로 회귀를 방지한다.</p>
+ * <p>8개 메서드가 synchronized (this.map) 으로 잠금. 회귀 : setClear 가 뮤텍스 객체를 새 HashMap 으로 교체하면
+ * 스레드별로 다른 모니터를 잡고 같은 맵 수정 (setPros 처럼 map.clear 제자리 비우기 필요).</p>
  *
  * @author 기여자
  * @version 1.0
@@ -27,7 +25,7 @@ public class EgovResourceVariableConcurrencyTest {
         EgovResourceVariable variable = new EgovResourceVariable();
         variable.setVariable("stale", "old");
 
-        // synchronized 메서드에 진입한 스레드가 들고 있는 모니터와 같은 객체다.
+        // synchronized 메서드 진입 스레드가 보유한 모니터와 같은 객체
         Map<String, Object> mutex = variable.getVariableMap();
         synchronized (mutex) {
             variable.setClear();
@@ -47,7 +45,7 @@ public class EgovResourceVariableConcurrencyTest {
 
         synchronized (lockedMap) {
             writer.start();
-            // 잠금 표현식만 평가하고 모니터 앞에 멈춘 상태를 확인한 뒤 비운다.
+            // 잠금 표현식만 평가, 모니터 앞 대기 상태 확인 후 비움
             awaitBlocked(writer);
             variable.setClear();
         }

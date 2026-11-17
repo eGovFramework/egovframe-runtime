@@ -65,7 +65,7 @@ public class EgovDateUtilBusinessDaysTest {
 
     @Test
     public void testHolidaysAreExcluded() {
-        // 신정(목요일) 하루를 뺀다
+        // 신정(목요일) 하루 제외
         assertEquals(21, EgovDateUtil.getBusinessDaysBetween("20260101", "20260131", holidays("20260101")));
         // 평일 공휴일 둘
         assertEquals(20, EgovDateUtil.getBusinessDaysBetween("20260101", "20260131", holidays("20260101", "20260102")));
@@ -73,30 +73,30 @@ public class EgovDateUtilBusinessDaysTest {
 
     @Test
     public void testWeekendAndOutOfRangeHolidaysDoNotChangeTheCount() {
-        // 토요일(0103)·일요일(0104) 공휴일은 이미 빠져 있다
+        // 토요일(0103)·일요일(0104) 공휴일은 이미 제외됨
         assertEquals(22, EgovDateUtil.getBusinessDaysBetween("20260101", "20260131", holidays("20260103", "20260104")));
-        // 범위 밖(3월 2일) 공휴일은 무시한다
+        // 범위 밖(3월 2일) 공휴일은 무시
         assertEquals(22, EgovDateUtil.getBusinessDaysBetween("20260101", "20260131", holidays("20260302")));
-        // 빈 집합은 주말만 제외한 것과 같다
+        // 빈 집합은 주말만 제외한 것과 동일
         assertEquals(22, EgovDateUtil.getBusinessDaysBetween("20260101", "20260131", holidays()));
     }
 
     @Test
     public void testDuplicatedHolidayIsSubtractedOnce() {
-        // 같은 날을 형식만 달리해 두 번 넣어도 하루만 뺀다
+        // 같은 날을 형식만 달리해 두 번 넣어도 하루만 제외
         assertEquals(21, EgovDateUtil.getBusinessDaysBetween("20260101", "20260131", holidays("20260101", "2026-01-01")));
     }
 
     @Test
     public void testHyphenatedFormatIsAccepted() {
         assertEquals(22, EgovDateUtil.getBusinessDaysBetween("2026-01-01", "2026-01-31", null));
-        // 시작일과 종료일의 형식이 달라도 된다
+        // 시작일·종료일 형식이 달라도 허용
         assertEquals(21, EgovDateUtil.getBusinessDaysBetween("2026-01-01", "20260131", holidays("2026-01-01")));
     }
 
     @Test
     public void testLeapDayIsCounted() {
-        // 2028-02-29 는 화요일 — 윤년의 2월 29일이 영업일로 잡힌다
+        // 2028-02-29 는 화요일 — 윤년 2월 29일이 영업일로 집계
         assertEquals(1, EgovDateUtil.getBusinessDaysBetween("20280229", "20280229", null));
         // 2026년은 윤년이 아니라 2월 28일(토)이 마지막
         assertEquals(20, EgovDateUtil.getBusinessDaysBetween("20260201", "20260228", null));
@@ -122,20 +122,20 @@ public class EgovDateUtilBusinessDaysTest {
 
     @Test
     public void testNonExistentDatesAreRejected() {
-        // 2월 30일은 없는 날짜다 — 조용히 3월 2일로 넘어가지 않는다
+        // 2월 30일은 없는 날짜 — 3월 2일로 넘기지 않음
         assertThrows(IllegalArgumentException.class,
                 () -> EgovDateUtil.getBusinessDaysBetween("20260230", "20260331", null));
-        // 2026년은 윤년이 아니다
+        // 2026년은 윤년 아님
         assertThrows(IllegalArgumentException.class,
                 () -> EgovDateUtil.getBusinessDaysBetween("20260101", "20260229", null));
-        // 13월은 없다
+        // 13월 없음
         assertThrows(IllegalArgumentException.class,
                 () -> EgovDateUtil.getBusinessDaysBetween("20261301", "20261331", null));
     }
 
     @Test
     public void testMalformedHolidayIsRejected() {
-        // 공휴일 집합의 오타를 조용히 넘기면 영업일이 하루 늘어난 채 계산된다
+        // 공휴일 오타 무시 시 영업일 과다 계산
         assertThrows(IllegalArgumentException.class,
                 () -> EgovDateUtil.getBusinessDaysBetween("20260101", "20260131", holidays("2026-0101")));
         assertThrows(IllegalArgumentException.class,

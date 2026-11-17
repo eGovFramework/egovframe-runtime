@@ -98,7 +98,7 @@ public class EgovMyBatisBatchItemWriter<T> extends MyBatisBatchItemWriter<T> {
 
     /**
      * item과 공유 변수(resourceVariable/jobVariable/stepVariable)를 병합한 파라미터로 변환한다.
-     * 공유 변수가 하나도 설정되지 않은 경우 기존 동작(item을 그대로 파라미터로 사용)을 그대로 보존한다.
+     * 공유 변수가 하나도 설정되지 않으면 item을 그대로 파라미터로 사용한다.
      */
     Object mergeSharedVariables(T item) {
         if (resourceVariable == null && jobVariable == null && stepVariable == null) {
@@ -115,8 +115,7 @@ public class EgovMyBatisBatchItemWriter<T> extends MyBatisBatchItemWriter<T> {
             map.putAll(stepVariable.getVariableMap());
 
         if (item instanceof Map<?, ?> itemMap) {
-            // Map item(예: resultType="hashmap")은 BeanInfo 로 class, empty 만 나오므로 엔트리를 그대로 덮어쓴다
-            // MyBatis 는 Map 파라미터를 String 이름으로 조회하므로 String 키 엔트리만 병합한다
+            // Map item(예: resultType="hashmap") : BeanInfo 로는 class, empty 만 나오므로 엔트리 직접 병합 (MyBatis 조회 기준인 String 키만)
             for (Map.Entry<?, ?> entry : itemMap.entrySet()) {
                 if (entry.getKey() instanceof String key)
                     map.put(key, entry.getValue());

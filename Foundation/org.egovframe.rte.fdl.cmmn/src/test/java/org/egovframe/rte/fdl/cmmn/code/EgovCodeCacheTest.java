@@ -97,7 +97,7 @@ class EgovCodeCacheTest {
 				return sampleCodes();
 			});
 
-			// 원본은 그룹 목록을 돌며 그룹당 쿼리 1번씩 날렸다.
+			// 원본은 그룹 목록 순회하며 그룹당 쿼리 1회 실행
 			for (String groupId : Arrays.asList("COM001", "GENDER", "COM001", "GENDER")) {
 				cache.getCodes(groupId);
 			}
@@ -119,7 +119,7 @@ class EgovCodeCacheTest {
 			fail.set(true);
 			assertThrows(IllegalStateException.class, cache::reload);
 
-			// 실패했지만 기존 코드는 그대로 조회된다.
+			// 실패해도 기존 코드는 그대로 조회
 			assertEquals(3, cache.getCodes("COM001").size());
 			assertEquals(Optional.of("남성"), cache.getName("GENDER", "M"));
 		}
@@ -242,8 +242,7 @@ class EgovCodeCacheTest {
 		@Test
 		@DisplayName("reload 중에도 조회는 온전한 스냅숏을 본다 — 찢어진 읽기 없음")
 		void 동시성_일관_스냅숏() throws InterruptedException {
-			// 두 상태를 오가며 reload 를 반복하고, 조회 스레드는 항상
-			// "어느 한쪽의 완전한 상태"만 관찰해야 한다.
+			// 두 상태 간 reload 반복 중 조회 스레드는 항상 한쪽의 완전한 상태만 관찰
 			AtomicBoolean flip = new AtomicBoolean(false);
 			List<EgovCode> stateA = Arrays.asList(
 					EgovCode.of("G", "A1", "a1"), EgovCode.of("G", "A2", "a2"));

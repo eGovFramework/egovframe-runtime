@@ -29,9 +29,8 @@ import org.junit.jupiter.api.Test;
 /**
  * {@link EgovKoreanParticles} 단위 테스트.
  *
- * <p><b>공통컴포넌트 원본(EgovStringUtil 조사 3종)의 이름-동작 불일치를 회귀로 고정</b>한다 —
- * 원본 {@code getSubjectParticle} 은 "조사를 반환한다"는 이름과 달리 명사+조사 전체를
- * 돌려줬다. 여기서는 {@code attach}(단어+조사)와 {@code particleOf}(조사만)로 분리한다.</p>
+ * <p><b>공통컴포넌트 원본(EgovStringUtil 조사 3종)의 이름-동작 불일치 회귀 고정</b>
+ * : {@code attach}(단어+조사)·{@code particleOf}(조사만) 분리</p>
  *
  * <pre>
  * &lt;&lt; 개정이력(Modification Information) &gt;&gt;

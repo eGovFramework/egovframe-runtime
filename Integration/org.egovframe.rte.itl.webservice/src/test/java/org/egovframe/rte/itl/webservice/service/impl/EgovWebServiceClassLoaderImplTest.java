@@ -67,7 +67,7 @@ public class EgovWebServiceClassLoaderImplTest {
         Class<?> serviceEndpointInterfaceClass = classLoader.loadClass(serviceEndpointInfo).getInterfaces()[0];
         Method operation = getOperation(serviceEndpointInterfaceClass);
 
-        // Signature 속성이 method descriptor와 다른 Holder를 가리키면 TypeNotPresentException이 발생한다.
+        // Signature 속성이 method descriptor와 다른 Holder를 가리키면 TypeNotPresentException 발생
         java.lang.reflect.Type[] genericParameterTypes = operation.getGenericParameterTypes();
 
         assertInstanceOf(ParameterizedType.class, genericParameterTypes[0]);
@@ -83,7 +83,7 @@ public class EgovWebServiceClassLoaderImplTest {
     public void testServiceEndpointHasServiceBridgeField() throws Exception {
         Class<?> serviceEndpointClass = classLoader.loadClass(serviceEndpointInfo);
 
-        // field 타입이 존재하지 않는 class이면 getField()에서 NoClassDefFoundError가 발생한다.
+        // field 타입이 존재하지 않는 class 이면 getField()에서 NoClassDefFoundError 발생
         assertEquals(ServiceBridge.class, serviceEndpointClass.getField(classLoader.getFieldNameOfServiceBridge()).getType());
     }
 

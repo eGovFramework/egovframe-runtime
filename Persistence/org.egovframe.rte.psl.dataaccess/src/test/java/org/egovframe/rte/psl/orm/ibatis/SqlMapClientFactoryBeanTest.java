@@ -8,8 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class SqlMapClientFactoryBeanTest {
 
     /**
-     * setConfigLocation(null)과 buildSqlMapClient()가 이미 null을 '미설정'으로 다루는데
-     * 배열 setter 두 개만 null에서 NPE를 내던 것을, 같은 미설정 상태로 받도록 가드를 추가했다.
+     * 배열 setter null : NPE 없이 '미설정'으로 처리 (setConfigLocation(null)과 동일).
      */
     @Test
     public void testSetLocationsNull() {

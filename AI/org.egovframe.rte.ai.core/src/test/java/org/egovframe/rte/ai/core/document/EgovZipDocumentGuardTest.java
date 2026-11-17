@@ -20,7 +20,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 /**
  * {@link EgovZipDocumentGuard} 직접 검증 — zip 기반 문서(hwpx·docx) 파싱 전 한도·DOCTYPE 차단.
- * (2026-09-07 보안 재점검: hwpx 추출기 경유 테스트만 있던 것을 가드 자체 단위 테스트로 보강)
+ * (2026-09-07 보안 재점검 : 가드 자체 단위 테스트 보강)
  */
 class EgovZipDocumentGuardTest {
 

@@ -20,9 +20,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * {@link EgovReloadableFilterInvocationSecurityMetadataSource#reload()}의 동시성 안전성을 검증한다.
  *
- * <p>reload()가 기존 requestMap을 clear() 후 다시 채우면, 요청 스레드가 재적재 중인 맵을
- * 순회하여 ConcurrentModificationException 또는 일시적 권한 소실을 겪을 수 있다. 수정본은
- * 새 맵을 완성한 뒤 참조를 원자적으로 교체하므로, 순회 스레드는 항상 완전한 맵만 관측한다.</p>
+ * <p>clear() 후 재적재 시 순회 스레드의 ConcurrentModificationException·일시적 권한 소실 우려
+ * : 새 맵 완성 후 원자적 참조 교체로 항상 완전한 맵만 관측</p>
  */
 class EgovReloadableFilterInvocationSecurityMetadataSourceReloadTest {
 
@@ -34,8 +33,7 @@ class EgovReloadableFilterInvocationSecurityMetadataSourceReloadTest {
             for (int i = 0; i < 20; i++) {
                 List<ConfigAttribute> roles = new ArrayList<>();
                 roles.add(new SecurityConfig("ROLE_" + i));
-                // 매 엔트리마다 서로 다른 RequestMatcher 인스턴스(맵 키 identity 확보).
-                // 비캡처 람다는 JVM이 싱글턴으로 재사용하므로 i를 캡처해 인스턴스를 분리한다.
+                // 엔트리별 별도 RequestMatcher 인스턴스 (비캡처 람다는 싱글턴 재사용되므로 i 캡처)
                 final int idx = i;
                 RequestMatcher matcher = request -> idx < 0;
                 map.put(matcher, roles);
@@ -66,7 +64,7 @@ class EgovReloadableFilterInvocationSecurityMetadataSourceReloadTest {
         final AtomicBoolean stop = new AtomicBoolean(false);
         final List<Throwable> errors = new CopyOnWriteArrayList<>();
         final CountDownLatch done = new CountDownLatch(2);
-        // 읽기 스레드가 관측한 최소 권한 수. 원자 교체가 아니면 재적재 중 빈/부분 맵(<20)을 볼 수 있다.
+        // 읽기 스레드 관측 최소 권한 수 (원자 교체가 아니면 부분 맵 <20 관측)
         final java.util.concurrent.atomic.AtomicInteger minObserved =
                 new java.util.concurrent.atomic.AtomicInteger(Integer.MAX_VALUE);
 
@@ -103,8 +101,7 @@ class EgovReloadableFilterInvocationSecurityMetadataSourceReloadTest {
         done.await();
 
         assertTrue(errors.isEmpty(), "동시 reload/순회 중 예외 발생: " + errors);
-        // 동시 재적재 내내 읽기 스레드는 항상 완전한 맵(20개)만 관측해야 한다(일시적 권한 소실 없음).
-        // 기존 clear()+put() 방식이면 부분 맵(<20)이 관측될 수 있어 이 단정이 깨진다.
+        // 동시 재적재 중에도 항상 완전한 맵(20개)만 관측 (clear()+put() 방식이면 실패)
         assertEquals(20, minObserved.get(),
                 "재적재 중 읽기 스레드가 불완전한 권한 맵을 관측했다: min=" + minObserved.get());
         assertEquals(20, source.getAllConfigAttributes().size());

@@ -23,7 +23,14 @@
 
 ### egovframe-boot-starter-parent 사용 시
 
-`egovframe-boot-starter-parent` 5.1.0 을 parent 로 사용하면 이 스타터가 **자동으로 포함**됩니다(access · crypto · logging · security 4종). 별도 의존성 선언이 필요 없습니다.
+`egovframe-boot-starter-parent` 5.1.0 은 이 스타터를 자동으로 포함하지 않습니다. 필요한 서비스가 직접 선언하며, 버전은 Parent 가 import 하는 `egovframe-rte-root` 5.1.0 이 관리하므로 생략할 수 있습니다.
+
+```xml
+<dependency>
+    <groupId>org.egovframe.boot</groupId>
+    <artifactId>egovframe-boot-starter-crypto</artifactId>
+</dependency>
+```
 
 ### Maven
 

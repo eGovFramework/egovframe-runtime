@@ -70,11 +70,8 @@ import org.egovframe.rte.fdl.filehandling.EgovFiles;
  * (링크를 따라 대상 디렉터리 밖에 쓰는 고전적 우회 차단). zip·tar 모두 쓰기 직전에 실경로를
  * 재확인하므로, 대상 디렉터리에 미리 심긴 심볼릭 링크를 거치는 엔트리도 거부한다.</p>
  *
- * <p>공통컴포넌트 {@code EgovFileCmprs}·{@code BackupJob}의 결함을 해소한 재구성이다 —
- * 원본은 ① Zip Slip 방어가 블랙리스트 문자열 치환({@code filePathBlackList}) 한 줄이고
- * ② 이름과 달리 압축 생성 기능이 없으며({@code EgovFileCmprs}) ③ 아카이브 엔트리 이름에
- * <b>서버 절대 경로를 그대로 기록</b>하고({@code BackupJob}) ④ 빈 디렉터리를 만나면 예외 없이
- * {@code false}를 반환했다. 설계 목적만 차용하고 구현은 전량 재작성했다(코드 이식 아님).</p>
+ * <p>공통컴포넌트 {@code EgovFileCmprs}·{@code BackupJob} 설계 목적만 차용, 구현은 전량 재작성
+ * (블랙리스트 치환식 Zip Slip 방어·엔트리 이름의 서버 절대 경로 기록 등 결함 해소).</p>
  *
  * <pre>
  * &lt;&lt; 개정이력(Modification Information) &gt;&gt;

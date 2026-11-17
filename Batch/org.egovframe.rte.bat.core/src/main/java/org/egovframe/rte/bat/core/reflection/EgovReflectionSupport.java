@@ -161,10 +161,8 @@ public class EgovReflectionSupport<T> {
      * Bean 생성시 한 번만 실행 된다.
      */
     public void generateGetterMethodMap(String[] names, T item) {
-        // 멀티스레드 step에서 FieldExtractor/ItemWriter 빈이 공유되면 이 인스턴스도 공유된다.
-        // 기존 코드는 methods를 먼저 대입한 뒤 methodMap을 채워, 다른 스레드가 methods != null 만 보고
-        // 아직 채워지지 않은(또는 null인) methodMap을 사용하다 NPE/부분초기화에 노출되었다.
-        // double-checked locking + 지역변수로 완성한 뒤 발행하여 부분초기화 상태가 외부에 보이지 않게 한다.
+        // 멀티스레드 step 공유 빈 : methods != null 만 보고 미완성 methodMap 사용 시 NPE/부분초기화
+        // double-checked locking + 지역변수로 완성 후 발행 (부분초기화 비노출)
         if (methods != null) {
             return;
         }
@@ -179,7 +177,7 @@ public class EgovReflectionSupport<T> {
                     for (int i = 0; i < names.length; i++) {
                         if (names[i].length() > 0) {
                             String suffix = names[i].substring(0, 1).toUpperCase(Locale.ROOT) + names[i].substring(1);
-                            // 기존 getXxx 선택을 유지하고, 없으면 boolean isXxx를 사용한다.
+                            // 기존 getXxx 선택 유지, 없으면 boolean isXxx 사용
                             Method getter = retrieveGetterMethod(localMethods, "get" + suffix);
                             if (getter == null) {
                                 Method booleanGetter = retrieveGetterMethod(localMethods, "is" + suffix);
@@ -195,7 +193,7 @@ public class EgovReflectionSupport<T> {
             } catch (StringIndexOutOfBoundsException | NullPointerException e) {
                 ReflectionUtils.handleReflectionException(e);
             }
-            // 완성된 map을 먼저 발행한 뒤 methods를 마지막에 대입(초기화 완료 표식)한다.
+            // 완성된 map 을 먼저 발행 후 methods 를 마지막에 대입(초기화 완료 표식)
             methodMap = localMap;
             methods = localMethods;
         }

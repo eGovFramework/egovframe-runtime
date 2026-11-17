@@ -132,7 +132,7 @@ public class EgovSessionExpiryCookieFilter implements Filter {
 		cookiePath = value(filterConfig, "cookiePath", cookiePath);
 		sameSite = value(filterConfig, "sameSite", sameSite);
 		httpOnly = Boolean.parseBoolean(value(filterConfig, "httpOnly", String.valueOf(httpOnly)));
-		// 이름·경로·SameSite 의 설정 오류는 첫 요청이 아니라 기동 시점에 드러나야 한다 — 빌더 검증을 미리 거친다
+		// 이름·경로·SameSite 의 설정 오류는 첫 요청이 아닌 기동 시점에 드러나야 함 — 빌더 검증 선수행
 		EgovCookies.builder(serverTimeCookieName, "0").path(cookiePath).sameSite(sameSite);
 		EgovCookies.builder(expiryTimeCookieName, "0").path(cookiePath).sameSite(sameSite);
 
@@ -165,14 +165,13 @@ public class EgovSessionExpiryCookieFilter implements Filter {
 		if (request instanceof HttpServletRequest && response instanceof HttpServletResponse) {
 			HttpServletRequest httpRequest = (HttpServletRequest) request;
 			if (!isExcluded(httpRequest)) {
-				// 세션이 없으면 빈 Optional — 쿠키를 발행하지 않고, 세션도 만들지 않는다
+				// 세션이 없으면 빈 Optional — 쿠키 미발행, 세션도 미생성
 				Optional<EgovSessionExpiry> expiry = EgovSessionExpiry.from(httpRequest);
 				if (expiry.isPresent()) {
 					try {
 						writeCookies(httpRequest, (HttpServletResponse) response, expiry.get());
 					} catch (IllegalArgumentException invalidCookieAttributes) {
-						// 이 쿠키는 부가 기능(만료 안내)이다 — SameSite=None 등 설정이 이번 요청의
-						// 채널(Secure)과 맞지 않아 발급이 거부돼도 본 요청 처리는 막지 않는다
+						// 부가 기능(만료 안내) 쿠키 : SameSite=None 등 설정이 채널(Secure)과 맞지 않아 거부돼도 본 요청은 계속
 						LOGGER.warn("세션 만료 쿠키 발행 실패 — 요청은 계속 진행: {}", invalidCookieAttributes.getMessage());
 					}
 				}

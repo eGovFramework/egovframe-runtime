@@ -122,7 +122,7 @@ public final class EgovPgTrgmLexicalSearch implements EgovLexicalSearch {
 			return List.of();
 		}
 		List<String> ids = transaction.execute(status -> {
-			// set_config 는 값을 돌려주는 SELECT 라 queryForObject 로 실행한다(반환값은 쓰지 않는다)
+			// set_config 는 값을 반환하는 SELECT — queryForObject 로 실행(반환값 미사용)
 			jdbc.queryForObject(SET_THRESHOLD_SQL, String.class, Double.toString(threshold));
 			return jdbc.query(sql, (rs, rowNum) -> rs.getString("doc_id"), query, query, limit);
 		});

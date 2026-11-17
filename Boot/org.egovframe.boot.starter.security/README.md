@@ -24,13 +24,22 @@ JDBC 기반 사용자 인증, DB 기반 URL 권한 관리(실행 중 재적재),
 - Spring Boot 3.5.16 이상 (`egovframe-boot-starter-parent` 5.1.0 기준)
 - Spring Web MVC(Servlet) 애플리케이션 — WebFlux 는 지원하지 않습니다
 - Maven 3.6.3 이상
-- Spring Security 6.5.11-egov.1 (`egovframe-rte-root` 5.1.0 이 지정하는 eGov 자체 빌드 — 해당 빌드를 받을 수 있는 Maven 저장소 필요)
+- Spring Security 6.5.11-egov.2 (`egovframe-rte-root` 5.1.0 이 지정하는 eGov 자체 빌드 — 해당 빌드를 받을 수 있는 Maven 저장소 필요)
 
 ## 📦 설치
 
 ### egovframe-boot-starter-parent 사용 시
 
-`egovframe-boot-starter-parent` 5.1.0 을 parent 로 사용하면 이 스타터가 **자동으로 포함**됩니다(access · crypto · logging · security 4종). 별도 의존성 선언이 필요 없습니다. 아래 "활성화 조건" 의 주의사항을 반드시 확인하세요.
+`egovframe-boot-starter-parent` 5.1.0 은 이 스타터를 자동으로 포함하지 않습니다. 필요한 서비스가 직접 선언하며, 버전은 Parent 가 import 하는 `egovframe-rte-root` 5.1.0 이 관리하므로 생략할 수 있습니다.
+
+```xml
+<dependency>
+    <groupId>org.egovframe.boot</groupId>
+    <artifactId>egovframe-boot-starter-security</artifactId>
+</dependency>
+```
+
+아래 "활성화 조건" 의 주의사항을 반드시 확인하세요.
 
 ### 개별 의존성으로 추가 시
 

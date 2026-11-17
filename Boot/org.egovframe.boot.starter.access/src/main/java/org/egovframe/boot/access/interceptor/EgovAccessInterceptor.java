@@ -61,7 +61,7 @@ public class EgovAccessInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
-        // 디코딩 후 "." / ".." 를 정규화해 경로 조작으로 인가 패턴을 우회하지 못하게 한다.
+        // 디코딩 후 "." / ".." 정규화 — 경로 조작에 의한 인가 패턴 우회 차단
         String requestUrl = StringUtils.cleanPath(URL_PATH_HELPER.getPathWithinApplication(request));
 
         // 인증 체크

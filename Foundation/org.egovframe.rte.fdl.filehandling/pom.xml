@@ -46,8 +46,7 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
-        <!-- EgovArchives 의 tar 처리 전용 - optional 이므로 전이되지 않는다.
-             zip 은 JDK 표준(java.util.zip)만 쓰므로 이 의존 없이도 동작한다. -->
+        <!-- EgovArchives tar 전용 (optional, zip 은 JDK 표준) -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-compress</artifactId>

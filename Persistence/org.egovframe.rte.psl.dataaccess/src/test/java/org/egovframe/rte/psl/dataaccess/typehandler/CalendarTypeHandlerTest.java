@@ -89,21 +89,21 @@ public class CalendarTypeHandlerTest {
     @Test
     public void getResultReturnsNullWhenWasNull() throws Exception {
         CalendarTypeHandler handler = new CalendarTypeHandler();
-        // wasNull=true 이면 getTimestamp 는 호출되지 않고 null 을 반환해야 한다.
+        // wasNull=true 이면 getTimestamp 미호출, null 반환해야 함
         assertNull(handler.getResult(resultGetter(true, null)));
     }
 
     @Test
     public void getResultReturnsNullWhenColumnIsNull() throws Exception {
         CalendarTypeHandler handler = new CalendarTypeHandler();
-        // 직전 컬럼이 non-null 이면 wasNull 은 false 다. 대상 컬럼 자체가 null 인 경우다.
+        // 직전 컬럼이 non-null 이면 wasNull 은 false. 대상 컬럼 자체가 null 인 경우
         assertNull(handler.getResult(resultGetter(false, null)));
     }
 
     @Test
     public void getResultReadsColumnEvenWhenPrecedingColumnWasNull() throws Exception {
         CalendarTypeHandler handler = new CalendarTypeHandler();
-        // 직전 컬럼이 null 이면 wasNull 은 true 로 남는다. 대상 컬럼에는 값이 있다.
+        // 직전 컬럼이 null 이면 wasNull 은 true 로 남음. 대상 컬럼에는 값 존재
         Object result = handler.getResult(resultGetter(true, EXPECTED_TS));
 
         assertInstanceOf(Calendar.class, result);
@@ -117,7 +117,7 @@ public class CalendarTypeHandlerTest {
 
         assertInstanceOf(Calendar.class, result);
         Calendar cal = (Calendar) result;
-        // Calendar 의 시각은 조회된 Timestamp 와 밀리초 단위로 동일해야 한다.
+        // Calendar 시각은 조회된 Timestamp 와 밀리초 단위로 동일해야 함
         assertEquals(EXPECTED_TS.getTime(), cal.getTimeInMillis());
     }
 
@@ -128,7 +128,7 @@ public class CalendarTypeHandlerTest {
 
         handler.setParameter(capturingNullSetter(capturedType), null);
 
-        // null 파라미터는 Types.DATE 로 setNull 되어야 한다.
+        // null 파라미터는 Types.DATE 로 setNull 되어야 함
         assertEquals(Types.DATE, capturedType.get());
     }
 
@@ -141,7 +141,7 @@ public class CalendarTypeHandlerTest {
         AtomicReference<Timestamp> captured = new AtomicReference<>();
         handler.setParameter(capturingTimestampSetter(captured), cal);
 
-        // Calendar 의 밀리초로 만든 Timestamp 가 세팅되어야 한다.
+        // Calendar 밀리초로 만든 Timestamp 가 세팅되어야 함
         assertEquals(new Timestamp(cal.getTimeInMillis()), captured.get());
         assertEquals(EXPECTED_TS.getTime(), captured.get().getTime());
     }
@@ -149,7 +149,7 @@ public class CalendarTypeHandlerTest {
     @Test
     public void valueOfReturnsInputString() {
         CalendarTypeHandler handler = new CalendarTypeHandler();
-        // 현재 구현은 입력 문자열을 그대로 반환한다.
+        // 현재 구현은 입력 문자열 그대로 반환
         assertEquals("20240102", handler.valueOf("20240102"));
     }
 }

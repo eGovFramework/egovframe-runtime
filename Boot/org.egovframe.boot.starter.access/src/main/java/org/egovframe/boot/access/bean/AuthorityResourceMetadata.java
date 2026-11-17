@@ -58,7 +58,7 @@ public class AuthorityResourceMetadata {
     }
 
     public void reload() throws Exception {
-        // 새 목록으로 참조를 교체해 요청 처리 중에도 완전한 스냅샷만 보이도록 한다.
+        // 새 목록으로 참조 교체 — 요청 처리 중에도 완전한 스냅샷만 노출
         authorityList = new ArrayList<>(egovAccessService.getAuthorityUser());
         resourceMap = new ArrayList<>(egovAccessService.getRoleAndUrl());
     }

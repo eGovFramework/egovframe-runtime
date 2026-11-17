@@ -262,8 +262,7 @@ public class EgovDateUtil {
     /**
      * 해당 대상자에 대해 기준일자에서의 만 나이를 구한다.
      *
-     * <p>7번째 자리(세대코드)로 출생 세기를 정한다. 0·9 는 1800년대, 1·2 는 1900년대, 3·4 는 2000년대이며,
-     * 외국인등록번호의 5·6 은 1900년대, 7·8 은 2000년대다.</p>
+     * <p>7번째 자리(세대코드) : 0·9 1800년대, 1·2 1900년대, 3·4 2000년대 (외국인 5·6 1900년대, 7·8 2000년대)</p>
      *
      * @param socialNo 주민등록번호 또는 외국인등록번호(구분자 없이 7자리 이상)
      * @param keyDate  기준일자(yyyyMMdd)
@@ -305,11 +304,11 @@ public class EgovDateUtil {
         }
         String birthDate = century + socialNo.substring(0, 6);
 
-        // 생일이 안지났을때 기준일자 년에서 생일년을 빼고 1년을 더뺀다.
+        // 생일 전: 기준일자 년 - 생일 년 - 1
         if (Integer.parseInt(keyDate.substring(4, 8)) < Integer.parseInt(birthDate.substring(4, 8))) {
             return Integer.parseInt(keyDate.substring(0, 4)) - Integer.parseInt(birthDate.substring(0, 4)) - 1;
         }
-        // 생일이 지났을때 기준일자 년에서 생일년을 뺀다.
+        // 생일 후: 기준일자 년 - 생일 년
         return Integer.parseInt(keyDate.substring(0, 4)) - Integer.parseInt(birthDate.substring(0, 4));
     }
 
@@ -442,13 +441,12 @@ public class EgovDateUtil {
         Calendar cd = new GregorianCalendar(Integer.parseInt(from.substring(0, 4)), Integer.parseInt(from.substring(4, 6)) - 1, Integer.parseInt(from.substring(6, 8)));
         int dayOfWeek = cd.get(Calendar.DAY_OF_WEEK);
 
-        // 요일이 3자리이면 첫자리만 취한다.
+        // 요일이 3자리이면 첫자리만 사용
         if (yoil != null && yoil.length() == 3) {
             yoil = yoil.substring(0, 1);
         }
 
-        // 정규화된 요일이 유효 요일집합에 속하는지 검증한다.
-        // 미인식 요일이 들어오면 아래 while 루프가 영원히 일치하지 못해 무한루프에 빠지므로 사전에 차단한다.
+        // 유효 요일 검증 (미인식 요일이면 아래 while 루프 무한루프)
         boolean validYoil = false;
         for (String s : sYoil) {
             if (s.equals(yoil)) {
@@ -479,8 +477,7 @@ public class EgovDateUtil {
     /**
      * 시작일과 종료일 사이의 영업일 수를 센다. 양 끝 날짜를 포함하며 주말(토·일)과 공휴일을 뺀다.
      *
-     * <p>공휴일은 호출자가 집합으로 넘긴다. 법정공휴일·대체공휴일·임시공휴일은 해마다 달라지고 기관마다
-     * 쉬는 날이 다르기도 해서, 이 유틸이 달력을 들고 있지 않고 넘겨받는다.</p>
+     * <p>공휴일은 호출자가 집합으로 전달 (법정·대체·임시공휴일은 연도·기관별로 다름)</p>
      *
      * <pre>
      * Set&lt;String&gt; holidays = Set.of("20260101", "20260302");
@@ -488,9 +485,8 @@ public class EgovDateUtil {
      * EgovDateUtil.getBusinessDaysBetween("2026-01-01", "2026-01-31", null);   // 주말만 제외
      * </pre>
      *
-     * <p>날짜는 {@code yyyyMMdd} 또는 {@code yyyy-MM-dd} 형식을 받으며 실제로 있는 날짜여야 한다
-     * (20260230 처럼 없는 날짜는 예외). 공휴일 집합의 원소도 같은 규칙으로 해석하고, 범위 밖이거나 주말인
-     * 공휴일은 이미 빠져 있으므로 무시한다. 같은 날이 여러 번 들어 있어도 한 번만 뺀다.</p>
+     * <p>날짜 형식 : {@code yyyyMMdd} 또는 {@code yyyy-MM-dd}, 실재 날짜만 (20260230 등은 예외).
+     * 공휴일 원소도 같은 규칙, 범위 밖·주말 공휴일은 무시, 중복은 한 번만 제외</p>
      *
      * @param from     시작일({@code yyyyMMdd} 또는 {@code yyyy-MM-dd})
      * @param to       종료일({@code yyyyMMdd} 또는 {@code yyyy-MM-dd})
@@ -505,7 +501,7 @@ public class EgovDateUtil {
             return 0;
         }
 
-        // 온전한 주는 시작 요일과 무관하게 평일이 5일이므로, 남는 며칠만 직접 센다.
+        // 온전한 주는 시작 요일과 무관하게 평일 5일 — 남는 일수만 직접 계산
         long totalDays = ChronoUnit.DAYS.between(startDate, endDate) + 1;
         long fullWeeks = totalDays / 7;
         long businessDays = fullWeeks * 5;

@@ -57,7 +57,7 @@ public class TypeLoaderUsingMetadata implements TypeLoader, InitializingBean {
     /**
      * 기존에 load된 Type을 담고 있는 map
      */
-    // 싱글톤 빈으로 주입되어 여러 스레드에서 getType()으로 동시 접근되므로 thread-safe 맵을 사용한다.
+    // 싱글톤 빈 : 여러 스레드가 getType() 동시 접근 (thread-safe 맵)
     private Map<String, Type> typePool = new ConcurrentHashMap<String, Type>();
 
     /**
@@ -111,7 +111,7 @@ public class TypeLoaderUsingMetadata implements TypeLoader, InitializingBean {
     private Type getType(String id, Map<String, Type> loadingTypes) {
         LOGGER.debug("### TypeLoaderUsingMetadata getType(id = \"{}\")", id);
 
-        // id 값이 null인 경우, NoSuchTypeException을 던진다.
+        // id 가 null 이면 NoSuchTypeException
         if (id == null) {
             LOGGER.debug("### TypeLoaderUsingMetadata Argument 'id' is null");
             throw new NoSuchTypeException();
@@ -119,7 +119,7 @@ public class TypeLoaderUsingMetadata implements TypeLoader, InitializingBean {
 
         Type type = null;
 
-        // 현재 loading중인 Type 중에서 찾는다.
+        // 현재 loading 중인 Type 에서 탐색
         if (loadingTypes != null) {
             type = loadingTypes.get(id);
             if (type != null) {
@@ -128,36 +128,31 @@ public class TypeLoaderUsingMetadata implements TypeLoader, InitializingBean {
             }
         }
 
-        // Primitive Type 중에서 찾는다.
+        // Primitive Type 에서 탐색
         type = PrimitiveType.getPrimitiveType(id);
         if (type != null) {
             LOGGER.debug("### TypeLoaderUsingMetadata Type(id = \"{}\") is a primitive type : {}", id, type);
             return type;
         }
 
-        // 기존의 load된 type 중에서 동일한 id의 Type을 검색한다.
+        // 기존 load 된 type 중 동일 id 의 Type 검색
         type = typePool.get(id);
         if (type != null) {
             LOGGER.debug("### TypeLoaderUsingMetadata Type(id = \"{}\") is already loaded : {}", id, type);
             return type;
         }
 
-        // [!!! 중요 !!!]
-        // List Type의 Element Type 또는 Record Type의
-        // Field Type이
-        // 현재 id의 Type일 수 있다. 이 경우, 무한 loop에 빠질 수 있으므로
-        // 미리 객체를 생성하여 loadingTypes에 추가한 후, 내부 정의는 나중에
-        // 추가한다.
+        // [!!! 중요 !!!] Element/Field Type이 자기 자신일 수 있음 : 무한 loop 방지 위해
+        // 객체를 먼저 loadingTypes에 등록하고 내부 정의는 나중에 설정
         LOGGER.debug("### TypeLoaderUsingMetadata Load new type(id= \"{}\"", id);
         if (loadingTypes == null) {
             loadingTypes = new HashMap<String, Type>();
         }
 
-        // List Type 인지 검사한다.
+        // List Type 여부 검사
         if (id.endsWith("[]")) {
             LOGGER.debug("### TypeLoaderUsingMetadata Type(id = \"{}\") is a list type", id);
-            // List Type (임시로 BOOLEAN Type을 Element로
-            // 갖도록 생성한다.)
+            // List Type (임시 Element : BOOLEAN)
             type = new ListType(id, id, PrimitiveType.BOOLEAN); // 임시
             loadingTypes.put(id, type);
 
@@ -212,7 +207,7 @@ public class TypeLoaderUsingMetadata implements TypeLoader, InitializingBean {
             loadingTypes.remove(id);
         }
 
-        // 동시에 같은 id를 load한 다른 스레드가 있으면 먼저 등록된 인스턴스를 정본으로 사용한다.
+        // 동시 load 시 먼저 등록된 인스턴스를 정본으로 사용
         Type existing = typePool.putIfAbsent(id, type);
         return existing != null ? existing : type;
     }

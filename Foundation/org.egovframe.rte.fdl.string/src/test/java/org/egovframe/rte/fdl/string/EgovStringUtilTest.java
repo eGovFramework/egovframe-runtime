@@ -71,17 +71,17 @@ public class EgovStringUtilTest {
     public void testFindPattern() {
         String pattern = "\\d{4}-\\d{1,2}-\\d{1,2}";
 
-        // 일치하는 pattern 을 찾는다.
+        // 일치하는 pattern 검색 성공
         Matcher matcher = Pattern.compile(pattern).matcher("2009-02-03");
         assertTrue(matcher.find());
         assertTrue(matcher.matches());
 
-        // 일치하는 pattern 을 찾는다.
+        // 일치하는 pattern 검색 성공
         matcher = Pattern.compile(pattern).matcher("abcdef2009-02-03abcdef");
         assertTrue(matcher.find());
         assertFalse(matcher.matches());
 
-        // 일치하는 pattern 을 찾지 못한다.
+        // 일치하는 pattern 없음
         matcher = Pattern.compile(pattern).matcher("abcdef2009-02-A3abcdef");
         assertFalse(matcher.find());
         assertFalse(matcher.matches());
@@ -242,30 +242,30 @@ public class EgovStringUtilTest {
     public void testAlignStringWithEllipsis() {
         String source = "abcdefghij";
 
-        // 지정한 길이를 넘으면 뒷부분을 "..."으로 대체하고, 결과 길이는 지정한 길이와 같다
+        // 지정 길이 초과 시 뒷부분을 "..."으로 대체, 결과 길이는 지정 길이와 동일
         assertEquals("ab...", EgovStringUtil.alignLeft(source, 5, true));
         assertEquals("ab...", EgovStringUtil.alignRight(source, 5, true));
         assertEquals("ab...", EgovStringUtil.alignCenter(source, 5, true));
 
-        // isEllipsis가 false이면 지정한 길이만큼 자른다
+        // isEllipsis가 false이면 지정 길이만큼 자름
         assertEquals("abcde", EgovStringUtil.alignLeft(source, 5, false));
         assertEquals("abcde", EgovStringUtil.alignRight(source, 5, false));
         assertEquals("abcde", EgovStringUtil.alignCenter(source, 5, false));
 
-        // 길이가 정확히 같으면 원본을 그대로 반환한다
+        // 길이가 정확히 같으면 원본 그대로 반환
         assertEquals("abcde", EgovStringUtil.alignLeft("abcde", 5, true));
         assertEquals("abcde", EgovStringUtil.alignRight("abcde", 5, true));
 
-        // 길이가 미달이면 isEllipsis와 무관하게 공백으로 채운다
+        // 길이 미달 시 isEllipsis와 무관하게 공백으로 채움
         assertEquals("abc   ", EgovStringUtil.alignLeft("abc", 6, true));
         assertEquals("abc   ", EgovStringUtil.alignLeft("abc", 6, false));
         assertEquals("   abc", EgovStringUtil.alignRight("abc", 6, true));
 
-        // 빈 문자열은 지정한 길이만큼의 공백이 된다
+        // 빈 문자열은 지정 길이만큼의 공백
         assertEquals("   ", EgovStringUtil.alignLeft("", 3, true));
         assertEquals("   ", EgovStringUtil.alignRight("", 3, true));
 
-        // null은 세 메서드 모두 NullPointerException을 발생시킨다
+        // null은 세 메서드 모두 NullPointerException 발생
         assertThrows(NullPointerException.class, () -> EgovStringUtil.alignLeft(null, 3, true));
         assertThrows(NullPointerException.class, () -> EgovStringUtil.alignRight(null, 3, true));
         assertThrows(NullPointerException.class, () -> EgovStringUtil.alignCenter(null, 3, true));
@@ -278,7 +278,7 @@ public class EgovStringUtilTest {
         String encoded1 = EgovStringUtil.encodePassword("password", "MD5");
         String encoded2 = EgovStringUtil.encodePassword("password", "MD5");
         assertEquals(encoded1, encoded2);
-        // 2. 알려진 벡터 — 지원 알고리즘의 해시값은 이전과 바이트 단위로 같다
+        // 2. 알려진 벡터 — 지원 알고리즘 해시값은 바이트 단위 동일
         assertEquals("5f4dcc3b5aa765d61d8327deb882cf99", encoded1);
         assertEquals("5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8",
                 EgovStringUtil.encodePassword("password", "SHA-256"));
@@ -464,8 +464,7 @@ public class EgovStringUtilTest {
     }
 
     /**
-     * 구분자를 생략한 getTokens는 구분자를 넘기는 오버로드에 그대로 위임하므로
-     * 두 오버로드의 결과는 같고, 원소 타입도 String으로 받을 수 있어야 한다.
+     * 구분자 생략 getTokens 는 오버로드에 위임 : 두 결과 동일, 원소 타입 String.
      */
     @Test
     public void testGetTokensDefaultSeparatorElementType() {
@@ -486,8 +485,7 @@ public class EgovStringUtilTest {
     }
 
     /**
-     * target이 빈 문자열이면 indexOf("")가 항상 0을 반환해
-     * 기존 구현은 무한 루프에 빠졌다. 이제는 0을 반환해야 한다.
+     * 빈 target 은 0 반환 (indexOf("")가 항상 0이라 무한 루프 위험).
      */
     @Test
     public void testSearchEmptyTargetDoesNotLoop() {

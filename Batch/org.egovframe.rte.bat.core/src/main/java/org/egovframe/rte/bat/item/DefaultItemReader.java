@@ -300,7 +300,7 @@ public class DefaultItemReader<T> implements ItemStreamReader<T> {
     }
 
     // 2026.03.24 KISA 보안취약점 조치
-    // makeItemReader 초기화 실패 시 생성된 reader의 자원을 해제한다.
+    // makeItemReader 초기화 실패 시 생성된 reader 자원 해제
     private void closeReaderOnFailure() {
         if (this.reader != null) {
             try {

@@ -31,7 +31,7 @@ org/egovframe/rte/psl/reactive/cassandra/
 
 | 클래스 | 설명 |
 |--------|------|
-| `EgovCassandraConfiguration` | CQL 세션·템플릿 Bean 구성 |
+| `EgovCassandraConfiguration` | `CqlSession` 기반 `ReactiveSession` 구성 |
 | `EgovCassandraRepository` | Cassandra 리포지토리 공통 인터페이스 |
 
 ---

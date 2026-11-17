@@ -4,7 +4,7 @@
 
 - **Artifact**: `org.egovframe.rte:egovframe-rte-fdl-filehandling:5.1.0`
 - **Runtime**: Java 17
-- **의존**: `egovframe-rte-fdl-string`, `commons-vfs2`, `commons-io`, `commons-lang3`
+- **의존**: `egovframe-rte-fdl-string`, `commons-vfs2`, `commons-io`, `commons-lang3`, `commons-compress`(optional, tar 사용 시)
 
 ---
 
@@ -19,7 +19,19 @@
 
 ```
 org/egovframe/rte/fdl/filehandling/
-└── EgovFileUtil.java
+├── EgovFileUtil.java
+├── EgovFiles.java
+├── EgovContentDispositions.java
+├── archive/
+│   ├── EgovArchives.java
+│   └── EgovExtractLimits.java
+└── upload/
+    ├── EgovFileStore.java
+    ├── EgovStoredFile.java
+    ├── EgovStoredFileNames.java
+    ├── EgovUploadPolicy.java
+    ├── EgovUploadRejectedException.java
+    └── EgovFileSignatureUtil.java
 ```
 
 ---
@@ -29,6 +41,11 @@ org/egovframe/rte/fdl/filehandling/
 | 클래스 | 설명 |
 |--------|------|
 | `EgovFileUtil` | 파일 복사·삭제·존재 여부·크기·경로 정규화, VFS `FileObject` 활용 등 |
+| `EgovFiles` | NIO.2 기반 파일 유틸 (`EgovFileUtil` 현대화 구현, 기준 디렉터리 이탈 차단) |
+| `EgovContentDispositions` | 다운로드 `Content-Disposition` 헤더 생성 (RFC 6266/5987) |
+| `EgovArchives` / `EgovExtractLimits` | zip/tar 생성·해제 (Zip Slip·압축 폭탄 차단) |
+| `EgovFileStore` / `EgovStoredFile` / `EgovStoredFileNames` | 업로드 파일 저장·재검증·삭제, 유일 저장명 생성 |
+| `EgovUploadPolicy` / `EgovUploadRejectedException` / `EgovFileSignatureUtil` | 업로드 허용 정책, 거부 예외, 시그니처(매직넘버) 검사 |
 
 구체 시그니처는 소스 및 JavaDoc을 참고하세요.
 

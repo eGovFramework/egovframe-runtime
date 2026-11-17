@@ -110,7 +110,7 @@ class EgovDocxTextExtractorTest {
 			String text = documents.isEmpty() ? "" : documents.get(0).text();
 			assertFalse(text.contains(SECRET), "외부 엔티티가 해석되어 로컬 파일 내용이 본문에 실렸다");
 		} catch (EgovExtractionException expected) {
-			// 2026-09-18 부터는 zip 가드가 파싱 전에 DOCTYPE 을 거부한다(원인 없는 가드 예외). POI 의 거부(원인 있음)도 안전한 결과다
+			// zip 가드의 DOCTYPE 사전 거부(원인 없음, 2026-09-18) 또는 POI 거부(원인 있음) 모두 안전
 			assertTrue(expected.getMessage().contains("DOCTYPE") || expected.getCause() != null, expected.getMessage());
 		}
 	}

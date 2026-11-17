@@ -37,11 +37,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * {@link StringTimestampTypeHandler} 단위 테스트.
  * <p>
- * iBatis 의 TypeHandler 는 싱글톤으로 공유되어 여러 스레드에서 동시에 호출된다.
- * 과거 구현은 {@code static SimpleDateFormat} 을 공유하여 thread-safe 하지 않았고,
- * 동시 호출 시 잘못된 결과나 예외(NumberFormatException, ArrayIndexOutOfBoundsException 등)를
- * 유발할 수 있었다. 본 테스트는 단일 인스턴스를 다수 스레드가 동시에 사용해도
- * 결과가 정확하고 예외가 없음을 검증한다.
+ * TypeHandler 는 싱글톤으로 여러 스레드가 동시 호출 ({@code static SimpleDateFormat} 공유 금지) :
+ * 단일 인스턴스 동시 사용 시 결과 정확성·무예외 검증.
  * </p>
  */
 public class StringTimestampTypeHandlerTest {
@@ -96,7 +93,7 @@ public class StringTimestampTypeHandlerTest {
     @Test
     public void getResultReturnsNullWhenColumnIsNull() throws Exception {
         StringTimestampTypeHandler handler = new StringTimestampTypeHandler();
-        // 대상 컬럼 자체가 null 인 경우다.
+        // 대상 컬럼 자체가 null 인 경우
         assertNull(handler.getResult(resultGetter(null)));
     }
 

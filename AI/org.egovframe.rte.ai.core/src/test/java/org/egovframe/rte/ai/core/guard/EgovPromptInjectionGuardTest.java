@@ -26,7 +26,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 /**
  * 프롬프트 인젝션 가드 계약 테스트 — 우회 흡수·정책·렉시콘 로드 실패·감사 기록(질의 원문 미기록)
- * (스펙 ai/prompt-injection-guard). 탐지 케이스는 참고 샘플의 검증 케이스를 이식했다.
+ * (스펙 ai/prompt-injection-guard). 탐지 케이스는 참고 샘플에서 이식.
  */
 class EgovPromptInjectionGuardTest {
 

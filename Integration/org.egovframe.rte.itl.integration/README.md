@@ -11,7 +11,7 @@
 ## 특징
 
 - **메타데이터 중심**: `IntegrationDefinition`, `SystemDefinition`, `ServiceDefinition`, `RecordTypeDefinition` 등
-- **DAO 계층**: Hibernate 기반 `*DefinitionDao` 구현체
+- **DAO 계층**: Hibernate 기반 `*DefinitionDao` 구현체, ORM 없이 쓰는 `EgovInMemoryIntegrationMetadataStore` / `EgovJdbcIntegrationMetadataStore`(표준 테이블 `EGOV_ITL_*`, `reload()` 로 재기동 없이 반영)
 - **메시지 모델**: `SimpleMessage`, `TypedMessage`, 헤더·리스트 컨테이너
 - **타입 시스템**: `PrimitiveType`, `RecordType`, `TypeLoader`, FactoryBean
 - **모니터링**: `EgovIntegrationServiceMonitor`, 이벤트 객체
@@ -32,8 +32,9 @@ org/egovframe/rte/itl/integration/
 │   ├── simple/
 │   └── typed/
 ├── metadata/              # 연계 정의 엔티티
-│   └── dao/
-│       └── hibernate/
+│   ├── dao/
+│   │   └── hibernate/
+│   └── store/             # InMemory·JDBC 메타데이터 저장소
 ├── monitor/
 ├── support/
 │   └── AbstractService.java
@@ -52,6 +53,7 @@ org/egovframe/rte/itl/integration/
 | **연계 API** | `EgovIntegrationService`, 응답·콜백·프로바이더 |
 | **메시지** | 헤더+바디 구조, Typed 컬렉션 |
 | **Hibernate DAO** | 정의 엔티티 CRUD |
+| **메타데이터 저장소** | InMemory·JDBC 저장소 (Hibernate 대체, 스냅숏 교체) |
 | **타입 로딩** | 메타데이터 기반 필드 타입 해석 |
 
 ---

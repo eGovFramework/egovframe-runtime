@@ -1,9 +1,9 @@
 # 전자정부 표준프레임워크 실행환경 (eGovFrame Runtime)
 
-[![eGovFrame](https://img.shields.io/badge/eGovFrame-5.1.0(Beta)-134F8C?labelColor=white&logo=data:image/svg%2Bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNzMuMjgyIDE3My4yODIiPjxwYXRoIGZpbGw9IiNmZmYiIGQ9Ik0xNzMuMjgyIDg2LjY1YzAgNDcuODQ0LTM4Ljc5NCA4Ni42MzItODYuNjQ2IDg2LjYzMkMzOC43OTkgMTczLjI4MiAwIDEzNC40OTQgMCA4Ni42NSAwIDM4Ljc4OCAzOC43OTkgMCA4Ni42MzYgMGM0Ny44NTIgMCA4Ni42NDYgMzguNzg4IDg2LjY0NiA4Ni42NSIvPjxwYXRoIGZpbGw9IiMwMDM3NjQiIGQ9Ik0xMjcuMzg5IDgwLjU5OGMtMTMuNzkxLTkuMzY1LTMxLjQzOS01LjU0Mi00MC43MTcgOC41MzMtNy43MiAxMS43NjctMTkuNDA1IDEzLjIzNS0yMy45MDYgMTMuMjM1LTE0Ljc1MSAwLTI0LjgyNC0xMC4zNjctMjcuODE4LTIxLjA5NWgtLjAxYy0uMDM5LS4xMDgtLjA1OS0uMi0uMDktLjMwNy0uMDI1LS4xMi0uMDU2LS4yMzMtLjA4OS0uMzY2LTEuMTc3LTQuNDY3LTEuNDY3LTYuNjA5LTEuNDY3LTExLjM2OCAwLTI1LjY1IDI2LjMyMS01NC4yMTMgNjQuMjE1LTU0LjIxMyAzOC44MjkgMCA2MS4wNSAyOS41NDUgNjYuNzggNDUuOTc5LS4xMDctLjI5NS0uMjA5LS41ODEtLjI5MS0uODc3LTExLjAxNS0zMi4xMjUtNDEuNDc0LTU1LjIxNi03Ny4zNTctNTUuMjE2LTQ1LjEzIDAtODEuNzI5IDM2LjU5LTgxLjcyOSA4MS43MzkgMCA0MC4zNTEgMjkuMTA4IDc0Ljg5MSA2OS40NzkgNzQuODkxIDMyLjE5NyAwIDUzLjg0Mi0xOC4wNTIgNjMuNzU3LTQyLjkzIDUuNDUtMTMuNjE0IDEuNTk1LTI5LjYwNS0xMC43NTctMzguMDA1Ii8%2BPHBhdGggZmlsbD0iI2U0MDMyZSIgZD0iTTE2NC43ODggNjIuNTg5Yy00Ljc3Ny0xNi4wMjYtMjcuMTUzLTQ3LjU3MS02Ny4yODItNDcuNTcxLTM3Ljg5NCAwLTY0LjIxNCAyOC41NjMtNjQuMjE0IDU0LjIxMiAwIDQuNzU5LjI5IDYuOTAxIDEuNDY2IDExLjM2OC0uNDg5LTEuOTUxLS43NC0zLjkwOC0uNzQtNS44MjMgMC0yNi43MjEgMjYuNzQxLTQ1LjIyNyA1NC4yNDgtNDUuMjI3IDM3LjIxOCAwIDY3LjM4OCAzMC4xNzQgNjcuMzg4IDY3LjM5IDAgMjkuMTczLTE2Ljc4NSA1NC40MzctNDEuMTc5IDY2LjU2NXYuMDIzYzMxLjQ1NS0xMS4zOTEgNTMuOTA4LTQxLjUxMiA1My45MDgtNzYuODg0IDAtOC4zNzgtMS4xMjctMTUuNzU5LTMuNTk1LTI0LjA1MyIvPjwvc3ZnPg%3D%3D)](https://www.egovframe.go.kr)
+[![eGovFrame](https://img.shields.io/badge/eGovFrame-5.1.0--Beta2-134F8C?labelColor=white&logo=data:image/svg%2Bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNzMuMjgyIDE3My4yODIiPjxwYXRoIGZpbGw9IiNmZmYiIGQ9Ik0xNzMuMjgyIDg2LjY1YzAgNDcuODQ0LTM4Ljc5NCA4Ni42MzItODYuNjQ2IDg2LjYzMkMzOC43OTkgMTczLjI4MiAwIDEzNC40OTQgMCA4Ni42NSAwIDM4Ljc4OCAzOC43OTkgMCA4Ni42MzYgMGM0Ny44NTIgMCA4Ni42NDYgMzguNzg4IDg2LjY0NiA4Ni42NSIvPjxwYXRoIGZpbGw9IiMwMDM3NjQiIGQ9Ik0xMjcuMzg5IDgwLjU5OGMtMTMuNzkxLTkuMzY1LTMxLjQzOS01LjU0Mi00MC43MTcgOC41MzMtNy43MiAxMS43NjctMTkuNDA1IDEzLjIzNS0yMy45MDYgMTMuMjM1LTE0Ljc1MSAwLTI0LjgyNC0xMC4zNjctMjcuODE4LTIxLjA5NWgtLjAxYy0uMDM5LS4xMDgtLjA1OS0uMi0uMDktLjMwNy0uMDI1LS4xMi0uMDU2LS4yMzMtLjA4OS0uMzY2LTEuMTc3LTQuNDY3LTEuNDY3LTYuNjA5LTEuNDY3LTExLjM2OCAwLTI1LjY1IDI2LjMyMS01NC4yMTMgNjQuMjE1LTU0LjIxMyAzOC44MjkgMCA2MS4wNSAyOS41NDUgNjYuNzggNDUuOTc5LS4xMDctLjI5NS0uMjA5LS41ODEtLjI5MS0uODc3LTExLjAxNS0zMi4xMjUtNDEuNDc0LTU1LjIxNi03Ny4zNTctNTUuMjE2LTQ1LjEzIDAtODEuNzI5IDM2LjU5LTgxLjcyOSA4MS43MzkgMCA0MC4zNTEgMjkuMTA4IDc0Ljg5MSA2OS40NzkgNzQuODkxIDMyLjE5NyAwIDUzLjg0Mi0xOC4wNTIgNjMuNzU3LTQyLjkzIDUuNDUtMTMuNjE0IDEuNTk1LTI5LjYwNS0xMC43NTctMzguMDA1Ii8%2BPHBhdGggZmlsbD0iI2U0MDMyZSIgZD0iTTE2NC43ODggNjIuNTg5Yy00Ljc3Ny0xNi4wMjYtMjcuMTUzLTQ3LjU3MS02Ny4yODItNDcuNTcxLTM3Ljg5NCAwLTY0LjIxNCAyOC41NjMtNjQuMjE0IDU0LjIxMiAwIDQuNzU5LjI5IDYuOTAxIDEuNDY2IDExLjM2OC0uNDg5LTEuOTUxLS43NC0zLjkwOC0uNzQtNS44MjMgMC0yNi43MjEgMjYuNzQxLTQ1LjIyNyA1NC4yNDgtNDUuMjI3IDM3LjIxOCAwIDY3LjM4OCAzMC4xNzQgNjcuMzg4IDY3LjM5IDAgMjkuMTczLTE2Ljc4NSA1NC40MzctNDEuMTc5IDY2LjU2NXYuMDIzYzMxLjQ1NS0xMS4zOTEgNTMuOTA4LTQxLjUxMiA1My45MDgtNzYuODg0IDAtOC4zNzgtMS4xMjctMTUuNzU5LTMuNTk1LTI0LjA1MyIvPjwvc3ZnPg%3D%3D)](https://www.egovframe.go.kr)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue?logo=apache&logoColor=white)](https://www.apache.org/licenses/LICENSE-2.0.txt)
 [![Java](https://img.shields.io/badge/Java-17-orange?logo=openjdk&logoColor=white)](https://openjdk.org/projects/jdk/17/)
-[![Spring Framework](https://img.shields.io/badge/Spring%20Framework-6.2.19-brightgreen?logo=spring&logoColor=white)](https://spring.io/projects/spring-framework)
+[![Spring Framework](https://img.shields.io/badge/Spring%20Framework-6.2.19--egov.2-brightgreen?logo=spring&logoColor=white)](https://spring.io/projects/spring-framework)
 [![Maven](https://img.shields.io/badge/Maven-3.6+-red?logo=apachemaven&logoColor=white)](https://maven.apache.org/)
 
 전자정부 표준프레임워크의 런타임 컴포넌트를 제공하는 멀티 모듈 Maven 프로젝트입니다.
@@ -29,8 +29,8 @@
 
 ### 주요 특징
 
-- **계층화된 아키텍처**: Foundation, Integration, Persistence, Presentation, Batch 레이어와 AI 영역으로 구성
-- **Spring Framework 기반**: Spring 6.2.19, Spring Security 6.5.11-egov.1, Spring Batch 5.2.6 등 최신 기술 스택 적용
+- **계층화된 아키텍처**: Foundation, Integration, Persistence, Presentation, Batch 레이어와 AI 영역으로 구성 (그 외 Boot 스타터 4종 · 적용 프로젝트용 Parent POM 2종)
+- **Spring Framework 기반**: Spring 6.2.19-egov.2, Spring Security 6.5.11-egov.2, Spring Batch 5.2.6-egov.2 등 최신 기술 스택 적용
 - **Java 17 지원**: 최신 Java 기능 활용
 - **멀티 모듈 구조**: 필요한 모듈만 선택적으로 사용 가능
 - **리액티브 프로그래밍 지원**: Spring WebFlux 기반 리액티브 모듈 제공
@@ -113,39 +113,49 @@ egovframe-runtime-5.1.0/
 ├── Presentation/
 │   ├── org.egovframe.rte.ptl.mvc/                # Spring MVC
 │   └── org.egovframe.rte.ptl.reactive/           # Spring WebFlux
+├── Boot/                                         # Spring Boot 스타터 (부모 : 루트 POM)
+│   ├── org.egovframe.boot.starter.access/        # 접근 제어
+│   ├── org.egovframe.boot.starter.crypto/        # 암호화
+│   ├── org.egovframe.boot.starter.logging/       # 로깅·추적
+│   └── org.egovframe.boot.starter.security/      # 보안
+├── Parent/                                       # 적용 프로젝트용 부모 POM
+│   ├── org.egovframe.boot.starter.parent/        # egovframe-boot-starter-parent (Spring Boot 3.5.16)
+│   └── org.egovframe.web.config.parent/          # egovframe-web-config-parent (Jakarta EE 9.1)
 └── pom.xml                                       # 루트 POM (egovframe-rte-root 5.1.0)
 ```
 
 ## 주요 라이브러리 버전
 
-루트 `pom.xml`(`egovframe-rte-root` 5.1.0)의 `properties` / `dependencyManagement` BOM 기준입니다.
+루트 `pom.xml`(`egovframe-rte-root` 5.1.0)의 `properties` / `dependencyManagement` 기준입니다. `dependencyManagement` 는 직접 선언 135개(실행환경 `egovframe-rte-*` 27개 · `egovframe-boot-starter-*` 4개 포함) + BOM import 12개로 구성됩니다.
 
 | 구분 | 라이브러리 | 버전 |
 |------|-----------|------|
-| AI | Spring AI / LangChain4j | 1.1.8 (`commons`·`model` 은 1.1.8-egov.1) / 1.18.1 |
+| AI | Spring AI / LangChain4j | 1.1.8 (egov 빌드 5종 `commons`·`model`·`template-st`·`pdf-document-reader`·`transformers` 은 1.1.8-egov.1) / 1.18.1 |
 | AI | PDFBox / Jedis / hwplib / hwpxlib | 3.0.7 / 6.0.0 / 1.1.9 / 1.0.8 |
-| Spring | Spring Framework | 6.2.19 |
-| Spring | Spring Security | 6.5.11-egov.1 (eGov 자체 빌드) |
-| Spring | Spring Batch | 5.2.6 |
-| Spring | Spring Data (릴리스 트레인) | 2025.0.13 (Commons·JPA 3.5.13, MongoDB 4.5.13) |
-| Spring | Spring Integration | 6.5.10-egov.1 (eGov 자체 빌드) |
-| Reactive | Reactor (BOM) / Reactor Core | 2024.0.18 / 3.7.19 |
-| Observability | Micrometer | 1.15.12 |
-| 기타 BOM | Netty / Jackson | 4.1.138.Final / 2.22.3 |
+| Spring | Spring Framework | 6.2.19-egov.2 (eGov 자체 빌드) |
+| Spring | Spring Security | 6.5.11-egov.2 (eGov 자체 빌드) |
+| Spring | Spring Batch | 5.2.6-egov.2 (eGov 자체 빌드) |
+| Spring | Spring Data (릴리스 트레인) | 2025.0.13 (Commons 3.5.13, MongoDB 4.5.13) |
+| Spring | Spring Data JPA | 3.5.13-egov.2 (eGov 자체 빌드, 개별 관리) |
+| Spring | Spring Integration | 6.5.10-egov.2 (eGov 자체 빌드) |
+| Reactive | Reactor (BOM) / Reactor Core | 2024.0.18 (Spring Framework 6.2 · Boot 3.5.16 기준) / 3.7.19-egov.2 (eGov 자체 빌드, 개별 관리) |
+| Reactive | Reactor Netty | 1.2.18 (직접 선언 고정 — 1.3.x 는 Netty 4.2 전용) |
+| Observability | Micrometer / Micrometer Tracing | 1.15.12 (micrometer-* 직접 선언 고정. `commons`·`observation`·`core`·`registry-statsd` 는 1.15.12-egov.2 eGov 자체 빌드) / 1.5.12 (`micrometer-tracing`·`-bridge-brave` 는 1.5.12-egov.2 eGov 자체 빌드) |
+| 기타 BOM | Netty / Jackson | 4.1.138.Final / 2.21.8 |
 | Persistence | Hibernate ORM / MyBatis | 6.6.58.Final / 3.5.19 |
 | Logging | Log4j2 / SLF4J | 2.26.1 / 2.0.20 |
 | Commons | Lang3 / IO / Codec | 3.20.0 / 2.22.0 / 1.22.1 |
-| Jakarta | Servlet / Validation / Persistence | 6.0.0 / 3.1.1 / 3.2.0 |
+| Jakarta | Servlet / Validation / Persistence | 6.0.0 / 3.1.1 / 3.1.0 |
 | Etc | POI / Lombok / CXF | 5.5.1 / 1.18.48 / 4.2.3 |
-| Test | JUnit / Mockito | 6.1.3 / 5.24.0 |
+| Test | JUnit / Mockito | 5.12.2 (Spring Boot 3.5.16 기준) / 5.24.0 |
 
-> Spring Boot · Spring Cloud · Spring LDAP · Spring for Apache Kafka · Micrometer Tracing 은 런타임 pom 에 선언되어 있지 않으며, 앱 또는 `egovframe-boot-starter-parent`(Spring Boot 3.5.16) / `egovframe-web-config-parent` 에서 가져옵니다.
+> Spring Boot 는 BOM 을 import 하지 않고 Boot 스타터(`Boot/*`)가 쓰는 아티팩트만 3.5.16 으로 개별 관리합니다. Spring Cloud · Spring LDAP · Spring for Apache Kafka 는 런타임 pom 에 선언되어 있지 않으며, 앱 또는 `egovframe-boot-starter-parent`(Spring Boot 3.5.16) / `egovframe-web-config-parent` 에서 가져옵니다.
 
 ## 요구사항
 
 - **Java**: JDK 17 이상
 - **Maven**: 3.6 이상
-- **Spring Framework**: 6.2.19
+- **Spring Framework**: 6.2.19-egov.2
 - **빌드 도구**: Maven
 
 ## 빌드 및 설치
@@ -204,7 +214,7 @@ mvn test
 
 ## 라이브러리별 특징 및 기능
 
-버전 **5.1.0** 기준 Maven 좌표는 `org.egovframe.rte:<artifactId>:5.1.0` 형태입니다. 상세 사용법은 일부 모듈(`/Foundation/.../README.md`, `/AI/.../README.md`)에 별도 문서가 있습니다.
+버전 **5.1.0** 기준 Maven 좌표는 `org.egovframe.rte:<artifactId>:5.1.0` 형태입니다. 상세 사용법은 각 모듈 디렉터리의 `README.md`(`Foundation/` · `AI/` · `Boot/` · `Parent/` 등)를 참고합니다.
 
 ### 요약 표
 
@@ -237,6 +247,9 @@ mvn test
 | Persistence | `psl.reactive.redis` | `egovframe-rte-psl-reactive-redis` | Spring Data Redis·Lettuce 리액티브 |
 | Presentation | `ptl.mvc` | `egovframe-rte-ptl-mvc` | Spring MVC 뷰·검증·태그 확장 |
 | Presentation | `ptl.reactive` | `egovframe-rte-ptl-reactive` | WebFlux 기반 표현 계층·검증 |
+
+> 위 27개 외에 Boot 스타터 4종(`org.egovframe.boot:egovframe-boot-starter-{access,crypto,logging,security}`, `Boot/*/README.md`)과 적용 프로젝트용 Parent POM 2종(`egovframe-boot-starter-parent` · `egovframe-web-config-parent`, `Parent/*/README.md`)이 같은 버전으로 함께 빌드·배포됩니다.
+
 ---
 
 ### Foundation Layer (`Foundation/`)

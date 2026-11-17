@@ -3,7 +3,7 @@
 **DOM/SAX** 기반 XML 파싱·검증·팩토리 서비스를 제공합니다. Spring `spring-context-support`와 연동해 **XML ↔ 자바 객체** 처리 시나리오를 지원합니다.
 
 - **Artifact**: `org.egovframe.rte:egovframe-rte-fdl-xml:5.1.0`
-- **Runtime**: Java 17 / Spring Framework 6.x / Jakarta EE API (provided)
+- **Runtime**: Java 17 / Spring Framework 6.2
 - **의존**: `egovframe-rte-fdl-logging`
 
 ---

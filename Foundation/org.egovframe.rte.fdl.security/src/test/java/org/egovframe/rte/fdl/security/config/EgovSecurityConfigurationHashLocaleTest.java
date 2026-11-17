@@ -15,9 +15,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * hash 설정값을 switch 키로 정규화할 때 기본 로케일에 휘둘리지 않는지 검증한다.
  *
- * <p>터키어·아제르바이잔어 로케일에서 "PLAINTEXT".toLowerCase()는 점 없는 ı가 섞인
- * "plaıntext"가 되어 case "plaintext"에 걸리지 않는다. 같은 파일의 xframeOptions
- * 분기(:488)는 이미 Locale.ROOT로 정규화한다.</p>
+ * <p>터키어·아제르바이잔어 로케일 : "PLAINTEXT".toLowerCase() → "plaıntext" 로 case "plaintext" 불일치
+ * (xframeOptions 분기와 같이 Locale.ROOT 정규화)</p>
  */
 public class EgovSecurityConfigurationHashLocaleTest {
 

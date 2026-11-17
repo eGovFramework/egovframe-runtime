@@ -71,7 +71,7 @@ public class PaginationTag extends TagSupport {
             } else if (!ObjectUtils.isEmpty(ctxd) && ctxd.containsBean(PAGINATION_MANAGER_BEAN_NAME)) {
                 paginationManager = (PaginationManager) ctxd.getBean(PAGINATION_MANAGER_BEAN_NAME);
             } else {
-                //bean 정의가 없다면 DefaultPaginationManager를 사용. 빈설정이 없으면 기본 적인 페이징 리스트라도 보여주기 위함.
+                //bean 정의가 없으면 DefaultPaginationManager 사용 (기본 페이징 리스트라도 표시)
                 paginationManager = new DefaultPaginationManager();
             }
 

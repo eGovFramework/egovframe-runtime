@@ -96,7 +96,7 @@ class EgovUploadPolicySecurityTest {
 	@Test
 	@DisplayName("허용되는 것은 여전히 허용된다 — 우회 차단이 정상 파일을 막지 않는다")
 	void 정상_파일은_허용() {
-		// "shell.jsp%00.png" 은 퍼센트 인코딩을 해석하지 않으므로 그냥 png 다 — 저장명은 uuid.png 가 된다
+		// "shell.jsp%00.png" 은 퍼센트 인코딩 미해석 — 단순 png, 저장명은 uuid.png
 		for (String ok : List.of("photo.png", "PHOTO.PNG", "보고서.xlsx", "a.b.c.jpg", "shell.jsp.png", "shell.jsp%00.png")) {
 			assertTrue(POLICY.check(ok, 10L).isEmpty(), "허용돼야 한다: " + ok);
 		}
@@ -113,8 +113,7 @@ class EgovUploadPolicySecurityTest {
 	@Test
 	@DisplayName("빈 화이트리스트는 정책 생성 자체가 거부된다 — 검사 시점이 아니라 설정 시점에 fail-closed")
 	void 빈_화이트리스트는_생성_거부() {
-		// 빈 목록이 "전부 거부" 로 조용히 동작하면 설정 실수가 운영까지 숨어 들어간다.
-		// 빌더가 즉시 실패해야 기동 시점에 드러난다.
+		// 빈 목록은 빌더에서 즉시 실패 (설정 실수를 기동 시점에 노출)
 		assertThrows(IllegalStateException.class,
 				() -> EgovUploadPolicy.builder().allowExtensionList("").maxFileSize(10L).build());
 		assertThrows(IllegalStateException.class,

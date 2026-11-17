@@ -81,7 +81,7 @@ public class EgovObjectMapper<T> implements InitializingBean {
     public T mapObject(List<String> tokens) {
         int tokenSize = tokens.size();
 
-        // 지정된 names(필드들)의 수와  실제 만들어 낸 Token 갯수가 다르면 예외를 던진다.
+        // 지정된 names(필드) 수와 실제 생성된 Token 개수가 다르면 예외
         if (names.length != tokenSize) {
             throw new IncorrectTokenCountException(names.length, tokenSize);
         }

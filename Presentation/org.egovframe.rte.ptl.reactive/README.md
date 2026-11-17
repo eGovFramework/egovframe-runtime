@@ -3,7 +3,7 @@
 **Spring WebFlux** 기반 **리액티브 표현 계층** 패키지입니다. 스테레오타입 어노테이션(`@EgovController` 등), 공통 예외 응답, **도메인 검증 어노테이션**(주민번호·사업자번호·이메일 등)을 제공합니다.
 
 - **Artifact**: `org.egovframe.rte:egovframe-rte-ptl-reactive:5.1.0`
-- **Runtime**: Java 17 / Spring WebFlux / Jakarta Validation(테스트·연동)
+- **Runtime**: Java 17 / Spring WebFlux / Jakarta Validation
 - **의존**: `egovframe-rte-fdl-logging`
 
 ---
@@ -49,7 +49,7 @@ org/egovframe/rte/ptl/reactive/
 | 영역 | 설명 |
 |------|------|
 | **어노테이션** | 전자정부 스타일 컴포넌트 마킹 |
-| **예외 처리** | WebFlux 환경에서 JSON 에러 바디 표준화 |
+| **예외 처리** | WebFlux 환경에서 JSON 에러 바디 표준화 (`setProblemDetailEnabled` 로 RFC 9457 Problem Details 선택) |
 | **검증** | Bean Validation `ConstraintValidator` 구현군 |
 
 ---

@@ -110,8 +110,7 @@ public final class EgovSubmitTokens {
 		String token = UUID.randomUUID().toString();
 
 		HttpSession session = request.getSession();
-		// 저장소 최초 생성이 요청 간에 겹칠 수 있으므로 세션을 모니터로 잡는다.
-		// 이후 토큰 조작은 저장소 자신이 동기화한다.
+		// 저장소 최초 생성 경합 : 세션을 모니터로 동기화 (이후 토큰 조작은 저장소 자체 동기화)
 		EgovSubmitTokenStore store;
 		synchronized (session) {
 			Object attribute = session.getAttribute(SESSION_ATTRIBUTE_NAME);
@@ -220,7 +219,7 @@ public final class EgovSubmitTokens {
 			return null;
 		}
 
-		// 미발급(이미 소비 포함)과 불일치를 구분해 알린다
+		// 미발급(이미 소비 포함)과 불일치를 구분해 통지
 		Reason reason = store.isIssued(key) ? Reason.TOKEN_MISMATCH : Reason.TOKEN_NOT_ISSUED;
 		LOGGER.debug("제출 토큰 검증 실패({}) — tokenKey={}", reason, key);
 		return reason;

@@ -30,9 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
  * {@link MultipartFile} 을 {@link EgovUploadPolicy} 로 검증하는 얇은 어댑터.
  *
  * <p><b>NOTE:</b> 검증 규칙 자체는 {@code fdl.filehandling} 의 정책 객체에 있다. 이 클래스는
- * 서블릿 자료형에서 <b>파일명과 크기를 꺼내 정책에 넘기는 일</b>만 한다 — 규칙을 웹 계층에
- * 복제하지 않기 위해서다(공통컴포넌트 원본은 같은 화이트리스트 로직을 유틸과 리졸버에
- * 두 벌 두고 있었다).</p>
+ * 서블릿 자료형에서 <b>파일명과 크기를 꺼내 정책에 넘기는 일</b>만 한다 (웹 계층 규칙 복제 방지).</p>
  *
  * <pre>
  * &#64;PostMapping("/upload")
@@ -177,7 +175,7 @@ public final class EgovMultipartFiles {
 		if (trimmed.isEmpty()) {
 			return trimmed;
 		}
-		// 드라이브 상대 표기("C:name")의 드라이브 접두는 구분자 없이도 경로다 — 함께 뗀다
+		// 드라이브 상대 표기("C:name")의 드라이브 접두는 구분자 없이도 경로 — 함께 제거
 		if (trimmed.length() >= 2 && trimmed.charAt(1) == ':' && Character.isLetter(trimmed.charAt(0))) {
 			trimmed = trimmed.substring(2).trim();
 			if (trimmed.isEmpty()) {

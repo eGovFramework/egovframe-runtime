@@ -26,7 +26,14 @@
 
 ### egovframe-boot-starter-parent 사용 시
 
-`egovframe-boot-starter-parent` 5.1.0 을 parent 로 사용하면 이 스타터가 **자동으로 포함**됩니다(access · crypto · logging · security 4종). 별도 의존성 선언이 필요 없습니다.
+`egovframe-boot-starter-parent` 5.1.0 은 이 스타터를 자동으로 포함하지 않습니다. 필요한 서비스가 직접 선언하며, 버전은 Parent 가 import 하는 `egovframe-rte-root` 5.1.0 이 관리하므로 생략할 수 있습니다.
+
+```xml
+<dependency>
+    <groupId>org.egovframe.boot</groupId>
+    <artifactId>egovframe-boot-starter-access</artifactId>
+</dependency>
+```
 
 ### 개별 의존성으로 추가 시
 
@@ -218,9 +225,9 @@ public void refresh() throws Exception {
 4. 인증된 경우 → 정규화한 요청 경로와 사용자 권한의 URL 패턴 매칭
 5. 일치하면 요청 처리 계속, 일치하지 않으면 `access-denied-url` 로 리다이렉트
 
-## ⚠️ egovframe-boot-starter-parent 사용 시 주의
+## ⚠️ egovframe-boot-starter-security 와 함께 사용 시 주의
 
-parent 를 사용하면 `egovframe-boot-starter-security` 도 함께 포함되어 Spring Security 가 classpath 에 있게 됩니다. 이때 `Globals.Auth=session` 이면 eGov 보안 설정은 적용되지 않지만 **Spring Boot 기본 보안(`defaultSecurityFilterChain`, 모든 URL 인증 요구)이 활성화**됩니다. 세션 방식만 사용한다면 Spring Boot 보안 자동구성을 제외하세요.
+`egovframe-boot-starter-security` 를 함께 선언하면 Spring Security 가 classpath 에 있게 됩니다 (parent 는 스타터를 자동 포함하지 않음). 이때 `Globals.Auth=session` 이면 eGov 보안 설정은 적용되지 않지만 **Spring Boot 기본 보안(`defaultSecurityFilterChain`, 모든 URL 인증 요구)이 활성화**됩니다. 세션 방식만 사용한다면 Spring Boot 보안 자동구성을 제외하세요.
 
 ```properties
 spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration

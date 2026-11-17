@@ -3,7 +3,7 @@
 `egovframe-rte-fdl-access`는 **DB 기반의 “권한(Authority) - 보호자원(URL 패턴)” 매핑**을 읽어와, Spring MVC `HandlerInterceptor`로 **로그인 여부 확인 및 URL 접근제한**을 적용하는 라이브러리입니다.
 
 - **Artifact**: `org.egovframe.rte:egovframe-rte-fdl-access:5.1.0`
-- **Runtime**: Java 17 / Spring Framework 6.x (Spring MVC)
+- **Runtime**: Java 17 / Spring Framework 6.2 (Spring MVC)
 
 ---
 

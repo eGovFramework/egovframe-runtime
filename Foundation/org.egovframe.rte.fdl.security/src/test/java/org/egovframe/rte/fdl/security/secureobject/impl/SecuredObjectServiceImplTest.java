@@ -15,9 +15,8 @@ import javax.sql.DataSource;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @ExtendWith(SpringExtension.class)
-// EgovSecurityServiceTest와 동일한 컨텍스트 클래스 조합을 써서 Spring 테스트 컨텍스트 캐시를 공유한다.
-// 다른 조합을 쓰면 같은 in-memory HSQLDB URL에 두 번째 DataSource가 만들어져 testdb.sql의
-// CREATE TABLE이 "object name already exists"로 실패한다.
+// EgovSecurityServiceTest 와 동일 컨텍스트 조합 : 컨텍스트 캐시 공유
+// (다른 조합이면 같은 HSQLDB URL 에 testdb.sql 재실행 → "object name already exists")
 @ContextConfiguration(classes = { EgovSecurityTestDatasource.class, EgovSecurityConfiguration.class, EgovSecurityTestConfig.class })
 public class SecuredObjectServiceImplTest {
 
@@ -26,8 +25,7 @@ public class SecuredObjectServiceImplTest {
 
     @Test
     public void testGetRolesAndUrlWithDefaultRequestMatcherType() {
-        // requestMatcherType을 지정하지 않은 EgovSecurityConfig — properties 파일에
-        // 이 키를 안 적으면 SecuredObjectServiceImpl 자신의 필드 기본값("ant")이 그대로 쓰인다.
+        // requestMatcherType 미지정 EgovSecurityConfig (SecuredObjectServiceImpl 필드 기본값 "ant" 사용)
         EgovSecurityConfig config = new EgovSecurityConfig();
 
         SecuredObjectDAO dao = new SecuredObjectDAO(config);
@@ -39,9 +37,8 @@ public class SecuredObjectServiceImplTest {
         SecuredObjectServiceImpl service = new SecuredObjectServiceImpl(config);
         service.setSecuredObjectDAO(dao);
 
-        // SecuredObjectDAO는 "regex"/"ciRegex"만 RequestMatcher를 만들고 그 외("ant" 포함)엔
-        // 순수 String을 반환하는데, SecuredObjectServiceImpl.getRolesAndUrl()은 무조건
-        // (RequestMatcher) key로 캐스팅해 ClassCastException이 난다.
+        // SecuredObjectDAO 는 "regex"/"ciRegex" 만 RequestMatcher, 그 외("ant" 포함)는 String 키
+        // : getRolesAndUrl() 의 (RequestMatcher) 무조건 캐스팅 시 ClassCastException
         assertDoesNotThrow(service::getRolesAndUrl);
     }
 

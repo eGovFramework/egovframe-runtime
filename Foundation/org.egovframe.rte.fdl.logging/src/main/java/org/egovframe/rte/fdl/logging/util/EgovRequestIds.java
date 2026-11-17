@@ -21,9 +21,8 @@ import java.util.regex.Pattern;
 /**
  * 게이트웨이·프록시가 넘긴 요청 식별자({@code X-Request-Id} 등)를 로그에 싣기 전에 형식을 검증한다.
  *
- * <p>승계한 값은 MDC({@code %X{requestId}})·응답 헤더·접근로그에 그대로 실린다. 제어문자·유니코드 개행·과대 길이를
- * 거르지 않으면 로그 인젝션(CWE-117)과 응답 헤더 반사의 소재가 된다. 허용 형식은 영숫자와 {@code . _ : -} 1~128자이며,
- * 벗어나거나 값이 없으면 승계하지 않고 새 UUID 를 만든다.</p>
+ * <p>승계 값은 MDC({@code %X{requestId}})·응답 헤더·접근로그에 그대로 실림 : 로그 인젝션(CWE-117)·헤더 반사 방지.
+ * 허용 형식은 영숫자와 {@code . _ : -} 1~128자 (위반·없음 시 새 UUID)</p>
  *
  * <pre>
  * String requestId = EgovRequestIds.acceptOrGenerate(request.getHeader("X-Request-Id"));

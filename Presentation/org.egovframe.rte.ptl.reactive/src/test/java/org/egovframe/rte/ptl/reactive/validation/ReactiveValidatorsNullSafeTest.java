@@ -33,7 +33,7 @@ class ReactiveValidatorsNullSafeTest {
 
     @Test
     void validators_stillValidateNonNullInput() {
-        // 가드 추가가 정상 입력 판정을 바꾸지 않는지 확인한다.
+        // 가드 추가가 정상 입력 판정을 바꾸지 않는지 확인
         assertFalse(new EgovEnglishCheckValidation().isValid("한글", null), "영문 검증기는 한글에 false");
         assertDoesNotThrow(() -> new EgovEnglishCheckValidation().isValid("abc", null));
         assertDoesNotThrow(() -> new EgovRrnCheckValidation().isValid("900101-1234567", null));

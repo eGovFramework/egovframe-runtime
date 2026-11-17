@@ -46,8 +46,7 @@ class ReactiveValidatorsSemanticTest {
     void rrnCheck_validatesResidentRegistrationNumberChecksum() {
         EgovRrnCheckValidation validator = new EgovRrnCheckValidation();
 
-        // 아래 값은 실제 개인 식별번호가 아니라 존재할 수 없는 날짜로 만든 체크섬 규격 합성값이다.
-        // 이 검증기는 패턴과 체크섬만 검증하며 날짜 유효성은 검증하지 않는다.
+        // 실제 식별번호 아닌 합성값 (존재할 수 없는 날짜 + 유효 체크섬, 검증기는 패턴·체크섬만 검증)
         assertTrue(validator.isValid("991332-1123459", null), "주민등록번호 검증기는 날짜를 검증하지 않고 체크섬만 검증하므로 존재할 수 없는 날짜라도 true로 판정한다");
         assertTrue(validator.isValid("001332-2123452", null), "주민등록번호 검증기는 날짜를 검증하지 않고 체크섬만 검증하므로 존재할 수 없는 날짜라도 true로 판정한다");
 
@@ -60,7 +59,7 @@ class ReactiveValidatorsSemanticTest {
     void mobilePhoneCheck_validatesMobilePhonePattern() {
         EgovMobilePhoneCheckValidation validator = new EgovMobilePhoneCheckValidation();
 
-        // 검증기가 하이픈을 먼저 제거하므로 하이픈 위치가 아닌 국번·자리수만 판정된다.
+        // 하이픈 선제거 : 국번·자리수만 판정
         assertTrue(validator.isValid("010-1234-5678", null), "휴대전화번호는 010 국번의 유효 번호를 true로 판정해야 한다");
         assertTrue(validator.isValid("011-123-4567", null), "휴대전화번호는 011 국번의 유효 번호를 true로 판정해야 한다");
         assertTrue(validator.isValid("016-1234-5678", null), "휴대전화번호는 016 국번의 유효 번호를 true로 판정해야 한다");
@@ -88,7 +87,7 @@ class ReactiveValidatorsSemanticTest {
 
         assertTrue(validator.isValid("abc", null), "영문 검증기는 소문자 영문만 있는 입력을 true로 판정해야 한다");
         assertTrue(validator.isValid("ABCdef", null), "영문 검증기는 대소문자 영문 입력을 true로 판정해야 한다");
-        // 빈 문자열 허용 계약은 유지하며, 필수값 여부는 @EgovNullCheck가 담당한다.
+        // 빈 문자열 허용 (필수값 여부는 @EgovNullCheck 담당)
         assertTrue(validator.isValid("", null), "영문 검증기는 빈 문자열을 true로 판정해야 한다");
 
         assertFalse(validator.isValid("한글", null), "영문 검증기는 한글 입력을 false로 판정해야 한다");
@@ -124,9 +123,7 @@ class ReactiveValidatorsSemanticTest {
 
     @Test
     void pwdCheck_consecutiveDetectionIsLocaleIndependent() {
-        // 터키어 로케일에서는 'i'가 대문자 'İ'(U+0130)로 변환되어,
-        // toUpperCase()가 로케일에 의존하면 'ghi'·'hij' 같은 연속열이 탐지되지 않고
-        // 약한 비밀번호가 통과되는 우회가 발생할 수 있다. Locale.ROOT 고정으로 방지한다.
+        // 터키어 로케일 : 'i' → 'İ'(U+0130) 변환으로 'ghi'·'hij' 연속열 미탐지 우회 (Locale.ROOT 고정으로 방지)
         Locale original = Locale.getDefault();
         try {
             Locale.setDefault(Locale.forLanguageTag("tr-TR"));

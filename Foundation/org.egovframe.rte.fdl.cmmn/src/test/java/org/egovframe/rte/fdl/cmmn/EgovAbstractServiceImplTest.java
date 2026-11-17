@@ -30,7 +30,7 @@ import org.springframework.test.util.ReflectionTestUtils;
  */
 class EgovAbstractServiceImplTest {
 
-	// 상위 클래스가 제공하는 로거는 실제 서비스 구현 클래스의 이름을 사용해야 한다.
+	// 상위 클래스 제공 로거는 실제 서비스 구현 클래스 이름 사용
 	@Test
 	void loggerUsesConcreteServiceClass() {
 		TestService service = new TestService();
@@ -38,7 +38,7 @@ class EgovAbstractServiceImplTest {
 		assertEquals(TestService.class.getName(), service.logger().getName());
 	}
 
-	// 로케일을 생략한 추적 호출은 현재 스레드의 LocaleContext를 사용해야 한다.
+	// 로케일 생략 추적 호출은 현재 스레드의 LocaleContext 사용
 	@Test
 	void leaveaTraceUsesLocaleFromCurrentContext() {
 		TestService service = new TestService();
@@ -56,7 +56,7 @@ class EgovAbstractServiceImplTest {
 		}
 	}
 
-	// protected API를 테스트하기 위한 최소 서비스 구현체이다.
+	// protected API 테스트용 최소 서비스 구현체
 	private static class TestService extends EgovAbstractServiceImpl {
 
 		private Logger logger() {
@@ -68,7 +68,7 @@ class EgovAbstractServiceImplTest {
 		}
 	}
 
-	// LeaveaTrace에 전달된 로케일만 기록하는 테스트 대역이다.
+	// LeaveaTrace에 전달된 로케일만 기록하는 테스트 대역
 	private static class CapturingLeaveaTrace extends LeaveaTrace {
 
 		private Locale locale;

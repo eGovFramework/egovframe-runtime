@@ -13,8 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * getHashedPassword 가 만든 해시를 프레임워크가 주입하는 인코더로 검증할 수 있는지 확인한다.
  *
- * <p>hash 를 지정하지 않으면 EgovSecurityConfiguration.passwordEncoder() 는 BCrypt 인코더를 돌려준다.
- * 가입 시 이 메서드로 저장한 값은 그 인코더로 로그인할 수 있어야 한다.</p>
+ * <p>hash 미지정 시 passwordEncoder() 는 BCrypt (가입 시 저장한 값으로 로그인 가능해야 함)</p>
  */
 public class EgovUserDetailsHelperTest {
 

@@ -17,13 +17,14 @@
 - **Spring Boot 3.5.16** 기반
 - **Java 17** 지원
 - 전자정부 표준프레임워크 **5.1.0** (RTE·Boot Starter) 모듈 통합
-- Spring 생태계 버전 관리 (Spring Framework, Spring Cloud, Spring Security, Spring Batch)
+- Spring 생태계 버전 관리 (Spring Framework·Security·Batch·Data JPA·Integration 은 egov.2 빌드, Spring Cloud)
 - **Spring AI 1.1.8** (`spring-ai-bom` import, egov 빌드 5종은 **1.1.8-egov.1** 개별 관리) — Ollama, PGVector·Redis 벡터 스토어, RAG, PDF/Markdown 리더, JDBC 채팅 메모리 등
 - **LangChain4J 1.18.1** 및 **1.18.1-beta28** (문서 파서·PGVector·임베딩·Reactor·Hugging Face 등)
 - **PostgreSQL** JDBC 42.7.11, **HSQLDB** 2.7.4
 - Reactive 프로그래밍 지원 (WebFlux, R2DBC, Reactive MongoDB/Redis/Cassandra — RTE 모듈)
 - **QueryDSL** 5.1.0 (Jakarta classifier)
 - **Lombok** 1.18.48
+- **내장 Tomcat** 10.1.61 (`tomcat.version` 재정의, Boot 3.5.16 기본값 10.1.55)
 - **로깅**: Log4j2 2.26.1, SLF4J 2.0.20, log4jdbc 1.2 (`egovframe-rte-root` 5.1.0 기준)
 - **Apache Commons**: IO, DBCP2, Pool2, Lang3, BeanUtils, Net 등 버전 고정
 
@@ -121,21 +122,29 @@
 - 위 AI 모듈이 쓰는 `hwplib` 1.1.9, `hwpxlib` 1.0.8, `pdfbox` 3.0.7, `jedis` 6.0.0 은 `egovframe-rte-root` 5.1.0 에서 함께 관리
 
 #### Boot Starter (5.1.0)
-- `egovframe-boot-starter-access` — 접근 제어
-- `egovframe-boot-starter-crypto` — 암호화
-- `egovframe-boot-starter-security` — 보안
+- `egovframe-boot-starter-logging` — 로깅 (이 Parent 가 직접 관리)
+- `egovframe-boot-starter-access` — 접근 제어 (서비스 선택 사용)
+- `egovframe-boot-starter-crypto` — 암호화 (서비스 선택 사용)
+- `egovframe-boot-starter-security` — 보안 (서비스 선택 사용)
+
+> `access`·`crypto`·`security` 는 이 Parent 의 관리 항목에서 제외했습니다. 필요한 서비스가 직접 선언하며, 버전은 import 한 `egovframe-rte-root` 5.1.0 이 관리하므로 생략할 수 있습니다.
 
 ### Spring 생태계
 
 | 구성요소 | 버전 (pom.properties) |
 |----------|------------------------|
 | Spring Boot | 3.5.16 (parent) |
-| Spring Framework | 6.2.19 |
+| Spring Framework | 6.2.19-egov.2 |
 | Spring Cloud | 2025.0.3 |
-| Spring Security | 6.5.11-egov.1 |
-| Spring Batch | 5.2.6 |
-| Spring Data | 2025.0.13 |
-| Spring Integration | 6.5.10-egov.1 |
+| Spring Security | 6.5.11-egov.2 |
+| Spring Batch | 5.2.6-egov.2 |
+| Spring Data | 2025.0.13 (JPA 3.5.13-egov.2) |
+| Spring Integration | 6.5.10-egov.2 |
+| Micrometer / Micrometer Tracing | 1.15.12 (egov 빌드 1.15.12-egov.2) / 1.5.12 (egov 빌드 1.5.12-egov.2) |
+| Reactor (BOM) | 2024.0.18 (Boot 3.5.16 기본값) |
+| Reactor Netty | 1.2.18 (직접 선언 고정) |
+| Netty | 4.1.138.Final |
+| Tomcat (embedded) | 10.1.61 (Boot 3.5.16 기본값 10.1.55 재정의) |
 | Spring AI | 1.1.8 (egov 빌드 5종 1.1.8-egov.1) |
 
 ### Spring AI (관리되는 아티팩트 예시)
@@ -158,7 +167,7 @@
 
 - **PostgreSQL** (JDBC): 42.7.11
 - **HSQLDB**: 2.7.4
-- **Jakarta Annotation API**: 3.0.0
+- **Jakarta Annotation API**: 2.1.1 (Spring Boot 3.5.16 기준, 아래 참고)
 
 ### 로깅
 
@@ -171,6 +180,7 @@
 - **QueryDSL**: 5.1.0 (`querydsl-apt` / `querydsl-jpa` — Jakarta classifier)
 - **Lombok**: 1.18.48
 - **Selenium**: 4.44.0
+- **SpringDoc OpenAPI**: 2.8.17 (`springdoc-openapi-starter-webmvc-ui` / `-webflux-ui`)
 - **Apache Commons**: DBCP2 2.14.0, Pool2 2.13.1, IO 2.22.0, Lang3 3.20.0, BeanUtils 1.11.0, Net 3.13.0
 
 ## 🔧 버전 정보 (pom.xml 기준)
@@ -178,10 +188,17 @@
 | 컴포넌트 | 버전 | pom 주석 날짜 |
 |---------|------|---------------|
 | Spring Boot | 3.5.16 | 2026.08.02 |
-| Spring Framework | 6.2.19 | - |
+| Spring Framework | 6.2.19-egov.2 | - |
 | Spring Cloud | 2025.0.3 | 2026.08.02 |
-| Spring Security | 6.5.11-egov.1 | - |
-| Spring Batch | 5.2.6 | - |
+| Spring Security | 6.5.11-egov.2 | - |
+| Spring Batch | 5.2.6-egov.2 | - |
+| Spring Data JPA | 3.5.13-egov.2 | - |
+| Spring Integration | 6.5.10-egov.2 | - |
+| Micrometer / Micrometer Tracing | 1.15.12 (egov 빌드 1.15.12-egov.2) / 1.5.12 (egov 빌드 1.5.12-egov.2) | - |
+| Reactor (BOM) | 2024.0.18 | - |
+| Reactor Netty | 1.2.18 | - |
+| Netty | 4.1.138.Final | - |
+| Tomcat (embedded) | 10.1.61 | - |
 | Spring AI | 1.1.8 (egov 5종 1.1.8-egov.1) | - |
 | LangChain4J | 1.18.1 / 1.18.1-beta28 | 2026.06.10 |
 | PostgreSQL (JDBC) | 42.7.11 | 2026.06.10 |
@@ -197,7 +214,19 @@
 
 > Spring Framework·Security·Batch·Data·Integration, Jackson, Log4j2, SLF4J, Lombok 등은 `egovframe-rte-root` 5.1.0 BOM 값과 동일하게 정렬되어 있습니다.
 >
-> Spring Boot 의 `dependencyManagement` 에 직접 선언된 항목은 `egovframe-rte-root` import 보다 우선하므로, 값이 다른 항목은 Boot 속성으로 재정의해 runtime 값에 맞췄습니다: Hibernate Validator 8.0.5.Final, Lettuce 6.8.2.RELEASE, R2DBC H2 1.1.0.RELEASE, MySQL Connector/J 26.7.0, Ehcache 3.12.0. 또한 HttpClient5 는 egovframe-web-config-parent 와 같은 5.6.1 로 맞췄고, Jakarta WebSocket 은 양쪽 모두 2.1.1(Jakarta EE 10) 입니다. Jakarta Annotation · Persistence · Validation API 는 Spring Boot 3.5.16(Jakarta EE 10, Hibernate 6.6) 기준 버전(2.1.1 / 3.1.0 / 3.0.2)을 따릅니다 — `egovframe-rte-root` 의 3.0.0 / 3.2.0 / 3.1.1(EE 11 계열)로 올리면 Hibernate 6.6 의 `EntityManagerFactory` 생성이 실패합니다.
+> Spring Boot 의 `dependencyManagement` 에 직접 선언된 항목은 `egovframe-rte-root` import 보다 우선하므로, 값이 다른 항목은 Boot 속성으로 재정의해 runtime 값에 맞췄습니다: Hibernate Validator 8.0.5.Final, Lettuce 6.8.2.RELEASE, R2DBC H2 1.1.0.RELEASE, MySQL Connector/J 26.7.0, Ehcache 3.12.0. 또한 HttpClient5 는 egovframe-web-config-parent 와 같은 5.6.1 로 맞췄고, Jakarta WebSocket 은 Boot 기준 2.1.1(Jakarta EE 10) 입니다(egovframe-web-config-parent 는 2.0.0, Jakarta EE 9.1). Jakarta Annotation · Persistence · Validation API 는 Spring Boot 3.5.16(Jakarta EE 10, Hibernate 6.6) 기준 버전(2.1.1 / 3.1.0 / 3.0.2)을 따릅니다. Persistence 는 `egovframe-rte-root` 도 3.1.0 이며, JPA 3.2 로 올리면 Hibernate 6.6 의 `EntityManagerFactory` 생성이 실패합니다. MongoDB 는 `mongodb.version` 을 5.13.0 으로 재정의해 드라이버와 bson 버전을 맞췄습니다.
+
+### 빌드 플러그인
+
+| 플러그인 | 버전 | 비고 |
+|----------|------|------|
+| maven-compiler-plugin | 3.16.0 | 속성 재정의 (Lombok `annotationProcessorPaths` 명시) |
+| maven-surefire-plugin | 3.6.0 | 속성 재정의 |
+| maven-javadoc-plugin | 3.12.0 | 속성 재정의 |
+| maven-source-plugin | 3.4.0 | 속성 재정의 |
+| maven-install-plugin | 3.2.0 | 속성 재정의 |
+| maven-war-plugin | 3.4.0 | Spring Boot 3.5.16 기본값 |
+| maven-deploy-plugin | 3.1.4 | Spring Boot 3.5.16 기본값 |
 
 ## 📚 참고 자료
 

@@ -47,7 +47,7 @@ class EgovAccessUtilTest {
     @SuppressWarnings("unchecked")
     void regexMatcher_reusesCompiledPattern() throws Exception {
         String pattern = "/cache/probe/.*";
-        // 서로 다른 입력에 같은 패턴으로 두 번 호출해도 컴파일된 Pattern은 재사용되어야 한다.
+        // 다른 입력·같은 패턴으로 두 번 호출해도 컴파일된 Pattern 재사용
         EgovAccessUtil.regexMatcher(pattern, "/cache/probe/a");
         EgovAccessUtil.regexMatcher(pattern, "/cache/probe/b");
 

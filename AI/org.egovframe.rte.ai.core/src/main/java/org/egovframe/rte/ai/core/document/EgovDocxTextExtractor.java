@@ -28,8 +28,7 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
 /**
  * DOCX(MS Word) 텍스트 추출기 — Apache POI(optional) 기반.
  *
- * <p>참고 샘플은 POI 를 얻으려고 {@code egovframe-rte-fdl-excel} 을 통째 의존했다(전이 의존 우회). 여기서는 {@code poi-ooxml}
- * 을 optional 로 직접 선언한다(과제 17 이후 전이 의존 금지 관례).</p>
+ * <p>{@code poi-ooxml} optional 직접 선언 ({@code egovframe-rte-fdl-excel} 경유 전이 의존 금지 — 과제 17 관례).</p>
  *
  * <p><b>zip 가드.</b> DOCX 는 zip 컨테이너이므로 POI 에 넘기기 전에 HWPX 와 <b>같은</b> {@link EgovZipDocumentGuard}(예산의 가드)를
  * 통과해야 한다 — 엔트리 수·개별·누적 해제 크기·DOCTYPE 을 POI 의 전역 설정에 기대지 않고 같은 기준으로 막는다(보안점검 1부 4장 #5).</p>

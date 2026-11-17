@@ -15,7 +15,7 @@ public class EgovLoginFailHandlerTest {
     public void onAuthenticationFailure_usesLoginFailureUrl() throws Exception {
         EgovSecurityConfig config = new EgovSecurityConfig();
         config.setLoginFailureUrl("/uat/uia/loginFail.do");
-        // 접근거부 URL 은 로그인 실패와 다른 화면이다. 둘을 구분해 두고 어느 쪽으로 가는지 본다.
+        // 접근거부 URL 과 로그인 실패 URL 을 구분해 이동 대상 확인
         config.setAccessDeniedUrl("/system/accessDenied.do");
 
         EgovLoginFailHandler handler = new EgovLoginFailHandler(config);

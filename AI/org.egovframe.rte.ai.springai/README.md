@@ -4,7 +4,7 @@
 
 - **Artifact**: `org.egovframe.rte:egovframe-rte-ai-springai:5.1.0`
 - **Runtime**: Java 17 / Spring Framework 6.2.x / Spring AI 1.1.8
-- **의존(compile)**: `egovframe-rte-ai-core`, `spring-ai-commons` · `-model` · `-client-chat` · `-rag` · `-vector-store` · `-retry`, `reactor-core`, `slf4j-api`
+- **의존(compile)**: `egovframe-rte-ai-core`, `spring-ai-commons` · `-model` · `-client-chat` · `-rag` · `-vector-store` · `-retry`, `spring-core`(버전 정렬용), `reactor-core`, `slf4j-api`
 
 ---
 

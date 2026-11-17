@@ -11,6 +11,7 @@
 ## 특징
 
 - **표준 Repository**: `EgovJpaRepository`로 도메인 리포지토리 일관화
+- **감사·소프트 삭제**: `EgovBaseEntity`(등록자·등록일시·수정자·수정일시 자동 기록), `EgovSoftDeletableEntity` + `EgovCrudRepository`(물리 삭제 대신 삭제일시 기록), MDC 기반 `EgovMdcAuditorAware`
 - **MyBatis·JPA 공존**: 동일 프로젝트에서 Mapper와 JPA 병행 가능(트랜잭션은 애플리케이션에서 통합)
 
 ---
@@ -19,8 +20,15 @@
 
 ```
 org/egovframe/rte/psl/data/jpa/
-└── repository/
-    └── EgovJpaRepository.java
+├── repository/
+│   ├── EgovJpaRepository.java
+│   └── EgovCrudRepository.java
+├── entity/
+│   ├── EgovBaseEntity.java
+│   ├── EgovSoftDeletable.java
+│   └── EgovSoftDeletableEntity.java
+└── audit/
+    └── EgovMdcAuditorAware.java
 ```
 
 ---
@@ -30,6 +38,10 @@ org/egovframe/rte/psl/data/jpa/
 | 클래스 | 설명 |
 |--------|------|
 | `EgovJpaRepository` | Egov 전자정부 표준에 맞춘 JPA Repository 마커/공통 인터페이스 |
+| `EgovCrudRepository` | 소프트 삭제(`softDelete*`·`restore`) 지원 공통 CRUD 리포지토리 |
+| `EgovBaseEntity` | 감사 필드 공통 상위 엔티티 (`@EnableJpaAuditing` 필요, `spring-aspects` 는 앱에서 직접 선언) |
+| `EgovSoftDeletable` / `EgovSoftDeletableEntity` | 소프트 삭제 계약 / 감사 필드 + 소프트 삭제 상위 엔티티 |
+| `EgovMdcAuditorAware` | SLF4J MDC 의 사용자 ID 를 감사자로 반환하는 `AuditorAware` |
 
 엔티티·쿼리 메서드는 비즈니스 모듈에서 `JpaRepository` / `@Query` 등으로 확장합니다.
 

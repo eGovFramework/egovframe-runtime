@@ -60,10 +60,8 @@ import java.util.Map;
  * </pre>
  * @since 2009.06.01
  *
- * <p><b>보안 주의:</b> {@code wsdlAddress}(WSDL 조회 URL)는 신뢰할 수 있는 연계 설정에서만 지정해야
- * 한다 — 이 값이 외부 입력으로 오염되면 SSRF로 이어질 수 있다. 또한 WSDL/XSD 파싱 시 XXE 방어는 이
- * 클래스가 별도로 강화하는 것이 아니라 {@link jakarta.xml.ws.Service#create}가 내부적으로 사용하는
- * CXF/JAX-WS 런타임의 기본 XML 파서 보안 설정에 의존한다.</p>
+ * <p><b>보안 주의:</b> {@code wsdlAddress}(WSDL 조회 URL)는 신뢰할 수 있는 연계 설정에서만 지정 (외부 입력 오염 시 SSRF).
+ * WSDL/XSD 파싱 XXE 방어는 {@link jakarta.xml.ws.Service#create} 의 CXF/JAX-WS 런타임 기본 XML 파서 설정에 의존.</p>
  */
 public class EgovWebServiceClientImpl implements EgovWebServiceClient {
 
@@ -172,11 +170,11 @@ public class EgovWebServiceClientImpl implements EgovWebServiceClient {
         this.serviceEndpointInterfaceInfo = serviceEndpointInterfaceInfo;
         this.messageConverter = messageConverter;
 
-        // ServiceEndpointInterface Class를 load한다.
+        // ServiceEndpointInterface Class load
         serviceEndpointInterfaceClass = classLoader.loadClass(serviceEndpointInterfaceInfo);
         LOGGER.debug("### EgovWebServiceClientImpl serviceEndpointInterfaceClass = {}", serviceEndpointInterfaceClass);
 
-        // service를 생성한다.
+        // service 생성
         wsdlURL = new URL(serviceEndpointInterfaceInfo.getWsdlAddress());
         LOGGER.debug("### EgovWebServiceClientImpl wsdlURL = {}", wsdlURL);
         serviceName = new QName(serviceEndpointInterfaceInfo.getNamespace(), serviceEndpointInterfaceInfo.getServiceName());
@@ -342,12 +340,12 @@ public class EgovWebServiceClientImpl implements EgovWebServiceClient {
             });
         }
 
-        // responseValueObject를 typed object로 변환한다.
+        // responseValueObject 를 typed object 로 변환
         LOGGER.debug("### EgovWebServiceClientImpl service() Parse Response Message");
         EgovIntegrationMessageHeader responseHeader = null;
         succeed = true;
 
-        // response parsing은 최대한 가능한 만큼 수행한다.
+        // response parsing 은 가능한 만큼 최대한 수행
         Map<String, Object> responseBody = new HashMap<String, Object>();
         int i = 0;
         for (ServiceParamInfo paramInfo : serviceEndpointInterfaceInfo.getParamInfos()) {

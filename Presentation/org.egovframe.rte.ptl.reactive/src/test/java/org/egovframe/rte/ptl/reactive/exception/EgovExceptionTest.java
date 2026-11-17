@@ -55,7 +55,7 @@ public class EgovExceptionTest {
     public void messageIsPropagatedToThrowable() {
         RuntimeException re = new EgovException(EgovErrorCode.NOT_FOUND, "custom");
 
-        // 수정 전에는 super(message)를 호출하지 않아 null 이었음(개선 입증)
+        // super(message) 전달 확인 (null 아님)
         assertEquals("custom", re.getMessage());
     }
 

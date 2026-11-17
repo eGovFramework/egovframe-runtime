@@ -22,10 +22,8 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
  * sqlHierarchicalRoles를 설정하지 않은 배포(DB 기반 role hierarchy 미사용)에서
  * 로그인 경로가 NPE 없이 동작하는지 검증.
  *
- * EgovSecurityTestDatasource(공유 in-memory HSQLDB "testdb")를 그대로 재사용하면
- * 이 클래스만의 다른 컨텍스트 클래스 조합 때문에 Spring 테스트 컨텍스트 캐시가 갈려
- * 같은 HSQLDB URL에 testdb.sql이 두 번 실행되어 "object name already exists"로
- * 깨진다. 그래서 이 테스트 전용의 독립된 in-memory DB를 따로 띄운다.
+ * 전용 in-memory DB 사용 : 공유 "testdb" 재사용 시 컨텍스트 캐시 분리로 testdb.sql 이
+ * 두 번 실행되어 "object name already exists" 발생
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {
@@ -40,10 +38,8 @@ public class EgovSecurityConfigurationRoleHierarchyTest {
 
     @Test
     public void testLoadUserByUsernameWorksWithoutSqlHierarchicalRoles() {
-        // HierarchyStringsFactoryBean.getObject()는 sqlHierarchicalRoles 미설정 시
-        // 안전 기본값("ROLE_ADMIN > ROLE_USER > ROLE_ANONYMOUS")을 반환하도록 이미 구현돼 있다.
-        // roleHierarchy()가 이 기본값을 거치지 않고 조기에 null을 반환하면
-        // EgovJdbcUserDetailsManager.loadUserByUsername()이 NPE로 죽는다.
+        // sqlHierarchicalRoles 미설정 시 HierarchyStringsFactoryBean 기본값("ROLE_ADMIN > ROLE_USER > ROLE_ANONYMOUS") 사용
+        // (roleHierarchy() 가 null 반환 시 loadUserByUsername() NPE)
         assertDoesNotThrow(() -> jdbcUserService.loadUserByUsername("user"));
     }
 
@@ -76,10 +72,8 @@ public class EgovSecurityConfigurationRoleHierarchyTest {
         @Bean
         @Primary
         public EgovSecurityConfig egovSecurityConfig() {
-            // src/test/resources/egovframework/conf/egov-security-config.properties와
-            // 동일한 필드 구성(EgovSecurityConfiguration의 securityFilterChain() 전체가
-            // 정상적으로 뜨려면 sqlRolesAndUrl 등도 HSQLDB 테스트 스키마와 맞아야 한다) —
-            // 단 sqlHierarchicalRoles만 의도적으로 비워서 재현 대상 시나리오를 만든다.
+            // egov-security-config.properties 와 동일 구성 (securityFilterChain() 기동에 필요),
+            // 단 sqlHierarchicalRoles 만 의도적으로 비움 (재현 시나리오)
             EgovSecurityConfig config = new EgovSecurityConfig();
             config.setId("noHierarchyConfig");
             config.setLoginUrl("/uat/uia/egovLoginUsr.do");
@@ -112,7 +106,7 @@ public class EgovSecurityConfigurationRoleHierarchyTest {
             config.setSqlRolesAndUrl(
                     "SELECT r.ROLE_PTTRN AS url, a.AUTHOR_CODE AS authority "
                             + "FROM ROLES r INNER JOIN AUTHROLES a ON r.ROLE_CODE = a.ROLE_CODE ORDER BY r.ROLE_SORT");
-            // sqlHierarchicalRoles는 의도적으로 미설정 — 재현 대상 시나리오.
+            // sqlHierarchicalRoles는 의도적으로 미설정 — 재현 대상 시나리오
             return config;
         }
     }

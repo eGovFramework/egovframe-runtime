@@ -111,7 +111,7 @@ class EgovSentenceChunkerTest {
 				}
 			});
 		}
-		// 한도 1: 보충면 문자 하나(UTF-16 2자)가 한도를 넘지만 코드포인트 하나를 그대로 내보낸다
+		// 한도 1: 보충면 문자 하나(UTF-16 2자)가 한도 초과여도 코드포인트 하나 그대로 출력
 		EgovChunks one = chunker(CHARS, 1).chunk(text);
 		for (String chunk : one.texts()) {
 			assertEquals(1, chunk.codePointCount(0, chunk.length()));

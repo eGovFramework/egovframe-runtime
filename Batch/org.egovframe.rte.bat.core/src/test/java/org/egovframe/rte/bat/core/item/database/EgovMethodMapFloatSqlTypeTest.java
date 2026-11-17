@@ -124,7 +124,7 @@ class EgovMethodMapFloatSqlTypeTest {
         Map<String, Method> methodMap = support.getMethodMap();
         String[] sqlTypes = support.getSqlTypeArray(params, item);
 
-        // 산출부는 primitive 를 소문자 이름으로 낸다.
+        // 산출부는 primitive 를 소문자 이름으로 출력
         assertEquals("double", sqlTypes[0]);
         assertEquals("float", sqlTypes[1]);
 

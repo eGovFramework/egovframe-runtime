@@ -57,14 +57,14 @@ public class LogLayoutTest {
         // targetLogger 설정 확인
         assertTrue(targetLogger.isDebugEnabled()); // true
         assertEquals(Level.DEBUG, targetLogger.getLevel()); // true
-        assertTrue(!targetLogger.isAdditive()); // true - 해당 로거 설정에 additivity=false이므로 targetLogger.isAdditive()=false
+        assertTrue(!targetLogger.isAdditive()); // true - 로거 설정 additivity=false
 
-        // targetLogger에 걸린 AppenderRef 설정 확인, "file" 이름의 File Appender가 설정되어 있음
+        // targetLogger에 걸린 AppenderRef 설정 확인, "file" 이름의 File Appender 설정
         Map<String, Appender> appenders = targetLogger.getAppenders();
         FileAppender fileAppender = (FileAppender) appenders.get("file");
         assertNotNull(fileAppender); // true
 
-        // 해당 로거의 File Appender 의 Layout 설정 확인, PatternLayout이 등록되어 있음
+        // 해당 로거의 File Appender 의 Layout 설정 확인, PatternLayout 등록
         assertEquals("org.apache.logging.log4j.core.layout.PatternLayout", fileAppender.getLayout().getClass().getName());
         PatternLayout layout = (PatternLayout) fileAppender.getLayout();
         assertEquals("%d %5p [%c] %m%n", layout.getConversionPattern());
@@ -127,7 +127,7 @@ public class LogLayoutTest {
         tailLines = LogFileUtil.getTailLines(logFile, 5);
 
         // 위의 %d %5p [%c] 및 마지막 %m%n 의 출력은 동일
-        // thread 명이 main 으로만 나올 때도 있고 main [client-10] 과 같이 나오는 경우도 있음
+        // thread 명은 main 또는 main [client-10] 형태로 출력
         String patternStr = "^(.*) ([a-zA-Z]+) \\[(org\\.egovframe\\.rte\\.fdl\\.logging\\.sample\\.LogLayoutSample)\\] (.*)$";
         Pattern pattern = Pattern.compile(patternStr);
         Matcher matcher = pattern.matcher(tailLines[0]);

@@ -52,10 +52,8 @@ public class BlobSerializableTypeHandler extends AbstractLobTypeHandler {
      * Prevents deserialization of untrusted data (e.g. RCE via malicious payloads).
      * Add application domain types via {@link #addAllowedClass(Class)} or {@link #addAllowedClassName(String)}.
      *
-     * <p><b>보안 주의:</b> 이 목록은 JVM 전역(static)이므로, 여기에 클래스를 추가하면 이 TypeHandler를
-     * 사용하는 애플리케이션의 모든 BLOB 역직렬화 지점에 동일하게 적용된다. 신뢰할 수 있는 자체 도메인
-     * 타입만 추가할 것 — 외부 입력으로 결정되는 클래스명을 추가하면 역직렬화 필터(CWE-502 방어)가
-     * 사실상 무력화될 수 있다.</p>
+     * <p><b>보안 주의:</b> JVM 전역(static) 목록 (모든 BLOB 역직렬화 지점에 적용). 신뢰할 수 있는 자체 도메인
+     * 타입만 추가 (외부 입력 클래스명 추가 시 역직렬화 필터(CWE-502 방어) 무력화).</p>
      */
     private static final Set<String> ALLOWED_CLASS_NAMES = ConcurrentHashMap.newKeySet();
 

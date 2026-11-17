@@ -54,7 +54,7 @@ class EgovWildcardMessageSourceSecurityTest {
 	void setUp() {
 		messageSource = new EgovWildcardMessageSource();
 		messageSource.setDefaultEncoding("UTF-8");
-		// 실행 환경의 기본 로케일에 따라 결과가 달라지지 않도록 시스템 로케일 폴백을 끈다
+		// 실행 환경 기본 로케일에 결과가 좌우되지 않도록 시스템 로케일 폴백 해제
 		messageSource.setFallbackToSystemLocale(false);
 		messageSource.setBasenames("classpath*:/egov-wildcard-security-test/*.properties");
 	}

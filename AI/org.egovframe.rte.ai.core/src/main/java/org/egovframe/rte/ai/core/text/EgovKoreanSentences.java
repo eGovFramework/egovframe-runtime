@@ -110,7 +110,7 @@ public final class EgovKoreanSentences {
 		while (index < length) {
 			Fence fence = fenceAt(text, index);
 			if (fence != null) {
-				// 코드펜스 안의 문장부호는 코드 조각일 수 있으므로 블록 전체를 한 구간으로 고정한다
+				// 코드펜스 안 문장부호는 코드 조각일 수 있음 — 블록 전체를 한 구간으로 고정
 				add(spans, text, sentenceStart, index);
 				int fenceEnd = consumeFence(text, index, fence);
 				add(spans, text, index, fenceEnd);
@@ -184,7 +184,7 @@ public final class EgovKoreanSentences {
 		while (runEnd < length && TERMINATORS.indexOf(text.charAt(runEnd)) >= 0) {
 			runEnd++;
 		}
-		// "..."·"?!" 같은 종결부호 런은 한 번에 소비해 빈 문장이 생기지 않게 한다. 닫는 인용·괄호는 앞 문장에 포함
+		// "..."·"?!" 같은 종결부호 런은 한 번에 소비(빈 문장 방지), 닫는 인용·괄호는 앞 문장에 포함
 		int boundaryEnd = runEnd;
 		while (boundaryEnd < length && CLOSING_MARKS.indexOf(text.charAt(boundaryEnd)) >= 0) {
 			boundaryEnd++;
@@ -198,10 +198,10 @@ public final class EgovKoreanSentences {
 			// 마침표는 날짜·소수점·약어·목록 번호와 구분되지 않으므로 한국어 종결어미 뒤에서만 경계
 			boundary = isKoreanEnding(previous) && followedByBreak;
 		} else {
-			// 물음표·느낌표는 다른 표기로 쓰이지 않는다 — 단 같은 줄의 닫히지 않은 링크·이미지 안이면 제외
+			// 물음표·느낌표는 다른 표기 용도 없음 — 단 같은 줄의 닫히지 않은 링크·이미지 안이면 제외
 			boundary = followedByBreak && !markup.insideUnclosed(text, terminatorStart);
 		}
-		// 인용을 닫은 뒤 같은 줄에 한글이 이어지면 인용을 받는 문장 성분("…"라고 말했다)이므로 자르지 않는다
+		// 닫는 인용 뒤 같은 줄에 한글이 이어지면 인용을 받는 문장 성분("…"라고 말했다) — 미분할
 		if (boundary && consumedClosing && continuesWithHangulOnSameLine(text, boundaryEnd)) {
 			boundary = false;
 		}

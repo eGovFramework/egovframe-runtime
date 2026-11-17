@@ -41,14 +41,14 @@ public class EgovSafeFlatFileItemWriterChunkRetryTest {
     @Test
     public void testRetriedChunkAfterRollbackIsNotRejectedWhenActualFileSizeIsWithinLimit() throws Exception {
         File destination = tempDir.resolve("retry.dat").toFile();
-        // "LINE-1" + "\n" = 7 bytes. 청크 하나만큼만 허용, 같은 청크가 두 번 누적되면 한도를 넘는다.
+        // "LINE-1" + "\n" = 7 bytes. 청크 하나만큼만 허용, 같은 청크가 두 번 누적되면 한도 초과
         EgovSafeFlatFileItemWriter<String> writer = writer(destination, 7);
         Chunk<String> chunk = new Chunk<>(List.of("LINE-1"));
         TransactionTemplate transactionTemplate = new TransactionTemplate(new ResourcelessTransactionManager());
 
         writer.open(new ExecutionContext());
 
-        // 첫 시도: 트랜잭션 안에서 write() 후 롤백 — 트랜잭션 버퍼에 있던 이 청크는 임시 파일에 쓰이지 않는다.
+        // 첫 시도: 트랜잭션 안에서 write() 후 롤백 — 트랜잭션 버퍼에 있던 이 청크는 임시 파일에 쓰이지 않음
         transactionTemplate.execute(status -> {
             try {
                 writer.write(chunk);
@@ -59,8 +59,7 @@ public class EgovSafeFlatFileItemWriterChunkRetryTest {
             return null;
         });
 
-        // 재시도: 같은 청크를 다시 write() — 실제 파일에는 여전히 이 청크가 한 번도 반영되지
-        // 않았으므로 한도 이내다. 누적 카운터로 셌다면 롤백을 반영하지 못해 이미 7B 를 센 상태가 된다.
+        // 재시도: 같은 청크 재 write() — 파일 미반영(롤백)이므로 한도 이내 (누적 카운터면 롤백 미반영으로 이미 7B)
         assertDoesNotThrow(() -> transactionTemplate.executeWithoutResult(status -> {
             try {
                 writer.write(chunk);

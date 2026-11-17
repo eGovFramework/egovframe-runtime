@@ -13,9 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * 설정을 생략했을 때 쓰이는 기본 조회 쿼리가 실제로 동작하는지 검증.
  *
- * UsersQueryFactoryBean과 AuthoritiesQueryFactoryBean은 같은 목적의 형제이고
- * 둘 다 user_id 컬럼을 쓰는 Spring Security 표준 스키마를 가정한다. 그 스키마를
- * 그대로 만들어 두 기본 쿼리를 나란히 실행한다.
+ * UsersQueryFactoryBean·AuthoritiesQueryFactoryBean 공통 가정(user_id 컬럼 표준 스키마)으로 두 기본 쿼리 실행
  */
 public class DefaultQueryFactoryBeanTest {
 

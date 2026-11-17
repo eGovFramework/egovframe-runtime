@@ -70,7 +70,7 @@ class EgovCookiesSecurityTest {
 	@Test
 	@DisplayName("세미콜론·제어 문자는 encodeValue 를 선택해도 발급되지 않는다 — 속성 경계는 인코딩으로 우회할 수 없다")
 	void 세미콜론은_인코딩으로도_우회_불가() {
-		// 빌더 생성 자체가 거부되므로 encodeValue() 에 도달할 수 없다
+		// 빌더 생성 자체가 거부되어 encodeValue() 도달 불가
 		assertThrows(IllegalArgumentException.class, () -> EgovCookies.builder("n", "a; Secure"));
 		assertThrows(IllegalArgumentException.class, () -> EgovCookies.builder("n", "a" + CR + LF + "Set-Cookie: b=1"));
 	}
@@ -115,7 +115,7 @@ class EgovCookiesSecurityTest {
 	@Test
 	@DisplayName("클라이언트가 변조한 퍼센트 인코딩은 decodedValue 가 예외 대신 빈 Optional 로 다룬다")
 	void 변조된_인코딩은_예외가_아니라_빈값() {
-		// 쿠키 값은 클라이언트가 임의로 바꿀 수 있다 — 읽기 헬퍼가 그 값 때문에 예외를 내면 요청 처리가 500 으로 끝난다
+		// 쿠키 값은 클라이언트가 임의 변경 가능 — 읽기 헬퍼가 그 값 때문에 예외를 내면 요청이 500 으로 종료
 		for (String tampered : List.of("%", "%zz", "%E0%A4%A", "abc%", "%%")) {
 			MockHttpServletRequest request = new MockHttpServletRequest();
 			request.setCookies(new Cookie("n", tampered));

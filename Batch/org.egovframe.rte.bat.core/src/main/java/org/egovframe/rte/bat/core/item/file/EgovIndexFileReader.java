@@ -146,7 +146,7 @@ public class EgovIndexFileReader<T> implements ItemStreamReader<T> {
     }
 
     // 2026.03.24 KISA 보안취약점 조치
-    // makeIndexItemReader 초기화 실패 시 생성된 reader의 자원을 해제한다.
+    // makeIndexItemReader 초기화 실패 시 생성된 reader 자원 해제
     private void closeReaderOnFailure() {
         if (this.reader != null) {
             try {
@@ -169,7 +169,7 @@ public class EgovIndexFileReader<T> implements ItemStreamReader<T> {
         String resourceFileName = indexResource.substring(index + 1);
         String resourceDirectory = indexResource.substring(0, index);
 
-        // 파일명에서 Index 값 즉, (?)로 정의된 값을 찾는다.
+        // 파일명에서 Index 값, 즉 (?)로 정의된 값 탐색
         Matcher matcher = Pattern.compile("\\([+-]?[0-9]+\\)").matcher(resourceFileName);
 
         while (matcher.find()) {
@@ -177,7 +177,7 @@ public class EgovIndexFileReader<T> implements ItemStreamReader<T> {
             indexKey = findIndex.substring(1, findIndex.length() - 1);
         }
 
-        // (일련번호)부분을 추출하고 검증한다.
+        // (일련번호) 부분 추출 및 검증
         if (indexKey == null || "".equals(indexKey) || indexKey.length() == 0) {
             throw new RuntimeException("The specified index number of the file can not be found(Resouce Property). example : 'FileName'+'_NDX(number)'");
         }
@@ -205,7 +205,7 @@ public class EgovIndexFileReader<T> implements ItemStreamReader<T> {
             throw new RuntimeException("Resource File Exception : " + e.getMessage());
         }
 
-        // 지정된 디렉토리에서 규격에 맞는 파일을 피터링하여 파일목록을 추출한다.
+        // 지정 디렉토리에서 규격에 맞는 파일을 필터링해 파일 목록 추출
         File[] fileInfoList = dir.listFiles(new FilenameFilter() {
             public boolean accept(File dir, String name) {
                 return name.startsWith(indexFileHeader);
@@ -216,7 +216,7 @@ public class EgovIndexFileReader<T> implements ItemStreamReader<T> {
             throw new RuntimeException("The file resource not found in '" + resourceDirectory + "'");
         }
         List<String> indexFileList = new ArrayList<String>();
-        // 추출된 파일목록중 디렉토리인경우 제외시킨다.
+        // 추출된 파일 목록 중 디렉토리 제외
         for (File file : fileInfoList) {
             if (file.isFile()) {
                 // 파일이 있다면 파일 이름 출력

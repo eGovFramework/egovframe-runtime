@@ -256,35 +256,31 @@ public class MessageConverterImplTest {
 
     @Test
     public void testConvertToValueObjectWithNullListSource() throws Exception {
-        // 메시지 body에서 List 필드가 생략되면 source가 null로 전달된다.
-        // null 역참조(NPE) 없이 null을 반환해야 한다.
+        // List 필드 생략 시 source null : NPE 없이 null 반환
         assertNull(messageConverter.convertToValueObject(null, personListType));
     }
 
     @Test
     public void testConvertToValueObjectWithNullRecordSource() throws Exception {
-        // 메시지 body에서 Record 필드가 생략되면 source가 null로 전달된다.
-        // null 역참조(NPE) 없이 null을 반환해야 한다.
+        // Record 필드 생략 시 source null : NPE 없이 null 반환
         assertNull(messageConverter.convertToValueObject(null, recordType));
     }
 
     @Test
     public void testConvertToTypedObjectWithNullListSource() throws Exception {
-        // 변환 대상 Value Object의 List 필드가 null인 경우이다.
-        // null 역참조(NPE) 없이 null을 반환해야 한다.
+        // Value Object의 List 필드 null : NPE 없이 null 반환
         assertNull(messageConverter.convertToTypedObject(null, personListType));
     }
 
     @Test
     public void testConvertToTypedObjectWithNullRecordSource() throws Exception {
-        // 변환 대상 Value Object의 Record 필드가 null인 경우이다.
-        // null 역참조(NPE) 없이 null을 반환해야 한다.
+        // Value Object의 Record 필드 null : NPE 없이 null 반환
         assertNull(messageConverter.convertToTypedObject(null, personRecordType));
     }
 
     @Test
     public void testConvertToTypedObjectWithNullListField() throws Exception {
-        // List 필드가 null인 Value Object도 나머지 필드는 정상적으로 변환되어야 한다.
+        // List 필드가 null이어도 나머지 필드는 정상 변환
         ValueObject source = new ValueObject() {
             {
                 stringValue = "String";

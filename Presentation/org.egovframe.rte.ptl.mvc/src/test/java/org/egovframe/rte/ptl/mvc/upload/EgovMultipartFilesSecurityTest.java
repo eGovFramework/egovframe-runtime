@@ -78,7 +78,7 @@ class EgovMultipartFilesSecurityTest {
 		Map<MultipartFile, EgovUploadPolicy.Reason> violations = EgovMultipartFiles.checkAll(imagePolicy(), List.of(emptyJsp));
 		assertEquals(EgovUploadPolicy.Reason.EMPTY_FILE, violations.get(emptyJsp));
 
-		// 빈 파일을 허용하는 정책이라도 확장자는 여전히 검사한다
+		// 빈 파일 허용 정책이라도 확장자는 검사
 		EgovUploadPolicy emptyAllowed = EgovUploadPolicy.builder().allowExtensionList(".png,.pdf").allowEmptyFile(true).build();
 		assertEquals(Optional.of(EgovUploadPolicy.Reason.EXTENSION_NOT_ALLOWED),
 				EgovMultipartFiles.checkAll(emptyAllowed, List.of(emptyJsp)).values().stream().findFirst());

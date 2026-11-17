@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ExceptionTransferHandlerNullTest {
 
-    // exceptionHandlerService 를 주입하지 않은 구성에서도 발생한 업무 예외를 그대로 전달해야 한다.
+    // exceptionHandlerService 미주입 구성에서도 발생한 업무 예외 그대로 전달
     @Test
     public void testTransferBizExceptionWithoutHandlerService() {
         ExceptionTransfer transfer = new ExceptionTransfer();
@@ -25,7 +25,7 @@ public class ExceptionTransferHandlerNullTest {
         assertSame(be, thrown);
     }
 
-    // 빈 배열을 주입한 동일 구성과 결과가 같아야 한다.
+    // 빈 배열 주입 구성과 결과 동일
     @Test
     public void testTransferBizExceptionWithEmptyHandlerService() {
         ExceptionTransfer transfer = new ExceptionTransfer();
@@ -37,7 +37,7 @@ public class ExceptionTransferHandlerNullTest {
         assertSame(be, thrown);
     }
 
-    // RuntimeException 도 같은 후처리 경로를 거치므로 동일하게 원본을 전달해야 한다.
+    // RuntimeException 도 같은 후처리 경로 — 원본 그대로 전달
     @Test
     public void testTransferRuntimeExceptionWithoutHandlerService() {
         ExceptionTransfer transfer = new ExceptionTransfer();

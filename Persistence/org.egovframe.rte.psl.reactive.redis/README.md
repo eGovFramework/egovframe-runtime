@@ -11,7 +11,7 @@
 ## 특징
 
 - Lettuce **비동기/리액티브** API
-- `EgovRedisConfiguration`으로 커넥션 팩토리·템플릿 구성 표준화
+- `EgovRedisConfiguration`으로 커넥션 팩토리 구성 표준화
 
 ---
 
@@ -31,8 +31,8 @@ org/egovframe/rte/psl/reactive/redis/
 
 | 클래스 | 설명 |
 |--------|------|
-| `EgovRedisConfiguration` | Redis Standalone/Cluster 등 Bean 정의 |
-| `EgovRedisRepository` | Redis 접근 리포지토리 베이스 |
+| `EgovRedisConfiguration` | Redis Standalone(SSL 선택) Lettuce 리액티브 커넥션 팩토리 구성 |
+| `EgovRedisRepository` | `ReactiveRedisTemplate` 확장 리포지토리 베이스 |
 
 ---
 

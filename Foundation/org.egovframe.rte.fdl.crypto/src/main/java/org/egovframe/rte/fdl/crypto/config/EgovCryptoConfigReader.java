@@ -95,8 +95,7 @@ public class EgovCryptoConfigReader {
                 try (InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
                     props.load(reader);
                 }
-                // 파일에 명시되지 않은 키(crypto, algorithm 등)는 기본값을 유지하도록
-                // 빈 인스턴스가 아니라 createDefaultConfig()를 베이스로 덮어쓴다.
+                // 미지정 키(crypto, algorithm 등)는 기본값 유지 : createDefaultConfig() 위에 덮어씀
                 return mapPropertiesToBean(props, createDefaultConfig());
             }
         } catch (IOException e) {
@@ -118,7 +117,7 @@ public class EgovCryptoConfigReader {
     }
 
     // 2026.02.28 KISA 보안취약점 조치
-    // properties 설정 파일을 읽어 기존 bean(기본값이 채워진 상태) 위에 덮어쓴다.
+    // properties 값을 기본값 bean 위에 덮어씀
     private static EgovCryptoConfig mapPropertiesToBean(Properties props, EgovCryptoConfig bean) {
         for (String key : props.stringPropertyNames()) {
             String value = props.getProperty(key);

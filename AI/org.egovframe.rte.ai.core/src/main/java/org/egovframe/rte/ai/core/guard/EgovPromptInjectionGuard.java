@@ -143,9 +143,8 @@ public final class EgovPromptInjectionGuard {
 		}
 		StringBuilder filtered = new StringBuilder(text.length());
 		text.codePoints().filter(cp -> !isRemoved(cp)).forEach(filtered::appendCodePoint);
-		// 결합 문자(Mn/Mc/Me — 다이어크리틱·변형 선택자)는 완전 분해(NFKD) 뒤에 벗겨야 한다: NFKC 는 "i"+U+0301 을 "í" 로
-		// 합성해 글자를 바꾸고, 한글은 완성형이 없어 결합 문자가 그대로 남아 렉시콘과 어긋난다(CWE-693, 2026-09-08 보안 재점검).
-		// 벗긴 뒤 NFKC 로 재합성한다(한글 자모 → 음절, 전각 → 반각). 렉시콘도 같은 함수로 정규화되므로 판정은 일관된다.
+		// 결합 문자(Mn/Mc/Me) 제거는 NFKD 분해 후 (NFKC 는 "i"+U+0301 을 "í" 로 합성, 한글은 결합 문자 잔존 — CWE-693, 2026-09-08 보안 재점검)
+		// 제거 후 NFKC 재합성(자모 → 음절, 전각 → 반각). 렉시콘도 같은 함수로 정규화 (판정 일관)
 		String decomposed = Normalizer.normalize(filtered, Normalizer.Form.NFKD);
 		StringBuilder stripped = new StringBuilder(decomposed.length());
 		decomposed.codePoints().filter(cp -> !isCombiningMark(cp)).forEach(stripped::appendCodePoint);

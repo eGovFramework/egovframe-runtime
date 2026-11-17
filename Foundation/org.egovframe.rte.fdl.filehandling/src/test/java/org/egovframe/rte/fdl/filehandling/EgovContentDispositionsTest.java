@@ -21,7 +21,7 @@ public class EgovContentDispositionsTest {
 
     @Test
     public void 한글_파일명은_filename스타에_ASCII_폴백을_병기한다() {
-        // 보(EB B3 B4)·고(EA B3 A0)·서(EC 84 9C) — attr-char 인 '.' 과 확장자는 그대로 남는다
+        // 보(EB B3 B4)·고(EA B3 A0)·서(EC 84 9C) — attr-char 인 '.' 과 확장자는 그대로 유지
         assertEquals("attachment; filename=\"___.hwp\"; filename*=UTF-8''%EB%B3%B4%EA%B3%A0%EC%84%9C.hwp",
                 EgovContentDispositions.attachment("보고서.hwp"));
     }

@@ -65,7 +65,7 @@
 
         <!-- test -->
         <dependency>
-            <!-- AiServices · InMemoryEmbeddingStore · MessageWindowChatMemory (opennlp 전이는 테스트 클래스패스에만) -->
+            <!-- AiServices · InMemoryEmbeddingStore · MessageWindowChatMemory (opennlp 는 테스트 전용) -->
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j</artifactId>
             <scope>test</scope>
@@ -85,7 +85,7 @@
             <artifactId>pdfbox</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- 감사 채널 테스트 — slf4j 바인딩이 없으면 발신이 NOP 이 된다(log4j2-test.xml 이 EGOV_AI_AUDIT 을 INFO 로 선언) -->
+        <!-- 감사 채널 테스트 : slf4j 바인딩 필요 (log4j2-test.xml 의 EGOV_AI_AUDIT=INFO) -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>

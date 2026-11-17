@@ -74,7 +74,7 @@ class EgovStoredFileNamesSecurityTest {
 	@Test
 	@DisplayName("널바이트 앞의 가짜 확장자는 무시되고 진짜 마지막 확장자만 남는다")
 	void 널바이트_확장자() {
-		// 정책 단계에서 이미 거부되지만, 저장명 생성 단계 단독으로도 위험 문자가 남지 않아야 한다
+		// 정책 단계에서 이미 거부되나, 저장명 생성 단계 단독으로도 위험 문자 제거 필요
 		String stored = EgovStoredFileNames.generate("shell.jsp" + (char) 0 + ".png");
 		assertTrue(stored.endsWith(".png"), stored);
 		assertFalse(stored.contains("\0") || stored.contains("jsp"), stored);

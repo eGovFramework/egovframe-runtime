@@ -18,9 +18,8 @@ package org.egovframe.rte.fdl.string;
 /**
  * 단어의 받침 유무에 맞는 한글 조사를 골라 주는 유틸 클래스.
  *
- * <p><b>NOTE:</b> 메시지 템플릿에서 "{이름}는" 처럼 조사를 고정하면 "홍길동는" 같은 어색한
- * 문장이 된다. 마지막 글자의 종성 유무로 다섯 쌍의 조사를 고른다 —
- * 은/는 · 이/가 · 을/를 · 과/와 · 으로/로.</p>
+ * <p><b>NOTE:</b> 마지막 글자 종성 유무로 조사 선택 (은/는 · 이/가 · 을/를 · 과/와 · 으로/로,
+ * 고정 조사 시 "홍길동는" 같은 오류 방지)</p>
  *
  * <pre>
  * EgovKoreanParticles.attach("홍길동", Particle.TOPIC)     → "홍길동은"
@@ -29,9 +28,8 @@ package org.egovframe.rte.fdl.string;
  * EgovKoreanParticles.particleOf("책상", Particle.SUBJECT) → "이"        (조사만)
  * </pre>
  *
- * <p><b>계약</b> — 한글 음절(가~힣)이 아닌 글자로 끝나는 단어(영문·숫자·기호)는 <b>받침이
- * 없는 것으로 간주</b>한다("MOU가"·"3를"). 소리 나는 대로 판정하려면 발음 사전이 필요해
- * 유틸의 범위를 벗어난다 — 그런 자리는 호출부가 조사를 직접 지정한다.</p>
+ * <p><b>계약</b> — 한글 음절(가~힣) 밖의 글자로 끝나는 단어(영문·숫자·기호)는 <b>받침 없음으로
+ * 간주</b>("MOU가"·"3를"). 발음 기준 판정은 범위 밖 (호출부에서 조사 직접 지정)</p>
  *
  * <pre>
  * &lt;&lt; 개정이력(Modification Information) &gt;&gt;
@@ -80,7 +78,7 @@ public final class EgovKoreanParticles {
 	}
 
 	/**
-	 * 단어에 맞는 <b>조사만</b> 돌려준다 — 템플릿 엔진에서 조사 자리만 채울 때 쓴다.
+	 * 단어에 맞는 <b>조사만</b> 반환 (템플릿 엔진의 조사 자리용).
 	 *
 	 * @param word     단어({@code null} 이면 받침 없는 쪽 조사)
 	 * @param particle 조사 종류

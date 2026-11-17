@@ -29,8 +29,8 @@ import org.egovframe.rte.ai.core.text.EgovKoreanSentences.Span;
  * 연속 부분문자열(개행·표 구조 보존)이고, 한 문장이 한도를 넘으면 한도에 맞는 가장 긴 창으로 잘라(공백 위치로 물러남·
  * 코드포인트 경계 유지) 진행을 보장한다. 최대 청크 수에 도달하면 중단하고 {@link EgovChunks#truncated()} 로 알린다.</p>
  *
- * <p>Spring AI 어댑터는 cl100k 토큰 계산기를, LangChain4j 어댑터는 문자 수({@code String::length})를 계산기로 넣는다 —
- * 참고 샘플이 두 변종(토큰/문자, 오버랩 유무)으로 갈라 두었던 것을 한 구현으로 합쳤다.</p>
+ * <p>Spring AI 어댑터는 cl100k 토큰 계산기를, LangChain4j 어댑터는 문자 수({@code String::length})를 계산기로 넣는다
+ * (토큰/문자·오버랩 유무 변종을 단일 구현으로 통합).</p>
  *
  * <pre>
  * EgovSentenceChunker chunker = EgovSentenceChunker.builder(String::length).maxSize(800).minLength(50).build();
@@ -123,7 +123,7 @@ public final class EgovSentenceChunker {
 				bufferStart = -1;
 				break;
 			}
-			// 오버랩: 앞 청크의 끝 문장부터 다시 시작하되 현재 문장까지 한도에 맞아야 한다
+			// 오버랩: 앞 청크의 끝 문장부터 재시작, 단 현재 문장까지 한도 이내여야 함
 			int overlapStart = overlapStart(text, spans, bufferStart, bufferEnd);
 			bufferStart = i;
 			bufferEnd = i;
@@ -140,7 +140,7 @@ public final class EgovSentenceChunker {
 			out.add(spans.get(bufferStart).start(), spans.get(bufferEnd).end());
 			bufferStart = -1;
 		}
-		// 한도에 걸려 멈췄는데 처리하지 않은 문장(또는 비우지 못한 버퍼)이 남아 있으면 "도달"이 아니라 "잘림"이다
+		// 한도로 중단 후 미처리 문장(또는 미방출 버퍼)이 남으면 "도달"이 아닌 "잘림"
 		boolean truncated = out.truncated || (out.limitReached && (i < spans.size() || bufferStart >= 0));
 		return new EgovChunks(text, out.spans, truncated);
 	}
@@ -177,7 +177,7 @@ public final class EgovSentenceChunker {
 			}
 			cut = alignToCodePoint(text, cursor, cut);
 			if (cut <= cursor) {
-				// 한도에 맞는 창이 없으면(보충면 문자 하나가 한도 초과) 코드포인트 하나만큼 나아가 종료를 보장한다
+				// 한도에 맞는 창이 없으면(보충면 문자 하나가 한도 초과) 코드포인트 하나만큼 전진 — 종료 보장
 				cut = cursor + Character.charCount(text.codePointAt(cursor));
 			}
 			out.add(cursor, cut);
@@ -300,7 +300,7 @@ public final class EgovSentenceChunker {
 				throw new IllegalArgumentException("maxChunks 는 1 이상이어야 합니다: " + maxChunks);
 			}
 			if (overlapSize < 0 || overlapSize > maxSize / 2) {
-				// 오버랩이 절반을 넘으면 창이 조금씩만 나아가 청크 수가 문서 길이에 비례해 폭증한다
+				// 오버랩이 절반 초과 시 창이 조금씩만 전진 — 청크 수가 문서 길이에 비례해 폭증
 				throw new IllegalArgumentException(
 						"overlap 은 0 이상, maxSize 의 절반(" + (maxSize / 2) + ") 이하여야 합니다: " + overlapSize);
 			}

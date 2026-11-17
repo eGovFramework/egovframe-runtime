@@ -69,7 +69,7 @@ public class ARIAEngineTest {
                         byte[] result = engine.encrypt(sbuffer, szKey);
                         String resultHex = Hex.encodeHexString(result, false);
 
-                        // 파일에서 읽어온 CT 값과, 암호화 결과물인 resultHex값이 동일한지 비교함
+                        // 파일의 CT 값과 암호화 결과 resultHex 값 일치 비교
                         Assertions.assertEquals(finalCt.toUpperCase(), resultHex, "Failed at " + testName);
                     }));
 
@@ -134,10 +134,10 @@ public class ARIAEngineTest {
                         ct = engine.encrypt(ct, szKey);
                     }
 
-                    // 1000번째 암호화 결과가 파일의 CT 값과 동일한지 비교함
+                    // 1000번째 암호화 결과와 파일의 CT 값 일치 비교
                     Assertions.assertEquals(testCase[2].toUpperCase(), Hex.encodeHexString(ct, false), "Failed at " + testName);
 
-                    // 다음 COUNT의 KEY, PT가 연쇄 규칙대로 만들어지는지 비교함
+                    // 다음 COUNT의 KEY, PT 연쇄 규칙 생성 여부 비교
                     if (next != null) {
                         byte[] nextKey = nextMctKey(szKey, prevCt, ct);
                         Assertions.assertEquals(next[0].toUpperCase(), Hex.encodeHexString(nextKey, false), "Next KEY mismatch at " + testName);
@@ -191,11 +191,11 @@ public class ARIAEngineTest {
                         byte[] sbuffer = Hex.decodeHex(finalPt);
                         byte[] szKey = Hex.decodeHex(finalKey);
 
-                        // 평문 길이가 블록 크기(16바이트)의 배수이므로 패딩 없이 블록 단위로 암호화됨
+                        // 평문 길이가 블록 크기(16바이트) 배수 — 패딩 없이 블록 단위 암호화
                         byte[] result = engine.encrypt(sbuffer, szKey);
                         String resultHex = Hex.encodeHexString(result, false);
 
-                        // 파일에서 읽어온 CT 값과, 암호화 결과물인 resultHex값이 동일한지 비교함
+                        // 파일의 CT 값과 암호화 결과 resultHex 값 일치 비교
                         Assertions.assertEquals(finalCt.toUpperCase(), resultHex, "Failed at " + testName);
                     }));
 
