@@ -1,6 +1,7 @@
 package org.egovframe.rte.psl.reactive.mongodb.repository;
 
 import lombok.extern.slf4j.Slf4j;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,12 +12,18 @@ import reactor.test.StepVerifier;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes=MongoDbConfiguration.class)
+@ContextConfiguration(classes = MongoDbConfiguration.class)
 @Slf4j
 public class MongoDbTest {
 
     @Autowired
     private SampleRepository repository;
+
+    @Before
+    public void setUp() {
+        // 이전 실행에서 남은 데이터(_id 중복)로 실패하지 않도록 기존 컬렉션 삭제
+        repository.dropCollection(Sample.class).block();
+    }
 
     public Sample makeSample() {
         Sample sample = new Sample();

@@ -15,24 +15,23 @@ import javax.annotation.Resource;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:/spring/context-ehcache.xml" })
+@ContextConfiguration(locations = {"classpath:/spring/context-ehcache.xml"})
 public class CacheableTest {
 
-	@Autowired
-	private CacheManager cacheManager;
+    @Resource(name = "ehcacheCacheableService")
+    CacheableService cacheableService;
+    @Autowired
+    private CacheManager cacheManager;
 
-	@Resource(name="ehcacheCacheableService")
-	CacheableService cacheableService;
+    @Test
+    public void testGetCache() {
+        String employeeNum = "01";
+        Employee employee = cacheableService.cacheableMethod(employeeNum);
 
-	@Test
-	public void testGetCache() {
-		String employeeNum = "01";
-		Employee employee = cacheableService.cacheableMethod(employeeNum);
+        Cache cache = cacheManager.getCache("ehcache");
+        ValueWrapper value = cache.get(employeeNum);
 
-		Cache cache = cacheManager.getCache("ehcache");
-		ValueWrapper value = cache.get(employeeNum);
-		
-		assertEquals(((Employee)value.get()).getName(), employee.getName());
-	}
+        assertEquals(((Employee) value.get()).getName(), employee.getName());
+    }
 
 }

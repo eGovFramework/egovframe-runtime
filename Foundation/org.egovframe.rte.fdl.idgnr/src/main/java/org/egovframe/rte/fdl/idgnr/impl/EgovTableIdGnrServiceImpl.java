@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 MOPAS(Ministry of Public Administration and Security).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,10 +29,11 @@ import org.springframework.transaction.support.TransactionTemplate;
 import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 /**
  * ID Generation 서비스를 위한 Table 구현 클래스
- * 
+ *
  * <p><b>NOTE</b>: 채번 테이블을 정의하고, 각 관리대상에 대한 현재 최종 Max 번호를
  * 관리하여 Table 기반의 유일키를 제공 받을 수 있다.</p>
  *
@@ -44,9 +45,14 @@ import java.util.Locale;
  *       PRIMARY KEY (table_name)
  *   );
  * </pre>
- * 
+ *
+ * <p><b>보안·동시성:</b> 테이블명·필드명은 SQL 문에 이어 붙는 식별자이므로 영문·숫자·밑줄(테이블은
+ * {@code 스키마.테이블} 허용)만 받는다(SQL 삽입 방지). 구분값({@code tableName})은 바인드 변수로 전달한다.
+ * 블록 채번 SELECT 에는 {@code FOR UPDATE} 행 잠금을 걸어 여러 WAS 가 같은 DB 를 공유해도 같은 블록을
+ * 중복 할당하지 않는다. SQL Server 처럼 {@code FOR UPDATE} 를 지원하지 않는 DBMS 는
+ * {@link #setSelectForUpdate(boolean)} 로 끄고 DBMS 별 잠금 방식을 별도로 적용한다.</p>
+ *
  * @author 실행환경 개발팀 김태호
- * @since 2009.02.01
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -58,16 +64,29 @@ import java.util.Locale;
  * 2013.09.04	한성곤				TransactionTemplate을 통해 transaction 처리 분리
  * 2014.08.18	한성곤				명명규칙 클래스 명 변경
  * 2017.02.28	장동한				시큐어코딩(ES)-오류 메시지를 통한 정보노출[CWE-209]
+ * 2026.10.25	실행환경 개발팀		SQL 식별자 검증·구분값 바인딩(SQL 삽입 방지), 채번 SELECT 행 잠금(FOR UPDATE)
  * </pre>
+ * @since 2009.02.01
  */
 public class EgovTableIdGnrServiceImpl extends AbstractDataBlockIdGnrService {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(EgovTableIdGnrServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EgovTableIdGnrServiceImpl.class);
+
+    /** 컬럼명 식별자 형식 */
+    private static final Pattern SAFE_IDENTIFIER = Pattern.compile("^[A-Za-z_][A-Za-z0-9_]*$");
+
+    /** 테이블명 식별자 형식 (스키마 한정 허용) */
+    private static final Pattern SAFE_TABLE_IDENTIFIER = Pattern.compile("^[A-Za-z_][A-Za-z0-9_]*(\\.[A-Za-z_][A-Za-z0-9_]*)?$");
+
+    /**
+     * 블록 채번 SELECT 에 FOR UPDATE 행 잠금 사용 여부 (기본 true)
+     */
+    private boolean selectForUpdate = true;
 
     /**
      * ID생성을 위한 테이블 정보 디폴트는 ids임.
      */
-	private String table = "ids";
+    private String table = "ids";
 
     /**
      * 테이블 정보에 기록되는 대상 키정보 대개의 경우는 아이디로 생성되는 테이블명을 기재함
@@ -112,110 +131,119 @@ public class EgovTableIdGnrServiceImpl extends AbstractDataBlockIdGnrService {
 
     /**
      * tableName에 대한 초기 값이 없는 경우 초기 id 값 등록 (blockSize 처리)
+     *
      * @param useBigDecimals
      * @param blockSize
      */
     private Object insertInitId(final boolean useBigDecimals, final int blockSize) {
-		LOGGER.debug(messageSource.getMessage("debug.idgnr.init.idblock", new Object[] { tableName }, Locale.getDefault()));
+        LOGGER.debug(messageSource.getMessage("debug.idgnr.init.idblock", new Object[]{tableName}, Locale.getDefault()));
         Object initId = null;
-    	String insertQuery = "INSERT INTO " + table + "(" + tableNameFieldName + ", " + nextIdFieldName + ") " + "values('" + tableName + "', ?)";
+        // 구분값(tableName)은 문자열로 이어 붙이지 않고 바인드 변수로 전달한다(SQL 삽입 방지).
+        String insertQuery = "INSERT INTO " + table + "(" + tableNameFieldName + ", " + nextIdFieldName + ") " + "values(?, ?)";
         LOGGER.debug("Insert Query : {}", insertQuery);
-    	if (useBigDecimals) {
-	   		initId = new BigDecimal(blockSize);
-    	} else {
-    		initId = new Long(blockSize);
-    	}
-    	jdbcTemplate.update(insertQuery, initId);
-    	return initId;
+        if (useBigDecimals) {
+            initId = new BigDecimal(blockSize);
+        } else {
+            initId = Long.valueOf(blockSize);
+        }
+        jdbcTemplate.update(insertQuery, tableName, initId);
+        return initId;
     }
 
     /**
      * blockSize 대로 ID 지정
-     * @param blockSize 지정되는 blockSize
+     *
+     * @param blockSize      지정되는 blockSize
      * @param useBigDecimals BigDecimal 사용 여부
      * @return BigDecimal을 사용하면 BigDecimal 아니면 long 리턴
      * @throws FdlException ID생성을 위한 블럭 할당이 불가능할때
      */
-	private Object allocateIdBlock(final int blockSize, final boolean useBigDecimals) throws FdlException {
-		LOGGER.debug(messageSource.getMessage("debug.idgnr.allocate.idblock", new Object[] { new Integer(blockSize), tableName }, Locale.getDefault()));
-		try {
-			return transactionTemplate.execute(new TransactionCallback<Object>() {
-				@SuppressWarnings("deprecation")
-				public Object doInTransaction(TransactionStatus status) {
-					Object nextId;
-					Object newNextId;
-					try {
-						String selectQuery = "SELECT " + nextIdFieldName + " FROM " + table + " WHERE " + tableNameFieldName + " = ?";
-						LOGGER.debug("Select Query : {}", selectQuery);
-						if (useBigDecimals) {
-							try {
-								nextId = jdbcTemplate.queryForObject(selectQuery, new Object[] { tableName }, BigDecimal.class);
-							} catch (EmptyResultDataAccessException erdae) {
-								nextId = null;
-							}
+    private Object allocateIdBlock(final int blockSize, final boolean useBigDecimals) throws FdlException {
+        LOGGER.debug(messageSource.getMessage("debug.idgnr.allocate.idblock", new Object[]{Integer.valueOf(blockSize), tableName}, Locale.getDefault()));
 
-							if (nextId == null) { // no row
-								insertInitId(useBigDecimals, blockSize);
-								return new BigDecimal(0);
-							}
-						} else {
-							try {
-								nextId = jdbcTemplate.queryForObject(selectQuery, new Object[] { tableName }, Long.class);
-							} catch (EmptyResultDataAccessException erdae) {
-								nextId = -1L;
-							}
+        try {
+            return transactionTemplate.execute(new TransactionCallback<Object>() {
+                @SuppressWarnings("deprecation")
+                public Object doInTransaction(TransactionStatus status) {
+                    Object nextId;
+                    Object newNextId;
+                    try {
+                        // mSemaphore 는 같은 JVM 내 동시성만 막는다. 여러 WAS 가 같은 DB 를 공유하면 다른 JVM 의
+                        // 트랜잭션이 같은 next_id 를 동시에 읽을 수 있으므로 FOR UPDATE 로 행을 잠근다.
+                        String selectQuery = "SELECT " + nextIdFieldName + " FROM " + table + " WHERE " + tableNameFieldName + " = ?"
+                                + (selectForUpdate ? " FOR UPDATE" : "");
+                        LOGGER.debug("Select Query : {}", selectQuery);
+                        if (useBigDecimals) {
+                            try {
+                                nextId = jdbcTemplate.queryForObject(selectQuery, new Object[]{tableName}, BigDecimal.class);
+                            } catch (EmptyResultDataAccessException erdae) {
+                                nextId = null;
+                            }
 
-							if ((Long) nextId == -1L) { // no row
-								insertInitId(useBigDecimals, blockSize);
+                            if (nextId == null) { // no row
+                                insertInitId(useBigDecimals, blockSize);
+                                return new BigDecimal(0);
+                            }
+                        } else {
+                            try {
+                                nextId = jdbcTemplate.queryForObject(selectQuery, new Object[]{tableName}, Long.class);
+                            } catch (EmptyResultDataAccessException erdae) {
+                                nextId = -1L;
+                            }
 
-								return new Long(0);
-							}
-						}
-					} catch (DataAccessException dae) {
-						//2017.02.28 장동한 시큐어코딩(ES)-오류 메시지를 통한 정보노출[CWE-209]
-						status.setRollbackOnly();
-						throw new RuntimeException(new FdlException(messageSource, "error.idgnr.select.idblock", new String[] { tableName }, null));
-					}
+                            if ((Long) nextId == -1L) { // no row
+                                insertInitId(useBigDecimals, blockSize);
 
-					try {
-						String updateQuery = "UPDATE " + table + " SET " + nextIdFieldName + " = ?" + " WHERE " + tableNameFieldName + " = ?";
-						LOGGER.debug("Update Query : {}", updateQuery);
+                                return Long.valueOf(0);
+                            }
+                        }
+                    } catch (DataAccessException dae) {
+                        //2017.02.28 장동한 시큐어코딩(ES)-오류 메시지를 통한 정보노출[CWE-209]
+                        status.setRollbackOnly();
+                        throw new RuntimeException(new FdlException(messageSource, "error.idgnr.select.idblock", new String[]{tableName}, null));
+                    }
 
-						if (useBigDecimals) {
-							newNextId = ((BigDecimal) nextId).add(new BigDecimal(blockSize));
-						} else {
-							newNextId = new Long(((Long) nextId).longValue() + blockSize);
-						}
+                    try {
+                        String updateQuery = "UPDATE " + table + " SET " + nextIdFieldName + " = ?" + " WHERE " + tableNameFieldName + " = ?";
+                        LOGGER.debug("Update Query : {}", updateQuery);
 
-						jdbcTemplate.update(updateQuery, newNextId, tableName);
-						return nextId;
-					} catch (DataAccessException dae) {
-						status.setRollbackOnly();
-						throw new RuntimeException(new FdlException(messageSource, "error.idgnr.update.idblock", new String[] { tableName }, null));
-					}
-				}
-			});
-		} catch (RuntimeException re) {
-			if (re.getCause() instanceof FdlException) {
-				throw (FdlException) re.getCause();
-			} else {
-				throw re;
-			}
-		}
+                        if (useBigDecimals) {
+                            newNextId = ((BigDecimal) nextId).add(new BigDecimal(blockSize));
+                        } else {
+                            newNextId = Long.valueOf(((Long) nextId).longValue() + blockSize);
+                        }
+
+                        jdbcTemplate.update(updateQuery, newNextId, tableName);
+                        return nextId;
+                    } catch (DataAccessException dae) {
+                        status.setRollbackOnly();
+                        throw new RuntimeException(new FdlException(messageSource, "error.idgnr.update.idblock", new String[]{tableName}, null));
+                    }
+                }
+            });
+        } catch (RuntimeException re) {
+            if (re.getCause() instanceof FdlException) {
+                throw (FdlException) re.getCause();
+            } else {
+                throw re;
+            }
+        }
     }
 
     /**
      * blockSize 대로 ID 지정(BigDecimal)
+     *
      * @param blockSize 지정되는 blockSize
      * @return 할당된 블럭의 첫번째 아이디
      * @throws FdlException ID생성을 위한 블럭 할당이 불가능할때
      */
-	protected BigDecimal allocateBigDecimalIdBlock(int blockSize) throws FdlException {
-		return (BigDecimal) allocateIdBlock(blockSize, true);
-	}
+    protected BigDecimal allocateBigDecimalIdBlock(int blockSize) throws FdlException {
+        return (BigDecimal) allocateIdBlock(blockSize, true);
+    }
 
     /**
      * blockSize 대로 ID 지정(long)
+     *
      * @param blockSize 지정되는 blockSize
      * @return 할당된 블럭의 첫번째 아이디
      * @throws FdlException ID생성을 위한 블럭 할당이 불가능할때
@@ -227,14 +255,17 @@ public class EgovTableIdGnrServiceImpl extends AbstractDataBlockIdGnrService {
 
     /**
      * ID생성을 위한 테이블 정보 Injection
+     *
      * @param table config로 지정되는 정보
      */
     public void setTable(String table) {
+        validateIdentifier(table, "table", SAFE_TABLE_IDENTIFIER);
         this.table = table;
     }
 
     /**
      * ID 생성을 위한 테이블의 키정보 ( 대개의경우는 대상 테이블명을 기재함 )
+     *
      * @param tableName config로 지정되는 정보
      */
     public void setTableName(String tableName) {
@@ -242,19 +273,50 @@ public class EgovTableIdGnrServiceImpl extends AbstractDataBlockIdGnrService {
     }
 
     /**
-     *  테이블명(구분값)에 대한 테이블 필드명 정보 지정
+     * 테이블명(구분값)에 대한 테이블 필드명 정보 지정
+     *
      * @param tableNameFieldName
      */
     public void setTableNameFieldName(String tableNameFieldName) {
-    	this.tableNameFieldName = tableNameFieldName;
+        validateIdentifier(tableNameFieldName, "tableNameFieldName", SAFE_IDENTIFIER);
+        this.tableNameFieldName = tableNameFieldName;
     }
 
     /**
      * Next Id 정보를 보관하는 필드명 정보 지정
+     *
      * @param nextIdFieldName
      */
     public void setNextIdFieldName(String nextIdFieldName) {
-    	this.nextIdFieldName = nextIdFieldName;
+        validateIdentifier(nextIdFieldName, "nextIdFieldName", SAFE_IDENTIFIER);
+        this.nextIdFieldName = nextIdFieldName;
+    }
+
+    /**
+     * 블록 채번 SELECT 에 FOR UPDATE 행 잠금을 사용할지 지정한다 (기본 true).
+     * FOR UPDATE 구문을 지원하지 않는 DBMS(SQL Server 등)에서만 false 로 둔다.
+     *
+     * @param selectForUpdate FOR UPDATE 사용 여부
+     */
+    public void setSelectForUpdate(boolean selectForUpdate) {
+        this.selectForUpdate = selectForUpdate;
+    }
+
+    /**
+     * SQL 식별자(테이블명/컬럼명) 유효성 검사 - SQL 삽입 방지
+     *
+     * @param name      식별자 값
+     * @param fieldName setter/필드 이름 (에러 메시지용)
+     * @param pattern   허용 형식
+     * @throws IllegalArgumentException 허용 형식이 아닌 경우
+     */
+    private static void validateIdentifier(String name, String fieldName, Pattern pattern) {
+        if (name == null || name.isEmpty()) {
+            throw new IllegalArgumentException(fieldName + " must not be null or empty");
+        }
+        if (!pattern.matcher(name).matches()) {
+            throw new IllegalArgumentException(fieldName + " contains invalid characters for an SQL identifier");
+        }
     }
 
 }

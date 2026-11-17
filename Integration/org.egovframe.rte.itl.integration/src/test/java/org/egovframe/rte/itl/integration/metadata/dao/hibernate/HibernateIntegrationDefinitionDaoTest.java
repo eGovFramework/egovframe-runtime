@@ -21,10 +21,9 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations="/org/egovframe/rte/itl/integration/metadata/dao/hibernate/context.xml")
-@Transactional(readOnly=false)
-public class HibernateIntegrationDefinitionDaoTest
-{
+@ContextConfiguration(locations = "/org/egovframe/rte/itl/integration/metadata/dao/hibernate/context.xml")
+@Transactional(readOnly = false)
+public class HibernateIntegrationDefinitionDaoTest {
 
     @Autowired
     private HibernateIntegrationDefinitionDao dao;
@@ -33,21 +32,19 @@ public class HibernateIntegrationDefinitionDaoTest
     private DataSource dataSource;
 
     @SuppressWarnings("deprecation")
-	@Before
-    public void before() throws Exception
-    {
+    @Before
+    public void before() throws Exception {
         ReplacementDataSet dataSet = new ReplacementDataSet(new FlatXmlDataSet(
                 ResourceUtils.getFile("classpath:org/egovframe/rte/itl/integration/metadata/dao/hibernate/dataset.xml")));
         dataSet.addReplacementObject("[null]", null);
-        
+
         IDatabaseConnection connection = new SpringDatabaseDataSourceConnection(dataSource);
-        
+
         DatabaseOperation.CLEAN_INSERT.execute(connection, dataSet);
     }
 
     @Test
-    public void testReadSucceeds() throws Exception
-    {
+    public void testReadSucceeds() throws Exception {
         IntegrationDefinition integrationDefinition = dao.getIntegrationDefinition("1");
         assertNotNull(integrationDefinition);
         assertTrue(integrationDefinition.isValid());
@@ -69,8 +66,7 @@ public class HibernateIntegrationDefinitionDaoTest
     }
 
     @Test
-    public void testReadOfConsumerSucceeds() throws Exception
-    {
+    public void testReadOfConsumerSucceeds() throws Exception {
         List<IntegrationDefinition> list = dao.getIntegrationDefinitionOfConsumer("00000000", "00000000");
         assertEquals(2, list.size());
         assertEquals("1", list.get(0).getId());
@@ -78,21 +74,19 @@ public class HibernateIntegrationDefinitionDaoTest
         assertEquals("2", list.get(1).getId());
         assertTrue(list.get(1).isValid());
     }
-    
+
     @Test
-    public void testReadOfProviderSucceeds() throws Exception
-    {
+    public void testReadOfProviderSucceeds() throws Exception {
         List<IntegrationDefinition> list = dao.getIntegrationDefinitionOfProvider("00000000", "00000000");
         assertEquals(1, list.size());
         assertEquals("1", list.get(0).getId());
         assertTrue(list.get(0).isValid());
     }
-    
+
     @Test
-    public void testReadFails() throws Exception
-    {
+    public void testReadFails() throws Exception {
         IntegrationDefinition integrationRegistry = dao.getIntegrationDefinition("0");
-        
+
         assertNull(integrationRegistry);
     }
 }

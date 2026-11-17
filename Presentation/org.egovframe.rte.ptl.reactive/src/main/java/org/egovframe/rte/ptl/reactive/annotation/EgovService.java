@@ -10,16 +10,16 @@ import java.lang.annotation.*;
  *
  * <p>Desc.: Indicates that an annotated class is a Service</p>
  *
- * @author ESFC
- * @since 2023.08.31
+ * @author 유지보수
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
  *
  * 수정일		수정자				수정내용
  * ----------------------------------------------
- * 2023.08.31   ESFC            최초 생성
+ * 2023.08.31   유지보수            최초 생성
  * </pre>
+ * @since 2023.08.31
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

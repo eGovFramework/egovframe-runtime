@@ -29,7 +29,6 @@ import org.springframework.context.ApplicationContextAware;
  * <p>Desc.: 설정 간소화 처리에 사용되는 내부 factory bean</p>
  *
  * @author ESFC
- * @since 2020.08.31
  * @version 3.10
  * <pre>
  * 개정이력(Modification Information)
@@ -39,35 +38,36 @@ import org.springframework.context.ApplicationContextAware;
  * 2020.08.31	ESFC			최초 생성
  *
  * </pre>
+ * @since 2020.08.31
  */
 public class ErrorIfMaximumExceededFactoryBean implements FactoryBean<Boolean>, ApplicationContextAware {
 
-	public static final boolean ERROR_IF_MAXIMUM_EXCEEDED = false;
-	private ApplicationContext context;
+    public static final boolean ERROR_IF_MAXIMUM_EXCEEDED = false;
+    private ApplicationContext context;
 
-	public Boolean getObject() throws Exception {
-		try {
-			SecurityConfig config = context.getBean(SecurityConfig.class);
-			if ((Boolean) config.getErrorIfMaximumExceeded() instanceof Boolean) {
-				return config.getErrorIfMaximumExceeded();
-			}
-		}  catch (NoSuchBeanDefinitionException nsbde) {
-			EgovJdkLogger.ignore("There is no SecurityConfig.class.");
-		}
+    public Boolean getObject() throws Exception {
+        try {
+            SecurityConfig config = context.getBean(SecurityConfig.class);
+            if ((Boolean) config.getErrorIfMaximumExceeded() instanceof Boolean) {
+                return config.getErrorIfMaximumExceeded();
+            }
+        } catch (NoSuchBeanDefinitionException nsbde) {
+            EgovJdkLogger.ignore("There is no SecurityConfig.class.");
+        }
 
-		return ERROR_IF_MAXIMUM_EXCEEDED;
-	}
+        return ERROR_IF_MAXIMUM_EXCEEDED;
+    }
 
-	public Class<Boolean> getObjectType() {
-		return Boolean.class;
-	}
+    public Class<Boolean> getObjectType() {
+        return Boolean.class;
+    }
 
-	public boolean isSingleton() {
-		return true;
-	}
+    public boolean isSingleton() {
+        return true;
+    }
 
-	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		this.context = applicationContext;
-	}
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.context = applicationContext;
+    }
 
 }

@@ -12,15 +12,14 @@ import javax.annotation.Resource;
 @Repository
 public class SampleRepository extends EgovCassandraRepository<Sample> {
 
-    @Resource(name="reactiveSession")
+    private final String PARTITION_KEY_NAME = "part01";
+    @Resource(name = "reactiveSession")
     private ReactiveSession reactiveSession;
 
     public SampleRepository(ReactiveSession reactiveSession) {
         super(reactiveSession);
         this.reactiveSession = reactiveSession;
     }
-
-    private final String PARTITION_KEY_NAME = "part01";
 
     public Flux<Sample> selectAllSample() {
         Query query = Query.empty();

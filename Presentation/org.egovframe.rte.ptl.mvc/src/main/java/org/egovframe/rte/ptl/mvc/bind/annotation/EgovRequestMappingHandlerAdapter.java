@@ -33,8 +33,8 @@ import java.util.List;
  * ArgumentResolver list의 순서를 변경해준다.
  *
  * </pre>
+ *
  * @author 이영지
- * @since 2014.04.23
  * @version 3.0
  * <pre>
  * 개정이력(Modification Information)
@@ -45,41 +45,42 @@ import java.util.List;
  * 2014.12.11	이기하				@RequestParam으로 대체
  * 2015.04.10	장동한				resolvers 수정 (나중에 삭제 처리해야 됨)
  * </pre>
+ * @since 2014.04.23
  * @deprecated This class has been deprecated.
  */
 @Deprecated
 public class EgovRequestMappingHandlerAdapter extends RequestMappingHandlerAdapter {
 
-	/**
-	 * CommandMapMethodArgumentResolver를 쓰기 위하여
-	 * ArgumentResolver list에서 MapMethodProcessor보다 앞에 CommandMapMethodArgumentResolver를 추가한다.
-	 * MapMethodProcessor의 기능을 살리기 위해 CommandMapArgument를 쓸 때는 @CommandMap을 붙여야 한다.
-	 *
-	 * @see CommandMap
-	 */
-	@Override
-	public void afterPropertiesSet() {
-		super.afterPropertiesSet();
+    /**
+     * CommandMapMethodArgumentResolver를 쓰기 위하여
+     * ArgumentResolver list에서 MapMethodProcessor보다 앞에 CommandMapMethodArgumentResolver를 추가한다.
+     * MapMethodProcessor의 기능을 살리기 위해 CommandMapArgument를 쓸 때는 @CommandMap을 붙여야 한다.
+     *
+     * @see CommandMap
+     */
+    @Override
+    public void afterPropertiesSet() {
+        super.afterPropertiesSet();
 
-		if (getArgumentResolvers() != null) {
-			List<HandlerMethodArgumentResolver> resolvers = new ArrayList<HandlerMethodArgumentResolver>(getArgumentResolvers());
-			int mapMethodProcessorInx = -1;
-			int commandMapInx = -1;
-			HandlerMethodArgumentResolver commandMapArgResolver = null;
-			for (int inx = 0; inx < resolvers.size(); inx++) {
-				HandlerMethodArgumentResolver resolver = resolvers.get(inx);
-				if (resolver instanceof MapMethodProcessor) {
-					mapMethodProcessorInx = inx;
-				} else if (resolver instanceof AnnotationCommandMapArgumentResolver) {
-					commandMapInx = inx;
-				}
-			}
-			if (commandMapInx != -1) {
-				commandMapArgResolver = resolvers.remove(commandMapInx);
-				resolvers.add(mapMethodProcessorInx, commandMapArgResolver);
-				setArgumentResolvers(resolvers);
-			}
-		}
-	}
+        if (getArgumentResolvers() != null) {
+            List<HandlerMethodArgumentResolver> resolvers = new ArrayList<HandlerMethodArgumentResolver>(getArgumentResolvers());
+            int mapMethodProcessorInx = -1;
+            int commandMapInx = -1;
+            HandlerMethodArgumentResolver commandMapArgResolver = null;
+            for (int inx = 0; inx < resolvers.size(); inx++) {
+                HandlerMethodArgumentResolver resolver = resolvers.get(inx);
+                if (resolver instanceof MapMethodProcessor) {
+                    mapMethodProcessorInx = inx;
+                } else if (resolver instanceof AnnotationCommandMapArgumentResolver) {
+                    commandMapInx = inx;
+                }
+            }
+            if (commandMapInx != -1) {
+                commandMapArgResolver = resolvers.remove(commandMapInx);
+                resolvers.add(mapMethodProcessorInx, commandMapArgResolver);
+                setArgumentResolvers(resolvers);
+            }
+        }
+    }
 
 }

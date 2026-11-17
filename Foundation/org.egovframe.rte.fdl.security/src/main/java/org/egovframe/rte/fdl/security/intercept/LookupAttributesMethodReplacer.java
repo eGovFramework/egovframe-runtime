@@ -24,12 +24,11 @@ import java.util.List;
 
 /**
  * 보호자원의 url 요청정보에 대한 권한을 매핑하는 클래스
- * 
+ *
  * <p><b>NOTE:</b> 매 request 마다 요청 url 에 대한 best matching 보호자원-권한 맵핑 정보를 DB 기반으로 찾기 위해
  * DefaultFilterInvocationDefinitionSource 의 lookupAttributes 메서드를 가로채어 수행하기 위한 MethodReplacer 이다.</p>
- * 
+ *
  * @author ByungHun Woo
- * @since 2009.06.01
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -39,6 +38,7 @@ import java.util.List;
  * 2009.06.01   윤성종             최초 생성
  * 2014.01.22   한성곤             Spring Security 3.2.X 업그레이드 적용
  * </pre>
+ * @since 2009.06.01
  */
 public class LookupAttributesMethodReplacer implements MethodReplacer {
 
@@ -48,6 +48,7 @@ public class LookupAttributesMethodReplacer implements MethodReplacer {
      * <p>
      * SecuredObjectService를 설정하는 메소드이다.
      * </p>
+     *
      * @param securedObjectService <code>EgovSecuredObjectService</code>
      */
     public void setSecuredObjectService(EgovSecuredObjectService securedObjectService) {
@@ -58,9 +59,10 @@ public class LookupAttributesMethodReplacer implements MethodReplacer {
      * <p>
      * best matching 보호자원-권한 맵핑 정보를 DB에서 조회한다.
      * </p>
+     *
      * @param target <code>Object</code>
      * @param method <code>Method</code>
-     * @param args <code>Object[]</code>
+     * @param args   <code>Object[]</code>
      * @return
      * @throws Exception
      * @see org.springframework.beans.factory.support.MethodReplacer#reimplement(java.lang.Object, java.lang.reflect.Method, java.lang.Object[])

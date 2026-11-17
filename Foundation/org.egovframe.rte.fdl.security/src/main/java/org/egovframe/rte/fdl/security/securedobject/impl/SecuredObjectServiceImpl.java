@@ -29,12 +29,11 @@ import java.util.Set;
 
 /**
  * 보호객체 관리를 지원하는 구현 클래스
- * 
+ *
  * <p><b>NOTE:</b> Spring Security의 초기 데이터를 DB로 부터 조회하여
  * 보호된 자원 접근 권한을 지원, 제어 할 수 있도록 구현한 클래스이다.</p>
- * 
+ *
  * @author ByungHun Woo
- * @since 2009.06.01
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -44,66 +43,67 @@ import java.util.Set;
  * 2009.06.01	윤성종				최초 생성
  * 2014.01.22	한성곤				Spring Security 3.2.X 업그레이드 적용
  * </pre>
+ * @since 2009.06.01
  */
 public class SecuredObjectServiceImpl implements EgovSecuredObjectService, ApplicationContextAware {
 
-	private SecuredObjectDAO securedObjectDAO;
+    private SecuredObjectDAO securedObjectDAO;
 
-    private String requestMatcherType = "ant";	// default
+    private String requestMatcherType = "ant";    // default
 
-	public void setApplicationContext(ApplicationContext context) throws BeansException {
-		if (context.getBeanNamesForType(SecurityConfig.class).length > 0) {
-			SecurityConfig config = context.getBean(SecurityConfig.class);
-			if (config != null) {
-				requestMatcherType = config.getRequestMatcherType();
-			}
-		}
-	}
+    public void setApplicationContext(ApplicationContext context) throws BeansException {
+        if (context.getBeanNamesForType(SecurityConfig.class).length > 0) {
+            SecurityConfig config = context.getBean(SecurityConfig.class);
+            if (config != null) {
+                requestMatcherType = config.getRequestMatcherType();
+            }
+        }
+    }
 
     public void setSecuredObjectDAO(SecuredObjectDAO securedObjectDAO) {
         this.securedObjectDAO = securedObjectDAO;
     }
-    
+
     public void setRequestMatcherType(String requestMatcherType) {
-    	this.requestMatcherType = requestMatcherType;
+        this.requestMatcherType = requestMatcherType;
     }
-    
-	public LinkedHashMap<RequestMatcher, List<ConfigAttribute>> getRolesAndUrl() throws Exception {
-		LinkedHashMap<RequestMatcher, List<ConfigAttribute>> ret = new LinkedHashMap<RequestMatcher, List<ConfigAttribute>>();
-		LinkedHashMap<Object, List<ConfigAttribute>> data = securedObjectDAO.getRolesAndUrl(requestMatcherType);
-		Set<Object> keys = data.keySet();
-		for (Object key : keys) {
-			ret.put((RequestMatcher) key, data.get(key));
-		}
-		return ret;
-	}
 
-	public LinkedHashMap<String, List<ConfigAttribute>> getRolesAndMethod() throws Exception {
-		LinkedHashMap<String, List<ConfigAttribute>> ret = new LinkedHashMap<String, List<ConfigAttribute>>();
-		LinkedHashMap<Object, List<ConfigAttribute>> data = securedObjectDAO.getRolesAndMethod();
-		return getRolesAndPath(ret, data);
-	}
+    public LinkedHashMap<RequestMatcher, List<ConfigAttribute>> getRolesAndUrl() throws Exception {
+        LinkedHashMap<RequestMatcher, List<ConfigAttribute>> ret = new LinkedHashMap<RequestMatcher, List<ConfigAttribute>>();
+        LinkedHashMap<Object, List<ConfigAttribute>> data = securedObjectDAO.getRolesAndUrl(requestMatcherType);
+        Set<Object> keys = data.keySet();
+        for (Object key : keys) {
+            ret.put((RequestMatcher) key, data.get(key));
+        }
+        return ret;
+    }
 
-	public LinkedHashMap<String, List<ConfigAttribute>> getRolesAndPointcut() throws Exception {
-		LinkedHashMap<String, List<ConfigAttribute>> ret = new LinkedHashMap<String, List<ConfigAttribute>>();
-		LinkedHashMap<Object, List<ConfigAttribute>> data = securedObjectDAO.getRolesAndPointcut();
-		return getRolesAndPath(ret, data);
-	}
+    public LinkedHashMap<String, List<ConfigAttribute>> getRolesAndMethod() throws Exception {
+        LinkedHashMap<String, List<ConfigAttribute>> ret = new LinkedHashMap<String, List<ConfigAttribute>>();
+        LinkedHashMap<Object, List<ConfigAttribute>> data = securedObjectDAO.getRolesAndMethod();
+        return getRolesAndPath(ret, data);
+    }
 
-	private LinkedHashMap<String, List<ConfigAttribute>> getRolesAndPath(LinkedHashMap<String, List<ConfigAttribute>> ret, LinkedHashMap<Object, List<ConfigAttribute>> data) {
-		Set<Object> keys = data.keySet();
-		for (Object key : keys) {
-			ret.put((String) key, data.get(key));
-		}
-		return ret;
-	}
+    public LinkedHashMap<String, List<ConfigAttribute>> getRolesAndPointcut() throws Exception {
+        LinkedHashMap<String, List<ConfigAttribute>> ret = new LinkedHashMap<String, List<ConfigAttribute>>();
+        LinkedHashMap<Object, List<ConfigAttribute>> data = securedObjectDAO.getRolesAndPointcut();
+        return getRolesAndPath(ret, data);
+    }
 
-	public List<ConfigAttribute> getMatchedRequestMapping(String url) throws Exception {
-		return securedObjectDAO.getRegexMatchedRequestMapping(url);
-	}
+    private LinkedHashMap<String, List<ConfigAttribute>> getRolesAndPath(LinkedHashMap<String, List<ConfigAttribute>> ret, LinkedHashMap<Object, List<ConfigAttribute>> data) {
+        Set<Object> keys = data.keySet();
+        for (Object key : keys) {
+            ret.put((String) key, data.get(key));
+        }
+        return ret;
+    }
 
-	public String getHierarchicalRoles() throws Exception {
-		return securedObjectDAO.getHierarchicalRoles();
-	}
+    public List<ConfigAttribute> getMatchedRequestMapping(String url) throws Exception {
+        return securedObjectDAO.getRegexMatchedRequestMapping(url);
+    }
+
+    public String getHierarchicalRoles() throws Exception {
+        return securedObjectDAO.getHierarchicalRoles();
+    }
 
 }

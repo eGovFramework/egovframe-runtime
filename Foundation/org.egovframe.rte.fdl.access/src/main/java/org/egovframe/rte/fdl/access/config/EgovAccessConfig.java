@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2019 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,17 +22,17 @@ import javax.sql.DataSource;
  *
  * <p>Desc.: 설정 간소화 처리에 사용되는 bean으로 설정에 대한 정보를 보관</p>
  *
- * @author ESFC
- * @since 2019.10.01
+ * @author 유지보수
  * @version 3.9
  * <pre>
  * 개정이력(Modification Information)
  *
  * 수정일		수정자				수정내용
  * ----------------------------------------------
- * 2019.10.01	ESFC            최초 생성
- * 2019.12.30   신용호            mappingPath 추가
+ * 2019.10.01	유지보수			최초 생성
+ * 2019.12.30   신용호			mappingPath 추가
  * </pre>
+ * @since 2019.10.01
  */
 public class EgovAccessConfig {
 
@@ -44,7 +44,7 @@ public class EgovAccessConfig {
     private String sqlRoleAndUrl;
     private String requestMatcherType;
     private String excludeList;
-	private String mappingPath;
+    private String mappingPath;
 
     public String getGlobalAuthen() {
         return globalAuthen;
@@ -111,11 +111,11 @@ public class EgovAccessConfig {
     }
 
     public String getMappingPath() {
-		return mappingPath;
-	}
+        return mappingPath;
+    }
 
-	public void setMappingPath(String mappingPath) {
-		this.mappingPath = mappingPath;
-	}
+    public void setMappingPath(String mappingPath) {
+        this.mappingPath = mappingPath;
+    }
 
 }

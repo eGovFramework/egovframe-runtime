@@ -12,18 +12,18 @@ import java.util.concurrent.Callable;
 @Controller
 public class AsyncReqTestController {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(AsyncReqTestController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AsyncReqTestController.class);
 
-	@RequestMapping("/callable.do")
-	public Callable<String> callableWithView(HttpServletRequest request, final Model model) {
-		LOGGER.info("Before async processing");
-		return new Callable<String>() {
+    @RequestMapping("/callable.do")
+    public Callable<String> callableWithView(HttpServletRequest request, final Model model) {
+        LOGGER.info("Before async processing");
+        return new Callable<String>() {
 
-			public String call() throws Exception {
-				Thread.sleep(2000);
-				LOGGER.info("Inside async processing");
-				return "result";
-			}
-		};
-	}
+            public String call() throws Exception {
+                Thread.sleep(2000);
+                LOGGER.info("Inside async processing");
+                return "result";
+            }
+        };
+    }
 }

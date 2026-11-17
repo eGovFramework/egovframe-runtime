@@ -11,26 +11,26 @@ import javax.annotation.Resource;
 import javax.sql.DataSource;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:/spring/context-profiles.xml" })
+@ContextConfiguration(locations = {"classpath:/spring/context-profiles.xml"})
 public class SpringXmlProfileTest {
-	
-	@Resource(name="xmlDataSource")
-	private DataSource dataSource;
 
-	@Test
-	public void testXmlConf() {
-		Assert.notNull(dataSource);
-	}	
+    @Resource(name = "xmlDataSource")
+    private DataSource dataSource;
 
-	@Test
-	public void testXmlProfile() {
-		GenericXmlApplicationContext context = new GenericXmlApplicationContext();
-		context.getEnvironment().setActiveProfiles("poc");
-		context.load("classpath:/spring/context-profiles.xml");
-		context.refresh();
-		
-		Assert.notNull(context.getBean("dataSource"));
-		
-		context.close();
-	}
+    @Test
+    public void testXmlConf() {
+        Assert.notNull(dataSource);
+    }
+
+    @Test
+    public void testXmlProfile() {
+        GenericXmlApplicationContext context = new GenericXmlApplicationContext();
+        context.getEnvironment().setActiveProfiles("poc");
+        context.load("classpath:/spring/context-profiles.xml");
+        context.refresh();
+
+        Assert.notNull(context.getBean("dataSource"));
+
+        context.close();
+    }
 }

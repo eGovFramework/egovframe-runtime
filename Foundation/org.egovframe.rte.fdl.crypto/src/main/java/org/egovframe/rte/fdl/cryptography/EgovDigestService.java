@@ -19,44 +19,44 @@ public interface EgovDigestService {
 
     /**
      * Digest 알고리즘.
-     * 
-     * @param algorithm
-     */
-    void setAlgorithm(String algorithm);
-    
-    /**
-     * Digest 알고리즘.
-     * 
+     *
      * @return
      */
     String getAlgorithm();
-    
+
     /**
-     * Plain digest.
-     * 
-     * @param isPlainDigest
+     * Digest 알고리즘.
+     *
+     * @param algorithm
      */
-    void setPlainDigest(boolean isPlainDigest);
-    
+    void setAlgorithm(String algorithm);
+
     /**
      * Plain digest.
-     * 
+     *
      * @return
      */
     boolean isPlainDigest();
-    
+
+    /**
+     * Plain digest.
+     *
+     * @param isPlainDigest
+     */
+    void setPlainDigest(boolean isPlainDigest);
+
     /**
      * Digest 처리.
-     * 
+     *
      * @param data
      * @return
      * @throws Exception
      */
     byte[] digest(byte[] data);
-    
+
     /**
      * 확인 처리.
-     * 
+     *
      * @param messageByte
      * @param digestByte
      * @return

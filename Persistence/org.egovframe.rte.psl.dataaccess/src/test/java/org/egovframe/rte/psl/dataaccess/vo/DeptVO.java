@@ -5,36 +5,36 @@ import java.math.BigDecimal;
 
 public class DeptVO implements Serializable {
 
-	private static final long serialVersionUID = -5658611204548724246L;
+    private static final long serialVersionUID = -5658611204548724246L;
 
-	private BigDecimal deptNo;
+    private BigDecimal deptNo;
 
-	private String deptName;
+    private String deptName;
 
-	private String loc;
+    private String loc;
 
-	public BigDecimal getDeptNo() {
-		return deptNo;
-	}
+    public BigDecimal getDeptNo() {
+        return deptNo;
+    }
 
-	public void setDeptNo(BigDecimal deptNo) {
-		this.deptNo = deptNo;
-	}
+    public void setDeptNo(BigDecimal deptNo) {
+        this.deptNo = deptNo;
+    }
 
-	public String getDeptName() {
-		return deptName;
-	}
+    public String getDeptName() {
+        return deptName;
+    }
 
-	public void setDeptName(String deptName) {
-		this.deptName = deptName;
-	}
+    public void setDeptName(String deptName) {
+        this.deptName = deptName;
+    }
 
-	public String getLoc() {
-		return loc;
-	}
+    public String getLoc() {
+        return loc;
+    }
 
-	public void setLoc(String loc) {
-		this.loc = loc;
-	}
+    public void setLoc(String loc) {
+        this.loc = loc;
+    }
 
 }

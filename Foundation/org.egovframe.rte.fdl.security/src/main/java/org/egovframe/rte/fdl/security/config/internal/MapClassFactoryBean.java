@@ -27,11 +27,10 @@ import org.springframework.util.StringUtils;
 
 /**
  * 사용자 정보 mapping 처리 클래스 지정을 처리하는 factory bean 클래스
- * 
- *<p>Desc.: 설정 간소화 처리에 사용되는 내부 factory bean</p>
+ *
+ * <p>Desc.: 설정 간소화 처리에 사용되는 내부 factory bean</p>
  *
  * @author Vincent Han
- * @since 2014.03.12
  * @version 3.0
  * <pre>
  * 개정이력(Modification Information)
@@ -40,45 +39,46 @@ import org.springframework.util.StringUtils;
  * ----------------------------------------------
  * 2014.03.12	한성곤				Spring Security 설정 간소화 기능 추가
  * </pre>
+ * @since 2014.03.12
  */
 public class MapClassFactoryBean implements FactoryBean<String>, ApplicationContextAware {
 
-	private ApplicationContext context;
-	
-	private String defaultMapClass;
+    private ApplicationContext context;
 
-	public String getObject() throws Exception {
-		try {
-			SecurityConfig config = context.getBean(SecurityConfig.class);
-			if (StringUtils.hasText(config.getJdbcMapClass())) {
-				return config.getJdbcMapClass();
-			}
-		} catch (NoSuchBeanDefinitionException nsbde) {
-			EgovJdkLogger.ignore("There is no SecurityConfig.class.");
-		}
-		
-		return defaultMapClass;
-	}
+    private String defaultMapClass;
 
-	public Class<String> getObjectType() {
-		return String.class;
-	}
+    public String getObject() throws Exception {
+        try {
+            SecurityConfig config = context.getBean(SecurityConfig.class);
+            if (StringUtils.hasText(config.getJdbcMapClass())) {
+                return config.getJdbcMapClass();
+            }
+        } catch (NoSuchBeanDefinitionException nsbde) {
+            EgovJdkLogger.ignore("There is no SecurityConfig.class.");
+        }
 
-	public boolean isSingleton() {
-		return true;
-	}
-	
-	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		this.context = applicationContext;
-	}
+        return defaultMapClass;
+    }
 
-	public String getDefaultMapClass() {
-		return defaultMapClass;
-	}
+    public Class<String> getObjectType() {
+        return String.class;
+    }
 
-	@Required
-	public void setDefaultMapClass(String defaultMapClass) {
-		this.defaultMapClass = defaultMapClass;
-	}
+    public boolean isSingleton() {
+        return true;
+    }
+
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.context = applicationContext;
+    }
+
+    public String getDefaultMapClass() {
+        return defaultMapClass;
+    }
+
+    @Required
+    public void setDefaultMapClass(String defaultMapClass) {
+        this.defaultMapClass = defaultMapClass;
+    }
 
 }

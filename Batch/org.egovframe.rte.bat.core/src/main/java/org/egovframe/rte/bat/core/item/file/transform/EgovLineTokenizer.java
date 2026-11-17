@@ -1,6 +1,6 @@
 /*
- * Copyright 2012-2014 MOSPA(Ministry of Security and Public Administration).
- *  
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,7 +21,6 @@ import java.util.List;
  * EgovLineTokenizer 인터페이스
  *
  * @author 실행환경 개발팀 이도형
- * @since 2012.07.20
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -30,15 +29,16 @@ import java.util.List;
  * ----------------------------------------------
  * 2012.07.20	이도형				최초 생성
  * </pre>
-*/
+ * @since 2012.07.20
+ */
 public interface EgovLineTokenizer<T> {
 
-	/**
-	 * Token 목록을 생성한다. 실제 구현은 하위 클래스에서 이루어 진다. 
-	 * 
-	 * @param line
-	 * @return List String : token 목록 
-	 */
-	List<String> tokenize(String line) throws Exception;
+    /**
+     * Token 목록을 생성한다. 실제 구현은 하위 클래스에서 이루어 진다.
+     *
+     * @param line
+     * @return List String : token 목록
+     */
+    List<String> tokenize(String line) throws Exception;
 
 }

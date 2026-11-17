@@ -3,34 +3,33 @@
 
 <mapper namespace="org.egovframe.rte.psl.dataaccess.mapper.EmployerMapper">
 
-	<resultMap id="lobTestResult" type="org.egovframe.rte.psl.dataaccess.vo.LobTestVO">
-		<result property="id" column="ID" />
-		<result property="blobType" column="BLOB_TYPE" />
-		<result property="clobType" column="CLOB_TYPE" />
-	</resultMap>
+    <resultMap id="lobTestResult" type="org.egovframe.rte.psl.dataaccess.vo.LobTestVO">
+        <result property="id" column="ID"/>
+        <result property="blobType" column="BLOB_TYPE"/>
+        <result property="clobType" column="CLOB_TYPE"/>
+    </resultMap>
 
-	<insert id="insertLobTest" parameterType="org.egovframe.rte.psl.dataaccess.vo.LobTestVO">
+    <insert id="insertLobTest" parameterType="org.egovframe.rte.psl.dataaccess.vo.LobTestVO">
 		<![CDATA[
-			insert into LOBTEST
-			           (ID,
-			            BLOB_TYPE,
-			            CLOB_TYPE)
-			values     (#{id},
-						#{blobType, jdbcType=BLOB},
-						#{clobType, jdbcType=CLOB}
-			            )
-		]]>
+        insert into LOBTEST
+        (ID,
+         BLOB_TYPE,
+         CLOB_TYPE)
+        values (#{id},
+                #{blobType, jdbcType=BLOB},
+                #{clobType, jdbcType=CLOB})
+        ]]>
 	</insert>
 
-	<select id="selectLobTest" parameterType="org.egovframe.rte.psl.dataaccess.vo.LobTestVO"
-		resultMap="lobTestResult">
+    <select id="selectLobTest" parameterType="org.egovframe.rte.psl.dataaccess.vo.LobTestVO"
+            resultMap="lobTestResult">
 		<![CDATA[
-			select ID,
-			       BLOB_TYPE,
-			       CLOB_TYPE
-			from   LOBTEST
-			where  ID = #{id}
-		]]>
+        select ID,
+               BLOB_TYPE,
+               CLOB_TYPE
+        from LOBTEST
+        where ID = #{id}
+        ]]>
 	</select>
 
 </mapper>

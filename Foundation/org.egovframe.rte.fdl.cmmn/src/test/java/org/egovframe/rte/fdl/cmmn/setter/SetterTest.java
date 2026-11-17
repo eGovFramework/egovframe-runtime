@@ -9,16 +9,16 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:/spring/context-setter.xml" })
+@ContextConfiguration(locations = {"classpath:/spring/context-setter.xml"})
 public class SetterTest {
 
-	@Autowired
-	private SetterBar setterBar;
+    @Autowired
+    private SetterBar setterBar;
 
-	@Test
-	public void test() {
-		assertTrue(setterBar.setMessage("I'm a big fan of yours.").equals("return_I'm a big fan of yours."));
-	}
+    @Test
+    public void test() {
+        assertTrue(setterBar.setMessage("I'm a big fan of yours.").equals("return_I'm a big fan of yours."));
+    }
 
 
 }

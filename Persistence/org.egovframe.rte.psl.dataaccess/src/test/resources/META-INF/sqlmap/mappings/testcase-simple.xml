@@ -3,10 +3,10 @@
 
 <sqlMap namespace="DeptSimple">
 
-	<typeAlias alias="deptVO" type="org.egovframe.rte.psl.dataaccess.vo.DeptVO" />
+    <typeAlias alias="deptVO" type="org.egovframe.rte.psl.dataaccess.vo.DeptVO"/>
 
-	<insert id="insertDeptSimple">
-		<![CDATA[
+    <insert id="insertDeptSimple">
+        <![CDATA[
 			insert into DEPT
 			           (DEPT_NO,
 			            DEPT_NAME,
@@ -15,32 +15,32 @@
 			            #deptName#,
 			            #loc#)
 		]]>
-	</insert>
+    </insert>
 
-	<select id="selectDeptSimpleUsingResultClass" resultClass="deptVO">
-		<![CDATA[
+    <select id="selectDeptSimpleUsingResultClass" resultClass="deptVO">
+        <![CDATA[
 			select DEPT_NO   as deptNo,
 			       DEPT_NAME as deptName,
 			       LOC       as loc
 			from   DEPT
 			where  DEPT_NO = #deptNo#
 		]]>
-	</select>
+    </select>
 
-	<update id="updateDeptSimple">
-		<![CDATA[
+    <update id="updateDeptSimple">
+        <![CDATA[
 			update DEPT
 			set    DEPT_NAME = #deptName#,
 			       LOC = #loc#
 			where  DEPT_NO = #deptNo#
 		]]>
-	</update>
+    </update>
 
-	<delete id="deleteDeptSimple">
-		<![CDATA[
+    <delete id="deleteDeptSimple">
+        <![CDATA[
 			delete from DEPT
 			where       DEPT_NO = #deptNo#
 		]]>
-	</delete>
+    </delete>
 
 </sqlMap>

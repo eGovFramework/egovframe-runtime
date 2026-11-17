@@ -23,183 +23,188 @@ import java.math.BigDecimal;
 
 /**
  * @author 배치실행개발팀
- * @since 2012. 07.25
  * @version 1.0
- * @see
- *  <pre>
+ * @see <pre>
  *      개정이력(Modification Information)
  *
  *   수정일      수정자           수정내용
  *  ------- -------- ---------------------------
  *  2012. 07.25  배치실행개발팀     최초 생성
  *  </pre>
+ * @since 2012. 07.25
  */
 
 @Entity
 @Table(name = "CUSTOMER")
 public class CustomerCreditMore {
 
-	// field "id"
-	@Id
-	private int id;
+    // field "id"
+    @Id
+    private int id;
 
-	// field "name"
-	private String name;
+    // field "name"
+    private String name;
 
-	// field "credit"
-	private BigDecimal credit;
+    // field "credit"
+    private BigDecimal credit;
 
-	private String serial;
-	private BigDecimal tax;
-	private int amount;
-	private String createDate;
-	private String changeDate;
-	
-	/**
-	 * 생성자
-	 */
-	public CustomerCreditMore() {
-	}
+    private String serial;
+    private BigDecimal tax;
+    private int amount;
+    private String createDate;
+    private String changeDate;
 
-	/**
-	 * 생성자
-	 * @param id
-	 * @param name
-	 * @param credit
-	 */
-	public CustomerCreditMore(int id, String name, BigDecimal credit) {
-		this.id = id;
-		this.name = name;
-		this.credit = credit;
+    /**
+     * 생성자
+     */
+    public CustomerCreditMore() {
+    }
 
-	}
+    /**
+     * 생성자
+     *
+     * @param id
+     * @param name
+     * @param credit
+     */
+    public CustomerCreditMore(int id, String name, BigDecimal credit) {
+        this.id = id;
+        this.name = name;
+        this.credit = credit;
 
-	/**
-	 * field 내용을 String으로 return
-	 */
-	@Override
-	public String toString() {
-		return "CustomerCredit [id=" + id + ",name=" + name + ", credit=" + credit + "]";
-	}
+    }
 
-	/**
-	 * credit getter
-	 * @return
-	 */
-	public BigDecimal getCredit() {
-		return credit;
-	}
+    /**
+     * field 내용을 String으로 return
+     */
+    @Override
+    public String toString() {
+        return "CustomerCredit [id=" + id + ",name=" + name + ", credit=" + credit + "]";
+    }
 
-	/**
-	 * id getter
-	 * @return
-	 */
-	public int getId() {
-		return id;
-	}
+    /**
+     * credit getter
+     *
+     * @return
+     */
+    public BigDecimal getCredit() {
+        return credit;
+    }
 
-	/**
-	 * id setter
-	 * @param id
-	 */
-	public void setId(int id) {
-		this.id = id;
-	}
+    /**
+     * credit setter
+     *
+     * @param credit
+     */
+    public void setCredit(BigDecimal credit) {
+        this.credit = credit;
+    }
 
-	/**
-	 * credit setter
-	 * @param credit
-	 */
-	public void setCredit(BigDecimal credit) {
-		this.credit = credit;
-	}
+    /**
+     * id getter
+     *
+     * @return
+     */
+    public int getId() {
+        return id;
+    }
 
-	/**
-	 * name getter
-	 * @return
-	 */
-	public String getName() {
-		return name;
-	}
+    /**
+     * id setter
+     *
+     * @param id
+     */
+    public void setId(int id) {
+        this.id = id;
+    }
 
-	/**
-	 * name setter
-	 * @param name
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
+    /**
+     * name getter
+     *
+     * @return
+     */
+    public String getName() {
+        return name;
+    }
 
-	/**
-	 * credit field를 증가
-	 * @param sum credit에 더하는 수
-	 * @return credit이 증가된 새로운 객체
-	 */
-	public CustomerCreditMore increaseCreditBy(BigDecimal sum) {
-		CustomerCreditMore newCredit = new CustomerCreditMore();
-		newCredit.credit = this.credit.add(sum);
-		newCredit.name = this.name;
-		newCredit.id = this.id;
-		return newCredit;
-	}
+    /**
+     * name setter
+     *
+     * @param name
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	/**
-	 * Object가 CustomerCredit인지 판단
-	 */
-	@Override
-	public boolean equals(Object o) {
-		return (o instanceof CustomerCreditMore) && ((CustomerCreditMore) o).id == id;
-	}
+    /**
+     * credit field를 증가
+     *
+     * @param sum credit에 더하는 수
+     * @return credit이 증가된 새로운 객체
+     */
+    public CustomerCreditMore increaseCreditBy(BigDecimal sum) {
+        CustomerCreditMore newCredit = new CustomerCreditMore();
+        newCredit.credit = this.credit.add(sum);
+        newCredit.name = this.name;
+        newCredit.id = this.id;
+        return newCredit;
+    }
 
-	/**
-	 * id
-	 */
-	@Override
-	public int hashCode() {
-		return id;
-	}
+    /**
+     * Object가 CustomerCredit인지 판단
+     */
+    @Override
+    public boolean equals(Object o) {
+        return (o instanceof CustomerCreditMore) && ((CustomerCreditMore) o).id == id;
+    }
 
-	
-	
+    /**
+     * id
+     */
+    @Override
+    public int hashCode() {
+        return id;
+    }
 
-	public String getSerial() {
-		return serial;
-	}
 
-	public void setSerial(String serial) {
-		this.serial = serial;
-	}
+    public String getSerial() {
+        return serial;
+    }
 
-	public BigDecimal getTax() {
-		return tax;
-	}
+    public void setSerial(String serial) {
+        this.serial = serial;
+    }
 
-	public void setTax(BigDecimal tax) {
-		this.tax = tax;
-	}
+    public BigDecimal getTax() {
+        return tax;
+    }
 
-	public int getAmount() {
-		return amount;
-	}
+    public void setTax(BigDecimal tax) {
+        this.tax = tax;
+    }
 
-	public void setAmount(int amount) {
-		this.amount = amount;
-	}
+    public int getAmount() {
+        return amount;
+    }
 
-	public String getCreateDate() {
-		return createDate;
-	}
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
 
-	public void setCreateDate(String createDate) {
-		this.createDate = createDate;
-	}
+    public String getCreateDate() {
+        return createDate;
+    }
 
-	public String getChangeDate() {
-		return changeDate;
-	}
+    public void setCreateDate(String createDate) {
+        this.createDate = createDate;
+    }
 
-	public void setChangeDate(String changeDate) {
-		this.changeDate = changeDate;
-	}
+    public String getChangeDate() {
+        return changeDate;
+    }
+
+    public void setChangeDate(String changeDate) {
+        this.changeDate = changeDate;
+    }
 
 }

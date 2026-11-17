@@ -19,11 +19,10 @@ import javax.sql.DataSource;
 
 /**
  * egov-security schema namespace 처리를 담당하는 bean 클래스
- * 
- *<p>Desc.: 설정 간소화 처리에 사용되는 bean으로 설정에 대한 정보를 보관</p>
+ *
+ * <p>Desc.: 설정 간소화 처리에 사용되는 bean으로 설정에 대한 정보를 보관</p>
  *
  * @author Vincent Han
- * @since 2014.03.12
  * @version 3.0
  * <pre>
  * 개정이력(Modification Information)
@@ -35,234 +34,237 @@ import javax.sql.DataSource;
  * 2020.05.27	ESFC			CSRF Access Denied 처리 URL 추가
  * 2023.08.31	ESFC			Spring 표현 언어(SpEL) 설정 옵션 추가
  * </pre>
+ * @since 2014.03.12
  */
 public class SecurityConfig {
 
     public static final String DEF_USERS_BY_USERNAME_QUERY_SQL = "select user_id, password, enabled, users.* from users where user_id = ?";
     public static final String DEF_AUTHORITIES_BY_USERNAME_QUERY_SQL = "select user_id, authority from authorites where user_id = ?";
 
-	private String loginUrl;
-	private String logoutSuccessUrl;
-	private String loginFailureUrl;
-	private String accessDeniedUrl;
-	private DataSource dataSource;
-	private String jdbcUsersByUsernameQuery = DEF_USERS_BY_USERNAME_QUERY_SQL;
-	private String jdbcAuthoritiesByUsernameQuery = DEF_AUTHORITIES_BY_USERNAME_QUERY_SQL;
-	private String jdbcMapClass = "org.egovframe.rte.fdl.security.userdetails.DefaultMapUserDetailsMapping";
-	private String requestMatcherType = "regex";
-	private String hash = "sha-256";
-	private boolean hashBase64 = true;
-	private int concurrentMaxSessons;
-	private String concurrentExpiredUrl;
-	private boolean errorIfMaximumExceeded;
-	private String defaultTargetUrl;
-	private boolean alwaysUseDefaultTargetUrl;
-	private boolean useExpressions;
-	private boolean sniff;
-	private String xframeOptions;
-	private boolean xssProtection;
-	private boolean cacheControl;
-	private boolean csrf;
-	private String csrfAccessDeniedUrl;
-	private boolean supportPointcut;
-	private boolean supportMethod;
+    private String loginUrl;
+    private String logoutSuccessUrl;
+    private String loginFailureUrl;
+    private String accessDeniedUrl;
+    private DataSource dataSource;
+    private String jdbcUsersByUsernameQuery = DEF_USERS_BY_USERNAME_QUERY_SQL;
+    private String jdbcAuthoritiesByUsernameQuery = DEF_AUTHORITIES_BY_USERNAME_QUERY_SQL;
+    private String jdbcMapClass = "org.egovframe.rte.fdl.security.userdetails.DefaultMapUserDetailsMapping";
+    private String requestMatcherType = "regex";
+    private String hash = "sha-256";
+    private boolean hashBase64 = true;
+    private int concurrentMaxSessons;
+    private String concurrentExpiredUrl;
+    private boolean errorIfMaximumExceeded;
+    private String defaultTargetUrl;
+    private boolean alwaysUseDefaultTargetUrl;
+    private boolean useExpressions;
+    private boolean sniff;
+    private String xframeOptions;
+    private boolean xssProtection;
+    private boolean cacheControl;
+    private boolean csrf;
+    private String csrfAccessDeniedUrl;
+    private boolean supportPointcut;
+    private boolean supportMethod;
 
-	public String getLoginUrl() {
-		return loginUrl;
-	}
+    public String getLoginUrl() {
+        return loginUrl;
+    }
 
-	public void setLoginUrl(String loginUrl) {
-		this.loginUrl = loginUrl;
-	}
+    public void setLoginUrl(String loginUrl) {
+        this.loginUrl = loginUrl;
+    }
 
-	public String getLogoutSuccessUrl() {
-		return logoutSuccessUrl;
-	}
+    public String getLogoutSuccessUrl() {
+        return logoutSuccessUrl;
+    }
 
-	public void setLogoutSuccessUrl(String logoutSuccessUrl) {
-		this.logoutSuccessUrl = logoutSuccessUrl;
-	}
+    public void setLogoutSuccessUrl(String logoutSuccessUrl) {
+        this.logoutSuccessUrl = logoutSuccessUrl;
+    }
 
-	public String getLoginFailureUrl() {
-		return loginFailureUrl;
-	}
+    public String getLoginFailureUrl() {
+        return loginFailureUrl;
+    }
 
-	public void setLoginFailureUrl(String loginFailureUrl) {
-		this.loginFailureUrl = loginFailureUrl;
-	}
+    public void setLoginFailureUrl(String loginFailureUrl) {
+        this.loginFailureUrl = loginFailureUrl;
+    }
 
-	public String getAccessDeniedUrl() {
-		return accessDeniedUrl;
-	}
+    public String getAccessDeniedUrl() {
+        return accessDeniedUrl;
+    }
 
-	public void setAccessDeniedUrl(String accessDeniedUrl) {
-		this.accessDeniedUrl = accessDeniedUrl;
-	}
+    public void setAccessDeniedUrl(String accessDeniedUrl) {
+        this.accessDeniedUrl = accessDeniedUrl;
+    }
 
-	public DataSource getDataSource() {
-		return dataSource;
-	}
+    public DataSource getDataSource() {
+        return dataSource;
+    }
 
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
-	}
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
-	public String getJdbcUsersByUsernameQuery() {
-		return jdbcUsersByUsernameQuery;
-	}
+    public String getJdbcUsersByUsernameQuery() {
+        return jdbcUsersByUsernameQuery;
+    }
 
-	public void setJdbcUsersByUsernameQuery(String jdbcUsersByUsernameQuery) {
-		this.jdbcUsersByUsernameQuery = jdbcUsersByUsernameQuery;
-	}
+    public void setJdbcUsersByUsernameQuery(String jdbcUsersByUsernameQuery) {
+        this.jdbcUsersByUsernameQuery = jdbcUsersByUsernameQuery;
+    }
 
-	public String getJdbcAuthoritiesByUsernameQuery() {
-		return jdbcAuthoritiesByUsernameQuery;
-	}
+    public String getJdbcAuthoritiesByUsernameQuery() {
+        return jdbcAuthoritiesByUsernameQuery;
+    }
 
-	public void setJdbcAuthoritiesByUsernameQuery(String jdbcAuthoritiesByUsernameQuery) {
-		this.jdbcAuthoritiesByUsernameQuery = jdbcAuthoritiesByUsernameQuery;
-	}
+    public void setJdbcAuthoritiesByUsernameQuery(String jdbcAuthoritiesByUsernameQuery) {
+        this.jdbcAuthoritiesByUsernameQuery = jdbcAuthoritiesByUsernameQuery;
+    }
 
-	public String getJdbcMapClass() {
-		return jdbcMapClass;
-	}
+    public String getJdbcMapClass() {
+        return jdbcMapClass;
+    }
 
-	public void setJdbcMapClass(String jdbcMapClass) {
-		this.jdbcMapClass = jdbcMapClass;
-	}
+    public void setJdbcMapClass(String jdbcMapClass) {
+        this.jdbcMapClass = jdbcMapClass;
+    }
 
-	public String getRequestMatcherType() {
-		return requestMatcherType;
-	}
+    public String getRequestMatcherType() {
+        return requestMatcherType;
+    }
 
-	public void setRequestMatcherType(String requestMatcherType) {
-		this.requestMatcherType = requestMatcherType;
-	}
+    public void setRequestMatcherType(String requestMatcherType) {
+        this.requestMatcherType = requestMatcherType;
+    }
 
-	public String getHash() {
-		return hash;
-	}
+    public String getHash() {
+        return hash;
+    }
 
-	public void setHash(String hash) {
-		this.hash = hash;
-	}
+    public void setHash(String hash) {
+        this.hash = hash;
+    }
 
-	public int getConcurrentMaxSessons() {
-		return concurrentMaxSessons;
-	}
+    public int getConcurrentMaxSessons() {
+        return concurrentMaxSessons;
+    }
 
-	public void setConcurrentMaxSessons(int concurrentMaxSessons) {
-		this.concurrentMaxSessons = concurrentMaxSessons;
-	}
+    public void setConcurrentMaxSessons(int concurrentMaxSessons) {
+        this.concurrentMaxSessons = concurrentMaxSessons;
+    }
 
-	public String getConcurrentExpiredUrl() {
-		return concurrentExpiredUrl;
-	}
+    public String getConcurrentExpiredUrl() {
+        return concurrentExpiredUrl;
+    }
 
-	public void setConcurrentExpiredUrl(String concurrentExpiredUrl) {
-		this.concurrentExpiredUrl = concurrentExpiredUrl;
-	}
+    public void setConcurrentExpiredUrl(String concurrentExpiredUrl) {
+        this.concurrentExpiredUrl = concurrentExpiredUrl;
+    }
 
-	public boolean getErrorIfMaximumExceeded() {
-		return errorIfMaximumExceeded;
-	}
+    public boolean getErrorIfMaximumExceeded() {
+        return errorIfMaximumExceeded;
+    }
 
-	public void setErrorIfMaximumExceeded(boolean errorIfMaximumExceeded) {
-		this.errorIfMaximumExceeded = errorIfMaximumExceeded;
-	}
+    public void setErrorIfMaximumExceeded(boolean errorIfMaximumExceeded) {
+        this.errorIfMaximumExceeded = errorIfMaximumExceeded;
+    }
 
-	public String getDefaultTargetUrl() {
-		return defaultTargetUrl;
-	}
+    public String getDefaultTargetUrl() {
+        return defaultTargetUrl;
+    }
 
-	public void setDefaultTargetUrl(String defaultTargetUrl) {
-		this.defaultTargetUrl = defaultTargetUrl;
-	}
+    public void setDefaultTargetUrl(String defaultTargetUrl) {
+        this.defaultTargetUrl = defaultTargetUrl;
+    }
 
-	public boolean isAlwaysUseDefaultTargetUrl() { return alwaysUseDefaultTargetUrl; }
+    public boolean isAlwaysUseDefaultTargetUrl() {
+        return alwaysUseDefaultTargetUrl;
+    }
 
-	public void setAlwaysUseDefaultTargetUrl(boolean alwaysUseDefaultTargetUrl) {
-		this.alwaysUseDefaultTargetUrl = alwaysUseDefaultTargetUrl;
-	}
+    public void setAlwaysUseDefaultTargetUrl(boolean alwaysUseDefaultTargetUrl) {
+        this.alwaysUseDefaultTargetUrl = alwaysUseDefaultTargetUrl;
+    }
 
-	public boolean isHashBase64() {
-		return hashBase64;
-	}
+    public boolean isHashBase64() {
+        return hashBase64;
+    }
 
-	public void setHashBase64(boolean hashBase64) {
-		this.hashBase64 = hashBase64;
-	}
+    public void setHashBase64(boolean hashBase64) {
+        this.hashBase64 = hashBase64;
+    }
 
-	public boolean isUseExpression() {
-		return useExpressions;
-	}
+    public boolean isUseExpression() {
+        return useExpressions;
+    }
 
-	public void setUseExpressions(boolean useExpressions) {
-		this.useExpressions = useExpressions;
-	}
+    public void setUseExpressions(boolean useExpressions) {
+        this.useExpressions = useExpressions;
+    }
 
-	public boolean isSniff() {
-		return sniff;
-	}
+    public boolean isSniff() {
+        return sniff;
+    }
 
-	public void setSniff(boolean sniff) {
-		this.sniff = sniff;
-	}
+    public void setSniff(boolean sniff) {
+        this.sniff = sniff;
+    }
 
-	public String getXframeOptions() {
-		return xframeOptions;
-	}
+    public String getXframeOptions() {
+        return xframeOptions;
+    }
 
-	public void setXframeOptions(String xframeOptions) {
-		this.xframeOptions = xframeOptions;
-	}
+    public void setXframeOptions(String xframeOptions) {
+        this.xframeOptions = xframeOptions;
+    }
 
-	public boolean isXssProtection() {
-		return xssProtection;
-	}
+    public boolean isXssProtection() {
+        return xssProtection;
+    }
 
-	public void setXssProtection(boolean xssProtection) {
-		this.xssProtection = xssProtection;
-	}
+    public void setXssProtection(boolean xssProtection) {
+        this.xssProtection = xssProtection;
+    }
 
-	public boolean getCacheControl() {
-		return cacheControl;
-	}
+    public boolean getCacheControl() {
+        return cacheControl;
+    }
 
-	public void setCacheControl(boolean cacheControl) {
-		this.cacheControl = cacheControl;
-	}
+    public void setCacheControl(boolean cacheControl) {
+        this.cacheControl = cacheControl;
+    }
 
-	public boolean isCsrf() {
-		return csrf;
-	}
+    public boolean isCsrf() {
+        return csrf;
+    }
 
-	public void setCsrf(boolean csrf) {
-		this.csrf = csrf;
-	}
+    public void setCsrf(boolean csrf) {
+        this.csrf = csrf;
+    }
 
-	public String getCsrfAccessDeniedUrl() {
-		return csrfAccessDeniedUrl;
-	}
+    public String getCsrfAccessDeniedUrl() {
+        return csrfAccessDeniedUrl;
+    }
 
-	public void setCsrfAccessDeniedUrl(String csrfAccessDeniedUrl) {
-		this.csrfAccessDeniedUrl = csrfAccessDeniedUrl;
-	}
+    public void setCsrfAccessDeniedUrl(String csrfAccessDeniedUrl) {
+        this.csrfAccessDeniedUrl = csrfAccessDeniedUrl;
+    }
 
-	public boolean isSupportPointcut() {
-		return supportPointcut;
-	}
+    public boolean isSupportPointcut() {
+        return supportPointcut;
+    }
 
-	public void setSupportPointcut(boolean supportPointcut) {
-		this.supportPointcut = supportPointcut;
-	}
+    public void setSupportPointcut(boolean supportPointcut) {
+        this.supportPointcut = supportPointcut;
+    }
 
-	public boolean isSupportMethod() {
-		return supportMethod;
-	}
+    public boolean isSupportMethod() {
+        return supportMethod;
+    }
 
-	public void setSupportMethod(boolean supportMethod) {
-		this.supportMethod = supportMethod;
-	}
+    public void setSupportMethod(boolean supportMethod) {
+        this.supportMethod = supportMethod;
+    }
 
 }

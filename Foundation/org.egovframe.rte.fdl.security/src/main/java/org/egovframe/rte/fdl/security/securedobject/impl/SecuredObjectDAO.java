@@ -33,13 +33,12 @@ import java.util.*;
 
 /**
  * DB기반의 보호된 자원 관리를 구현한 DAO 클래스
- * 
+ *
  * <p><b>NOTE:</b> DB 기반의 Secured Object 정보를 제공하기 위한 DAO 로
- * default 쿼리를 제공하며 사용자 DB 에 맞는 각 유형의 DB 쿼리는 재설정 가능하다. 
+ * default 쿼리를 제공하며 사용자 DB 에 맞는 각 유형의 DB 쿼리는 재설정 가능하다.
  * namedParameterJdbcTemplate 를 사용하여 DB 조회를 처리한다.</p>
- * 
+ *
  * @author ByungHun Woo
- * @since 2009.06.01
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -50,61 +49,56 @@ import java.util.*;
  * 2014.01.22   한성곤		        Spring Security 3.2.X 업그레이드 적용, 설정 간소화 처리 관련 변경
  * 2014.07.03   한성곤		        RegexRequestMatcher의 equals 미적용에 따른 Map 검색 문제 해결 (RegexRequestMatcher -> SelfRegexRequestMatcher 변경)
  * </pre>
+ * @since 2009.06.01
  */
 public class SecuredObjectDAO implements ApplicationContextAware {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(SecuredObjectDAO.class);
 
     /**
      * url 형식인 보호자원 - Role 맵핑정보를 조회하는 default 쿼리이다.
      */
     public static final String DEF_ROLES_AND_URL_QUERY =
-        "SELECT a.resource_pattern url, b.authority authority "
-            + "FROM SECURED_RESOURCES a, SECURED_RESOURCES_ROLE b "
-            + "WHERE a.resource_id = b.resource_id "
-            + "AND a.resource_type = 'url' ORDER BY a.sort_order ";
-
+            "SELECT a.resource_pattern url, b.authority authority "
+                    + "FROM SECURED_RESOURCES a, SECURED_RESOURCES_ROLE b "
+                    + "WHERE a.resource_id = b.resource_id "
+                    + "AND a.resource_type = 'url' ORDER BY a.sort_order ";
     /**
      * method 형식인 보호자원 - Role 맵핑정보를 조회하는 default 쿼리이다.
      */
     public static final String DEF_ROLES_AND_METHOD_QUERY =
-        "SELECT a.resource_pattern method, b.authority authority "
-            + "FROM SECURED_RESOURCES a, SECURED_RESOURCES_ROLE b "
-            + "WHERE a.resource_id = b.resource_id "
-            + "AND a.resource_type = 'method' ORDER BY a.sort_order ";
-
+            "SELECT a.resource_pattern method, b.authority authority "
+                    + "FROM SECURED_RESOURCES a, SECURED_RESOURCES_ROLE b "
+                    + "WHERE a.resource_id = b.resource_id "
+                    + "AND a.resource_type = 'method' ORDER BY a.sort_order ";
     /**
      * pointcut 형식인 보호자원 - Role 맵핑정보를 조회하는 default 쿼리이다.
      */
     public static final String DEF_ROLES_AND_POINTCUT_QUERY =
-        "SELECT a.resource_pattern pointcut, b.authority authority "
-            + "FROM SECURED_RESOURCES a, SECURED_RESOURCES_ROLE b "
-            + "WHERE a.resource_id = b.resource_id "
-            + "AND a.resource_type = 'pointcut' ORDER BY a.sort_order ";
-
+            "SELECT a.resource_pattern pointcut, b.authority authority "
+                    + "FROM SECURED_RESOURCES a, SECURED_RESOURCES_ROLE b "
+                    + "WHERE a.resource_id = b.resource_id "
+                    + "AND a.resource_type = 'pointcut' ORDER BY a.sort_order ";
     /**
      * 매 request 마다 best matching url 보호자원 - Role 맵핑정보를 얻기위한 default 쿼리이다.
      * (Oracle 10g specific)
      */
     public static final String DEF_REGEX_MATCHED_REQUEST_MAPPING_QUERY_ORACLE10G =
-        "SELECT a.resource_pattern uri, b.authority authority "
-            + "FROM secured_resources a, secured_resources_role b "
-            + "WHERE a.resource_id = b.resource_id "
-            + "AND a.resource_id =  "
-            + " ( SELECT resource_id FROM "
-            + "    ( SELECT resource_id, ROW_NUMBER() OVER (ORDER BY sort_order) resource_order FROM secured_resources c "
-            + "      WHERE REGEXP_LIKE ( :url, c.resource_pattern ) "
-            + "      AND c.resource_type = 'url' "
-            + "      ORDER BY c.sort_order ) "
-            + "   WHERE resource_order = 1 ) ";
-
+            "SELECT a.resource_pattern uri, b.authority authority "
+                    + "FROM secured_resources a, secured_resources_role b "
+                    + "WHERE a.resource_id = b.resource_id "
+                    + "AND a.resource_id =  "
+                    + " ( SELECT resource_id FROM "
+                    + "    ( SELECT resource_id, ROW_NUMBER() OVER (ORDER BY sort_order) resource_order FROM secured_resources c "
+                    + "      WHERE REGEXP_LIKE ( :url, c.resource_pattern ) "
+                    + "      AND c.resource_type = 'url' "
+                    + "      ORDER BY c.sort_order ) "
+                    + "   WHERE resource_order = 1 ) ";
     /**
      * Role 의 계층(Hierarchy) 관계를 조회하는 default 쿼리이다.
      */
     public static final String DEF_HIERARCHICAL_ROLES_QUERY =
-        "SELECT a.child_role child, a.parent_role parent "
-            + "FROM ROLES_HIERARCHY a LEFT JOIN ROLES_HIERARCHY b on (a.child_role = b.parent_role) ";
-
+            "SELECT a.child_role child, a.parent_role parent "
+                    + "FROM ROLES_HIERARCHY a LEFT JOIN ROLES_HIERARCHY b on (a.child_role = b.parent_role) ";
+    private static final Logger LOGGER = LoggerFactory.getLogger(SecuredObjectDAO.class);
     private String sqlRolesAndUrl;
 
     private String sqlRolesAndMethod;
@@ -120,50 +114,51 @@ public class SecuredObjectDAO implements ApplicationContextAware {
     private ApplicationContext context;
 
     public SecuredObjectDAO() {
-		this.sqlRolesAndUrl = DEF_ROLES_AND_URL_QUERY;
-		this.sqlRolesAndMethod = DEF_ROLES_AND_METHOD_QUERY;
-		this.sqlRolesAndPointcut = DEF_ROLES_AND_POINTCUT_QUERY;
-		this.sqlRegexMatchedRequestMapping = DEF_REGEX_MATCHED_REQUEST_MAPPING_QUERY_ORACLE10G;
-		this.sqlHierarchicalRoles = DEF_HIERARCHICAL_ROLES_QUERY;
+        this.sqlRolesAndUrl = DEF_ROLES_AND_URL_QUERY;
+        this.sqlRolesAndMethod = DEF_ROLES_AND_METHOD_QUERY;
+        this.sqlRolesAndPointcut = DEF_ROLES_AND_POINTCUT_QUERY;
+        this.sqlRegexMatchedRequestMapping = DEF_REGEX_MATCHED_REQUEST_MAPPING_QUERY_ORACLE10G;
+        this.sqlHierarchicalRoles = DEF_HIERARCHICAL_ROLES_QUERY;
     }
 
     public void setDataSource(DataSource dataSource) {
         this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
     }
 
-	public void setApplicationContext(ApplicationContext context) throws BeansException {
-		this.context = context;
-	}
+    public void setApplicationContext(ApplicationContext context) throws BeansException {
+        this.context = context;
+    }
 
-	@PostConstruct
-	public void securedObjectConfigInit() {
-		if (context.getBeanNamesForType(SecuredObjectConfig.class).length > 0) {
-			SecuredObjectConfig config = context.getBean(SecuredObjectConfig.class);
+    @PostConstruct
+    public void securedObjectConfigInit() {
+        if (context.getBeanNamesForType(SecuredObjectConfig.class).length > 0) {
+            SecuredObjectConfig config = context.getBean(SecuredObjectConfig.class);
 
-			if (StringUtils.hasText(config.getSqlRolesAndUrl())) {
-				sqlRolesAndUrl = config.getSqlRolesAndUrl();
-			}
+            if (StringUtils.hasText(config.getSqlRolesAndUrl())) {
+                sqlRolesAndUrl = config.getSqlRolesAndUrl();
+            }
 
-			if (StringUtils.hasText(config.getSqlRolesAndMethod())) {
-				sqlRolesAndMethod = config.getSqlRolesAndMethod();
-			}
+            if (StringUtils.hasText(config.getSqlRolesAndMethod())) {
+                sqlRolesAndMethod = config.getSqlRolesAndMethod();
+            }
 
-			if (StringUtils.hasText(config.getSqlRolesAndPointcut())) {
-				sqlRolesAndPointcut = config.getSqlRolesAndPointcut();
-			}
+            if (StringUtils.hasText(config.getSqlRolesAndPointcut())) {
+                sqlRolesAndPointcut = config.getSqlRolesAndPointcut();
+            }
 
-			if (StringUtils.hasText(config.getSqlRegexMatchedRequestMapping())) {
-				sqlRegexMatchedRequestMapping = config.getSqlRegexMatchedRequestMapping();
-			}
+            if (StringUtils.hasText(config.getSqlRegexMatchedRequestMapping())) {
+                sqlRegexMatchedRequestMapping = config.getSqlRegexMatchedRequestMapping();
+            }
 
-			if (StringUtils.hasText(config.getSqlHierarchicalRoles())) {
-				sqlHierarchicalRoles = config.getSqlHierarchicalRoles();
-			}
-		}
-	}
+            if (StringUtils.hasText(config.getSqlHierarchicalRoles())) {
+                sqlHierarchicalRoles = config.getSqlHierarchicalRoles();
+            }
+        }
+    }
 
     /**
      * 롤에 대한 URL 정보를 가져오는 SQL을 얻어온다.
+     *
      * @return
      */
     public String getSqlRolesAndUrl() {
@@ -172,6 +167,7 @@ public class SecuredObjectDAO implements ApplicationContextAware {
 
     /**
      * 롤에대한 URL 정보를 가져오는 SQL을 설정한다.
+     *
      * @param sqlRolesAndUrl
      */
     public void setSqlRolesAndUrl(String sqlRolesAndUrl) {
@@ -179,7 +175,8 @@ public class SecuredObjectDAO implements ApplicationContextAware {
     }
 
     /**
-     *  롤에 대한 메소드 정보를 가져오는 SQL을 얻어온다.
+     * 롤에 대한 메소드 정보를 가져오는 SQL을 얻어온다.
+     *
      * @return
      */
     public String getSqlRolesAndMethod() {
@@ -188,6 +185,7 @@ public class SecuredObjectDAO implements ApplicationContextAware {
 
     /**
      * 롤에 대한 메소드 정보를 가져오는 SQL을 설정한다.
+     *
      * @param sqlRolesAndMethod
      */
     public void setSqlRolesAndMethod(String sqlRolesAndMethod) {
@@ -196,6 +194,7 @@ public class SecuredObjectDAO implements ApplicationContextAware {
 
     /**
      * 롤에 대한 포인트컷 정보를 가져오는 SQL을 얻어온다.
+     *
      * @return
      */
     public String getSqlRolesAndPointcut() {
@@ -204,6 +203,7 @@ public class SecuredObjectDAO implements ApplicationContextAware {
 
     /**
      * 롤에 대한 포인트컷 정보를 가져오는 SQL을 설정한다.
+     *
      * @param sqlRolesAndPointcut
      */
     public void setSqlRolesAndPointcut(String sqlRolesAndPointcut) {
@@ -211,7 +211,8 @@ public class SecuredObjectDAO implements ApplicationContextAware {
     }
 
     /**
-     *  매핑 정보를 가져오는 SQL을 얻어온다.
+     * 매핑 정보를 가져오는 SQL을 얻어온다.
+     *
      * @return
      */
     public String getSqlRegexMatchedRequestMapping() {
@@ -220,6 +221,7 @@ public class SecuredObjectDAO implements ApplicationContextAware {
 
     /**
      * 매핑 정보를 가져오는 SQL을 설정한다.
+     *
      * @param sqlRegexMatchedRequestMapping
      */
     public void setSqlRegexMatchedRequestMapping(String sqlRegexMatchedRequestMapping) {
@@ -228,6 +230,7 @@ public class SecuredObjectDAO implements ApplicationContextAware {
 
     /**
      * 롤 계층구조 정보를 가져오는 SQL을 얻어온다.
+     *
      * @return
      */
     public String getSqlHierarchicalRoles() {
@@ -236,6 +239,7 @@ public class SecuredObjectDAO implements ApplicationContextAware {
 
     /**
      * 롤 계층구조 정보를 가져오는 SQL을 설정한다.
+     *
      * @param sqlHierarchicalRoles
      */
     public void setSqlHierarchicalRoles(String sqlHierarchicalRoles) {
@@ -278,15 +282,15 @@ public class SecuredObjectDAO implements ApplicationContextAware {
             presentResourceStr = (String) tempMap.get(resourceType);
             // url 인 경우 RequestKey 형식의 key를 Map에 담아야 함
             if (isResourcesUrl) {
-            	if (requestMatcherType.equalsIgnoreCase("regex")) {
-            		presentResource = new SelfRegexRequestMatcher(presentResourceStr, null);
-            	} else if (requestMatcherType.equalsIgnoreCase("ciRegex")) {
-            		presentResource = new SelfRegexRequestMatcher(presentResourceStr, null, true);
-            	} else {
-            		presentResource = new AntPathRequestMatcher(presentResourceStr);
-            	}
+                if (requestMatcherType.equalsIgnoreCase("regex")) {
+                    presentResource = new SelfRegexRequestMatcher(presentResourceStr, null);
+                } else if (requestMatcherType.equalsIgnoreCase("ciRegex")) {
+                    presentResource = new SelfRegexRequestMatcher(presentResourceStr, null, true);
+                } else {
+                    presentResource = new AntPathRequestMatcher(presentResourceStr);
+                }
             } else {
-            	presentResource = presentResourceStr;
+                presentResource = presentResourceStr;
             }
 
             List<ConfigAttribute> configList = new LinkedList<ConfigAttribute>();
@@ -330,7 +334,7 @@ public class SecuredObjectDAO implements ApplicationContextAware {
 
     public List<ConfigAttribute> getRegexMatchedRequestMapping(String url) throws Exception {
         // best regex matching - best 매칭된 Uri 에 따른 Role List 조회,
-    	// DB 차원의 정규식 지원이 있는 경우 사용 (ex. hsqldb custom function, Oracle 10g regexp_like 등)
+        // DB 차원의 정규식 지원이 있는 경우 사용 (ex. hsqldb custom function, Oracle 10g regexp_like 등)
         Map<String, String> paramMap = new HashMap<String, String>();
         paramMap.put("url", url);
         List<Map<String, Object>> resultList = this.namedParameterJdbcTemplate.queryForList(getSqlRegexMatchedRequestMapping(), paramMap);
@@ -341,18 +345,18 @@ public class SecuredObjectDAO implements ApplicationContextAware {
         // 같은 Uri 에 대한 Role 맵핑이므로 무조건 configList 에 add 함
         while (itr.hasNext()) {
             tempMap = itr.next();
-			configList.add(new SecurityConfig((String) tempMap.get("authority")));
+            configList.add(new SecurityConfig((String) tempMap.get("authority")));
         }
 
         if (configList.size() > 0) {
-        	LOGGER.debug("Request Uri : {}, matched Uri : {}, mapping Roles : {}", url, resultList.get(0).get("uri"), configList);
+            LOGGER.debug("Request Uri : {}, matched Uri : {}, mapping Roles : {}", url, resultList.get(0).get("uri"), configList);
         }
 
         return configList;
     }
 
     public String getHierarchicalRoles() throws Exception {
-    	List<Map<String, Object>> resultList = this.namedParameterJdbcTemplate.queryForList(getSqlHierarchicalRoles(), new HashMap<String, String>());
+        List<Map<String, Object>> resultList = this.namedParameterJdbcTemplate.queryForList(getSqlHierarchicalRoles(), new HashMap<String, String>());
 
         Iterator<Map<String, Object>> itr = resultList.iterator();
         StringBuffer concatedRoles = new StringBuffer();

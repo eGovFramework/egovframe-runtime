@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:vld="http://www.springmodules.org/validation/bean"
            elementFormDefault="qualified"
-           targetNamespace="http://www.springmodules.org/validation/bean"
-           xmlns:vld="http://www.springmodules.org/validation/bean">
+           targetNamespace="http://www.springmodules.org/validation/bean">
 
     <!-- Basic Structure Element Definitions -->
 
@@ -98,22 +98,27 @@
         </xs:attribute>
         <xs:attribute name="message" type="xs:string" use="optional">
             <xs:annotation>
-                <xs:documentation>A default error message to be used when the error code cannot be resolved</xs:documentation>
+                <xs:documentation>A default error message to be used when the error code cannot be resolved
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="args" type="xs:string" use="optional">
             <xs:annotation>
-                <xs:documentation>A comma-separated list of arguments to be used along with the error code</xs:documentation>
+                <xs:documentation>A comma-separated list of arguments to be used along with the error code
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="apply-if" type="xs:string" use="optional">
             <xs:annotation>
-                <xs:documentation>A condition expression that determines when/whether this rule should be applied on the bean.</xs:documentation>
+                <xs:documentation>A condition expression that determines when/whether this rule should be applied on the
+                    bean.
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="contexts" type="xs:string" use="optional">
             <xs:annotation>
-                <xs:documentation>A comma-separated list of validation context tokens this rule is associated with</xs:documentation>
+                <xs:documentation>A comma-separated list of validation context tokens this rule is associated with
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
     </xs:attributeGroup>

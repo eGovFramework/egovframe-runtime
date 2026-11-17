@@ -6,51 +6,51 @@
                  RECORD_TYPE_NAME="M1"
                  PARENT_RECORD_TYPE_ID="[null]"/>
     <RECORD_TYPE_FIELD RECORD_TYPE_ID="M1"
-                    RECORD_FIELD_NAME="a"
-                    RECORD_FIELD_TYPE_ID="string"/>
+                       RECORD_FIELD_NAME="a"
+                       RECORD_FIELD_TYPE_ID="string"/>
     <RECORD_TYPE_FIELD RECORD_TYPE_ID="M1"
-                    RECORD_FIELD_NAME="b"
-                    RECORD_FIELD_TYPE_ID="integer"/>
+                       RECORD_FIELD_NAME="b"
+                       RECORD_FIELD_TYPE_ID="integer"/>
     <RECORD_TYPE_FIELD RECORD_TYPE_ID="M1"
-                    RECORD_FIELD_NAME="c"
-                    RECORD_FIELD_TYPE_ID="boolean"/>
-    
+                       RECORD_FIELD_NAME="c"
+                       RECORD_FIELD_TYPE_ID="boolean"/>
+
     <RECORD_TYPE RECORD_TYPE_ID="M2"
                  RECORD_TYPE_NAME="M2"
                  PARENT_RECORD_TYPE_ID="[null]"/>
     <RECORD_TYPE_FIELD RECORD_TYPE_ID="M2"
-                    RECORD_FIELD_NAME="d"
-                    RECORD_FIELD_TYPE_ID="string"/>
+                       RECORD_FIELD_NAME="d"
+                       RECORD_FIELD_TYPE_ID="string"/>
     <RECORD_TYPE_FIELD RECORD_TYPE_ID="M2"
-                    RECORD_FIELD_NAME="e"
-                    RECORD_FIELD_TYPE_ID="string"/>
+                       RECORD_FIELD_NAME="e"
+                       RECORD_FIELD_TYPE_ID="string"/>
 
     <RECORD_TYPE RECORD_TYPE_ID="M3"
                  RECORD_TYPE_NAME="M3"
                  PARENT_RECORD_TYPE_ID="M2"/>
     <RECORD_TYPE_FIELD RECORD_TYPE_ID="M3"
-                    RECORD_FIELD_NAME="f"
-                    RECORD_FIELD_TYPE_ID="integer"/>
+                       RECORD_FIELD_NAME="f"
+                       RECORD_FIELD_TYPE_ID="integer"/>
     <RECORD_TYPE_FIELD RECORD_TYPE_ID="M3"
-                    RECORD_FIELD_NAME="g"
-                    RECORD_FIELD_TYPE_ID="integer"/>
+                       RECORD_FIELD_NAME="g"
+                       RECORD_FIELD_TYPE_ID="integer"/>
 
     <RECORD_TYPE RECORD_TYPE_ID="M4"
                  RECORD_TYPE_NAME="M4"
                  PARENT_RECORD_TYPE_ID="M2"/>
     <RECORD_TYPE_FIELD RECORD_TYPE_ID="M4"
-                    RECORD_FIELD_NAME="d"
-                    RECORD_FIELD_TYPE_ID="integer"/>
+                       RECORD_FIELD_NAME="d"
+                       RECORD_FIELD_TYPE_ID="integer"/>
     <RECORD_TYPE_FIELD RECORD_TYPE_ID="M4"
-                    RECORD_FIELD_NAME="f"
-                    RECORD_FIELD_TYPE_ID="integer"/>
+                       RECORD_FIELD_NAME="f"
+                       RECORD_FIELD_TYPE_ID="integer"/>
 
     <ORGANIZATION ORGANIZATION_ID="00000000"
                   ORGANIZATION_NAME="Organization A"/>
 
     <ORGANIZATION ORGANIZATION_ID="00000001"
                   ORGANIZATION_NAME="Organization B"/>
-                  
+
     <SYSTEM SYSTEM_KEY="1"
             ORGANIZATION_ID="00000000"
             SYSTEM_ID="00000000"
@@ -74,7 +74,7 @@
             SYSTEM_ID="00000001"
             SYSTEM_NAME="System B1"
             SYSTEM_STANDARD_YN="Y"/>
-    
+
     <SERVICE SERVICE_KEY="1"
              SYSTEM_KEY="1"
              SERVICE_ID="00000000"
@@ -84,7 +84,7 @@
              SERVICE_PROVIDER_BEAN_ID="[null]"
              SERVICE_STANDARD_YN="Y"
              USING_YN="Y"/>
-             
+
     <SERVICE SERVICE_KEY="2"
              SYSTEM_KEY="2"
              SERVICE_ID="00000000"
@@ -94,7 +94,7 @@
              SERVICE_PROVIDER_BEAN_ID="[null]"
              SERVICE_STANDARD_YN="Y"
              USING_YN="Y"/>
-             
+
     <SERVICE SERVICE_KEY="3"
              SYSTEM_KEY="3"
              SERVICE_ID="00000000"
@@ -104,7 +104,7 @@
              SERVICE_PROVIDER_BEAN_ID="[null]"
              SERVICE_STANDARD_YN="Y"
              USING_YN="Y"/>
-             
+
     <SERVICE SERVICE_KEY="4"
              SYSTEM_KEY="4"
              SERVICE_ID="00000000"
@@ -130,5 +130,5 @@
                  USING_YN="Y"
                  VALIDATE_FROM="2009-01-01 00:00:00"
                  VALIDATE_TO="2009-05-31 23:59:59"/>
-  
+
 </dataset>

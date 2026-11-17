@@ -4,36 +4,36 @@ import javax.persistence.*;
 
 @Entity
 public class Department {
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long deptNo;
-	
-	private String deptName;
-	
-	@ManyToOne(optional = false)
-	private Employee manager;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long deptNo;
 
-	public long getDeptNo() {
-		return deptNo;
-	}
+    private String deptName;
 
-	public void setDeptNo(long deptNo) {
-		this.deptNo = deptNo;
-	}
+    @ManyToOne(optional = false)
+    private Employee manager;
 
-	public String getDeptName() {
-		return deptName;
-	}
+    public long getDeptNo() {
+        return deptNo;
+    }
 
-	public void setDeptName(String deptName) {
-		this.deptName = deptName;
-	}
+    public void setDeptNo(long deptNo) {
+        this.deptNo = deptNo;
+    }
 
-	public Employee getManager() {
-		return manager;
-	}
+    public String getDeptName() {
+        return deptName;
+    }
 
-	public void setManager(Employee manager) {
-		this.manager = manager;
-	}
+    public void setDeptName(String deptName) {
+        this.deptName = deptName;
+    }
+
+    public Employee getManager() {
+        return manager;
+    }
+
+    public void setManager(Employee manager) {
+        this.manager = manager;
+    }
 }

@@ -28,36 +28,38 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
-* FilxedLength 방식으로 데이터처리를 수행하는 테스트
-* @author 배치실행개발팀
-* @since 2012. 06.27
-* @version 1.0
-* @see
-*/
+ * FilxedLength 방식으로 데이터처리를 수행하는 테스트
+ *
+ * @author 배치실행개발팀
+ * @version 1.0
+ * @see
+ * @since 2012. 06.27
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations="/org/egovframe/batch/jobs/fixedLengthIoJob.xml")
+@ContextConfiguration(locations = "/org/egovframe/batch/jobs/fixedLengthIoJob.xml")
 public class EgovFixedLengthFunctionalTests extends EgovAbstractIoSampleTests {
 
-	/**
-	 * 배치결과를 다시 읽을 때  reader 설정하는 메소드
-	 */
-	@Override
-	protected void pointReaderToOutput(ItemReader<CustomerCredit> reader) {
-		JobParameters jobParameters = new JobParametersBuilder(super.getUniqueJobParameters()).addString("inputFile", "file:./target/test-outputs/fixedLengthOutput.txt")
-				.toJobParameters();
-		StepExecution stepExecution = MetaDataInstanceFactory.createStepExecution(jobParameters);
-		StepSynchronizationManager.close();
-		StepSynchronizationManager.register(stepExecution);
-	}
+    /**
+     * 배치결과를 다시 읽을 때  reader 설정하는 메소드
+     */
+    @Override
+    protected void pointReaderToOutput(ItemReader<CustomerCredit> reader) {
+        JobParameters jobParameters = new JobParametersBuilder(super.getUniqueJobParameters()).addString("inputFile", "file:./target/test-outputs/fixedLengthOutput.txt")
+                .toJobParameters();
+        StepExecution stepExecution = MetaDataInstanceFactory.createStepExecution(jobParameters);
+        StepSynchronizationManager.close();
+        StepSynchronizationManager.register(stepExecution);
+    }
 
-	/**
-	 * 잡파라미터를 설정하기 위한 메소드 
-	 * @return jobParameters
-	 */
-	@Override
-	protected JobParameters getUniqueJobParameters() {
-		return new JobParametersBuilder(super.getUniqueJobParameters()).addString("inputFile", "/org/egovframe/data/input/fixedLength.txt")
-				.addString("outputFile", "file:./target/test-outputs/fixedLengthOutput.txt").toJobParameters();
-	}
+    /**
+     * 잡파라미터를 설정하기 위한 메소드
+     *
+     * @return jobParameters
+     */
+    @Override
+    protected JobParameters getUniqueJobParameters() {
+        return new JobParametersBuilder(super.getUniqueJobParameters()).addString("inputFile", "/org/egovframe/data/input/fixedLength.txt")
+                .addString("outputFile", "file:./target/test-outputs/fixedLengthOutput.txt").toJobParameters();
+    }
 
 }

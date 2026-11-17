@@ -10,7 +10,7 @@ import org.springframework.web.reactive.config.EnableWebFlux;
 
 @Configuration
 @EnableWebFlux
-@ComponentScan(basePackages="org.egovframe.rte.psl.reactive.cassandra.repository")
+@ComponentScan(basePackages = "org.egovframe.rte.psl.reactive.cassandra.repository")
 @EnableCassandraRepositories
 public class CassandraConfiguration {
 
@@ -21,7 +21,7 @@ public class CassandraConfiguration {
     private String username = "com";
     private String password = "com01";
 
-    @Bean(name="reactiveSession")
+    @Bean(name = "reactiveSession")
     public ReactiveSession reactiveSession() {
         EgovCassandraConfiguration egovCassandraConfiguration = new EgovCassandraConfiguration();
         egovCassandraConfiguration.setDataCenterName(this.dataCenterName);

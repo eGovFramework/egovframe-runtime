@@ -26,86 +26,88 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
- *  == 개정이력(Modification Information) ==
- *
- *   수정일      수정자           수정내용
- *  -------    --------    ---------------------------
- *   2014.01.22 권윤정  SimpleJdbcTestUtils -> JdbcTestUtils 변경
- *   2014.01.22 권윤정  SimpleJdbcTemplate -> JdbcTemplate 변경
- *   2014.01.22 권윤정  SLF4J로 로깅방식 변경
+ * == 개정이력(Modification Information) ==
+ * <p>
+ * 수정일      수정자           수정내용
+ * -------    --------    ---------------------------
+ * 2014.01.22 권윤정  SimpleJdbcTestUtils -> JdbcTestUtils 변경
+ * 2014.01.22 권윤정  SimpleJdbcTemplate -> JdbcTemplate 변경
+ * 2014.01.22 권윤정  SLF4J로 로깅방식 변경
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath*:META-INF/spring/context-*.xml" })
+@ContextConfiguration(locations = {"classpath*:META-INF/spring/context-*.xml"})
 @Transactional
 public class LobTypeTest extends TestBase {
 
-	@Resource(name = "typeTestMapper")
-	TypeTestMapper typeTestMapper;
+    @Resource(name = "typeTestMapper")
+    TypeTestMapper typeTestMapper;
 
-	@Before
-	public void onSetUp() throws Exception {
-		// 외부에 sql file 로부터 DB 초기화 (TypeTest 기존 테이블
-		// 삭제/생성)
-		ScriptUtils.executeSqlScript(dataSource.getConnection(), new ClassPathResource("META-INF/testdata/sample_schema_ddl_typetest_" + usingDBMS + ".sql"));
-	}
+    @Before
+    public void onSetUp() throws Exception {
+        // 외부에 sql file 로부터 DB 초기화 (TypeTest 기존 테이블
+        // 삭제/생성)
+        try (java.sql.Connection scriptConn = dataSource.getConnection()) {
+            ScriptUtils.executeSqlScript(scriptConn, new ClassPathResource("META-INF/testdata/sample_schema_ddl_typetest_" + usingDBMS + ".sql"));
+        }
+    }
 
-	public LobTestVO makeVO() throws Exception {
-		LobTestVO vo = new LobTestVO();
-		vo.setId(1);
+    public LobTestVO makeVO() throws Exception {
+        LobTestVO vo = new LobTestVO();
+        vo.setId(1);
 
-		ResourceLoader resourceLoader = new DefaultResourceLoader();
-		org.springframework.core.io.Resource resource = resourceLoader.getResource("META-INF/testdata/iBATIS-SqlMaps-2_en.pdf");
-		File file = resource.getFile();
-		byte[] fileBArray = new byte[(int) file.length()];
-		@SuppressWarnings("resource")
-		FileInputStream fis = new FileInputStream(file);
-		fis.read(fileBArray);
-		vo.setBlobType(fileBArray);
+        ResourceLoader resourceLoader = new DefaultResourceLoader();
+        org.springframework.core.io.Resource resource = resourceLoader.getResource("META-INF/testdata/iBATIS-SqlMaps-2_en.pdf");
+        File file = resource.getFile();
+        byte[] fileBArray = new byte[(int) file.length()];
+        @SuppressWarnings("resource")
+        FileInputStream fis = new FileInputStream(file);
+        fis.read(fileBArray);
+        vo.setBlobType(fileBArray);
 
-		resource = resourceLoader.getResource("META-INF/testdata/index-all.html");
-		BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()));
-		StringBuilder builder = new StringBuilder();
-		String line = null;
-		while ((line = reader.readLine()) != null) {
-			builder.append(line);
-			builder.append("\n");
-		}
-		vo.setClobType(builder.toString());
+        resource = resourceLoader.getResource("META-INF/testdata/index-all.html");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()));
+        StringBuilder builder = new StringBuilder();
+        String line = null;
+        while ((line = reader.readLine()) != null) {
+            builder.append(line);
+            builder.append("\n");
+        }
+        vo.setClobType(builder.toString());
 
-		return vo;
-	}
+        return vo;
+    }
 
-	public void checkResult(LobTestVO vo, LobTestVO resultVO) {
-		assertNotNull(resultVO);
-		assertEquals(vo.getId(), resultVO.getId());
+    public void checkResult(LobTestVO vo, LobTestVO resultVO) {
+        assertNotNull(resultVO);
+        assertEquals(vo.getId(), resultVO.getId());
 
-		// 바로 비교는 불가 - length 비교 및 첫 바이트, 끝 바이트가 동일한지 확인한다.
-		int srcLength = vo.getBlobType().length;
-		assertEquals(srcLength, resultVO.getBlobType().length);
-		assertEquals(vo.getBlobType()[0], resultVO.getBlobType()[0]);
-		assertEquals(vo.getBlobType()[srcLength - 1], resultVO.getBlobType()[srcLength - 1]);
+        // 바로 비교는 불가 - length 비교 및 첫 바이트, 끝 바이트가 동일한지 확인한다.
+        int srcLength = vo.getBlobType().length;
+        assertEquals(srcLength, resultVO.getBlobType().length);
+        assertEquals(vo.getBlobType()[0], resultVO.getBlobType()[0]);
+        assertEquals(vo.getBlobType()[srcLength - 1], resultVO.getBlobType()[srcLength - 1]);
 
-		assertEquals(vo.getClobType(), resultVO.getClobType());
-		LoggerFactory.getLogger(this.getClass()).debug(resultVO.getClobType());
+        assertEquals(vo.getClobType(), resultVO.getClobType());
+        LoggerFactory.getLogger(this.getClass()).debug(resultVO.getClobType());
 
-	}
+    }
 
-	@Rollback(false)
-	@Test
-	public void testLobTypeTest() throws Exception {
+    @Rollback(false)
+    @Test
+    public void testLobTypeTest() throws Exception {
 
-		LobTestVO vo = makeVO();
+        LobTestVO vo = makeVO();
 
-		// insert
-		typeTestMapper.insert("insertLobTest", vo);
+        // insert
+        typeTestMapper.insert("insertLobTest", vo);
 
-		// select
-		LobTestVO resultVO = (LobTestVO) typeTestMapper.selectOne("selectLobTest", vo);
+        // select
+        LobTestVO resultVO = (LobTestVO) typeTestMapper.selectOne("selectLobTest", vo);
 
-		// check
-		checkResult(vo, resultVO);
+        // check
+        checkResult(vo, resultVO);
 
-	}
+    }
 
 }

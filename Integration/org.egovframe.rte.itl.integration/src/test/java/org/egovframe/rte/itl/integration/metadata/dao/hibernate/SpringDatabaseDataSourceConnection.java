@@ -8,7 +8,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
- * Wrapped version of DBUnits DatabaseDataSourceConnection to enable Spring Transaction support. 
+ * Wrapped version of DBUnits DatabaseDataSourceConnection to enable Spring Transaction support.
  */
 public class SpringDatabaseDataSourceConnection extends DatabaseDataSourceConnection {
 

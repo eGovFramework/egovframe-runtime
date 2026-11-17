@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 MOPAS(Ministry of Public Administration and Security).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +22,8 @@ package org.egovframe.rte.itl.integration;
  * <code>EgovIntegrationContext</code>의 <code>getService</code> 메소드 호출 시 해당하는
  * service가 존재하지 않을 경우 발생한다.
  * </p>
- * 
+ *
  * @author 실행환경 개발팀 심상호
- * @since 2009.06.01
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -33,28 +32,29 @@ package org.egovframe.rte.itl.integration;
  * ----------------------------------------------
  * 2009.06.01	심상호				최초 생성
  * </pre>
+ * @since 2009.06.01
  */
 public class EgovIntegrationException extends RuntimeException {
 
-	/**
-	 * serialVersion UID
-	 */
-	private static final long serialVersionUID = 5787571086773572581L;
+    /**
+     * serialVersion UID
+     */
+    private static final long serialVersionUID = 5787571086773572581L;
 
-	public EgovIntegrationException() {
-		super();
-	}
+    public EgovIntegrationException() {
+        super();
+    }
 
-	public EgovIntegrationException(String arg0, Throwable arg1) {
-		super(arg0, arg1);
-	}
+    public EgovIntegrationException(String arg0, Throwable arg1) {
+        super(arg0, arg1);
+    }
 
-	public EgovIntegrationException(String arg0) {
-		super(arg0);
-	}
+    public EgovIntegrationException(String arg0) {
+        super(arg0);
+    }
 
-	public EgovIntegrationException(Throwable arg0) {
-		super(arg0);
-	}
+    public EgovIntegrationException(Throwable arg0) {
+        super(arg0);
+    }
 
 }

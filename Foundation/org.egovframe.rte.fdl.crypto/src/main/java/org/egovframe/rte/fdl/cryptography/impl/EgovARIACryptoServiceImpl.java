@@ -33,111 +33,116 @@ import java.nio.charset.StandardCharsets;
 
 public class EgovARIACryptoServiceImpl implements EgovARIACryptoService {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(EgovARIACryptoServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EgovARIACryptoServiceImpl.class);
 
-	private static final int BLOCKSIZE_MODULAR = 16;
-	private EgovPasswordEncoder passwordEncoder;
-	private int blockSize = 1024;
+    private static final int BLOCKSIZE_MODULAR = 16;
+    private EgovPasswordEncoder passwordEncoder;
+    private int blockSize = 1024;
 
-	public void setPasswordEncoder(EgovPasswordEncoder passwordEncoder) {
-		this.passwordEncoder = passwordEncoder;
-		LOGGER.debug("passwordEncoder's algorithm : {}", passwordEncoder.getAlgorithm());
-	}
+    public void setPasswordEncoder(EgovPasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+        LOGGER.debug("passwordEncoder's algorithm : {}", passwordEncoder.getAlgorithm());
+    }
 
-	public void setBlockSize(int blockSize) {
-		if (blockSize % BLOCKSIZE_MODULAR != 0) {
-			blockSize += (BLOCKSIZE_MODULAR - blockSize % BLOCKSIZE_MODULAR);
-		}
-		this.blockSize = blockSize;
-	}
+    public void setBlockSize(int blockSize) {
+        // 0 이하 값은 파일 읽기 루프가 진행되지 않아 무한 루프가 된다(CWE-835).
+        if (blockSize <= 0) {
+            throw new IllegalArgumentException("blockSize must be a positive number: " + blockSize);
+        }
+        if (blockSize % BLOCKSIZE_MODULAR != 0) {
+            blockSize += (BLOCKSIZE_MODULAR - blockSize % BLOCKSIZE_MODULAR);
+        }
+        this.blockSize = blockSize;
+    }
 
-	public BigDecimal encrypt(BigDecimal number, String password) {
-		throw new UnsupportedOperationException("Unsupported method.. (ARIA Cryptography service doesn't support BigDecimal en/decryption)");
-	}
+    public BigDecimal encrypt(BigDecimal number, String password) {
+        throw new UnsupportedOperationException("Unsupported method.. (ARIA Cryptography service doesn't support BigDecimal en/decryption)");
+    }
 
-	public byte[] encrypt(byte[] data, String password) {
-		if (passwordEncoder.checkPassword(password)) {
-			ARIACipher cipher = new ARIACipher();
-			cipher.setPassword(password);
-			return cipher.encrypt(data);
-		} else {
-			LOGGER.error("password not matched!!!");
-			throw new IllegalArgumentException("password not matched!!!");
-		}
-	}
+    public byte[] encrypt(byte[] data, String password) {
+        if (passwordEncoder.checkPassword(password)) {
+            ARIACipher cipher = new ARIACipher();
+            cipher.setPassword(password);
+            return cipher.encrypt(data);
+        } else {
+            LOGGER.error("password not matched!!!");
+            throw new IllegalArgumentException("password not matched!!!");
+        }
+    }
 
-	public void encrypt(File srcFile, String password, File trgtFile) {
-		FileInputStream fis = null;
-		ByteArrayOutputStream baos = null;
-		String fileString = new String();
-		byte[] buffer = null;
-		if (passwordEncoder.checkPassword(password)) {
-			ARIACipher cipher = new ARIACipher();
-			cipher.setPassword(password);
-			try {
-				fis = new FileInputStream(srcFile);
-				baos = new ByteArrayOutputStream();
-				buffer = new byte[blockSize];
-				LOGGER.debug("blockSize = {}", blockSize);
-				int len = 0;
-				while ((len = fis.read(buffer)) != -1) {
-					if (len < blockSize) {
-						byte[] tmp = new byte[len];
-						System.arraycopy(buffer, 0, tmp, 0, len);
-						baos.write(tmp, 0, len);
-					} else {
-						baos.write(buffer, 0, len);
-					}
-				}
-				byte[] fileArray = baos.toByteArray();
-				fileString = new String(Base64.encodeBase64(fileArray));
-				byte[] enc = cipher.encrypt(fileString.getBytes(StandardCharsets.UTF_8));
-				String encString = Base64.encodeBase64String(enc);
-				FileUtils.writeStringToFile(trgtFile, encString, "UTF-8", true);
-			} catch (IOException e) {
-				ReflectionUtils.handleReflectionException(e);
-			} finally {
-				EgovResourceReleaser.close(fis, baos);
-			}
-		} else {
-			LOGGER.error("password not matched!!!");
-			throw new IllegalArgumentException("password not matched!!!");
-		}
-	}
+    public void encrypt(File srcFile, String password, File trgtFile) {
+        FileInputStream fis = null;
+        ByteArrayOutputStream baos = null;
+        String fileString = new String();
+        byte[] buffer = null;
+        if (passwordEncoder.checkPassword(password)) {
+            ARIACipher cipher = new ARIACipher();
+            cipher.setPassword(password);
+            try {
+                fis = new FileInputStream(srcFile);
+                baos = new ByteArrayOutputStream();
+                buffer = new byte[blockSize];
+                LOGGER.debug("blockSize = {}", blockSize);
+                int len = 0;
+                while ((len = fis.read(buffer)) != -1) {
+                    if (len < blockSize) {
+                        byte[] tmp = new byte[len];
+                        System.arraycopy(buffer, 0, tmp, 0, len);
+                        baos.write(tmp, 0, len);
+                    } else {
+                        baos.write(buffer, 0, len);
+                    }
+                }
+                byte[] fileArray = baos.toByteArray();
+                fileString = new String(Base64.encodeBase64(fileArray));
+                byte[] enc = cipher.encrypt(fileString.getBytes(StandardCharsets.UTF_8));
+                String encString = Base64.encodeBase64String(enc);
+                // 대상 파일에 이어 쓰면(append) 기존 내용 뒤에 붙어 복호화가 불가능해지므로 덮어쓴다.
+                FileUtils.writeStringToFile(trgtFile, encString, "UTF-8");
+            } catch (IOException e) {
+                ReflectionUtils.handleReflectionException(e);
+            } finally {
+                EgovResourceReleaser.close(fis, baos);
+            }
+        } else {
+            LOGGER.error("password not matched!!!");
+            throw new IllegalArgumentException("password not matched!!!");
+        }
+    }
 
-	public BigDecimal decrypt(BigDecimal encryptedNumber, String password) {
-		throw new UnsupportedOperationException("Unsupported method.. (ARIA Cryptography service doesn't support BigDecimal en/decryption)");
-	}
+    public BigDecimal decrypt(BigDecimal encryptedNumber, String password) {
+        throw new UnsupportedOperationException("Unsupported method.. (ARIA Cryptography service doesn't support BigDecimal en/decryption)");
+    }
 
-	public byte[] decrypt(byte[] encryptedData, String password) {
-		if (passwordEncoder.checkPassword(password)) {
-			ARIACipher cipher = new ARIACipher();
-			cipher.setPassword(password);
-			return cipher.decrypt(encryptedData);
-		} else {
-			LOGGER.error("password not matched!!!");
-			throw new IllegalArgumentException("password not matched!!!");
-		}
-	}
+    public byte[] decrypt(byte[] encryptedData, String password) {
+        if (passwordEncoder.checkPassword(password)) {
+            ARIACipher cipher = new ARIACipher();
+            cipher.setPassword(password);
+            return cipher.decrypt(encryptedData);
+        } else {
+            LOGGER.error("password not matched!!!");
+            throw new IllegalArgumentException("password not matched!!!");
+        }
+    }
 
-	public void decrypt(File encryptedFile, String password, File trgtFile) {
-		if (passwordEncoder.checkPassword(password)) {
-			ARIACipher cipher = new ARIACipher();
-			cipher.setPassword(password);
-			try {
-				String readEncString = FileUtils.readFileToString(encryptedFile, "UTF-8");
-				byte[] decEnc = Base64.decodeBase64(readEncString);
-				byte[] dec = cipher.decrypt(decEnc);
-				String decBase64String = new String(dec, StandardCharsets.UTF_8);
-				byte[] data = Base64.decodeBase64(decBase64String);
-				FileUtils.writeByteArrayToFile(trgtFile, data);
-			} catch (IOException e) {
-				ReflectionUtils.handleReflectionException(e);
-			}
-		} else {
-			LOGGER.error("password not matched!!!");
-			throw new IllegalArgumentException("password not matched!!!");
-		}
-	}
+    public void decrypt(File encryptedFile, String password, File trgtFile) {
+        if (passwordEncoder.checkPassword(password)) {
+            ARIACipher cipher = new ARIACipher();
+            cipher.setPassword(password);
+            try {
+                String readEncString = FileUtils.readFileToString(encryptedFile, "UTF-8");
+                byte[] decEnc = Base64.decodeBase64(readEncString);
+                byte[] dec = cipher.decrypt(decEnc);
+                String decBase64String = new String(dec, StandardCharsets.UTF_8);
+                byte[] data = Base64.decodeBase64(decBase64String);
+                FileUtils.writeByteArrayToFile(trgtFile, data);
+            } catch (IOException e) {
+                ReflectionUtils.handleReflectionException(e);
+            }
+        } else {
+            LOGGER.error("password not matched!!!");
+            throw new IllegalArgumentException("password not matched!!!");
+        }
+    }
 
 }

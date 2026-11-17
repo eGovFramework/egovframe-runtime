@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"classpath*:META-INF/spring/*.xml"})
+@ContextConfiguration(locations = {"classpath*:/META-INF/spring/*.xml"})
 public class EgovAccessConfigTest {
     protected MockHttpServletRequest request;
     protected MockHttpSession session;
@@ -30,7 +30,7 @@ public class EgovAccessConfigTest {
     @Before
     public void setUp() {
         session = new MockHttpSession();
-        session.setAttribute("accessUser","GNRUSER");
+        session.setAttribute("accessUser", "GNRUSER");
 
         request = new MockHttpServletRequest();
         request.setSession(session);
@@ -38,7 +38,7 @@ public class EgovAccessConfigTest {
     }
 
     @After
-    public void clear(){
+    public void clear() {
         session.clearAttributes();
         session = null;
     }
@@ -57,7 +57,6 @@ public class EgovAccessConfigTest {
         List<Map<String, Object>> rolesList = EgovUserDetailsHelper.getRoles();
 
         if (!ObjectUtils.isEmpty(authList) && !ObjectUtils.isEmpty(rolesList)) {
-            List<String> urlList = new ArrayList<>();
             List<String> roleList = new ArrayList<>();
             for (String auth : authList) {
                 Iterator<Map<String, Object>> iterator = rolesList.iterator();
@@ -70,7 +69,7 @@ public class EgovAccessConfigTest {
                 }
             }
 
-            urlList = roleList.stream().distinct().collect(Collectors.toList());
+            List<String> urlList = roleList.stream().distinct().collect(Collectors.toList());
 
             for (String authUrl : urlList) {
                 if ("ant".equals(requestMatchType)) {

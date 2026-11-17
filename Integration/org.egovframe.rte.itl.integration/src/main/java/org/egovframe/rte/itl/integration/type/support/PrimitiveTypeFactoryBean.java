@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 MOPAS(Ministry of Public Administration and Security).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,9 +27,8 @@ import org.springframework.util.StringUtils;
  * <b>NOTE:</b> 전자정부 연계 서비스의 표준 메시지의 PrimitiveType을 Spring Context 설정을 통해
  * reference할 수 있도록 지원하는 FactoryBean Class이다.
  * </p>
- * 
+ *
  * @author 실행환경 개발팀 심상호
- * @since 2009.06.01
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -38,54 +37,59 @@ import org.springframework.util.StringUtils;
  * ----------------------------------------------
  * 2009.06.01	심상호				최초 생성
  * </pre>
+ * @since 2009.06.01
  */
 public class PrimitiveTypeFactoryBean extends AbstractFactoryBean<Object> implements BeanNameAware {
 
-	/** bean name */
-	protected String beanName;
+    /**
+     * bean name
+     */
+    protected String beanName;
 
-	/** type id */
-	protected String id;
+    /**
+     * type id
+     */
+    protected String id;
 
-	/**
-	 * Default Constructor
-	 */
-	public PrimitiveTypeFactoryBean() {
-		super();
-	}
+    /**
+     * Default Constructor
+     */
+    public PrimitiveTypeFactoryBean() {
+        super();
+    }
 
-	public void setBeanName(String name) {
-		this.beanName = name;
-	}
+    public void setBeanName(String name) {
+        this.beanName = name;
+    }
 
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		super.afterPropertiesSet();
-		if (id == null) {
-			id = beanName;
-		}
-		if (StringUtils.hasText(id) == false) {
-			throw new IllegalArgumentException();
-		}
-	}
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        super.afterPropertiesSet();
+        if (id == null) {
+            id = beanName;
+        }
+        if (StringUtils.hasText(id) == false) {
+            throw new IllegalArgumentException();
+        }
+    }
 
-	@Override
-	protected Object createInstance() throws Exception {
-		PrimitiveType type = PrimitiveType.getPrimitiveType(id);
-		if (type == null) {
-			throw new NoSuchTypeException();
-		}
-		return type;
-	}
+    @Override
+    protected Object createInstance() throws Exception {
+        PrimitiveType type = PrimitiveType.getPrimitiveType(id);
+        if (type == null) {
+            throw new NoSuchTypeException();
+        }
+        return type;
+    }
 
-	@Override
-	public Class<?> getObjectType() {
-		return PrimitiveType.class;
-	}
+    @Override
+    public Class<?> getObjectType() {
+        return PrimitiveType.class;
+    }
 
-	@Override
-	public boolean isSingleton() {
-		return false;
-	}
+    @Override
+    public boolean isSingleton() {
+        return false;
+    }
 
 }

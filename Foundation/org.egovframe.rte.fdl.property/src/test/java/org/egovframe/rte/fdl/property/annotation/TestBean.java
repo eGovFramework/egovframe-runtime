@@ -29,104 +29,103 @@ import org.springframework.util.ObjectUtils;
 public class TestBean {
 
 
-	private String country;
+    private String country;
 
-	private BeanFactory beanFactory;
+    private BeanFactory beanFactory;
 
-	private boolean postProcessed;
+    private boolean postProcessed;
 
-	private String name;
+    private String name;
 
-	private String sex;
+    private String sex;
 
-	private int age;
+    private int age;
 
-	private boolean destroyed;
-
-
-	public TestBean() {
-	}
-
-	public TestBean(String name) {
-		this.name = name;
-	}
-	public TestBean(String name, int age) {
-		this.name = name;
-		this.age = age;
-	}
-
-	public void setPostProcessed(boolean postProcessed) {
-		this.postProcessed = postProcessed;
-	}
-
-	public boolean isPostProcessed() {
-		return postProcessed;
-	}
-
-	
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getSex() {
-		return sex;
-	}
-
-	public void setSex(String sex) {
-		this.sex = sex;
-		if (this.name == null) {
-			this.name = sex;
-		}
-	}
+    private boolean destroyed;
 
 
+    public TestBean() {
+    }
 
-	public void destroy() {
-		this.destroyed = true;
-	}
+    public TestBean(String name) {
+        this.name = name;
+    }
 
-	public boolean wasDestroyed() {
-		return destroyed;
-	}
+    public TestBean(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    public boolean isPostProcessed() {
+        return postProcessed;
+    }
+
+    public void setPostProcessed(boolean postProcessed) {
+        this.postProcessed = postProcessed;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
+        if (this.name == null) {
+            this.name = sex;
+        }
+    }
 
 
-	public boolean equals(Object other) {
-		if (this == other) {
-			return true;
-		}
-		if (other == null || !(other instanceof TestBean)) {
-			return false;
-		}
-		TestBean tb2 = (TestBean) other;
-		return (ObjectUtils.nullSafeEquals(this.name, tb2.name) && this.age == tb2.age);
-	}
+    public void destroy() {
+        this.destroyed = true;
+    }
 
-	public int hashCode() {
-		return this.age;
-	}
+    public boolean wasDestroyed() {
+        return destroyed;
+    }
 
-	public String toString() {
-		return this.name;
-	}
 
-	public String getCountry() {
-		return country;
-	}
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (other == null || !(other instanceof TestBean)) {
+            return false;
+        }
+        TestBean tb2 = (TestBean) other;
+        return (ObjectUtils.nullSafeEquals(this.name, tb2.name) && this.age == tb2.age);
+    }
 
-	public void setCountry(String country) {
-		this.country = country;
-	}
+    public int hashCode() {
+        return this.age;
+    }
 
-	public BeanFactory getBeanFactory() {
-		return beanFactory;
-	}
+    public String toString() {
+        return this.name;
+    }
 
-	public void setBeanFactory(BeanFactory beanFactory) {
-		this.beanFactory = beanFactory;
-	}
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public BeanFactory getBeanFactory() {
+        return beanFactory;
+    }
+
+    public void setBeanFactory(BeanFactory beanFactory) {
+        this.beanFactory = beanFactory;
+    }
 
 }

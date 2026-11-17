@@ -22,58 +22,62 @@ import java.util.Properties;
 import static org.junit.Assert.*;
 
 /**
- *  == 개정이력(Modification Information) ==
- *   
- *   수정일      수정자           수정내용
- *  -------    --------    ---------------------------
- *   2014.01.22 권윤정  SimpleJdbcTestUtils -> JdbcTestUtils 변경
- *   2014.01.22 권윤정  SimpleJdbcTemplate -> JdbcTemplate 변경
+ * == 개정이력(Modification Information) ==
+ * <p>
+ * 수정일      수정자           수정내용
+ * -------    --------    ---------------------------
+ * 2014.01.22 권윤정  SimpleJdbcTestUtils -> JdbcTestUtils 변경
+ * 2014.01.22 권윤정  SimpleJdbcTemplate -> JdbcTemplate 변경
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath*:META-INF/spring/context-*.xml" })
+@ContextConfiguration(locations = {"classpath*:META-INF/spring/context-*.xml"})
 @Transactional
 public class RowHandlerTest extends TestBase {
 
-	@Resource(name = "schemaProperties")
-	Properties schemaProperties;
+    @Resource(name = "schemaProperties")
+    Properties schemaProperties;
 
-	@Resource(name = "empDAO")
-	EmpDAO empDAO;
+    @Resource(name = "empDAO")
+    EmpDAO empDAO;
 
-	// fileWritingRowHandler 는 prototype 으로 선언했음
-	@Resource(name = "fileWritingRowHandler")
-	FileWritingRowHandler rowHandler;
+    // fileWritingRowHandler 는 prototype 으로 선언했음
+    @Resource(name = "fileWritingRowHandler")
+    FileWritingRowHandler rowHandler;
 
-	boolean isHsql = true;
+    boolean isHsql = true;
 
-	@Before
-	public void onSetUp() throws Exception {
-		ScriptUtils.executeSqlScript(dataSource.getConnection(), new ClassPathResource("META-INF/testdata/sample_schema_ddl_" + usingDBMS + ".sql"));
+    @Before
+    public void onSetUp() throws Exception {
+        try (java.sql.Connection scriptConn = dataSource.getConnection()) {
+            ScriptUtils.executeSqlScript(scriptConn, new ClassPathResource("META-INF/testdata/sample_schema_ddl_" + usingDBMS + ".sql"));
+        }
 
-		// init data
-		ScriptUtils.executeSqlScript(dataSource.getConnection(), new ClassPathResource("META-INF/testdata/sample_schema_initdata_" + usingDBMS + ".sql"));
-	}
+        // init data
+        try (java.sql.Connection scriptConn = dataSource.getConnection()) {
+            ScriptUtils.executeSqlScript(scriptConn, new ClassPathResource("META-INF/testdata/sample_schema_initdata_" + usingDBMS + ".sql"));
+        }
+    }
 
-	@SuppressWarnings("deprecation")
-	@Rollback(false)
-	@Test
-	public void testRowHandlerForOutFileWriting() throws Exception {
+    @SuppressWarnings("deprecation")
+    @Rollback(false)
+    @Test
+    public void testRowHandlerForOutFileWriting() throws Exception {
 
-		// select to outFile using rowHandler
-		empDAO.getSqlMapClientTemplate().queryWithRowHandler("selectEmpListToOutFileUsingRowHandler", null, rowHandler);
+        // select to outFile using rowHandler
+        empDAO.getSqlMapClientTemplate().queryWithRowHandler("selectEmpListToOutFileUsingRowHandler", null, rowHandler);
 
-		// check
-		ResourceLoader resourceLoader = new DefaultResourceLoader();
-		org.springframework.core.io.Resource resource = resourceLoader.getResource("file:./src/test/resources/META-INF/testdata/" + schemaProperties.getProperty("outResultFile"));
-		// BufferedOutputStream flush 및 close
-		rowHandler.releaseResource();
+        // check
+        ResourceLoader resourceLoader = new DefaultResourceLoader();
+        org.springframework.core.io.Resource resource = resourceLoader.getResource("file:./src/test/resources/META-INF/testdata/" + schemaProperties.getProperty("outResultFile"));
+        // BufferedOutputStream flush 및 close
+        rowHandler.releaseResource();
 
-		assertEquals(38416, rowHandler.getTotalCount());
+        assertEquals(38416, rowHandler.getTotalCount());
 
-		File file = resource.getFile();
-		assertNotNull(file);
-		// 대용량 out file size 체크
-		assertTrue(1000000 < file.length());
-	}
+        File file = resource.getFile();
+        assertNotNull(file);
+        // 대용량 out file size 체크
+        assertTrue(1000000 < file.length());
+    }
 
 }

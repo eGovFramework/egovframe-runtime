@@ -44,107 +44,112 @@ import static org.junit.Assert.assertTrue;
  * IoSample 실행을 위한 기본 클래스
  *
  * @author 배치실행개발팀
- * @since 2012. 06.27
  * @version 1.0
  * @see
+ * @since 2012. 06.27
  */
-@ContextConfiguration(locations={"/org/egovframe/batch/simple-job-launcher-context.xml"
-		, "/org/egovframe/batch/job-runner-context.xml"})
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, StepScopeTestExecutionListener.class })
+@ContextConfiguration(locations = {"/org/egovframe/batch/simple-job-launcher-context.xml"
+        , "/org/egovframe/batch/job-runner-context.xml"})
+@TestExecutionListeners({DependencyInjectionTestExecutionListener.class, StepScopeTestExecutionListener.class})
 public abstract class EgovAbstractIoSampleTests {
 
-	//배치작업을  test하기 위한 JobLauncherTestUtils
-	@Autowired
-	@Qualifier("jobLauncherTestUtils")
-	private JobLauncherTestUtils jobLauncherTestUtils;
+    //배치작업을  test하기 위한 JobLauncherTestUtils
+    @Autowired
+    @Qualifier("jobLauncherTestUtils")
+    private JobLauncherTestUtils jobLauncherTestUtils;
 
-	//배치작업의  reader
-	@Autowired
-	private ItemReader<CustomerCredit> reader;
+    //배치작업의  reader
+    @Autowired
+    private ItemReader<CustomerCredit> reader;
 
-	/**
-	 * 배치작업 테스트
-	 */
-	@Test
-	public void testUpdateCredit() throws Exception {
+    /**
+     * 배치작업 테스트
+     */
+    @Test
+    public void testUpdateCredit() throws Exception {
 
-		open(reader);
-		List<CustomerCredit> inputs = getCredits(reader);
-		close(reader);
-		JobExecution jobExecution = jobLauncherTestUtils.launchJob(getUniqueJobParameters());
+        open(reader);
+        List<CustomerCredit> inputs = getCredits(reader);
+        close(reader);
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob(getUniqueJobParameters());
 
-		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
+        assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
 
-		pointReaderToOutput(reader);
-		open(reader);
-		List<CustomerCredit> outputs = getCredits(reader);
-		close(reader);
+        pointReaderToOutput(reader);
+        open(reader);
+        List<CustomerCredit> outputs = getCredits(reader);
+        close(reader);
 
-		assertEquals(inputs.size(), outputs.size());
-		int itemCount = inputs.size();
-		assertTrue(itemCount > 0);
+        assertEquals(inputs.size(), outputs.size());
+        int itemCount = inputs.size();
+        assertTrue(itemCount > 0);
 
-		for (int i = 0; i < itemCount; i++) {
-			assertEquals(inputs.get(i).getCredit().add(CustomerCreditIncreaseProcessor.FIXED_AMOUNT).intValue(), outputs.get(i).getCredit().intValue());
-		}
+        for (int i = 0; i < itemCount; i++) {
+            assertEquals(inputs.get(i).getCredit().add(CustomerCreditIncreaseProcessor.FIXED_AMOUNT).intValue(), outputs.get(i).getCredit().intValue());
+        }
 
-	}
+    }
 
-	/**
-	 * 잡파라미터를 얻기 위한 메소드
-	 * @return jobParameters
-	 */
-	protected JobParameters getUniqueJobParameters() {
-		return jobLauncherTestUtils.getUniqueJobParameters();
-	}
+    /**
+     * 잡파라미터를 얻기 위한 메소드
+     *
+     * @return jobParameters
+     */
+    protected JobParameters getUniqueJobParameters() {
+        return jobLauncherTestUtils.getUniqueJobParameters();
+    }
 
-	/**
-	 * file-to-file 배치작업일 경우만 필요한 설정으로  배치결과를 다시 읽을 때  reader 설정하는 메소드
-	 */
-	protected abstract void pointReaderToOutput(ItemReader<CustomerCredit> reader);
+    /**
+     * file-to-file 배치작업일 경우만 필요한 설정으로  배치결과를 다시 읽을 때  reader 설정하는 메소드
+     */
+    protected abstract void pointReaderToOutput(ItemReader<CustomerCredit> reader);
 
-	/**
-	 * 배치작업의 결과값을 list로 만드는 메소드
-	 * @param reader
-	 * @return List<CustomerCredit>
-	 * @throws Exception
-	 */
-	private List<CustomerCredit> getCredits(ItemReader<CustomerCredit> reader) throws Exception {
-		CustomerCredit credit;
-		List<CustomerCredit> result = new ArrayList<CustomerCredit>();
-		while ((credit = reader.read()) != null) {
-			result.add(credit);
-		}
-		return result;
+    /**
+     * 배치작업의 결과값을 list로 만드는 메소드
+     *
+     * @param reader
+     * @return List<CustomerCredit>
+     * @throws Exception
+     */
+    private List<CustomerCredit> getCredits(ItemReader<CustomerCredit> reader) throws Exception {
+        CustomerCredit credit;
+        List<CustomerCredit> result = new ArrayList<CustomerCredit>();
+        while ((credit = reader.read()) != null) {
+            result.add(credit);
+        }
+        return result;
 
-	}
+    }
 
-	/**
-	 * reader를 open하는 메소드
-	 * @param reader
-	 */
-	private void open(ItemReader<?> reader) {
-		if (reader instanceof ItemStream) {
-			((ItemStream) reader).open(new ExecutionContext());
-		}
-	}
+    /**
+     * reader를 open하는 메소드
+     *
+     * @param reader
+     */
+    private void open(ItemReader<?> reader) {
+        if (reader instanceof ItemStream) {
+            ((ItemStream) reader).open(new ExecutionContext());
+        }
+    }
 
-	/**
-	 * reader를 close하는 메소드
-	 * @param reader
-	 */
-	private void close(ItemReader<?> reader) {
-		if (reader instanceof ItemStream) {
-			((ItemStream) reader).close();
-		}
-	}
+    /**
+     * reader를 close하는 메소드
+     *
+     * @param reader
+     */
+    private void close(ItemReader<?> reader) {
+        if (reader instanceof ItemStream) {
+            ((ItemStream) reader).close();
+        }
+    }
 
-	/**
-	 * stepExecution를 얻는 메소드
-	 * @return StepExecution
-	 */
-	protected StepExecution getStepExecution() {
-		return MetaDataInstanceFactory.createStepExecution(getUniqueJobParameters());
-	}
+    /**
+     * stepExecution를 얻는 메소드
+     *
+     * @return StepExecution
+     */
+    protected StepExecution getStepExecution() {
+        return MetaDataInstanceFactory.createStepExecution(getUniqueJobParameters());
+    }
 
 }

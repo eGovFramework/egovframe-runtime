@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection="sample")
+@Document(collection = "sample")
 public class Sample {
 
     @Id

@@ -20,41 +20,41 @@ import static org.junit.Assert.*;
 @Transactional
 public class SimpleTest {
 
-	@Autowired
-	UserRepository repository;
+    @Autowired
+    UserRepository repository;
 
-	User user;
+    User user;
 
-	@Before
-	public void setUp() {     
-		user = new User();
-		user.setUsername("foobar");
-		user.setFirstname("firstname");
-		user.setLastname("lastname");
-	}
+    @Before
+    public void setUp() {
+        user = new User();
+        user.setUsername("foobar");
+        user.setFirstname("firstname");
+        user.setLastname("lastname");
+    }
 
-	@Test
-	public void testInsert() {
-		user = repository.save(user);
-		System.out.println("user pk>"+user.getId());
-		UserPK userPk = new UserPK();
-		userPk.setId(user.getId());
-		assertEquals(user, repository.findById(userPk).get());
-	}
+    @Test
+    public void testInsert() {
+        user = repository.save(user);
+        System.out.println("user pk>" + user.getId());
+        UserPK userPk = new UserPK();
+        userPk.setId(user.getId());
+        assertEquals(user, repository.findById(userPk).get());
+    }
 
-	@Test
-	public void testFindByLastname() {
-		user = repository.save(user);
-		List<User> users = repository.findByLastname("lastname");
-		assertNotNull(users);
-		assertTrue(users.contains(user));
-	}
+    @Test
+    public void testFindByLastname() {
+        user = repository.save(user);
+        List<User> users = repository.findByLastname("lastname");
+        assertNotNull(users);
+        assertTrue(users.contains(user));
+    }
 
-	@Test
-	public void testFindByName() {
-		user = repository.save(user);
-		List<User> users = repository.findByFirstnameOrLastname("lastname");
-		assertTrue(users.contains(user));
-	}
+    @Test
+    public void testFindByName() {
+        user = repository.save(user);
+        List<User> users = repository.findByFirstnameOrLastname("lastname");
+        assertTrue(users.contains(user));
+    }
 
 }

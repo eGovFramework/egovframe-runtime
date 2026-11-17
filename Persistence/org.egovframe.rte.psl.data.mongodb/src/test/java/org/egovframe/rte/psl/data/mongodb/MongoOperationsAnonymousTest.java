@@ -37,7 +37,7 @@ public class MongoOperationsAnonymousTest {
 
     @Test
     public void testBasicOperations() {
-        MongoOperations mongoOperations = new MongoTemplate(MongoClients.create("mongodb://"+mongodbHost+":"+mongodbPort), "user");
+        MongoOperations mongoOperations = new MongoTemplate(MongoClients.create("mongodb://" + mongodbHost + ":" + mongodbPort), "user");
 
         Person person = new Person();
         person.setId("1001");

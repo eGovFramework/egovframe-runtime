@@ -29,7 +29,7 @@ import java.util.Map;
 
 /**
  * AnnotationCommandMapArgumentResolver.java
- * <p/> 
+ * <p/>
  * <b>NOTE:</b> <pre> Spring3.1부터 AnnotationMethodHandlerAdapter은 deprecated되었으며 대신, RequestMappingHandlerAdapter를 사용해야한다.
  * RequestMappingHandlerAdapter에서 ArgumentResolver는 webArgumentResolver가 아닌 HandlerMethodArgumentResolver를 구현해야한다.
  * ( 클래스의 동작은 기존 CommandMapArgumentResolver와 동일 )
@@ -40,8 +40,8 @@ import java.util.Map;
  * AnnotationCommandMapArgumentResolver는 Controller 메소드의 argument중에 @CommandMap으로 선언된  Map 객체가 있다면
  * HTTP request를 Map객체에 담는다.
  *                </pre>
+ *
  * @author 이영지
- * @since 2014.04.23
  * @version 3.0
  * <pre>
  * 개정이력(Modification Information)
@@ -51,29 +51,30 @@ import java.util.Map;
  * 2014.04.23	이영지				최초 생성
  * 2014.12.11	이기하				@RequestParam으로 대체
  * </pre>
+ * @since 2014.04.23
  * @deprecated This class has been deprecated.
  */
 @Deprecated
 public class AnnotationCommandMapArgumentResolver implements HandlerMethodArgumentResolver {
 
-	@Override
-	public boolean supportsParameter(MethodParameter parameter) {
-		return Map.class.isAssignableFrom(parameter.getParameterType()) && parameter.hasParameterAnnotation(CommandMap.class);
-	}
+    @Override
+    public boolean supportsParameter(MethodParameter parameter) {
+        return Map.class.isAssignableFrom(parameter.getParameterType()) && parameter.hasParameterAnnotation(CommandMap.class);
+    }
 
-	@Override
-	public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-		Map<String, Object> commandMap = new HashMap<String, Object>();
-		HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
-		Enumeration<?> enumeration = request.getParameterNames();
-		while (enumeration.hasMoreElements()) {
-			String key = (String) enumeration.nextElement();
-			String[] values = request.getParameterValues(key);
-			if (values != null) {
-				commandMap.put(key, (values.length > 1) ? values : values[0]);
-			}
-		}
-		return commandMap;
-	}
+    @Override
+    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+        Map<String, Object> commandMap = new HashMap<String, Object>();
+        HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
+        Enumeration<?> enumeration = request.getParameterNames();
+        while (enumeration.hasMoreElements()) {
+            String key = (String) enumeration.nextElement();
+            String[] values = request.getParameterValues(key);
+            if (values != null) {
+                commandMap.put(key, (values.length > 1) ? values : values[0]);
+            }
+        }
+        return commandMap;
+    }
 
 }

@@ -26,75 +26,75 @@ import org.springframework.batch.core.annotation.OnSkipInWrite;
 
 /**
  * Skip 된 데이터를 처리하는 Listener 클래스
- * 
+ *
  * @author 배치실행개발팀
- * @since 2012.06.27
  * @version 1.0
  * @see <pre>
  *      개정이력(Modification Information)
- *   
+ *
  *   수정일      수정자           수정내용
  *  ------- -------- ---------------------------
  *  2012.06.27  배치실행개발팀     최초 생성
  * </pre>
+ * @since 2012.06.27
  */
 
 public class EgovSkipCheckingListener {
 
-	private static final Log logger = LogFactory.getLog(EgovSkipCheckingListener.class);
+    private static final Log logger = LogFactory.getLog(EgovSkipCheckingListener.class);
 
-	// processSkips
-	private static int processSkips;
+    // processSkips
+    private static int processSkips;
 
-	/**
-	 * 잡수행이 Fail이고, Skip이 일어났을 경우, ExitStatus 상태를 COMPLETED WITH SKIPS 으로 변경
-	 */
-	@AfterStep
-	public ExitStatus checkForSkips(StepExecution stepExecution) {
-		if (!stepExecution.getExitStatus().getExitCode().equals(ExitStatus.FAILED.getExitCode()) && stepExecution.getSkipCount() > 0) {
-			return new ExitStatus("COMPLETED WITH SKIPS");
-		} else {
-			return null;
-		}
-	}
+    /**
+     * ProcessSkips Getter
+     */
+    public static int getProcessSkips() {
+        return processSkips;
+    }
 
-	/**
-	 * ProcessSkips Getter
-	 */
-	public static int getProcessSkips() {
-		return processSkips;
-	}
+    /**
+     * ProcessSkips 리셋
+     */
+    public static void resetProcessSkips() {
+        processSkips = 0;
+    }
 
-	/**
-	 * ProcessSkips 리셋
-	 */
-	public static void resetProcessSkips() {
-		processSkips = 0;
-	}
+    /**
+     * 잡수행이 Fail이고, Skip이 일어났을 경우, ExitStatus 상태를 COMPLETED WITH SKIPS 으로 변경
+     */
+    @AfterStep
+    public ExitStatus checkForSkips(StepExecution stepExecution) {
+        if (!stepExecution.getExitStatus().getExitCode().equals(ExitStatus.FAILED.getExitCode()) && stepExecution.getSkipCount() > 0) {
+            return new ExitStatus("COMPLETED WITH SKIPS");
+        } else {
+            return null;
+        }
+    }
 
-	/**
-	 * Write 하다 Skip 이 발생할 경우 수행
-	 */
+    /**
+     * Write 하다 Skip 이 발생할 경우 수행
+     */
 
-	@OnSkipInWrite
-	public void skipWrite(Trade trade, Throwable t) {
-		logger.debug("Skipped writing " + trade);
-	}
+    @OnSkipInWrite
+    public void skipWrite(Trade trade, Throwable t) {
+        logger.debug("Skipped writing " + trade);
+    }
 
-	/**
-	 * Process 하다 Skip 이 발생할 경우 수행
-	 */
-	@OnSkipInProcess
-	public void skipProcess(Trade trade, Throwable t) {
-		logger.debug("Skipped processing " + trade);
-		processSkips++;
-	}
+    /**
+     * Process 하다 Skip 이 발생할 경우 수행
+     */
+    @OnSkipInProcess
+    public void skipProcess(Trade trade, Throwable t) {
+        logger.debug("Skipped processing " + trade);
+        processSkips++;
+    }
 
-	/**
-	 * Step 수행 전에 stepName을 Context에 put 함
-	 */
-	@BeforeStep
-	public void saveStepName(StepExecution stepExecution) {
-		stepExecution.getExecutionContext().put("stepName", stepExecution.getStepName());
-	}
+    /**
+     * Step 수행 전에 stepName을 Context에 put 함
+     */
+    @BeforeStep
+    public void saveStepName(StepExecution stepExecution) {
+        stepExecution.getExecutionContext().put("stepName", stepExecution.getStepName());
+    }
 }

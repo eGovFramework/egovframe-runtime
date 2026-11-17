@@ -15,14 +15,14 @@ import java.util.Map;
 @Controller
 public class CategoryExcelController {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(CategoryExcelController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CategoryExcelController.class);
 
-	@RequestMapping("/sale/listExcelCategory.do")
+    @RequestMapping("/sale/listExcelCategory.do")
     public ModelAndView selectCategoryList() throws Exception {
 
         LOGGER.debug("### selectCategoryList start !!!");
 
-		List<Map<String, ?>> lists = new ArrayList<Map<String, ?>>();
+        List<Map<String, ?>> lists = new ArrayList<Map<String, ?>>();
 
         Map<String, String> mapCategory = new HashMap<String, String>();
         mapCategory.put("id", "0000000001");

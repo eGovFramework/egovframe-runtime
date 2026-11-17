@@ -20,19 +20,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(locations = "classpath*:META-INF/spring/bind/exception/test_servlet.xml")
 public class ControllerAdviceTest {
 
-	@Autowired
-	private WebApplicationContext wac;
-	private MockMvc mockMvc;
+    @Autowired
+    private WebApplicationContext wac;
+    private MockMvc mockMvc;
 
-	@Before
-	public void setup() {
-		this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
-	}
+    @Before
+    public void setup() {
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
+    }
 
-	@Test
-	public void exceptionHandlerTest() throws Exception {
-		mockMvc.perform(get("/form")).andExpect(status().isOk()).andExpect(model().attribute("exceptionMsg", "RuntimeException.class"));
+    @Test
+    public void exceptionHandlerTest() throws Exception {
+        mockMvc.perform(get("/form")).andExpect(status().isOk()).andExpect(model().attribute("exceptionMsg", "RuntimeException.class"));
 
-		mockMvc.perform(get("/wrong")).andExpect(status().isNotFound());
-	}
+        mockMvc.perform(get("/wrong")).andExpect(status().isNotFound());
+    }
 }

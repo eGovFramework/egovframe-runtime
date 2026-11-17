@@ -24,65 +24,69 @@ import static org.junit.Assert.*;
 
 /**
  * FileWritingResultHandler 테스트
- * 
- *  == 개정이력(Modification Information) ==
- *   
- *   수정일      수정자           수정내용
- *  -------    --------    ---------------------------
- *   2014.01.22 권윤정 최초생성
- * 
+ * <p>
+ * == 개정이력(Modification Information) ==
+ * <p>
+ * 수정일      수정자           수정내용
+ * -------    --------    ---------------------------
+ * 2014.01.22 권윤정 최초생성
+ *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath*:META-INF/spring/context-*.xml" })
+@ContextConfiguration(locations = {"classpath*:META-INF/spring/context-*.xml"})
 @Transactional
 public class ResultHandlerMapperTest extends TestBase {
 
-	@Resource(name = "schemaProperties")
-	Properties schemaProperties;
+    @Resource(name = "schemaProperties")
+    Properties schemaProperties;
 
-	@Resource(name = "employerMapper")
-	EmployerMapper employerMapper;
+    @Resource(name = "employerMapper")
+    EmployerMapper employerMapper;
 
-	@Resource(name = "empMapper")
-	EmpMapper empMapper;
+    @Resource(name = "empMapper")
+    EmpMapper empMapper;
 
-	// fileWritingRowHandler 는 prototype 으로 선언했음
-	@Resource(name = "fileWritingResultHandler")
-	FileWritingResultHandler resultHandler;
+    // fileWritingRowHandler 는 prototype 으로 선언했음
+    @Resource(name = "fileWritingResultHandler")
+    FileWritingResultHandler resultHandler;
 
-	boolean isHsql = true;
+    boolean isHsql = true;
 
-	@Before
-	public void onSetUp() throws Exception {
-		ScriptUtils.executeSqlScript(dataSource.getConnection(), new ClassPathResource("META-INF/testdata/sample_schema_ddl_" + usingDBMS + ".sql"));
+    @Before
+    public void onSetUp() throws Exception {
+        try (java.sql.Connection scriptConn = dataSource.getConnection()) {
+            ScriptUtils.executeSqlScript(scriptConn, new ClassPathResource("META-INF/testdata/sample_schema_ddl_" + usingDBMS + ".sql"));
+        }
 
-		// init data
-		ScriptUtils.executeSqlScript(dataSource.getConnection(), new ClassPathResource("META-INF/testdata/sample_schema_initdata_" + usingDBMS + ".sql"));
-	}
+        // init data
+        try (java.sql.Connection scriptConn = dataSource.getConnection()) {
+            ScriptUtils.executeSqlScript(scriptConn, new ClassPathResource("META-INF/testdata/sample_schema_initdata_" + usingDBMS + ".sql"));
+        }
+    }
 
-	@Rollback(false)
-	@Test
-	public void testResultHandlerForOutFileWriting() throws Exception {
+    @Rollback(false)
+    @Test
+    public void testResultHandlerForOutFileWriting() throws Exception {
 
-		// select to outFile using resultHandler
-		//  1. DAO방식 테스트
-		empMapper.selectEmpListToOutFileUsingResultHandler("org.egovframe.rte.psl.dataaccess.mapper.EmployerMapper.selectEmpListToOutFileUsingResultHandler", resultHandler);
-		// 2. Mapper방식 테스트
-		employerMapper.selectEmpListToOutFileUsingResultHandler(resultHandler);
+        // select to outFile using resultHandler
+        //  1. DAO방식 테스트
+        empMapper.selectEmpListToOutFileUsingResultHandler("org.egovframe.rte.psl.dataaccess.mapper.EmployerMapper.selectEmpListToOutFileUsingResultHandler", resultHandler);
+        // 2. Mapper방식 테스트
+        employerMapper.selectEmpListToOutFileUsingResultHandler(resultHandler);
 
-		// check
-		ResourceLoader resourceLoader = new DefaultResourceLoader();
-		org.springframework.core.io.Resource resource = resourceLoader.getResource("file:./src/test/resources/META-INF/testdata/" + schemaProperties.getProperty("outResultFile"));
+        // check
+        ResourceLoader resourceLoader = new DefaultResourceLoader();
+        org.springframework.core.io.Resource resource = resourceLoader.getResource("file:./src/test/resources/META-INF/testdata/" + schemaProperties.getProperty("outResultFile"));
 
-		// BufferedOutputStream flush 및 close
-		// resultHandler.releaseResource();
+        // BufferedOutputStream flush 및 close
+        // resultHandler.releaseResource();
 
-		// 각 38,416개씩 두번 실행했으므로 총 76,832개 출력
-		assertEquals(76832, resultHandler.getTotalCount());
+        // 각 38,416개씩 두번 실행했으므로 총 76,832개 출력
+        assertEquals(76832, resultHandler.getTotalCount());
 
-		File file = resource.getFile();
-		assertNotNull(file);
-		// 대용량 out file size 체크
-		assertTrue(1000000 < file.length());
-	}
+        File file = resource.getFile();
+        assertNotNull(file);
+        // 대용량 out file size 체크
+        assertTrue(1000000 < file.length());
+    }
 }

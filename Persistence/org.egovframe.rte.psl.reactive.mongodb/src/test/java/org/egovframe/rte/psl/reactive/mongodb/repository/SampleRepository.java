@@ -13,7 +13,7 @@ import javax.annotation.Resource;
 @Repository
 public class SampleRepository extends EgovMongoDbRepository<Sample> {
 
-    @Resource(name="reactiveMongoDatabaseFactory")
+    @Resource(name = "reactiveMongoDatabaseFactory")
     private ReactiveMongoDatabaseFactory reactiveMongoDatabaseFactory;
 
     public SampleRepository(ReactiveMongoDatabaseFactory reactiveMongoDatabaseFactory) {

@@ -8,28 +8,26 @@ import java.util.Properties;
 
 public class TestBase {
 
-	protected boolean isHsql = false;
-	protected boolean isOracle = false;
-	protected boolean isMysql = false;
-	protected boolean isTibero = false;
-	protected boolean isAltibase = false;
+    protected static String usingDBMS = "hsql";
+    protected boolean isHsql = false;
+    protected boolean isOracle = false;
+    protected boolean isMysql = false;
+    protected boolean isTibero = false;
+    protected boolean isAltibase = false;
+    @Resource(name = "jdbcProperties")
+    protected Properties jdbcProperties;
 
-	protected static String usingDBMS = "hsql";
+    @Resource(name = "dataSource")
+    protected DataSource dataSource;
 
-	@Resource(name = "jdbcProperties")
-	protected Properties jdbcProperties;
-
-	@Resource(name = "dataSource")
-	protected DataSource dataSource;
-
-	@Before
-	public void setDBMSType() {
-		usingDBMS = jdbcProperties.getProperty("usingDBMS");
-		isHsql = "hsql".equals(usingDBMS);
-		isOracle = "oracle".equals(usingDBMS);
-		isMysql = "mysql".equals(usingDBMS);
-		isTibero = "tibero".equals(usingDBMS);
-		isAltibase = "altibase".equals(usingDBMS);
-	}
+    @Before
+    public void setDBMSType() {
+        usingDBMS = jdbcProperties.getProperty("usingDBMS");
+        isHsql = "hsql".equals(usingDBMS);
+        isOracle = "oracle".equals(usingDBMS);
+        isMysql = "mysql".equals(usingDBMS);
+        isTibero = "tibero".equals(usingDBMS);
+        isAltibase = "altibase".equals(usingDBMS);
+    }
 
 }

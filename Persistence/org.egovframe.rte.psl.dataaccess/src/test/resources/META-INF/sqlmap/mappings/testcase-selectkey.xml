@@ -3,20 +3,20 @@
 
 <sqlMap namespace="EmpSelectKey">
 
-	<typeAlias alias="empVO" type="org.egovframe.rte.psl.dataaccess.vo.EmpVO" />
+    <typeAlias alias="empVO" type="org.egovframe.rte.psl.dataaccess.vo.EmpVO"/>
 
-	<!-- resultMap EmpResult.empResult 참고 -->
-	<!-- select 쿼리 EmpResult.selectEmpUsingResultMap 참고 -->
+    <!-- resultMap EmpResult.empResult 참고 -->
+    <!-- select 쿼리 EmpResult.selectEmpUsingResultMap 참고 -->
 
-	<insert id="insertEmpUsingSelectKey" parameterClass="empVO">
-	     <selectKey resultClass="decimal" keyProperty="empNo">
-			select	case when MAX_EMP_NO is null then 1000 
-						 else (MAX_EMP_NO + 1) 
-					end
-			from (select MAX(EMP_NO) MAX_EMP_NO from EMP) MAX_EMP
-	     </selectKey>
-	     
-		<![CDATA[
+    <insert id="insertEmpUsingSelectKey" parameterClass="empVO">
+        <selectKey resultClass="decimal" keyProperty="empNo">
+            select case when MAX_EMP_NO is null then 1000
+            else (MAX_EMP_NO + 1)
+            end
+            from (select MAX(EMP_NO) MAX_EMP_NO from EMP) MAX_EMP
+        </selectKey>
+
+        <![CDATA[
 			insert into EMP
 					   (EMP_NO,
 						EMP_NAME,
@@ -35,12 +35,12 @@
 						#comm#,
 						#deptNo#)
 		]]>
-	</insert>
-	
-	<delete id="deleteEmpAll">
-		<![CDATA[
+    </insert>
+
+    <delete id="deleteEmpAll">
+        <![CDATA[
 			delete from EMP
 		]]>
-	</delete>
+    </delete>
 
 </sqlMap>

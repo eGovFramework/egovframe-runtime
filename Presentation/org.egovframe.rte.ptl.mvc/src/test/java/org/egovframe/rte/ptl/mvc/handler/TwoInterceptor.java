@@ -9,21 +9,21 @@ import java.util.ArrayList;
 
 public class TwoInterceptor extends HandlerInterceptorAdapter {
 
-	@SuppressWarnings("unchecked")
-	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    @SuppressWarnings("unchecked")
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
-		ArrayList<String> array = (ArrayList<String>) request.getAttribute("interceptor");
-		array.add("TwoInterceptor.preHandle");
-		request.setAttribute("interceptor", array);
-		return super.preHandle(request, response, handler);
-	}
+        ArrayList<String> array = (ArrayList<String>) request.getAttribute("interceptor");
+        array.add("TwoInterceptor.preHandle");
+        request.setAttribute("interceptor", array);
+        return super.preHandle(request, response, handler);
+    }
 
-	@SuppressWarnings("unchecked")
-	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+    @SuppressWarnings("unchecked")
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
 
-		ArrayList<String> array = (ArrayList<String>) request.getAttribute("interceptor");
-		array.add("TwoInterceptor.postHandle");
-		request.setAttribute("interceptor", array);
-		super.postHandle(request, response, handler, modelAndView);
-	}
+        ArrayList<String> array = (ArrayList<String>) request.getAttribute("interceptor");
+        array.add("TwoInterceptor.postHandle");
+        request.setAttribute("interceptor", array);
+        super.postHandle(request, response, handler, modelAndView);
+    }
 }

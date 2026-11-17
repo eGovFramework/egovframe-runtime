@@ -13,23 +13,23 @@ import static org.junit.Assert.assertEquals;
 
 public class HTMLTagFilterTest {
 
-	@Test
-	public void HTMLTagFilterDoFilterTest() throws IOException, ServletException {
-		HTMLTagFilter tagFilter = new HTMLTagFilter();
-		tagFilter.doFilter(new MockHttpServletRequest(), new MockHttpServletResponse(), new MockFilterChain());
+    @Test
+    public void HTMLTagFilterDoFilterTest() throws IOException, ServletException {
+        HTMLTagFilter tagFilter = new HTMLTagFilter();
+        tagFilter.doFilter(new MockHttpServletRequest(), new MockHttpServletResponse(), new MockFilterChain());
 
-	}
+    }
 
-	@Test
-	public void HTMLTagFilterRequestWrapperTest() {
-		HttpServletRequest request = new MockHttpServletRequest();
-		request.setAttribute("param01", "param01");
-		request.setAttribute("param02", "param02");
-		HTMLTagFilterRequestWrapper requestWrapper = new HTMLTagFilterRequestWrapper(request);
-		String param = (String) requestWrapper.getAttribute("param01");
+    @Test
+    public void HTMLTagFilterRequestWrapperTest() {
+        HttpServletRequest request = new MockHttpServletRequest();
+        request.setAttribute("param01", "param01");
+        request.setAttribute("param02", "param02");
+        HTMLTagFilterRequestWrapper requestWrapper = new HTMLTagFilterRequestWrapper(request);
+        String param = (String) requestWrapper.getAttribute("param01");
 
-		assertEquals("param01", param);
+        assertEquals("param01", param);
 
-	}
+    }
 
 }

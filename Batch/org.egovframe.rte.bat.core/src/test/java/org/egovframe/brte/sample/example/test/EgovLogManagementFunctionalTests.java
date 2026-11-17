@@ -35,7 +35,6 @@ import static org.junit.Assert.assertEquals;
  * 배치 실행로그 를 확인하기 위한 테스트 (Registry와 DB)
  *
  * @author 배치실행개발팀
- * @since 2012. 07.30
  * @version 1.0
  * @see <pre>
  * == 개정이력(Modification Information) ==
@@ -45,58 +44,59 @@ import static org.junit.Assert.assertEquals;
  *  2012. 07.30  배치실행개발팀    최초 생성
  *
  * </pre>
+ * @since 2012. 07.30
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"/org/egovframe/batch/simple-job-launcher-context.xml"
-		, "/org/egovframe/batch/jobs/logManagementJob.xml"
-		, "/org/egovframe/batch/job-runner-context.xml"})
+@ContextConfiguration(locations = {"/org/egovframe/batch/simple-job-launcher-context.xml"
+        , "/org/egovframe/batch/jobs/logManagementJob.xml"
+        , "/org/egovframe/batch/job-runner-context.xml"})
 public class EgovLogManagementFunctionalTests {
 
-	// 배치작업을 test하기 위한 JobLauncherTestUtils
-	@Autowired
-	private JobLauncherTestUtils jobLauncherTestUtils;
+    // 배치작업을 test하기 위한 JobLauncherTestUtils
+    @Autowired
+    private JobLauncherTestUtils jobLauncherTestUtils;
 
-	// Job 정보가 저장되어 있는 JobRegistry
-	@Autowired
-	private JobRegistry jobRegistry;
+    // Job 정보가 저장되어 있는 JobRegistry
+    @Autowired
+    private JobRegistry jobRegistry;
 
-	private JdbcTemplate jdbcTemplate;
+    private JdbcTemplate jdbcTemplate;
 
-	/**
-	 * DataSource 세팅
-	 *
-	 */
-	@Autowired
-	public void setDataSource(DataSource dataSource) {
-		this.jdbcTemplate = new JdbcTemplate(dataSource);
-	}
+    /**
+     * DataSource 세팅
+     *
+     */
+    @Autowired
+    public void setDataSource(DataSource dataSource) {
+        this.jdbcTemplate = new JdbcTemplate(dataSource);
+    }
 
-	/**
-	 * 배치작업 테스트 전에 DB관련 작업
-	 */
-	@Before
-	public void setUp() {
-		jdbcTemplate.update("DELETE from ERROR_LOG");
-	}
+    /**
+     * 배치작업 테스트 전에 DB관련 작업
+     */
+    @Before
+    public void setUp() {
+        jdbcTemplate.update("DELETE from ERROR_LOG");
+    }
 
-	/**
-	 * 배치 작업 테스트
-	 *
-	 * @throws Exception
-	 */
-	@Test
-	public void testUpdateCredit() throws Exception {
-		JobExecution jobExecution = jobLauncherTestUtils.launchJob();
-		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
-		// Registry : Job 정보에 대한 로그기록
-		assertEquals("[logManagementJob]", jobRegistry.getJobNames().toString());
+    /**
+     * 배치 작업 테스트
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testUpdateCredit() throws Exception {
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob();
+        assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
+        // Registry : Job 정보에 대한 로그기록
+        assertEquals("[logManagementJob]", jobRegistry.getJobNames().toString());
 
-		// DB : ERROR_LOG 테이블의 로그 수
-		assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "ERROR_LOG"));
+        // DB : ERROR_LOG 테이블의 로그 수
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "ERROR_LOG"));
 
-		// DB : ERROR_LOG 테이블의 로그 데이터
-		assertEquals("3 records were skipped!", jdbcTemplate.queryForObject("SELECT MESSAGE from ERROR_LOG where JOB_NAME = ?", String.class, "logManagementJob"));
-	}
+        // DB : ERROR_LOG 테이블의 로그 데이터
+        assertEquals("3 records were skipped!", jdbcTemplate.queryForObject("SELECT MESSAGE from ERROR_LOG where JOB_NAME = ?", String.class, "logManagementJob"));
+    }
 
 }

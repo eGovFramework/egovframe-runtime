@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 MOPAS(Ministry of Public Administration and Security).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,9 +27,8 @@ import javax.jws.WebParam.Mode;
  * <b>NOTE:</b> 웹 서비스 ServiceEndpointInterface의 각 parameter와
  * EgovIntegrationMessage의 각 field 간의 mapping 정보를 나타내는 class이다.
  * </p>
- * 
+ *
  * @author 실행환경 개발팀 심상호
- * @since 2009.06.01
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -38,85 +37,89 @@ import javax.jws.WebParam.Mode;
  * ----------------------------------------------
  * 2009.06.01	심상호				최초 생성
  * </pre>
+ * @since 2009.06.01
  */
 public class ServiceParamInfoImpl implements ServiceParamInfo {
 
-	/** name */
-	private String name;
+    /**
+     * name
+     */
+    private String name;
 
-	/** type */
-	private Type type;
+    /**
+     * type
+     */
+    private Type type;
 
-	/** mode */
-	private Mode mode;
+    /**
+     * mode
+     */
+    private Mode mode;
 
-	/** header flag */
-	private boolean header;
+    /**
+     * header flag
+     */
+    private boolean header;
 
-	/**
-	 * Constructor
-	 * 
-	 * @param name
-	 *            name
-	 * @param type
-	 *            type
-	 * @param mode
-	 *            mode
-	 * @param header
-	 *            header flag
-	 */
-	public ServiceParamInfoImpl(String name, Type type, Mode mode, boolean header) {
-		super();
-		this.name = name;
-		this.type = type;
-		this.mode = mode;
-		this.header = header;
-	}
+    /**
+     * Constructor
+     *
+     * @param name   name
+     * @param type   type
+     * @param mode   mode
+     * @param header header flag
+     */
+    public ServiceParamInfoImpl(String name, Type type, Mode mode, boolean header) {
+        super();
+        this.name = name;
+        this.type = type;
+        this.mode = mode;
+        this.header = header;
+    }
 
-	/**
-	 * name
-	 * 
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
+    /**
+     * name
+     *
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
 
-	/**
-	 * type
-	 * 
-	 * @return the type
-	 */
-	public Type getType() {
-		return type;
-	}
+    /**
+     * type
+     *
+     * @return the type
+     */
+    public Type getType() {
+        return type;
+    }
 
-	/**
-	 * mode
-	 * 
-	 * @return the mode
-	 */
-	public Mode getMode() {
-		return mode;
-	}
+    /**
+     * mode
+     *
+     * @return the mode
+     */
+    public Mode getMode() {
+        return mode;
+    }
 
-	/**
-	 * mode
-	 * 
-	 * @param mode
-	 *            the mode to set
-	 */
-	public void setMode(Mode mode) {
-		this.mode = mode;
-	}
+    /**
+     * mode
+     *
+     * @param mode the mode to set
+     */
+    public void setMode(Mode mode) {
+        this.mode = mode;
+    }
 
-	/**
-	 * header
-	 * 
-	 * @return the header
-	 */
-	public boolean isHeader() {
-		return header;
-	}
+    /**
+     * header
+     *
+     * @return the header
+     */
+    public boolean isHeader() {
+        return header;
+    }
 
 }

@@ -30,7 +30,6 @@ import javax.sql.DataSource;
  * <p>Desc.: 설정 간소화 처리에 사용되는 내부 factory bean</p>
  *
  * @author ESFC
- * @since 2019.10.01
  * @version 3.9
  * <pre>
  * 개정이력(Modification Information)
@@ -39,6 +38,7 @@ import javax.sql.DataSource;
  * ----------------------------------------------
  * 2019.10.01   ESFC            최초 생성
  * </pre>
+ * @since 2019.10.01
  */
 public class AccessDataSourceFactoryBean implements FactoryBean<DataSource>, ApplicationContextAware {
 
@@ -54,7 +54,7 @@ public class AccessDataSourceFactoryBean implements FactoryBean<DataSource>, App
     public DataSource getObject() throws Exception {
         EgovAccessConfig config = context.getBean(EgovAccessConfig.class);
         if (config == null) {
-            throw new NoSuchBeanDefinitionException("##### AccessDataSourceFactoryBean EgovAccessConfig is not defined");
+            throw new NoSuchBeanDefinitionException("### AccessDataSourceFactoryBean EgovAccessConfig is not defined");
         }
 
         if (config.getDataSource() != null) {

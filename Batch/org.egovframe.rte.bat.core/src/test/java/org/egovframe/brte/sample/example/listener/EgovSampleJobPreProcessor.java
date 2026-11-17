@@ -21,28 +21,28 @@ import org.springframework.batch.core.JobExecution;
 
 /**
  * 잡 단계 이전에 호출되는 리스너 클래스
- * 
+ *
  * @author 배치실행개발팀
- * @since 2012.06.27
  * @version 1.0
  * @see <pre>
  *      개정이력(Modification Information)
- *   
+ *
  *   수정일      수정자           수정내용
  *  ------- -------- ---------------------------
  *  2012.06.27  배치실행개발팀     최초 생성
  * </pre>
+ * @since 2012.06.27
  */
 public class EgovSampleJobPreProcessor extends EgovJobPreProcessor {
 
-	protected Log log = LogFactory.getLog(this.getClass());
+    protected Log log = LogFactory.getLog(this.getClass());
 
-	/**
-	 * Job 수행 이전에 호출되는 부분
-	 */
-	public void beforeJob(JobExecution jobExecution) {
+    /**
+     * Job 수행 이전에 호출되는 부분
+     */
+    public void beforeJob(JobExecution jobExecution) {
 
-		log.info(">>>>>>>> beforeJob :::  Start " + jobExecution.getJobInstance().getJobName());
-	}
+        log.info(">>>>>>>> beforeJob :::  Start " + jobExecution.getJobInstance().getJobName());
+    }
 
 }

@@ -8,45 +8,45 @@ import java.util.Date;
 
 @Entity
 public class Article {
-	@Id
-	@GeneratedValue(strategy =  GenerationType.AUTO)
-	private long articleId;
-	
-	private String subject;
-	
-	private String contents;
-	
-	private Date createdDatetime;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long articleId;
 
-	public long getArticleId() {
-		return articleId;
-	}
+    private String subject;
 
-	public void setArticleId(long articleId) {
-		this.articleId = articleId;
-	}
+    private String contents;
 
-	public String getSubject() {
-		return subject;
-	}
+    private Date createdDatetime;
 
-	public void setSubject(String subject) {
-		this.subject = subject;
-	}
+    public long getArticleId() {
+        return articleId;
+    }
 
-	public String getContents() {
-		return contents;
-	}
+    public void setArticleId(long articleId) {
+        this.articleId = articleId;
+    }
 
-	public void setContents(String contents) {
-		this.contents = contents;
-	}
+    public String getSubject() {
+        return subject;
+    }
 
-	public Date getCreatedDatetime() {
-		return createdDatetime;
-	}
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
 
-	public void setCreatedDatetime(Date createdDatetime) {
-		this.createdDatetime = createdDatetime;
-	}
+    public String getContents() {
+        return contents;
+    }
+
+    public void setContents(String contents) {
+        this.contents = contents;
+    }
+
+    public Date getCreatedDatetime() {
+        return createdDatetime;
+    }
+
+    public void setCreatedDatetime(Date createdDatetime) {
+        this.createdDatetime = createdDatetime;
+    }
 }

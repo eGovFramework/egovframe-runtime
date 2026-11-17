@@ -3,26 +3,26 @@
 
 <mapper namespace="org.egovframe.rte.psl.dataaccess.EmpMapper">
 
-	<insert id="insertEmpUsingBatch" parameterType="org.egovframe.rte.psl.dataaccess.vo.EmpVO">
+    <insert id="insertEmpUsingBatch" parameterType="org.egovframe.rte.psl.dataaccess.vo.EmpVO">
 		<![CDATA[
-			insert into EMP
-					   (EMP_NO,
-						EMP_NAME,
-						JOB,
-						MGR,
-						HIRE_DATE,
-						SAL,
-						COMM,
-						DEPT_NO)
-			values	   (#{empNo},
-						#{empName},
-						#{job},
-						#{mgr,jdbcType=NUMERIC},
-						#{hireDate,jdbcType=DATE},
-						#{sal,jdbcType=NUMERIC},
-						#{comm,jdbcType=NUMERIC},
-						#{deptNo,jdbcType=NUMERIC})
-		]]>
+        insert into EMP
+        (EMP_NO,
+         EMP_NAME,
+         JOB,
+         MGR,
+         HIRE_DATE,
+         SAL,
+         COMM,
+         DEPT_NO)
+        values (#{empNo},
+                #{empName},
+                #{job},
+                #{mgr,jdbcType=NUMERIC},
+                #{hireDate,jdbcType=DATE},
+                #{sal,jdbcType=NUMERIC},
+                #{comm,jdbcType=NUMERIC},
+                #{deptNo,jdbcType=NUMERIC})
+        ]]>
 	</insert>
 
 </mapper>

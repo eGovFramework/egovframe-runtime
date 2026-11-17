@@ -1,6 +1,5 @@
 /*
- * Copyright 2009-2014 MOSPA(Ministry of Security and Public Administration).
-
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.

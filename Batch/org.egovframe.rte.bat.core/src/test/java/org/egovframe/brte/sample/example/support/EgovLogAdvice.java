@@ -22,42 +22,42 @@ import org.aspectj.lang.JoinPoint;
 
 /**
  * 로그틀을 제공하는 클래스
- * 
+ *
  * @author 배치실행개발팀
- * @since 2012. 07.30
  * @see <pre>
  * == 개정이력(Modification Information) ==
- * 수정일               수정자               수정내용 
- * ------      --------     --------------------------- 
+ * 수정일               수정자               수정내용
+ * ------      --------     ---------------------------
  * 2012. 07.30  배치실행개발팀    최초 생성
  * </pre>
+ * @since 2012. 07.30
  */
 public class EgovLogAdvice {
 
-	private static Log log = LogFactory.getLog(EgovLogAdvice.class);
+    private static Log log = LogFactory.getLog(EgovLogAdvice.class);
 
-	/**
-	 * 기본 로그틀 제공
-	 */
-	public void doBasicLogging(JoinPoint pjp) throws Throwable {
-		Object[] args = pjp.getArgs();
-		StringBuffer output = new StringBuffer();
+    /**
+     * 기본 로그틀 제공
+     */
+    public void doBasicLogging(JoinPoint pjp) throws Throwable {
+        Object[] args = pjp.getArgs();
+        StringBuffer output = new StringBuffer();
 
-		output.append(pjp.getTarget().getClass().getName()).append(": ");
-		output.append(pjp.toShortString()).append(": ");
+        output.append(pjp.getTarget().getClass().getName()).append(": ");
+        output.append(pjp.toShortString()).append(": ");
 
-		for (Object arg : args) {
-			output.append(arg).append(" ");
-		}
+        for (Object arg : args) {
+            output.append(arg).append(" ");
+        }
 
-		log.info("Basic: " + output.toString());
-	}
+        log.info("Basic: " + output.toString());
+    }
 
-	/**
-	 *  processed: item 로그틀 제공 
-	 */
-	public void doStronglyTypedLogging(Object item) {
-		log.info("Processed: " + item);
-	}
+    /**
+     * processed: item 로그틀 제공
+     */
+    public void doStronglyTypedLogging(Object item) {
+        log.info("Processed: " + item);
+    }
 
 }

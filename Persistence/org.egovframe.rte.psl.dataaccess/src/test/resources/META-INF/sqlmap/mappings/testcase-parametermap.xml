@@ -3,29 +3,29 @@
 
 <sqlMap namespace="EmpParameter">
 
-	<typeAlias alias="empVO" type="org.egovframe.rte.psl.dataaccess.vo.EmpVO" />
+    <typeAlias alias="empVO" type="org.egovframe.rte.psl.dataaccess.vo.EmpVO"/>
 
-	<parameterMap id="empParam" class="empVO">
-		<parameter property="empNo" mode="IN" javaType="decimal"
-			jdbcType="NUMERIC" />
-		<parameter property="empName" mode="IN" javaType="string"
-			jdbcType="VARCHAR" nullValue="blank" />
-		<parameter property="job" mode="IN" javaType="string"
-			jdbcType="VARCHAR" nullValue=""/>
-		<parameter property="mgr" mode="IN" javaType="decimal"
-			jdbcType="NUMERIC" />
-		<parameter property="hireDate" mode="IN" javaType="date"
-			jdbcType="DATE" />
-		<parameter property="sal" mode="IN" javaType="decimal"
-			jdbcType="NUMERIC" />
-		<parameter property="comm" mode="IN" javaType="decimal"
-			jdbcType="NUMERIC" nullValue="-99999"/>
-		<parameter property="deptNo" mode="IN" javaType="decimal"
-			jdbcType="NUMERIC"/>
-	</parameterMap>
-	
-	<insert id="insertEmpUsingParameterMap" parameterMap="empParam">
-		<![CDATA[
+    <parameterMap id="empParam" class="empVO">
+        <parameter property="empNo" mode="IN" javaType="decimal"
+                   jdbcType="NUMERIC"/>
+        <parameter property="empName" mode="IN" javaType="string"
+                   jdbcType="VARCHAR" nullValue="blank"/>
+        <parameter property="job" mode="IN" javaType="string"
+                   jdbcType="VARCHAR" nullValue=""/>
+        <parameter property="mgr" mode="IN" javaType="decimal"
+                   jdbcType="NUMERIC"/>
+        <parameter property="hireDate" mode="IN" javaType="date"
+                   jdbcType="DATE"/>
+        <parameter property="sal" mode="IN" javaType="decimal"
+                   jdbcType="NUMERIC"/>
+        <parameter property="comm" mode="IN" javaType="decimal"
+                   jdbcType="NUMERIC" nullValue="-99999"/>
+        <parameter property="deptNo" mode="IN" javaType="decimal"
+                   jdbcType="NUMERIC"/>
+    </parameterMap>
+
+    <insert id="insertEmpUsingParameterMap" parameterMap="empParam">
+        <![CDATA[
 			insert into EMP
 			           (EMP_NO,
 			            EMP_NAME,
@@ -44,10 +44,10 @@
 			            ?,
 			            ?)
 		]]>
-	</insert>
+    </insert>
 
-	<insert id="insertEmptUsingInLineParam">
-		<![CDATA[
+    <insert id="insertEmptUsingInLineParam">
+        <![CDATA[
 			insert into EMP
 			           (EMP_NO,
 			            EMP_NAME,
@@ -66,10 +66,10 @@
 			            #comm,javaType=decimal,jdbcType=NUMERIC,mode=IN,nullValue=-99999#,
 			            #deptNo:NUMERIC#)
 		]]>
-	</insert>
-	
-	<select id="selectEmp" parameterClass="empVO" resultClass="empVO">
-		<![CDATA[
+    </insert>
+
+    <select id="selectEmp" parameterClass="empVO" resultClass="empVO">
+        <![CDATA[
 			select EMP_NO as empNo,
 			       EMP_NAME as empName,
 			       JOB as job,
@@ -81,6 +81,6 @@
 			from   EMP
 			where  EMP_NO = #empNo#
 		]]>
-	</select>
+    </select>
 
 </sqlMap>

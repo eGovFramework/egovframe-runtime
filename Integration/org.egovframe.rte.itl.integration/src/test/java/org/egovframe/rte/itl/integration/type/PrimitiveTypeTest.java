@@ -9,12 +9,22 @@ import java.util.Date;
 
 import static org.junit.Assert.*;
 
-public class PrimitiveTypeTest
-{
+public class PrimitiveTypeTest {
+
+    private static final BigInteger bigIntegerValue = new BigInteger("123456789012345678901234567890");
+    private static final BigDecimal bigDecimalValue = new BigDecimal("123456789012345678901234567890.123456789012345678901234567890");
+
+    private static boolean isUnassignableValue(PrimitiveType type, Object value) throws Exception {
+        try {
+            type.convertToTypedObject(value);
+        } catch (UnassignableValueException e) {
+            return true;
+        }
+        return false;
+    }
 
     @Test
-    public void testIsAssignableFrom() throws Exception
-    {
+    public void testIsAssignableFrom() throws Exception {
         // BOOLEAN
         assertTrue(PrimitiveType.BOOLEAN.isAssignableFrom(boolean.class));
         assertTrue(PrimitiveType.BOOLEAN.isAssignableFrom(Boolean.class));
@@ -279,346 +289,327 @@ public class PrimitiveTypeTest
         assertFalse(PrimitiveType.CALENDAR.isAssignableFrom(char.class));
         assertFalse(PrimitiveType.CALENDAR.isAssignableFrom(Character.class));
     }
-    
+
     @Test
-    public void testIsAssignableValue() throws Exception
-    {
+    public void testIsAssignableValue() throws Exception {
         // BOOLEAN
         assertTrue(PrimitiveType.BOOLEAN.isAssignableValue(null));
         assertTrue(PrimitiveType.BOOLEAN.isAssignableValue(true));
-        assertTrue(PrimitiveType.BOOLEAN.isAssignableValue(new Boolean(false)));
+        assertTrue(PrimitiveType.BOOLEAN.isAssignableValue(Boolean.valueOf(false)));
         assertFalse(PrimitiveType.BOOLEAN.isAssignableValue("string"));
         assertFalse(PrimitiveType.BOOLEAN.isAssignableValue(Byte.MIN_VALUE));
-        assertFalse(PrimitiveType.BOOLEAN.isAssignableValue(new Byte(Byte.MAX_VALUE)));
+        assertFalse(PrimitiveType.BOOLEAN.isAssignableValue(Byte.valueOf(Byte.MAX_VALUE)));
         assertFalse(PrimitiveType.BOOLEAN.isAssignableValue(Short.MIN_VALUE));
-        assertFalse(PrimitiveType.BOOLEAN.isAssignableValue(new Short(Short.MAX_VALUE)));
+        assertFalse(PrimitiveType.BOOLEAN.isAssignableValue(Short.valueOf(Short.MAX_VALUE)));
         assertFalse(PrimitiveType.BOOLEAN.isAssignableValue(Integer.MIN_VALUE));
-        assertFalse(PrimitiveType.BOOLEAN.isAssignableValue(new Integer(Integer.MAX_VALUE)));
+        assertFalse(PrimitiveType.BOOLEAN.isAssignableValue(Integer.valueOf(Integer.MAX_VALUE)));
         assertFalse(PrimitiveType.BOOLEAN.isAssignableValue(Long.MIN_VALUE));
-        assertFalse(PrimitiveType.BOOLEAN.isAssignableValue(new Long(Long.MAX_VALUE)));
+        assertFalse(PrimitiveType.BOOLEAN.isAssignableValue(Long.valueOf(Long.MAX_VALUE)));
         assertFalse(PrimitiveType.BOOLEAN.isAssignableValue(BigInteger.valueOf(Long.MAX_VALUE)));
         assertFalse(PrimitiveType.BOOLEAN.isAssignableValue(Float.MIN_VALUE));
-        assertFalse(PrimitiveType.BOOLEAN.isAssignableValue(new Float(Float.MAX_VALUE)));
+        assertFalse(PrimitiveType.BOOLEAN.isAssignableValue(Float.valueOf(Float.MAX_VALUE)));
         assertFalse(PrimitiveType.BOOLEAN.isAssignableValue(Double.MIN_VALUE));
-        assertFalse(PrimitiveType.BOOLEAN.isAssignableValue(new Double(Double.MAX_VALUE)));
+        assertFalse(PrimitiveType.BOOLEAN.isAssignableValue(Double.valueOf(Double.MAX_VALUE)));
         assertFalse(PrimitiveType.BOOLEAN.isAssignableValue(BigDecimal.valueOf(Double.MAX_VALUE)));
         assertFalse(PrimitiveType.BOOLEAN.isAssignableValue(new Date()));
         assertFalse(PrimitiveType.BOOLEAN.isAssignableValue(Calendar.getInstance()));
         assertFalse(PrimitiveType.BOOLEAN.isAssignableValue(new Object()));
         assertFalse(PrimitiveType.BOOLEAN.isAssignableValue(Character.MIN_VALUE));
-        assertFalse(PrimitiveType.BOOLEAN.isAssignableValue(new Character(Character.MAX_VALUE)));
+        assertFalse(PrimitiveType.BOOLEAN.isAssignableValue(Character.valueOf(Character.MAX_VALUE)));
 
         // STRING
         assertTrue(PrimitiveType.STRING.isAssignableValue(null));
         assertFalse(PrimitiveType.STRING.isAssignableValue(true));
-        assertFalse(PrimitiveType.STRING.isAssignableValue(new Boolean(false)));
+        assertFalse(PrimitiveType.STRING.isAssignableValue(Boolean.valueOf(false)));
         assertTrue(PrimitiveType.STRING.isAssignableValue("string"));
         assertFalse(PrimitiveType.STRING.isAssignableValue(Byte.MIN_VALUE));
-        assertFalse(PrimitiveType.STRING.isAssignableValue(new Byte(Byte.MAX_VALUE)));
+        assertFalse(PrimitiveType.STRING.isAssignableValue(Byte.valueOf(Byte.MAX_VALUE)));
         assertFalse(PrimitiveType.STRING.isAssignableValue(Short.MIN_VALUE));
-        assertFalse(PrimitiveType.STRING.isAssignableValue(new Short(Short.MAX_VALUE)));
+        assertFalse(PrimitiveType.STRING.isAssignableValue(Short.valueOf(Short.MAX_VALUE)));
         assertFalse(PrimitiveType.STRING.isAssignableValue(Integer.MIN_VALUE));
-        assertFalse(PrimitiveType.STRING.isAssignableValue(new Integer(Integer.MAX_VALUE)));
+        assertFalse(PrimitiveType.STRING.isAssignableValue(Integer.valueOf(Integer.MAX_VALUE)));
         assertFalse(PrimitiveType.STRING.isAssignableValue(Long.MIN_VALUE));
-        assertFalse(PrimitiveType.STRING.isAssignableValue(new Long(Long.MAX_VALUE)));
+        assertFalse(PrimitiveType.STRING.isAssignableValue(Long.valueOf(Long.MAX_VALUE)));
         assertFalse(PrimitiveType.STRING.isAssignableValue(BigInteger.valueOf(Long.MAX_VALUE)));
         assertFalse(PrimitiveType.STRING.isAssignableValue(Float.MIN_VALUE));
-        assertFalse(PrimitiveType.STRING.isAssignableValue(new Float(Float.MAX_VALUE)));
+        assertFalse(PrimitiveType.STRING.isAssignableValue(Float.valueOf(Float.MAX_VALUE)));
         assertFalse(PrimitiveType.STRING.isAssignableValue(Double.MIN_VALUE));
-        assertFalse(PrimitiveType.STRING.isAssignableValue(new Double(Double.MAX_VALUE)));
+        assertFalse(PrimitiveType.STRING.isAssignableValue(Double.valueOf(Double.MAX_VALUE)));
         assertFalse(PrimitiveType.STRING.isAssignableValue(BigDecimal.valueOf(Double.MAX_VALUE)));
         assertFalse(PrimitiveType.STRING.isAssignableValue(new Date()));
         assertFalse(PrimitiveType.STRING.isAssignableValue(Calendar.getInstance()));
         assertFalse(PrimitiveType.STRING.isAssignableValue(new Object()));
         assertFalse(PrimitiveType.STRING.isAssignableValue(Character.MIN_VALUE));
-        assertFalse(PrimitiveType.STRING.isAssignableValue(new Character(Character.MAX_VALUE)));
+        assertFalse(PrimitiveType.STRING.isAssignableValue(Character.valueOf(Character.MAX_VALUE)));
 
         // BYTE
         assertTrue(PrimitiveType.BYTE.isAssignableValue(null));
         assertFalse(PrimitiveType.BYTE.isAssignableValue(true));
-        assertFalse(PrimitiveType.BYTE.isAssignableValue(new Boolean(false)));
+        assertFalse(PrimitiveType.BYTE.isAssignableValue(Boolean.valueOf(false)));
         assertFalse(PrimitiveType.BYTE.isAssignableValue("string"));
         assertTrue(PrimitiveType.BYTE.isAssignableValue(Byte.MIN_VALUE));
-        assertTrue(PrimitiveType.BYTE.isAssignableValue(new Byte(Byte.MAX_VALUE)));
+        assertTrue(PrimitiveType.BYTE.isAssignableValue(Byte.valueOf(Byte.MAX_VALUE)));
         assertFalse(PrimitiveType.BYTE.isAssignableValue(Short.MIN_VALUE));
-        assertFalse(PrimitiveType.BYTE.isAssignableValue(new Short(Short.MAX_VALUE)));
+        assertFalse(PrimitiveType.BYTE.isAssignableValue(Short.valueOf(Short.MAX_VALUE)));
         assertFalse(PrimitiveType.BYTE.isAssignableValue(Integer.MIN_VALUE));
-        assertFalse(PrimitiveType.BYTE.isAssignableValue(new Integer(Integer.MAX_VALUE)));
+        assertFalse(PrimitiveType.BYTE.isAssignableValue(Integer.valueOf(Integer.MAX_VALUE)));
         assertFalse(PrimitiveType.BYTE.isAssignableValue(Long.MIN_VALUE));
-        assertFalse(PrimitiveType.BYTE.isAssignableValue(new Long(Long.MAX_VALUE)));
+        assertFalse(PrimitiveType.BYTE.isAssignableValue(Long.valueOf(Long.MAX_VALUE)));
         assertFalse(PrimitiveType.BYTE.isAssignableValue(BigInteger.valueOf(Long.MAX_VALUE)));
         assertFalse(PrimitiveType.BYTE.isAssignableValue(Float.MIN_VALUE));
-        assertFalse(PrimitiveType.BYTE.isAssignableValue(new Float(Float.MAX_VALUE)));
+        assertFalse(PrimitiveType.BYTE.isAssignableValue(Float.valueOf(Float.MAX_VALUE)));
         assertFalse(PrimitiveType.BYTE.isAssignableValue(Double.MIN_VALUE));
-        assertFalse(PrimitiveType.BYTE.isAssignableValue(new Double(Double.MAX_VALUE)));
+        assertFalse(PrimitiveType.BYTE.isAssignableValue(Double.valueOf(Double.MAX_VALUE)));
         assertFalse(PrimitiveType.BYTE.isAssignableValue(BigDecimal.valueOf(Double.MAX_VALUE)));
         assertFalse(PrimitiveType.BYTE.isAssignableValue(new Date()));
         assertFalse(PrimitiveType.BYTE.isAssignableValue(Calendar.getInstance()));
         assertFalse(PrimitiveType.BYTE.isAssignableValue(new Object()));
         assertFalse(PrimitiveType.BYTE.isAssignableValue(Character.MIN_VALUE));
-        assertFalse(PrimitiveType.BYTE.isAssignableValue(new Character(Character.MAX_VALUE)));
+        assertFalse(PrimitiveType.BYTE.isAssignableValue(Character.valueOf(Character.MAX_VALUE)));
 
         // SHORT
         assertTrue(PrimitiveType.SHORT.isAssignableValue(null));
         assertFalse(PrimitiveType.SHORT.isAssignableValue(true));
-        assertFalse(PrimitiveType.SHORT.isAssignableValue(new Boolean(false)));
+        assertFalse(PrimitiveType.SHORT.isAssignableValue(Boolean.valueOf(false)));
         assertFalse(PrimitiveType.SHORT.isAssignableValue("string"));
         assertTrue(PrimitiveType.SHORT.isAssignableValue(Byte.MIN_VALUE));
-        assertTrue(PrimitiveType.SHORT.isAssignableValue(new Byte(Byte.MAX_VALUE)));
+        assertTrue(PrimitiveType.SHORT.isAssignableValue(Byte.valueOf(Byte.MAX_VALUE)));
         assertTrue(PrimitiveType.SHORT.isAssignableValue(Short.MIN_VALUE));
-        assertTrue(PrimitiveType.SHORT.isAssignableValue(new Short(Short.MAX_VALUE)));
+        assertTrue(PrimitiveType.SHORT.isAssignableValue(Short.valueOf(Short.MAX_VALUE)));
         assertFalse(PrimitiveType.SHORT.isAssignableValue(Integer.MIN_VALUE));
-        assertFalse(PrimitiveType.SHORT.isAssignableValue(new Integer(Integer.MAX_VALUE)));
+        assertFalse(PrimitiveType.SHORT.isAssignableValue(Integer.valueOf(Integer.MAX_VALUE)));
         assertFalse(PrimitiveType.SHORT.isAssignableValue(Long.MIN_VALUE));
-        assertFalse(PrimitiveType.SHORT.isAssignableValue(new Long(Long.MAX_VALUE)));
+        assertFalse(PrimitiveType.SHORT.isAssignableValue(Long.valueOf(Long.MAX_VALUE)));
         assertFalse(PrimitiveType.SHORT.isAssignableValue(BigInteger.valueOf(Long.MAX_VALUE)));
         assertFalse(PrimitiveType.SHORT.isAssignableValue(Float.MIN_VALUE));
-        assertFalse(PrimitiveType.SHORT.isAssignableValue(new Float(Float.MAX_VALUE)));
+        assertFalse(PrimitiveType.SHORT.isAssignableValue(Float.valueOf(Float.MAX_VALUE)));
         assertFalse(PrimitiveType.SHORT.isAssignableValue(Double.MIN_VALUE));
-        assertFalse(PrimitiveType.SHORT.isAssignableValue(new Double(Double.MAX_VALUE)));
+        assertFalse(PrimitiveType.SHORT.isAssignableValue(Double.valueOf(Double.MAX_VALUE)));
         assertFalse(PrimitiveType.SHORT.isAssignableValue(BigDecimal.valueOf(Double.MAX_VALUE)));
         assertFalse(PrimitiveType.SHORT.isAssignableValue(new Date()));
         assertFalse(PrimitiveType.SHORT.isAssignableValue(Calendar.getInstance()));
         assertFalse(PrimitiveType.SHORT.isAssignableValue(new Object()));
         assertFalse(PrimitiveType.SHORT.isAssignableValue(Character.MIN_VALUE));
-        assertFalse(PrimitiveType.SHORT.isAssignableValue(new Character(Character.MAX_VALUE)));
+        assertFalse(PrimitiveType.SHORT.isAssignableValue(Character.valueOf(Character.MAX_VALUE)));
 
         // INTEGER
         assertTrue(PrimitiveType.INTEGER.isAssignableValue(null));
         assertFalse(PrimitiveType.INTEGER.isAssignableValue(true));
-        assertFalse(PrimitiveType.INTEGER.isAssignableValue(new Boolean(false)));
+        assertFalse(PrimitiveType.INTEGER.isAssignableValue(Boolean.valueOf(false)));
         assertFalse(PrimitiveType.INTEGER.isAssignableValue("string"));
         assertTrue(PrimitiveType.INTEGER.isAssignableValue(Byte.MIN_VALUE));
-        assertTrue(PrimitiveType.INTEGER.isAssignableValue(new Byte(Byte.MAX_VALUE)));
+        assertTrue(PrimitiveType.INTEGER.isAssignableValue(Byte.valueOf(Byte.MAX_VALUE)));
         assertTrue(PrimitiveType.INTEGER.isAssignableValue(Short.MIN_VALUE));
-        assertTrue(PrimitiveType.INTEGER.isAssignableValue(new Short(Short.MAX_VALUE)));
+        assertTrue(PrimitiveType.INTEGER.isAssignableValue(Short.valueOf(Short.MAX_VALUE)));
         assertTrue(PrimitiveType.INTEGER.isAssignableValue(Integer.MIN_VALUE));
-        assertTrue(PrimitiveType.INTEGER.isAssignableValue(new Integer(Integer.MAX_VALUE)));
+        assertTrue(PrimitiveType.INTEGER.isAssignableValue(Integer.valueOf(Integer.MAX_VALUE)));
         assertFalse(PrimitiveType.INTEGER.isAssignableValue(Long.MIN_VALUE));
-        assertFalse(PrimitiveType.INTEGER.isAssignableValue(new Long(Long.MAX_VALUE)));
+        assertFalse(PrimitiveType.INTEGER.isAssignableValue(Long.valueOf(Long.MAX_VALUE)));
         assertFalse(PrimitiveType.INTEGER.isAssignableValue(BigInteger.valueOf(Long.MAX_VALUE)));
         assertFalse(PrimitiveType.INTEGER.isAssignableValue(Float.MIN_VALUE));
-        assertFalse(PrimitiveType.INTEGER.isAssignableValue(new Float(Float.MAX_VALUE)));
+        assertFalse(PrimitiveType.INTEGER.isAssignableValue(Float.valueOf(Float.MAX_VALUE)));
         assertFalse(PrimitiveType.INTEGER.isAssignableValue(Double.MIN_VALUE));
-        assertFalse(PrimitiveType.INTEGER.isAssignableValue(new Double(Double.MAX_VALUE)));
+        assertFalse(PrimitiveType.INTEGER.isAssignableValue(Double.valueOf(Double.MAX_VALUE)));
         assertFalse(PrimitiveType.INTEGER.isAssignableValue(BigDecimal.valueOf(Double.MAX_VALUE)));
         assertFalse(PrimitiveType.INTEGER.isAssignableValue(new Date()));
         assertFalse(PrimitiveType.INTEGER.isAssignableValue(Calendar.getInstance()));
         assertFalse(PrimitiveType.INTEGER.isAssignableValue(new Object()));
         assertFalse(PrimitiveType.INTEGER.isAssignableValue(Character.MIN_VALUE));
-        assertFalse(PrimitiveType.INTEGER.isAssignableValue(new Character(Character.MAX_VALUE)));
+        assertFalse(PrimitiveType.INTEGER.isAssignableValue(Character.valueOf(Character.MAX_VALUE)));
 
         // LONG
         assertTrue(PrimitiveType.LONG.isAssignableValue(null));
         assertFalse(PrimitiveType.LONG.isAssignableValue(true));
-        assertFalse(PrimitiveType.LONG.isAssignableValue(new Boolean(false)));
+        assertFalse(PrimitiveType.LONG.isAssignableValue(Boolean.valueOf(false)));
         assertFalse(PrimitiveType.LONG.isAssignableValue("string"));
         assertTrue(PrimitiveType.LONG.isAssignableValue(Byte.MIN_VALUE));
-        assertTrue(PrimitiveType.LONG.isAssignableValue(new Byte(Byte.MAX_VALUE)));
+        assertTrue(PrimitiveType.LONG.isAssignableValue(Byte.valueOf(Byte.MAX_VALUE)));
         assertTrue(PrimitiveType.LONG.isAssignableValue(Short.MIN_VALUE));
-        assertTrue(PrimitiveType.LONG.isAssignableValue(new Short(Short.MAX_VALUE)));
+        assertTrue(PrimitiveType.LONG.isAssignableValue(Short.valueOf(Short.MAX_VALUE)));
         assertTrue(PrimitiveType.LONG.isAssignableValue(Integer.MIN_VALUE));
-        assertTrue(PrimitiveType.LONG.isAssignableValue(new Integer(Integer.MAX_VALUE)));
+        assertTrue(PrimitiveType.LONG.isAssignableValue(Integer.valueOf(Integer.MAX_VALUE)));
         assertTrue(PrimitiveType.LONG.isAssignableValue(Long.MIN_VALUE));
-        assertTrue(PrimitiveType.LONG.isAssignableValue(new Long(Long.MAX_VALUE)));
+        assertTrue(PrimitiveType.LONG.isAssignableValue(Long.valueOf(Long.MAX_VALUE)));
         assertFalse(PrimitiveType.LONG.isAssignableValue(BigInteger.valueOf(Long.MAX_VALUE)));
         assertFalse(PrimitiveType.LONG.isAssignableValue(Float.MIN_VALUE));
-        assertFalse(PrimitiveType.LONG.isAssignableValue(new Float(Float.MAX_VALUE)));
+        assertFalse(PrimitiveType.LONG.isAssignableValue(Float.valueOf(Float.MAX_VALUE)));
         assertFalse(PrimitiveType.LONG.isAssignableValue(Double.MIN_VALUE));
-        assertFalse(PrimitiveType.LONG.isAssignableValue(new Double(Double.MAX_VALUE)));
+        assertFalse(PrimitiveType.LONG.isAssignableValue(Double.valueOf(Double.MAX_VALUE)));
         assertFalse(PrimitiveType.LONG.isAssignableValue(BigDecimal.valueOf(Double.MAX_VALUE)));
         assertFalse(PrimitiveType.LONG.isAssignableValue(new Date()));
         assertFalse(PrimitiveType.LONG.isAssignableValue(Calendar.getInstance()));
         assertFalse(PrimitiveType.LONG.isAssignableValue(new Object()));
         assertFalse(PrimitiveType.LONG.isAssignableValue(Character.MIN_VALUE));
-        assertFalse(PrimitiveType.LONG.isAssignableValue(new Character(Character.MAX_VALUE)));
+        assertFalse(PrimitiveType.LONG.isAssignableValue(Character.valueOf(Character.MAX_VALUE)));
 
         // BIGINTEGER
         assertTrue(PrimitiveType.BIGINTEGER.isAssignableValue(null));
         assertFalse(PrimitiveType.BIGINTEGER.isAssignableValue(true));
-        assertFalse(PrimitiveType.BIGINTEGER.isAssignableValue(new Boolean(false)));
+        assertFalse(PrimitiveType.BIGINTEGER.isAssignableValue(Boolean.valueOf(false)));
         assertFalse(PrimitiveType.BIGINTEGER.isAssignableValue("string"));
         assertTrue(PrimitiveType.BIGINTEGER.isAssignableValue(Byte.MIN_VALUE));
-        assertTrue(PrimitiveType.BIGINTEGER.isAssignableValue(new Byte(Byte.MAX_VALUE)));
+        assertTrue(PrimitiveType.BIGINTEGER.isAssignableValue(Byte.valueOf(Byte.MAX_VALUE)));
         assertTrue(PrimitiveType.BIGINTEGER.isAssignableValue(Short.MIN_VALUE));
-        assertTrue(PrimitiveType.BIGINTEGER.isAssignableValue(new Short(Short.MAX_VALUE)));
+        assertTrue(PrimitiveType.BIGINTEGER.isAssignableValue(Short.valueOf(Short.MAX_VALUE)));
         assertTrue(PrimitiveType.BIGINTEGER.isAssignableValue(Integer.MIN_VALUE));
-        assertTrue(PrimitiveType.BIGINTEGER.isAssignableValue(new Integer(Integer.MAX_VALUE)));
+        assertTrue(PrimitiveType.BIGINTEGER.isAssignableValue(Integer.valueOf(Integer.MAX_VALUE)));
         assertTrue(PrimitiveType.BIGINTEGER.isAssignableValue(Long.MIN_VALUE));
-        assertTrue(PrimitiveType.BIGINTEGER.isAssignableValue(new Long(Long.MAX_VALUE)));
+        assertTrue(PrimitiveType.BIGINTEGER.isAssignableValue(Long.valueOf(Long.MAX_VALUE)));
         assertTrue(PrimitiveType.BIGINTEGER.isAssignableValue(BigInteger.valueOf(Long.MAX_VALUE)));
         assertFalse(PrimitiveType.BIGINTEGER.isAssignableValue(Float.MIN_VALUE));
-        assertFalse(PrimitiveType.BIGINTEGER.isAssignableValue(new Float(Float.MAX_VALUE)));
+        assertFalse(PrimitiveType.BIGINTEGER.isAssignableValue(Float.valueOf(Float.MAX_VALUE)));
         assertFalse(PrimitiveType.BIGINTEGER.isAssignableValue(Double.MIN_VALUE));
-        assertFalse(PrimitiveType.BIGINTEGER.isAssignableValue(new Double(Double.MAX_VALUE)));
+        assertFalse(PrimitiveType.BIGINTEGER.isAssignableValue(Double.valueOf(Double.MAX_VALUE)));
         assertFalse(PrimitiveType.BIGINTEGER.isAssignableValue(BigDecimal.valueOf(Double.MAX_VALUE)));
         assertFalse(PrimitiveType.BIGINTEGER.isAssignableValue(new Date()));
         assertFalse(PrimitiveType.BIGINTEGER.isAssignableValue(Calendar.getInstance()));
         assertFalse(PrimitiveType.BIGINTEGER.isAssignableValue(new Object()));
         assertFalse(PrimitiveType.BIGINTEGER.isAssignableValue(Character.MIN_VALUE));
-        assertFalse(PrimitiveType.BIGINTEGER.isAssignableValue(new Character(Character.MAX_VALUE)));
+        assertFalse(PrimitiveType.BIGINTEGER.isAssignableValue(Character.valueOf(Character.MAX_VALUE)));
 
         // FLOAT
         assertTrue(PrimitiveType.FLOAT.isAssignableValue(null));
         assertFalse(PrimitiveType.FLOAT.isAssignableValue(true));
-        assertFalse(PrimitiveType.FLOAT.isAssignableValue(new Boolean(false)));
+        assertFalse(PrimitiveType.FLOAT.isAssignableValue(Boolean.valueOf(false)));
         assertFalse(PrimitiveType.FLOAT.isAssignableValue("string"));
         assertTrue(PrimitiveType.FLOAT.isAssignableValue(Byte.MIN_VALUE));
-        assertTrue(PrimitiveType.FLOAT.isAssignableValue(new Byte(Byte.MAX_VALUE)));
+        assertTrue(PrimitiveType.FLOAT.isAssignableValue(Byte.valueOf(Byte.MAX_VALUE)));
         assertTrue(PrimitiveType.FLOAT.isAssignableValue(Short.MIN_VALUE));
-        assertTrue(PrimitiveType.FLOAT.isAssignableValue(new Short(Short.MAX_VALUE)));
+        assertTrue(PrimitiveType.FLOAT.isAssignableValue(Short.valueOf(Short.MAX_VALUE)));
         assertFalse(PrimitiveType.FLOAT.isAssignableValue(Integer.MIN_VALUE));
-        assertFalse(PrimitiveType.FLOAT.isAssignableValue(new Integer(Integer.MAX_VALUE)));
+        assertFalse(PrimitiveType.FLOAT.isAssignableValue(Integer.valueOf(Integer.MAX_VALUE)));
         assertFalse(PrimitiveType.FLOAT.isAssignableValue(Long.MIN_VALUE));
-        assertFalse(PrimitiveType.FLOAT.isAssignableValue(new Long(Long.MAX_VALUE)));
+        assertFalse(PrimitiveType.FLOAT.isAssignableValue(Long.valueOf(Long.MAX_VALUE)));
         assertFalse(PrimitiveType.FLOAT.isAssignableValue(BigInteger.valueOf(Long.MAX_VALUE)));
         assertTrue(PrimitiveType.FLOAT.isAssignableValue(Float.MIN_VALUE));
-        assertTrue(PrimitiveType.FLOAT.isAssignableValue(new Float(Float.MAX_VALUE)));
+        assertTrue(PrimitiveType.FLOAT.isAssignableValue(Float.valueOf(Float.MAX_VALUE)));
         assertFalse(PrimitiveType.FLOAT.isAssignableValue(Double.MIN_VALUE));
-        assertFalse(PrimitiveType.FLOAT.isAssignableValue(new Double(Double.MAX_VALUE)));
+        assertFalse(PrimitiveType.FLOAT.isAssignableValue(Double.valueOf(Double.MAX_VALUE)));
         assertFalse(PrimitiveType.FLOAT.isAssignableValue(BigDecimal.valueOf(Double.MAX_VALUE)));
         assertFalse(PrimitiveType.FLOAT.isAssignableValue(new Date()));
         assertFalse(PrimitiveType.FLOAT.isAssignableValue(Calendar.getInstance()));
         assertFalse(PrimitiveType.FLOAT.isAssignableValue(new Object()));
         assertFalse(PrimitiveType.FLOAT.isAssignableValue(Character.MIN_VALUE));
-        assertFalse(PrimitiveType.FLOAT.isAssignableValue(new Character(Character.MAX_VALUE)));
+        assertFalse(PrimitiveType.FLOAT.isAssignableValue(Character.valueOf(Character.MAX_VALUE)));
 
         // DOUBLE
         assertTrue(PrimitiveType.DOUBLE.isAssignableValue(null));
         assertFalse(PrimitiveType.DOUBLE.isAssignableValue(true));
-        assertFalse(PrimitiveType.DOUBLE.isAssignableValue(new Boolean(false)));
+        assertFalse(PrimitiveType.DOUBLE.isAssignableValue(Boolean.valueOf(false)));
         assertFalse(PrimitiveType.DOUBLE.isAssignableValue("string"));
         assertTrue(PrimitiveType.DOUBLE.isAssignableValue(Byte.MIN_VALUE));
-        assertTrue(PrimitiveType.DOUBLE.isAssignableValue(new Byte(Byte.MAX_VALUE)));
+        assertTrue(PrimitiveType.DOUBLE.isAssignableValue(Byte.valueOf(Byte.MAX_VALUE)));
         assertTrue(PrimitiveType.DOUBLE.isAssignableValue(Short.MIN_VALUE));
-        assertTrue(PrimitiveType.DOUBLE.isAssignableValue(new Short(Short.MAX_VALUE)));
+        assertTrue(PrimitiveType.DOUBLE.isAssignableValue(Short.valueOf(Short.MAX_VALUE)));
         assertTrue(PrimitiveType.DOUBLE.isAssignableValue(Integer.MIN_VALUE));
-        assertTrue(PrimitiveType.DOUBLE.isAssignableValue(new Integer(Integer.MAX_VALUE)));
+        assertTrue(PrimitiveType.DOUBLE.isAssignableValue(Integer.valueOf(Integer.MAX_VALUE)));
         assertFalse(PrimitiveType.DOUBLE.isAssignableValue(Long.MIN_VALUE));
-        assertFalse(PrimitiveType.DOUBLE.isAssignableValue(new Long(Long.MAX_VALUE)));
+        assertFalse(PrimitiveType.DOUBLE.isAssignableValue(Long.valueOf(Long.MAX_VALUE)));
         assertFalse(PrimitiveType.DOUBLE.isAssignableValue(BigInteger.valueOf(Long.MAX_VALUE)));
         assertTrue(PrimitiveType.DOUBLE.isAssignableValue(Float.MIN_VALUE));
-        assertTrue(PrimitiveType.DOUBLE.isAssignableValue(new Float(Float.MAX_VALUE)));
+        assertTrue(PrimitiveType.DOUBLE.isAssignableValue(Float.valueOf(Float.MAX_VALUE)));
         assertTrue(PrimitiveType.DOUBLE.isAssignableValue(Double.MIN_VALUE));
-        assertTrue(PrimitiveType.DOUBLE.isAssignableValue(new Double(Double.MAX_VALUE)));
+        assertTrue(PrimitiveType.DOUBLE.isAssignableValue(Double.valueOf(Double.MAX_VALUE)));
         assertFalse(PrimitiveType.DOUBLE.isAssignableValue(BigDecimal.valueOf(Double.MAX_VALUE)));
         assertFalse(PrimitiveType.DOUBLE.isAssignableValue(new Date()));
         assertFalse(PrimitiveType.DOUBLE.isAssignableValue(Calendar.getInstance()));
         assertFalse(PrimitiveType.DOUBLE.isAssignableValue(new Object()));
         assertFalse(PrimitiveType.DOUBLE.isAssignableValue(Character.MIN_VALUE));
-        assertFalse(PrimitiveType.DOUBLE.isAssignableValue(new Character(Character.MAX_VALUE)));
+        assertFalse(PrimitiveType.DOUBLE.isAssignableValue(Character.valueOf(Character.MAX_VALUE)));
 
         // BIGDECIMAL
         assertTrue(PrimitiveType.BIGDECIMAL.isAssignableValue(null));
         assertFalse(PrimitiveType.BIGDECIMAL.isAssignableValue(true));
-        assertFalse(PrimitiveType.BIGDECIMAL.isAssignableValue(new Boolean(false)));
+        assertFalse(PrimitiveType.BIGDECIMAL.isAssignableValue(Boolean.valueOf(false)));
         assertFalse(PrimitiveType.BIGDECIMAL.isAssignableValue("string"));
         assertTrue(PrimitiveType.BIGDECIMAL.isAssignableValue(Byte.MIN_VALUE));
-        assertTrue(PrimitiveType.BIGDECIMAL.isAssignableValue(new Byte(Byte.MAX_VALUE)));
+        assertTrue(PrimitiveType.BIGDECIMAL.isAssignableValue(Byte.valueOf(Byte.MAX_VALUE)));
         assertTrue(PrimitiveType.BIGDECIMAL.isAssignableValue(Short.MIN_VALUE));
-        assertTrue(PrimitiveType.BIGDECIMAL.isAssignableValue(new Short(Short.MAX_VALUE)));
+        assertTrue(PrimitiveType.BIGDECIMAL.isAssignableValue(Short.valueOf(Short.MAX_VALUE)));
         assertTrue(PrimitiveType.BIGDECIMAL.isAssignableValue(Integer.MIN_VALUE));
-        assertTrue(PrimitiveType.BIGDECIMAL.isAssignableValue(new Integer(Integer.MAX_VALUE)));
+        assertTrue(PrimitiveType.BIGDECIMAL.isAssignableValue(Integer.valueOf(Integer.MAX_VALUE)));
         assertTrue(PrimitiveType.BIGDECIMAL.isAssignableValue(Long.MIN_VALUE));
-        assertTrue(PrimitiveType.BIGDECIMAL.isAssignableValue(new Long(Long.MAX_VALUE)));
+        assertTrue(PrimitiveType.BIGDECIMAL.isAssignableValue(Long.valueOf(Long.MAX_VALUE)));
         assertTrue(PrimitiveType.BIGDECIMAL.isAssignableValue(BigInteger.valueOf(Long.MAX_VALUE)));
         assertTrue(PrimitiveType.BIGDECIMAL.isAssignableValue(Float.MIN_VALUE));
-        assertTrue(PrimitiveType.BIGDECIMAL.isAssignableValue(new Float(Float.MAX_VALUE)));
+        assertTrue(PrimitiveType.BIGDECIMAL.isAssignableValue(Float.valueOf(Float.MAX_VALUE)));
         assertTrue(PrimitiveType.BIGDECIMAL.isAssignableValue(Double.MIN_VALUE));
-        assertTrue(PrimitiveType.BIGDECIMAL.isAssignableValue(new Double(Double.MAX_VALUE)));
+        assertTrue(PrimitiveType.BIGDECIMAL.isAssignableValue(Double.valueOf(Double.MAX_VALUE)));
         assertTrue(PrimitiveType.BIGDECIMAL.isAssignableValue(BigDecimal.valueOf(Double.MAX_VALUE)));
         assertFalse(PrimitiveType.BIGDECIMAL.isAssignableValue(new Date()));
         assertFalse(PrimitiveType.BIGDECIMAL.isAssignableValue(Calendar.getInstance()));
         assertFalse(PrimitiveType.BIGDECIMAL.isAssignableValue(new Object()));
         assertFalse(PrimitiveType.BIGDECIMAL.isAssignableValue(Character.MIN_VALUE));
-        assertFalse(PrimitiveType.BIGDECIMAL.isAssignableValue(new Character(Character.MAX_VALUE)));
+        assertFalse(PrimitiveType.BIGDECIMAL.isAssignableValue(Character.valueOf(Character.MAX_VALUE)));
 
         // CALENDAR
         assertTrue(PrimitiveType.CALENDAR.isAssignableValue(null));
         assertFalse(PrimitiveType.CALENDAR.isAssignableValue(true));
-        assertFalse(PrimitiveType.CALENDAR.isAssignableValue(new Boolean(false)));
+        assertFalse(PrimitiveType.CALENDAR.isAssignableValue(Boolean.valueOf(false)));
         assertFalse(PrimitiveType.CALENDAR.isAssignableValue("string"));
         assertFalse(PrimitiveType.CALENDAR.isAssignableValue(Byte.MIN_VALUE));
-        assertFalse(PrimitiveType.CALENDAR.isAssignableValue(new Byte(Byte.MAX_VALUE)));
+        assertFalse(PrimitiveType.CALENDAR.isAssignableValue(Byte.valueOf(Byte.MAX_VALUE)));
         assertFalse(PrimitiveType.CALENDAR.isAssignableValue(Short.MIN_VALUE));
-        assertFalse(PrimitiveType.CALENDAR.isAssignableValue(new Short(Short.MAX_VALUE)));
+        assertFalse(PrimitiveType.CALENDAR.isAssignableValue(Short.valueOf(Short.MAX_VALUE)));
         assertFalse(PrimitiveType.CALENDAR.isAssignableValue(Integer.MIN_VALUE));
-        assertFalse(PrimitiveType.CALENDAR.isAssignableValue(new Integer(Integer.MAX_VALUE)));
+        assertFalse(PrimitiveType.CALENDAR.isAssignableValue(Integer.valueOf(Integer.MAX_VALUE)));
         assertFalse(PrimitiveType.CALENDAR.isAssignableValue(Long.MIN_VALUE));
-        assertFalse(PrimitiveType.CALENDAR.isAssignableValue(new Long(Long.MAX_VALUE)));
+        assertFalse(PrimitiveType.CALENDAR.isAssignableValue(Long.valueOf(Long.MAX_VALUE)));
         assertFalse(PrimitiveType.CALENDAR.isAssignableValue(BigInteger.valueOf(Long.MAX_VALUE)));
         assertFalse(PrimitiveType.CALENDAR.isAssignableValue(Float.MIN_VALUE));
-        assertFalse(PrimitiveType.CALENDAR.isAssignableValue(new Float(Float.MAX_VALUE)));
+        assertFalse(PrimitiveType.CALENDAR.isAssignableValue(Float.valueOf(Float.MAX_VALUE)));
         assertFalse(PrimitiveType.CALENDAR.isAssignableValue(Double.MIN_VALUE));
-        assertFalse(PrimitiveType.CALENDAR.isAssignableValue(new Double(Double.MAX_VALUE)));
+        assertFalse(PrimitiveType.CALENDAR.isAssignableValue(Double.valueOf(Double.MAX_VALUE)));
         assertFalse(PrimitiveType.CALENDAR.isAssignableValue(BigDecimal.valueOf(Double.MAX_VALUE)));
         assertTrue(PrimitiveType.CALENDAR.isAssignableValue(new Date()));
         assertTrue(PrimitiveType.CALENDAR.isAssignableValue(Calendar.getInstance()));
         assertFalse(PrimitiveType.CALENDAR.isAssignableValue(new Object()));
         assertFalse(PrimitiveType.CALENDAR.isAssignableValue(Character.MIN_VALUE));
-        assertFalse(PrimitiveType.CALENDAR.isAssignableValue(new Character(Character.MAX_VALUE)));
+        assertFalse(PrimitiveType.CALENDAR.isAssignableValue(Character.valueOf(Character.MAX_VALUE)));
     }
-    
-    private static boolean isUnassignableValue(PrimitiveType type, Object value) throws Exception
-    {
-        try
-        {
-            type.convertToTypedObject(value);
-        }
-        catch (UnassignableValueException e)
-        {
-            return true;
-        }
-        return false;
-    }
-    
-    private static final BigInteger bigIntegerValue = new BigInteger("123456789012345678901234567890");
 
-    private static final BigDecimal bigDecimalValue = new BigDecimal("123456789012345678901234567890.123456789012345678901234567890");
-    
     @Test
-    public void testConvertToTypedObject() throws Exception
-    {
+    public void testConvertToTypedObject() throws Exception {
         // BOOLEAN
         assertTrue(PrimitiveType.BOOLEAN.convertToTypedObject(true) instanceof Boolean);
-        assertEquals(new Boolean(false), PrimitiveType.BOOLEAN.convertToTypedObject(false));
+        assertEquals(Boolean.valueOf(false), PrimitiveType.BOOLEAN.convertToTypedObject(false));
         assertTrue(isUnassignableValue(PrimitiveType.BOOLEAN, "true"));
         assertTrue(isUnassignableValue(PrimitiveType.BYTE, Integer.MIN_VALUE));
-                
+
         // BYTE
         assertTrue(PrimitiveType.BYTE.convertToTypedObject(Byte.MIN_VALUE) instanceof Byte);
         assertEquals(Byte.MAX_VALUE, PrimitiveType.BYTE.convertToTypedObject(Byte.MAX_VALUE));
         assertTrue(isUnassignableValue(PrimitiveType.BYTE, "0"));
         assertTrue(isUnassignableValue(PrimitiveType.BYTE, Short.MIN_VALUE));
         assertTrue(isUnassignableValue(PrimitiveType.BYTE, Float.MAX_VALUE));
-                
+
         // SHORT
         assertTrue(PrimitiveType.SHORT.convertToTypedObject(Short.MIN_VALUE) instanceof Short);
-        assertEquals(new Short(Byte.MAX_VALUE), PrimitiveType.SHORT.convertToTypedObject(Byte.MAX_VALUE));
-        assertEquals(new Short(Short.MAX_VALUE), PrimitiveType.SHORT.convertToTypedObject(Short.MAX_VALUE));
+        assertEquals(Short.valueOf(Byte.MAX_VALUE), PrimitiveType.SHORT.convertToTypedObject(Byte.MAX_VALUE));
+        assertEquals(Short.valueOf(Short.MAX_VALUE), PrimitiveType.SHORT.convertToTypedObject(Short.MAX_VALUE));
         assertTrue(isUnassignableValue(PrimitiveType.SHORT, "0"));
         assertTrue(isUnassignableValue(PrimitiveType.SHORT, Integer.MIN_VALUE));
         assertTrue(isUnassignableValue(PrimitiveType.SHORT, Float.MAX_VALUE));
-        
+
         // INTEGER
         assertTrue(PrimitiveType.INTEGER.convertToTypedObject(Integer.MIN_VALUE) instanceof Integer);
-        assertEquals(new Integer(Byte.MAX_VALUE), PrimitiveType.INTEGER.convertToTypedObject(Byte.MAX_VALUE));
-        assertEquals(new Integer(Short.MAX_VALUE), PrimitiveType.INTEGER.convertToTypedObject(Short.MAX_VALUE));
-        assertEquals(new Integer(Integer.MAX_VALUE), PrimitiveType.INTEGER.convertToTypedObject(Integer.MAX_VALUE));
+        assertEquals(Integer.valueOf(Byte.MAX_VALUE), PrimitiveType.INTEGER.convertToTypedObject(Byte.MAX_VALUE));
+        assertEquals(Integer.valueOf(Short.MAX_VALUE), PrimitiveType.INTEGER.convertToTypedObject(Short.MAX_VALUE));
+        assertEquals(Integer.valueOf(Integer.MAX_VALUE), PrimitiveType.INTEGER.convertToTypedObject(Integer.MAX_VALUE));
         assertTrue(isUnassignableValue(PrimitiveType.INTEGER, "0"));
         assertTrue(isUnassignableValue(PrimitiveType.INTEGER, Long.MIN_VALUE));
         assertTrue(isUnassignableValue(PrimitiveType.INTEGER, Float.MAX_VALUE));
-        
+
         // LONG
         assertTrue(PrimitiveType.LONG.convertToTypedObject(Long.MIN_VALUE) instanceof Long);
-        assertEquals(new Long(Byte.MAX_VALUE), PrimitiveType.LONG.convertToTypedObject(Byte.MAX_VALUE));
-        assertEquals(new Long(Short.MAX_VALUE), PrimitiveType.LONG.convertToTypedObject(Short.MAX_VALUE));
-        assertEquals(new Long(Integer.MAX_VALUE), PrimitiveType.LONG.convertToTypedObject(Integer.MAX_VALUE));
-        assertEquals(new Long(Long.MAX_VALUE), PrimitiveType.LONG.convertToTypedObject(Long.MAX_VALUE));
+        assertEquals(Long.valueOf(Byte.MAX_VALUE), PrimitiveType.LONG.convertToTypedObject(Byte.MAX_VALUE));
+        assertEquals(Long.valueOf(Short.MAX_VALUE), PrimitiveType.LONG.convertToTypedObject(Short.MAX_VALUE));
+        assertEquals(Long.valueOf(Integer.MAX_VALUE), PrimitiveType.LONG.convertToTypedObject(Integer.MAX_VALUE));
+        assertEquals(Long.valueOf(Long.MAX_VALUE), PrimitiveType.LONG.convertToTypedObject(Long.MAX_VALUE));
         assertTrue(isUnassignableValue(PrimitiveType.LONG, "0"));
         assertTrue(isUnassignableValue(PrimitiveType.LONG, bigIntegerValue));
         assertTrue(isUnassignableValue(PrimitiveType.LONG, Float.MAX_VALUE));
-        
+
         // BIGINTEGER
         assertTrue(PrimitiveType.BIGINTEGER.convertToTypedObject(bigIntegerValue) instanceof BigInteger);
         assertEquals(BigInteger.valueOf(Byte.MAX_VALUE), PrimitiveType.BIGINTEGER.convertToTypedObject(Byte.MAX_VALUE));
@@ -629,27 +620,27 @@ public class PrimitiveTypeTest
         assertTrue(isUnassignableValue(PrimitiveType.BIGINTEGER, "0"));
         assertTrue(isUnassignableValue(PrimitiveType.BIGINTEGER, Float.MAX_VALUE));
         assertTrue(isUnassignableValue(PrimitiveType.BIGINTEGER, bigDecimalValue));
-        
+
         // FLOAT
         assertTrue(PrimitiveType.FLOAT.convertToTypedObject(Float.MIN_VALUE) instanceof Float);
-        assertEquals(new Float(Byte.MAX_VALUE), PrimitiveType.FLOAT.convertToTypedObject(Byte.MAX_VALUE));
-        assertEquals(new Float(Short.MAX_VALUE), PrimitiveType.FLOAT.convertToTypedObject(Short.MAX_VALUE));
-        assertEquals(new Float(Float.MAX_VALUE), PrimitiveType.FLOAT.convertToTypedObject(Float.MAX_VALUE));
+        assertEquals(Float.valueOf(Byte.MAX_VALUE), PrimitiveType.FLOAT.convertToTypedObject(Byte.MAX_VALUE));
+        assertEquals(Float.valueOf(Short.MAX_VALUE), PrimitiveType.FLOAT.convertToTypedObject(Short.MAX_VALUE));
+        assertEquals(Float.valueOf(Float.MAX_VALUE), PrimitiveType.FLOAT.convertToTypedObject(Float.MAX_VALUE));
         assertTrue(isUnassignableValue(PrimitiveType.FLOAT, "0"));
         assertTrue(isUnassignableValue(PrimitiveType.FLOAT, Integer.MAX_VALUE));
         assertTrue(isUnassignableValue(PrimitiveType.FLOAT, Double.MAX_VALUE));
-        
+
         // DOUBLE
         assertTrue(PrimitiveType.DOUBLE.convertToTypedObject(Double.MIN_VALUE) instanceof Double);
-        assertEquals(new Double(Byte.MAX_VALUE), PrimitiveType.DOUBLE.convertToTypedObject(Byte.MAX_VALUE));
-        assertEquals(new Double(Short.MAX_VALUE), PrimitiveType.DOUBLE.convertToTypedObject(Short.MAX_VALUE));
-        assertEquals(new Double(Integer.MAX_VALUE), PrimitiveType.DOUBLE.convertToTypedObject(Integer.MAX_VALUE));
-        assertEquals(new Double(Float.MAX_VALUE), PrimitiveType.DOUBLE.convertToTypedObject(Float.MAX_VALUE));
-        assertEquals(new Double(Double.MAX_VALUE), PrimitiveType.DOUBLE.convertToTypedObject(Double.MAX_VALUE));
+        assertEquals(Double.valueOf(Byte.MAX_VALUE), PrimitiveType.DOUBLE.convertToTypedObject(Byte.MAX_VALUE));
+        assertEquals(Double.valueOf(Short.MAX_VALUE), PrimitiveType.DOUBLE.convertToTypedObject(Short.MAX_VALUE));
+        assertEquals(Double.valueOf(Integer.MAX_VALUE), PrimitiveType.DOUBLE.convertToTypedObject(Integer.MAX_VALUE));
+        assertEquals(Double.valueOf(Float.MAX_VALUE), PrimitiveType.DOUBLE.convertToTypedObject(Float.MAX_VALUE));
+        assertEquals(Double.valueOf(Double.MAX_VALUE), PrimitiveType.DOUBLE.convertToTypedObject(Double.MAX_VALUE));
         assertTrue(isUnassignableValue(PrimitiveType.DOUBLE, "0"));
         assertTrue(isUnassignableValue(PrimitiveType.DOUBLE, Long.MAX_VALUE));
         assertTrue(isUnassignableValue(PrimitiveType.DOUBLE, bigDecimalValue));
-        
+
         // BIGDECIMAL
         assertTrue(PrimitiveType.BIGDECIMAL.convertToTypedObject(bigDecimalValue) instanceof BigDecimal);
         assertEquals(BigDecimal.valueOf(Byte.MAX_VALUE), PrimitiveType.BIGDECIMAL.convertToTypedObject(Byte.MAX_VALUE));

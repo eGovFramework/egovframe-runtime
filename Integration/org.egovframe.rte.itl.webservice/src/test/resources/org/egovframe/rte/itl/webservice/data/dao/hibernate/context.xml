@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
 
     <bean id="hibernateWebServiceClientDefinitionDao"
           class="org.egovframe.rte.itl.webservice.data.dao.hibernate.HibernateWebServiceClientDefinitionDao">
         <property name="sessionFactory" ref="sessionFactory"/>
-    </bean>          
-    
+    </bean>
+
     <bean id="hibernateWebServiceServerDefinitionDao"
           class="org.egovframe.rte.itl.webservice.data.dao.hibernate.HibernateWebServiceServerDefinitionDao">
         <property name="sessionFactory" ref="sessionFactory"/>
-    </bean>          
-    
+    </bean>
+
     <bean id="myDataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
         <property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
         <property name="url" value="jdbc:hsqldb:mem:test/test;showdown=true"/>
         <property name="username" value="sa"/>
         <property name="password" value=""/>
     </bean>
-    
+
     <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
         <property name="dataSource" ref="myDataSource"/>
         <property name="mappingResources">

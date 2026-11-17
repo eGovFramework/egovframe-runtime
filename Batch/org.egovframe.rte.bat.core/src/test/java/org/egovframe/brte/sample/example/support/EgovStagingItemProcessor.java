@@ -25,64 +25,64 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *  BATCH_STAGING에 processed 값 업데이트
+ * BATCH_STAGING에 processed 값 업데이트
  *
  * @param <T> item type
- *
  * @see EgovStagingItemReader
  * @see EgovStagingItemWriter
  * @see EgovProcessIndicatorItemWrapper
+ * <p>
+ * <p>
+ * == 개정이력(Modification Information) ==
+ * <p>
+ * 수정일               수정자               수정내용
+ * -------      --------     ---------------------------
+ * 2017.07.06   장동한         SimpleJdbcTemplate(Deprecated) > NamedParameterJdbcTemplate 변경
  *
- *
-  * == 개정이력(Modification Information) ==
- *   
- *   수정일               수정자               수정내용
- *  -------      --------     ---------------------------
- *  2017.07.06   장동한         SimpleJdbcTemplate(Deprecated) > NamedParameterJdbcTemplate 변경
- * 
  */
 @SuppressWarnings("deprecation")
 public class EgovStagingItemProcessor<T> implements ItemProcessor<EgovProcessIndicatorItemWrapper<T>, T>, InitializingBean {
 
-	//DB 사용을 위한  NamedParameterJdbcTemplate
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    //DB 사용을 위한  NamedParameterJdbcTemplate
+    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-	/**
-	 * DataSource 세팅
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
+    /**
+     * DataSource 세팅
+     *
+     * @param dataSource
+     */
+    public void setDataSource(DataSource dataSource) {
+        this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+    }
 
-	/**
-	 * 설정확인
-	 */
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		Assert.notNull(namedParameterJdbcTemplate, "Either jdbcTemplate or dataSource must be set");
-	}
+    /**
+     * 설정확인
+     */
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        Assert.notNull(namedParameterJdbcTemplate, "Either jdbcTemplate or dataSource must be set");
+    }
 
-	/**
-	 * BATCH_STAGING에 processed 값 업데이트
-	 *
-	 */
-	@Override
-	public T process(EgovProcessIndicatorItemWrapper<T> wrapper) throws Exception {
+    /**
+     * BATCH_STAGING에 processed 값 업데이트
+     *
+     */
+    @Override
+    public T process(EgovProcessIndicatorItemWrapper<T> wrapper) throws Exception {
 
-		Map<String,Object> namedParameters = new HashMap<String,Object>();
-		namedParameters.put("processed1", EgovStagingItemWriter.DONE);
-		namedParameters.put("id", wrapper.getId());
-		namedParameters.put("processed2", EgovStagingItemWriter.NEW);
-		
-		String query = "UPDATE BATCH_STAGING SET PROCESSED=:processed1 WHERE ID=:id AND PROCESSED=:processed2";
-		int count = namedParameterJdbcTemplate.update(query, namedParameters);
+        Map<String, Object> namedParameters = new HashMap<String, Object>();
+        namedParameters.put("processed1", EgovStagingItemWriter.DONE);
+        namedParameters.put("id", wrapper.getId());
+        namedParameters.put("processed2", EgovStagingItemWriter.NEW);
 
-		if (count != 1) {
-			throw new OptimisticLockingFailureException("The staging record with ID=" + wrapper.getId() + " was updated concurrently when trying to mark as complete (updated "
-					+ count + " records.");
-		}
-		return wrapper.getItem();
-	}
+        String query = "UPDATE BATCH_STAGING SET PROCESSED=:processed1 WHERE ID=:id AND PROCESSED=:processed2";
+        int count = namedParameterJdbcTemplate.update(query, namedParameters);
+
+        if (count != 1) {
+            throw new OptimisticLockingFailureException("The staging record with ID=" + wrapper.getId() + " was updated concurrently when trying to mark as complete (updated "
+                    + count + " records.");
+        }
+        return wrapper.getItem();
+    }
 
 }

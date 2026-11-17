@@ -41,12 +41,10 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * 다수의 파일을 파티셔닝을 이용해 하나의 파일로 처리하는 테스트
- * @author 배치실행개발팀
- * @since 2012. 07.30
- * @version 1.0
- * @see
  *
- *      <pre>
+ * @author 배치실행개발팀
+ * @version 1.0
+ * @see <pre>
  * == 개정이력(Modification Information) ==
  *
  *   수정일               수정자               수정내용
@@ -54,112 +52,116 @@ import static org.junit.Assert.assertTrue;
  *  2012. 07.30  배치실행개발팀    최초 생성
  *
  * </pre>
+ * @since 2012. 07.30
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"/org/egovframe/batch/simple-job-launcher-context.xml"
-		, "/org/egovframe/batch/jobs/partitionFileToOneFileJob.xml"
-		, "/org/egovframe/batch/job-runner-context.xml"})
+@ContextConfiguration(locations = {"/org/egovframe/batch/simple-job-launcher-context.xml"
+        , "/org/egovframe/batch/jobs/partitionFileToOneFileJob.xml"
+        , "/org/egovframe/batch/job-runner-context.xml"})
 public class EgovPartitionFileToOneFileFunctionalTests implements ApplicationContextAware {
 
-	//배치작업의  reader
-	@Autowired
-	@Qualifier("inputTestReader")
-	private ItemReader<CustomerCredit> inputReader;
+    //배치작업의  reader
+    @Autowired
+    @Qualifier("inputTestReader")
+    private ItemReader<CustomerCredit> inputReader;
 
-	//배치작업을  test하기 위한 JobLauncherTestUtils
-	@Autowired
-	private JobLauncherTestUtils jobLauncherTestUtils;
+    //배치작업을  test하기 위한 JobLauncherTestUtils
+    @Autowired
+    private JobLauncherTestUtils jobLauncherTestUtils;
 
-	//ApplicationContext
-	private ApplicationContext applicationContext;
+    //ApplicationContext
+    private ApplicationContext applicationContext;
 
-	//ApplicationContext 설정
-	@Override
-	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		this.applicationContext = applicationContext;
-	}
+    //ApplicationContext 설정
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
 
-	/**
-	 * 배치작업 테스트
-	 */
-	@Test
-	public void testUpdateCredit() throws Exception {
+    /**
+     * 배치작업 테스트
+     */
+    @Test
+    public void testUpdateCredit() throws Exception {
 
-		assertTrue("Define a prototype bean called 'outputTestReader' to check the output", applicationContext.containsBeanDefinition("outputTestReader"));
+        assertTrue("Define a prototype bean called 'outputTestReader' to check the output", applicationContext.containsBeanDefinition("outputTestReader"));
 
-		open(inputReader);
-		List<CustomerCredit> inputs = new ArrayList<CustomerCredit>(getCredits(inputReader));
-		close(inputReader);
+        open(inputReader);
+        List<CustomerCredit> inputs = new ArrayList<CustomerCredit>(getCredits(inputReader));
+        close(inputReader);
 
-		JobExecution jobExecution = jobLauncherTestUtils.launchJob();
-		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob();
+        assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
 
-		@SuppressWarnings("unchecked")
-		ItemReader<CustomerCredit> outputReader = (ItemReader<CustomerCredit>) applicationContext.getBean("outputTestReader");
-		open(outputReader);
-		List<CustomerCredit> outputs = new ArrayList<CustomerCredit>(getCredits(outputReader));
-		close(outputReader);
+        @SuppressWarnings("unchecked")
+        ItemReader<CustomerCredit> outputReader = (ItemReader<CustomerCredit>) applicationContext.getBean("outputTestReader");
+        open(outputReader);
+        List<CustomerCredit> outputs = new ArrayList<CustomerCredit>(getCredits(outputReader));
+        close(outputReader);
 
-		// inputFile 과 outputFile 에 포함된 line 수 비교
-		assertEquals(inputs.size(), outputs.size());
+        // inputFile 과 outputFile 에 포함된 line 수 비교
+        assertEquals(inputs.size(), outputs.size());
 
-		// inputFile 과 outputFile 에 포함된 모든 credit 의 합을 비교
-		int inputCredit = 0;
-		int outputCredit = 0;
+        // inputFile 과 outputFile 에 포함된 모든 credit 의 합을 비교
+        int inputCredit = 0;
+        int outputCredit = 0;
 
-		//input 파일들에서 Credit 의 합
-		inputs.iterator();
-		for (int i = 0; i < inputs.size(); i++) {
-			inputCredit += inputs.get(i).getCredit().intValue();
-		}
+        //input 파일들에서 Credit 의 합
+        inputs.iterator();
+        for (int i = 0; i < inputs.size(); i++) {
+            inputCredit += inputs.get(i).getCredit().intValue();
+        }
 
-		//output 파일들에서 Credit 의 합
-		for (int j = 0; j < outputs.size(); j++) {
-			outputCredit += outputs.get(j).getCredit().intValue();
-		}
+        //output 파일들에서 Credit 의 합
+        for (int j = 0; j < outputs.size(); j++) {
+            outputCredit += outputs.get(j).getCredit().intValue();
+        }
 
-		assertEquals(inputCredit, outputCredit);
+        assertEquals(inputCredit, outputCredit);
 
-	}
+    }
 
-	/**
-	 * 배치작업의 결과값을 List로 만드는 메소드
-	 * @param reader
-	 * @return List<CustomerCredit>
-	 * @throws Exception
-	 */
-	@SuppressWarnings("unused")
-	private List<CustomerCredit> getCredits(ItemReader<CustomerCredit> reader) throws Exception {
-		CustomerCredit credit;
-		List<CustomerCredit> result = new ArrayList<CustomerCredit>();
-		while ((credit = reader.read()) != null) {
-			int i = 0;
-			i++;
-			result.add(credit);
-		}
-		return result;
+    /**
+     * 배치작업의 결과값을 List로 만드는 메소드
+     *
+     * @param reader
+     * @return List<CustomerCredit>
+     * @throws Exception
+     */
+    @SuppressWarnings("unused")
+    private List<CustomerCredit> getCredits(ItemReader<CustomerCredit> reader) throws Exception {
+        CustomerCredit credit;
+        List<CustomerCredit> result = new ArrayList<CustomerCredit>();
+        while ((credit = reader.read()) != null) {
+            int i = 0;
+            i++;
+            result.add(credit);
+        }
+        return result;
 
-	}
+    }
 
-	/**
-	 * reader를 open하는 메소드
-	 * @param reader
-	 */
-	private void open(ItemReader<?> reader) {
-		if (reader instanceof ItemStream) {
-			((ItemStream) reader).open(new ExecutionContext());
-		}
-	}
+    /**
+     * reader를 open하는 메소드
+     *
+     * @param reader
+     */
+    private void open(ItemReader<?> reader) {
+        if (reader instanceof ItemStream) {
+            ((ItemStream) reader).open(new ExecutionContext());
+        }
+    }
 
-	/**
-	 * reader를 close하는 메소드
-	 * @param reader
-	 */
-	private void close(ItemReader<?> reader) {
-		if (reader instanceof ItemStream) {
-			((ItemStream) reader).close();
-		}
-	}
+    /**
+     * reader를 close하는 메소드
+     *
+     * @param reader
+     */
+    private void close(ItemReader<?> reader) {
+        if (reader instanceof ItemStream) {
+            ((ItemStream) reader).close();
+        }
+    }
 
 }

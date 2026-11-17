@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 MOPAS(Ministry of Public Administration and Security).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,9 +29,8 @@ import javax.servlet.ServletConfig;
  * <p>
  * <b>NOTE:</b> 전자정부 웹 서비스를 Servlet을 통해 제공하기 위해 사용하는 Servlet class이다.
  * </p>
- * 
+ *
  * @author 실행환경 개발팀 심상호
- * @since 2009.06.01
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -40,37 +39,38 @@ import javax.servlet.ServletConfig;
  * ----------------------------------------------
  * 2009.06.01	심상호				최초 생성
  * </pre>
+ * @since 2009.06.01
  */
 public class EgovWebServiceServlet extends CXFNonSpringServlet {
 
-	/**
-	 * serialVersion UID
-	 */
-	private static final long serialVersionUID = -4456525394813473566L;
+    /**
+     * serialVersion UID
+     */
+    private static final long serialVersionUID = -4456525394813473566L;
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(EgovWebServiceServlet.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EgovWebServiceServlet.class);
 
-	public void loadBus(ServletConfig servletConfig) {
-		super.loadBus(servletConfig);
+    public void loadBus(ServletConfig servletConfig) {
+        super.loadBus(servletConfig);
 
-		LOGGER.debug("EgovWebServiceServlet loadBus");
+        LOGGER.debug("EgovWebServiceServlet loadBus");
 
-		ApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(servletConfig.getServletContext());
-		if (applicationContext == null) {
-			LOGGER.error("applicationContext is null");
-			return;
-		}
+        ApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(servletConfig.getServletContext());
+        if (applicationContext == null) {
+            LOGGER.error("applicationContext is null");
+            return;
+        }
 
-		EgovWebServiceContext context = null;
+        EgovWebServiceContext context = null;
 
-		try {
-			context = (EgovWebServiceContext) applicationContext.getBean("egovWebServiceContext", EgovWebServiceContext.class);
-		} catch (BeansException e) {
-			LOGGER.error("Cannot get EgovWebServiceContext {}", e);
-			return;
-		}
+        try {
+            context = (EgovWebServiceContext) applicationContext.getBean("egovWebServiceContext", EgovWebServiceContext.class);
+        } catch (BeansException e) {
+            LOGGER.error("Cannot get EgovWebServiceContext {}", e);
+            return;
+        }
 
-		context.publishServer(getBus());
-	}
+        context.publishServer(getBus());
+    }
 
 }

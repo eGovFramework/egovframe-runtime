@@ -30,7 +30,6 @@ import org.springframework.util.StringUtils;
  * <p>Desc.: 설정 간소화 처리에 사용되는 내부 factory bean</p>
  *
  * @author ESFC
- * @since 2020.05.27
  * @version 3.10
  * <pre>
  * 개정이력(Modification Information)
@@ -39,34 +38,35 @@ import org.springframework.util.StringUtils;
  * ----------------------------------------------
  * 2020.05.27	ESFC			최초 생성
  * </pre>
+ * @since 2020.05.27
  */
 public class CsrfAccessDeniedUrlFactoryBean implements FactoryBean<String>, ApplicationContextAware {
 
-	public static final String DEFAULT_EXPIRED_URL = "/index.htm";
-	private ApplicationContext context;
+    public static final String DEFAULT_EXPIRED_URL = "/index.htm";
+    private ApplicationContext context;
 
-	public String getObject() throws Exception {
-		try {
-			SecurityConfig config = context.getBean(SecurityConfig.class);
-			if (StringUtils.hasText(config.getCsrfAccessDeniedUrl())) {
-				return config.getCsrfAccessDeniedUrl();
-			}
-		} catch (NoSuchBeanDefinitionException nsbde) {
-			EgovJdkLogger.ignore("There is no SecurityConfig.class.");
-		}
-		return DEFAULT_EXPIRED_URL;
-	}
+    public String getObject() throws Exception {
+        try {
+            SecurityConfig config = context.getBean(SecurityConfig.class);
+            if (StringUtils.hasText(config.getCsrfAccessDeniedUrl())) {
+                return config.getCsrfAccessDeniedUrl();
+            }
+        } catch (NoSuchBeanDefinitionException nsbde) {
+            EgovJdkLogger.ignore("There is no SecurityConfig.class.");
+        }
+        return DEFAULT_EXPIRED_URL;
+    }
 
-	public Class<String> getObjectType() {
-		return String.class;
-	}
+    public Class<String> getObjectType() {
+        return String.class;
+    }
 
-	public boolean isSingleton() {
-		return true;
-	}
+    public boolean isSingleton() {
+        return true;
+    }
 
-	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		this.context = applicationContext;
-	}
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.context = applicationContext;
+    }
 
 }

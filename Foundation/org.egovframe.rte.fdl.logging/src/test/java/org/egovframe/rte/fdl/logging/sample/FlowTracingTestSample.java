@@ -7,30 +7,29 @@ import org.springframework.stereotype.Component;
 @Component("flowTracingTestSample")
 public class FlowTracingTestSample {
 
-	// logger: level=TRACE, appender=Console, File
-	private static Logger logger = LogManager.getLogger("flowTracingLogger");
+    // logger: level=TRACE, appender=Console, File
+    private static Logger logger = LogManager.getLogger("flowTracingLogger");
+    int num = 0;
+    private String[] messages = new String[]{"Hello", "eGov", "Framework"};
 
-	private String[] messages = new String[] { "Hello", "eGov", "Framework" };
-	int num = 0;
-	
-	public String retrieveMessage() {
-		logger.entry();
-		String testMsg = "";
-		try {
-			testMsg = getMessage(num);
-			num++;
-		} catch (Exception ex) {
-			logger.error("An exception have been thrown");
-			logger.catching(ex);
-		}
+    public String retrieveMessage() {
+        logger.entry();
+        String testMsg = "";
+        try {
+            testMsg = getMessage(num);
+            num++;
+        } catch (Exception ex) {
+            logger.error("An exception have been thrown");
+            logger.catching(ex);
+        }
 
-		return logger.exit(testMsg);
-	}
+        return logger.exit(testMsg);
+    }
 
-	public String getMessage(int key) {
-		logger.entry(key);
-		String value = messages[key];
-		return logger.exit(value);
-	}
+    public String getMessage(int key) {
+        logger.entry(key);
+        String value = messages[key];
+        return logger.exit(value);
+    }
 
 }

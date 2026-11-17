@@ -42,18 +42,23 @@ import org.springframework.context.MessageSource;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.Random;
 import java.util.StringTokenizer;
 
 /**
  * ID Generation 서비스를 위한 UUID 구현 클래스
- * 
+ *
  * <p><b>NOTE</b>: UUID(Universally Unique Identifier)
  * 알고리즘 기반의 유일키를 제공 받을 수 있다.</p>
- * 
+ *
+ * <p><b>보안 주의:</b> 이 구현은 주소+시각(초 미만 절삭)+순번으로 값을 만들어 <b>예측 가능</b>하다(CWE-330).
+ * 세션ID·토큰 등 보안 목적 식별자로 사용하지 말고, 신규 개발은 {@link EgovUUIdGnrServiceImpl}(주소 미설정 시
+ * {@link java.util.UUID#randomUUID()})을 사용한다.</p>
+ *
  * @author 실행환경 개발팀 김태호
- * @since 2009.02.01
  * @version 1.0
+ * @since 2009.02.01
  * @deprecated Use the EgovUUIdGnrServiceImpl class.
  * <pre>
  * 개정이력(Modification Information)
@@ -62,6 +67,7 @@ import java.util.StringTokenizer;
  * ----------------------------------------------
  * 2009.02.01	김태호            최초 생성
  * 2020.08.31   ESFC            ES-적절하지 않은 난수값 사용[CWE-330]
+ * 2026.10.25   실행환경 개발팀      예측 가능한 값임을 명시(보안 목적 사용 금지 안내)
  *
  * </pre>
  */
@@ -69,42 +75,38 @@ import java.util.StringTokenizer;
 public class EgovUUIdGnrService implements EgovIdGnrService, ApplicationContextAware {
 
     /**
-     * Message Source
-     */
-    private MessageSource messageSource;
-
-    /**
-     * Message Source Injection
-     */
-    public void setApplicationContext(ApplicationContext applicationContext) {
-        this.messageSource =
-            (MessageSource) applicationContext.getBean("messageSource");
-    }
-
-    /**
      * Class 사용 로거 지정
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(EgovUUIdGnrService.class);
-
     private static final String ERROR_STRING = "address in the configuration should be a valid IP or MAC Address";
-
+    /**
+     * Message Source
+     */
+    private MessageSource messageSource;
     /**
      * Address Id
      */
     private String mAddressId;
-
     /**
      * UUID 생성에 필요한 Time Factor에 의한 ID
      */
     private String mTimeId;
-
     /**
      * Loop Counter
      */
     private short mLoopCounter = 0;
 
     /**
+     * Message Source Injection
+     */
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.messageSource =
+                (MessageSource) applicationContext.getBean("messageSource");
+    }
+
+    /**
      * BigDecimal 타입을 아이디 제공
+     *
      * @return BigDecimal 타입 ID
      * @throws FdlException 아이디 생성에 실패한 경우
      */
@@ -125,42 +127,47 @@ public class EgovUUIdGnrService implements EgovIdGnrService, ApplicationContextA
 
     /**
      * byte 타입을 아이디 제공
+     *
      * @return byte 타입 ID
      * @throws FdlException 아이디 생성에 실패한 경우
      */
     public byte getNextByteId() throws FdlException {
-        throw new FdlException(messageSource, "error.idgnr.not.supported", new String[] {"Byte" }, null);
+        throw new FdlException(messageSource, "error.idgnr.not.supported", new String[]{"Byte"}, null);
     }
 
     /**
      * int 타입을 아이디 제공을 요청하면 불가능한 요청이라는 Exception 발생
+     *
      * @return int 타입 ID
      * @throws FdlException 아이디 생성에 실패한 경우
      */
     public int getNextIntegerId() throws FdlException {
-        throw new FdlException(messageSource, "error.idgnr.not.supported", new String[] {"Integer" }, null);
+        throw new FdlException(messageSource, "error.idgnr.not.supported", new String[]{"Integer"}, null);
     }
 
     /**
      * long 타입을 아이디 제공을 요청하면 불가능한 요청이라는 Exception 발생
+     *
      * @return long 타입 ID
      * @throws FdlException 아이디 생성에 실패한 경우
      */
     public long getNextLongId() throws FdlException {
-        throw new FdlException(messageSource, "error.idgnr.not.supported", new String[] {"Long" }, null);
+        throw new FdlException(messageSource, "error.idgnr.not.supported", new String[]{"Long"}, null);
     }
 
     /**
      * short 타입을 아이디 제공을 요청하면 불가능한 요청이라는 Exception 발생
+     *
      * @return short 타입 ID
      * @throws FdlException 아이디 생성에 실패한 경우
      */
     public short getNextShortId() throws FdlException {
-        throw new FdlException(messageSource, "error.idgnr.not.supported", new String[] {"Short" }, null);
+        throw new FdlException(messageSource, "error.idgnr.not.supported", new String[]{"Short"}, null);
     }
 
     /**
      * String 타입을 아이디 제공
+     *
      * @return String 타입 ID
      * @throws FdlException 아이디 생성에 실패한 경우
      */
@@ -170,39 +177,42 @@ public class EgovUUIdGnrService implements EgovIdGnrService, ApplicationContextA
 
     /**
      * 정책정보를 입력받아 String 타입을 아이디 제공을 요청하면 불가능한 요청이라는 에러 발생
+     *
      * @param strategy 정책정보 오브젝트
      * @return String 타입 ID
      * @throws FdlException 아이디 생성에 실패한 경우
      */
     public String getNextStringId(EgovIdGnrStrategy strategy) throws FdlException {
-        throw new FdlException(messageSource, "error.idgnr.not.supported", new String[] {"String" }, null);
+        throw new FdlException(messageSource, "error.idgnr.not.supported", new String[]{"String"}, null);
     }
 
     /**
      * 정책정보를 입력받아 String 타입을 아이디 제공을 요청하면 불가능한 요청이라는 에러 발생
+     *
      * @param strategyId 정책 String
      * @return String 타입 ID
      * @throws FdlException 아이디 생성에 실패한 경우
      */
     public String getNextStringId(String strategyId) throws FdlException {
-        throw new FdlException(messageSource, "error.idgnr.not.supported", new String[] {"String" }, null);
+        throw new FdlException(messageSource, "error.idgnr.not.supported", new String[]{"String"}, null);
     }
 
     /**
      * Config 정보에 지정된 Address 세팅
+     *
      * @param address Config 에 지정된 address 정보
      * @throws FdlException IP 정보가 이상한 경우
      */
     public void setAddress(String address) throws FdlException {
         byte[] addressBytes = new byte[6];
-        Random random = new Random();
+        Random random = new SecureRandom();
         random.setSeed(System.currentTimeMillis());
         if (null == address) {
             LOGGER.warn("IDGeneration Service : Using a random number as the "
-                + "base for id's.  This is not the best method for many "
-                + "purposes, but may be adequate in some circumstances."
-                + " Consider using an IP or ethernet (MAC) address if "
-                + "available. ");
+                    + "base for id's.  This is not the best method for many "
+                    + "purposes, but may be adequate in some circumstances."
+                    + " Consider using an IP or ethernet (MAC) address if "
+                    + "available. ");
             for (int i = 0; i < 6; i++) {
                 // 2020.08.31 ESFC ES-적절하지 않은 난수값 사용[CWE-330]
                 addressBytes[i] = (byte) (random.nextDouble() * 255 + 0);
@@ -241,10 +251,11 @@ public class EgovUUIdGnrService implements EgovIdGnrService, ApplicationContextA
 
     /**
      * UUID 얻기
+     *
      * @return String unique id
      */
     private String getUUId() {
-    	// CHECKSTYLE:OFF
+        // CHECKSTYLE:OFF
         byte[] bytes6 = new byte[6];
 
         long timeNow = System.currentTimeMillis();
@@ -278,26 +289,27 @@ public class EgovUUIdGnrService implements EgovIdGnrService, ApplicationContextA
 
     /**
      * Get the counter value as a signed short
-     * @original Get the counter value as a signed short
+     *
      * @return short loop count
+     * @original Get the counter value as a signed short
      */
     private short getLoopCounter() {
         return mLoopCounter++;
     }
 
     // CHECKSTYLE:OFF
+
     /**
      * To fix size byte array.
-     * 
-     * @original This method transforms Java BigInteger type into a fix size byte array 
-     * containing the two's-complement representation of the integer. 
-     * The byte array will be in big-endian byte-order: the most significant byte is in the zeroth element. 
-     * If the destination array is shorter then the BigInteger.toByteArray(), 
+     *
+     * @param bigInt      Java BigInteger type
+     * @param destination destination array
+     * @original This method transforms Java BigInteger type into a fix size byte array
+     * containing the two's-complement representation of the integer.
+     * The byte array will be in big-endian byte-order: the most significant byte is in the zeroth element.
+     * If the destination array is shorter then the BigInteger.toByteArray(),
      * the the less significant bytes will be copy only.
      * If the destination array is longer then the BigInteger.toByteArray(), destination will be left padded with zeros.
-     * 
-     * @param bigInt Java BigInteger type
-     * @param destination destination array
      */
     // CHECKSTYLE:ON
     private void toFixSizeByteArray(BigInteger bigInt, byte[] destination) {

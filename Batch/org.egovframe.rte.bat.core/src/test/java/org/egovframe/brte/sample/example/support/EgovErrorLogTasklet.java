@@ -32,78 +32,78 @@ import javax.sql.DataSource;
  * Data 처리하다 Error 발생 시 Skip 에 관한 정보를 DB로 처리하는 클래스
  *
  * @author 배치실행개발팀
- * @since 2012. 07.30
  * @see <pre>
  * == 개정이력(Modification Information) ==
  * 수정일               수정자               수정내용
  * ------      --------     ---------------------------
  * 2012. 07.30  배치실행개발팀    최초 생성
  * </pre>
+ * @since 2012. 07.30
  */
 public class EgovErrorLogTasklet implements Tasklet, StepExecutionListener {
 
-	protected final Log logger = LogFactory.getLog(getClass());
+    protected final Log logger = LogFactory.getLog(getClass());
 
-	private JdbcTemplate jdbcTemplate;
+    private JdbcTemplate jdbcTemplate;
 
-	//jobName
-	private String jobName;
+    //jobName
+    private String jobName;
 
-	//stepExecution
-	private StepExecution stepExecution;
+    //stepExecution
+    private StepExecution stepExecution;
 
-	private String stepName;
+    private String stepName;
 
-	/**
-	 * Error_Log 테이블에 Skip Error 에 대한 정보를 저장
-	 */
-	@Override
-	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-		Assert.notNull(this.stepName, "Step name not set.  Either this class was not registered as a listener "
-				+ "or the key 'stepName' was not found in the Job's ExecutionContext.");
-		this.jdbcTemplate.update("insert into ERROR_LOG values (?, ?, '" + getSkipCount() + " records were skipped!')", jobName, stepName);
-		return RepeatStatus.FINISHED;
-	}
+    /**
+     * Error_Log 테이블에 Skip Error 에 대한 정보를 저장
+     */
+    @Override
+    public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
+        Assert.notNull(this.stepName, "Step name not set.  Either this class was not registered as a listener "
+                + "or the key 'stepName' was not found in the Job's ExecutionContext.");
+        this.jdbcTemplate.update("insert into ERROR_LOG values (?, ?, '" + getSkipCount() + " records were skipped!')", jobName, stepName);
+        return RepeatStatus.FINISHED;
+    }
 
-	/**
-	 * skipCount 정보를 Execution 에서 가져옴
-	 */
-	private int getSkipCount() {
-		if (stepExecution == null || stepName == null) {
-			return 0;
-		}
-		for (StepExecution execution : stepExecution.getJobExecution().getStepExecutions()) {
-			if (execution.getStepName().equals(stepName)) {
-				return execution.getSkipCount();
-			}
-		}
-		return 0;
-	}
+    /**
+     * skipCount 정보를 Execution 에서 가져옴
+     */
+    private int getSkipCount() {
+        if (stepExecution == null || stepName == null) {
+            return 0;
+        }
+        for (StepExecution execution : stepExecution.getJobExecution().getStepExecutions()) {
+            if (execution.getStepName().equals(stepName)) {
+                return execution.getSkipCount();
+            }
+        }
+        return 0;
+    }
 
-	/**
-	 * DataSource 셋팅
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.jdbcTemplate = new JdbcTemplate(dataSource);
-	}
+    /**
+     * DataSource 셋팅
+     */
+    public void setDataSource(DataSource dataSource) {
+        this.jdbcTemplate = new JdbcTemplate(dataSource);
+    }
 
-	/**
-	 * Step 수행전에 처리되는 로직, 해당 stepName 을 JobExecution의 Context에서 제거함
-	 */
-	@Override
-	public void beforeStep(StepExecution stepExecution) {
-		this.jobName = stepExecution.getJobExecution().getJobInstance().getJobName().trim();
-		this.stepName = (String) stepExecution.getJobExecution().getExecutionContext().get("stepName");
-		this.stepExecution = stepExecution;
-		stepExecution.getJobExecution().getExecutionContext().remove("stepName");
-	}
+    /**
+     * Step 수행전에 처리되는 로직, 해당 stepName 을 JobExecution의 Context에서 제거함
+     */
+    @Override
+    public void beforeStep(StepExecution stepExecution) {
+        this.jobName = stepExecution.getJobExecution().getJobInstance().getJobName().trim();
+        this.stepName = (String) stepExecution.getJobExecution().getExecutionContext().get("stepName");
+        this.stepExecution = stepExecution;
+        stepExecution.getJobExecution().getExecutionContext().remove("stepName");
+    }
 
-	/**
-	 * Step 단계이후 수행
-	 */
-	@Override
-	public ExitStatus afterStep(StepExecution stepExecution) {
-		return null;
-	}
+    /**
+     * Step 단계이후 수행
+     */
+    @Override
+    public ExitStatus afterStep(StepExecution stepExecution) {
+        return null;
+    }
 
 }

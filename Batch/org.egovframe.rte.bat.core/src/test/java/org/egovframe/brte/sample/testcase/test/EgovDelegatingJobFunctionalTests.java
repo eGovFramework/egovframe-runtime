@@ -31,40 +31,40 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
-*  기존에 작성된 클래스를 ItemReader나 ItemWriter의 역할로 배치작업을 수행하는 테스트
-*
-* @author 배치실행개발팀
-* @since 2012. 06.27
-* @version 1.0
-* @see
-*/
+ * 기존에 작성된 클래스를 ItemReader나 ItemWriter의 역할로 배치작업을 수행하는 테스트
+ *
+ * @author 배치실행개발팀
+ * @version 1.0
+ * @see
+ * @since 2012. 06.27
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"/org/egovframe/batch/simple-job-launcher-context.xml"
-		, "/org/egovframe/batch/jobs/delegatingJob.xml"
-		, "/org/egovframe/batch/job-runner-context.xml"})
+@ContextConfiguration(locations = {"/org/egovframe/batch/simple-job-launcher-context.xml"
+        , "/org/egovframe/batch/jobs/delegatingJob.xml"
+        , "/org/egovframe/batch/job-runner-context.xml"})
 public class EgovDelegatingJobFunctionalTests {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(EgovDelegatingJobFunctionalTests.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EgovDelegatingJobFunctionalTests.class);
 
-	//배치작업을  test하기 위한 JobLauncherTestUtils
-	@Autowired
-	private JobLauncherTestUtils jobLauncherTestUtils;
-	//배치작업에 사용된 기존 업무 클래스
-	@Autowired
-	private PersonService personService;
+    //배치작업을  test하기 위한 JobLauncherTestUtils
+    @Autowired
+    private JobLauncherTestUtils jobLauncherTestUtils;
+    //배치작업에 사용된 기존 업무 클래스
+    @Autowired
+    private PersonService personService;
 
-	/**
-	 * 배치작업 테스트
-	 */
-	@Test
-	public void testLaunchJob() throws Exception {
+    /**
+     * 배치작업 테스트
+     */
+    @Test
+    public void testLaunchJob() throws Exception {
 
-		JobExecution jobExecution = jobLauncherTestUtils.launchJob();
-		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
-		assertTrue(personService.getReturnedCount() > 0);
-		assertEquals(personService.getReturnedCount(), personService.getReceivedCount());
-		LOGGER.info(">>>>>>>>> readCount = {}", personService.getReturnedCount());
-		LOGGER.info(">>>>>>>>> writeCount = {}", personService.getReceivedCount());
-	}
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob();
+        assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
+        assertTrue(personService.getReturnedCount() > 0);
+        assertEquals(personService.getReturnedCount(), personService.getReceivedCount());
+        LOGGER.info(">>>>>>>>> readCount = {}", personService.getReturnedCount());
+        LOGGER.info(">>>>>>>>> writeCount = {}", personService.getReceivedCount());
+    }
 
 }

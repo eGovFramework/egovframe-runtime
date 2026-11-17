@@ -7,77 +7,75 @@ import java.util.Date;
 @IdClass(UserPK.class)
 public class User {
 
-	private static final long serialVersionUID = 1088577580599262864L;
-	
-	@Id
-	@GeneratedValue(strategy =  GenerationType.AUTO)
-	private Long id;
-	
-	@Column(unique = true)
-	private String username;
-	private String firstname;
-	private String lastname;
-	private Date startDate;
-	private int age;
-	
-	private boolean active;
-	
-	public Long getId() 
-	{
-		return id;
-	}
+    private static final long serialVersionUID = 1088577580599262864L;
 
-	public void setId(Long id) 
-	{
-		this.id = id;
-	}
-	 
-	public String getUsername() {
-		return username;
-	}
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    @Column(unique = true)
+    private String username;
+    private String firstname;
+    private String lastname;
+    private Date startDate;
+    private int age;
 
-	public String getFirstname() {
-		return firstname;
-	}
+    private boolean active;
 
-	public void setFirstname(String firstname) {
-		this.firstname = firstname;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public String getLastname() {
-		return lastname;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setLastname(String lastname) {
-		this.lastname = lastname;
-	}
+    public String getUsername() {
+        return username;
+    }
 
-	public Date getStartDate() {
-		return startDate;
-	}
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
+    public String getFirstname() {
+        return firstname;
+    }
 
-	public int getAge() {
-		return age;
-	}
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
 
-	public void setAge(int age) {
-		this.age = age;
-	}
+    public String getLastname() {
+        return lastname;
+    }
 
-	public boolean isActive() {
-		return active;
-	}
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
 
-	public void setActive(boolean active) {
-		this.active = active;
-	}
-	
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
 }

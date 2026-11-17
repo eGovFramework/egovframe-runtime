@@ -29,50 +29,51 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- * 
+ *
  * 작업 그룹 설정 기능을  테스트
- * 
+ *
  * @author 배치실행개발팀
- * @since 2012. 07.31
  * @version 1.0
  * @see <pre>
  *      개정이력(Modification Information)
- *   
+ *
  *   수정일      수정자           수정내용
  *  ------- -------- ---------------------------
  *  2012.07.31  배치실행개발팀     최초 생성
  *  </pre>
+ * @since 2012. 07.31
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"/org/egovframe/batch/group-job-launcher-context.xml"
-		, "/org/egovframe/batch/jobs/delegatingJob.xml"
-		, "/org/egovframe/batch/job-runner-context.xml"})
+@ContextConfiguration(locations = {"/org/egovframe/batch/group-job-launcher-context.xml"
+        , "/org/egovframe/batch/jobs/delegatingJob.xml"
+        , "/org/egovframe/batch/job-runner-context.xml"})
 public class EgovJobGroupDelegatingJobFunctionalTests {
 
-	//배치작업을  test하기 위한 JobLauncherTestUtils
-	@Autowired
-	private JobLauncherTestUtils jobLauncherTestUtils;
+    //배치작업을  test하기 위한 JobLauncherTestUtils
+    @Autowired
+    private JobLauncherTestUtils jobLauncherTestUtils;
 
-	//배치작업에 사용된 기존 업무 클래스
-	@Autowired
-	private PersonService personService;
+    //배치작업에 사용된 기존 업무 클래스
+    @Autowired
+    private PersonService personService;
 
-	//Job 정보가 저장되어 있는 JobRegistry
-	@Autowired
-	private JobRegistry jobRegistry;
+    //Job 정보가 저장되어 있는 JobRegistry
+    @Autowired
+    private JobRegistry jobRegistry;
 
-	/**
-	 * 배치작업 테스트
-	 * @throws Exception
-	 */
-	@Test
-	public void testLaunchJob() throws Exception {
+    /**
+     * 배치작업 테스트
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testLaunchJob() throws Exception {
 
-		jobLauncherTestUtils.launchJob();
-		assertTrue(personService.getReturnedCount() > 0);
-		assertEquals(personService.getReturnedCount(), personService.getReceivedCount());
-		assertEquals("[testJobGroup.delegateJob]", jobRegistry.getJobNames().toString());
+        jobLauncherTestUtils.launchJob();
+        assertTrue(personService.getReturnedCount() > 0);
+        assertEquals(personService.getReturnedCount(), personService.getReceivedCount());
+        assertEquals("[testJobGroup.delegateJob]", jobRegistry.getJobNames().toString());
 
-	}
+    }
 
 }

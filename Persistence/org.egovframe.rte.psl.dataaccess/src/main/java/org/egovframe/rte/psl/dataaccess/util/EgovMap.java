@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 MOPAS(Ministry of Public Administration and Security).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,8 +27,8 @@ import org.apache.commons.collections4.map.ListOrderedMap;
  * attribute (camel case) 에 대한 resultMap 과 같은 효과를 낼 수
  * 있도록 추가하였음)
  * </p>
+ *
  * @author 실행환경 개발팀 우병훈
- * @since 2009.02.06
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -37,25 +37,25 @@ import org.apache.commons.collections4.map.ListOrderedMap;
  * ----------------------------------------------
  * 2009.02.06	우병훈				최초 생성
  * </pre>
+ * @since 2009.02.06
  */
 public class EgovMap extends ListOrderedMap {
 
-	private static final long serialVersionUID = 6723434363565852261L;
+    private static final long serialVersionUID = 6723434363565852261L;
 
-	/**
-	 * key 에 대하여 Camel Case 변환하여 super.put
-	 * (ListOrderedMap) 을 호출한다.
-	 * @param key
-	 *        - '_' 가 포함된 변수명
-	 * @param value
-	 *        - 명시된 key 에 대한 값 (변경 없음)
-	 * @return previous value associated with specified
-	 *         key, or null if there was no mapping for
-	 *         key
-	 */
-	@Override
-	public Object put(Object key, Object value) {
-		return super.put(CamelUtil.convert2CamelCase((String) key), value);
-	}
+    /**
+     * key 에 대하여 Camel Case 변환하여 super.put
+     * (ListOrderedMap) 을 호출한다.
+     *
+     * @param key   - '_' 가 포함된 변수명
+     * @param value - 명시된 key 에 대한 값 (변경 없음)
+     * @return previous value associated with specified
+     * key, or null if there was no mapping for
+     * key
+     */
+    @Override
+    public Object put(Object key, Object value) {
+        return super.put(CamelUtil.convert2CamelCase((String) key), value);
+    }
 
 }

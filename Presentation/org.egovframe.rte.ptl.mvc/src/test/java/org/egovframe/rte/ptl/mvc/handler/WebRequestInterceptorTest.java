@@ -36,45 +36,46 @@ import static org.junit.Assert.assertEquals;
 @ContextConfiguration(locations = "classpath*:META-INF/spring/handler/test_servlet.xml")
 public class WebRequestInterceptorTest {
 
-	@Autowired
-	private ApplicationContext ctx;
+    @Autowired
+    private ApplicationContext ctx;
 
-	private DispatcherServlet dispatcher;
+    private DispatcherServlet dispatcher;
 
-	/**
-	 * org.springframework.web.servlet.mvc.annotation.ServletAnnotationControllerTests 를 참조했다.
-	 * @throws ServletException
-	 */
-	@Before
-	public void setUp() throws ServletException {
-		this.dispatcher = new DispatcherServlet() {
-			/**
-			 *  serialVersion UID
-			 */
-			private static final long serialVersionUID = -6801286643507797419L;
+    /**
+     * org.springframework.web.servlet.mvc.annotation.ServletAnnotationControllerTests 를 참조했다.
+     *
+     * @throws ServletException
+     */
+    @Before
+    public void setUp() throws ServletException {
+        this.dispatcher = new DispatcherServlet() {
+            /**
+             *  serialVersion UID
+             */
+            private static final long serialVersionUID = -6801286643507797419L;
 
-			@Override
-			protected WebApplicationContext createWebApplicationContext(WebApplicationContext parent) throws BeansException {
-				GenericWebApplicationContext genericCtx = new GenericWebApplicationContext();
-				genericCtx.setParent(ctx);
-				genericCtx.refresh();
-				return genericCtx;
-			}
-		};
-		dispatcher.init(new MockServletConfig());
-	}
+            @Override
+            protected WebApplicationContext createWebApplicationContext(WebApplicationContext parent) throws BeansException {
+                GenericWebApplicationContext genericCtx = new GenericWebApplicationContext();
+                genericCtx.setParent(ctx);
+                genericCtx.refresh();
+                return genericCtx;
+            }
+        };
+        dispatcher.init(new MockServletConfig());
+    }
 
-	@Test
-	public void testPrePostHandle() throws ServletException, IOException {
+    @Test
+    public void testPrePostHandle() throws ServletException, IOException {
 
-		MockHttpServletRequest request = new MockHttpServletRequest("GET", "/test.do");
-		MockHttpServletResponse response = new MockHttpServletResponse();
-		dispatcher.service(request, response);
-		ArrayList<?> array = (ArrayList<?>) request.getAttribute("interceptor");
-		assertEquals("OneInterceptor.preHandle", array.get(0));
-		assertEquals("TwoInterceptor.preHandle", array.get(1));
-		assertEquals("InterceptorTestController", array.get(2));
-		assertEquals("TwoInterceptor.postHandle", array.get(3));
-		assertEquals("OneInterceptor.postHandle", array.get(4));
-	}
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/test.do");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        dispatcher.service(request, response);
+        ArrayList<?> array = (ArrayList<?>) request.getAttribute("interceptor");
+        assertEquals("OneInterceptor.preHandle", array.get(0));
+        assertEquals("TwoInterceptor.preHandle", array.get(1));
+        assertEquals("InterceptorTestController", array.get(2));
+        assertEquals("TwoInterceptor.postHandle", array.get(3));
+        assertEquals("OneInterceptor.postHandle", array.get(4));
+    }
 }

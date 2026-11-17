@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface DepartmentRepository extends CrudRepository<Department, Long> {
 
-	List<Department> findByDeptNameContaining(String deptname);
+    List<Department> findByDeptNameContaining(String deptname);
 
 }

@@ -19,11 +19,10 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 
 /**
  * egov-security schema namespace 처리를 담당하는 namespace handler 클래스
- * 
- *<p>Desc.: 설정 간소화 처리에 사용되는 namespace handler</p>
+ *
+ * <p>Desc.: 설정 간소화 처리에 사용되는 namespace handler</p>
  *
  * @author Vincent Han
- * @since 2014.03.12
  * @version 3.0
  * <pre>
  * 개정이력(Modification Information)
@@ -32,6 +31,7 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
  * ----------------------------------------------
  * 2014.03.12	한성곤		        Spring Security 설정 간소화 기능 추가
  * </pre>
+ * @since 2014.03.12
  */
 public class EgovSecurityNameHandler extends NamespaceHandlerSupport {
 

@@ -3,17 +3,17 @@
 
 <sqlMap namespace="LobTest">
 
-	<typeAlias alias="lobTestVO"
-		type="org.egovframe.rte.psl.dataaccess.vo.LobTestVO" />
+    <typeAlias alias="lobTestVO"
+               type="org.egovframe.rte.psl.dataaccess.vo.LobTestVO"/>
 
-	<resultMap id="lobTestResult" class="lobTestVO">
-		<result property="id" column="ID" />
-		<result property="blobType" column="BLOB_TYPE" />
-		<result property="clobType" column="CLOB_TYPE" />
-	</resultMap>
+    <resultMap id="lobTestResult" class="lobTestVO">
+        <result property="id" column="ID"/>
+        <result property="blobType" column="BLOB_TYPE"/>
+        <result property="clobType" column="CLOB_TYPE"/>
+    </resultMap>
 
-	<insert id="insertLobTest" parameterClass="lobTestVO">
-		<![CDATA[
+    <insert id="insertLobTest" parameterClass="lobTestVO">
+        <![CDATA[
 			insert into LOBTEST
 			           (ID,
 			            BLOB_TYPE,
@@ -23,17 +23,17 @@
 						#clobType:CLOB#
 			            )
 		]]>
-	</insert>
+    </insert>
 
-	<select id="selectLobTest" parameterClass="lobTestVO"
-		resultMap="lobTestResult">
-		<![CDATA[
+    <select id="selectLobTest" parameterClass="lobTestVO"
+            resultMap="lobTestResult">
+        <![CDATA[
 			select ID,
 			       BLOB_TYPE,
 			       CLOB_TYPE
 			from   LOBTEST
 			where  ID = #id#
 		]]>
-	</select>
+    </select>
 
 </sqlMap>

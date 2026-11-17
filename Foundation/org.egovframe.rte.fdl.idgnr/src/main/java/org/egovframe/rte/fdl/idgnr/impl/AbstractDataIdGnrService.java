@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 MOPAS(Ministry of Public Administration and Security).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,9 +24,8 @@ import java.sql.SQLException;
 
 /**
  * ID Generation 서비스를 위한 Data Id  Abstract Service
- * 
+ *
  * @author 실행환경 개발팀 김태호
- * @since 2009.02.01
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -35,6 +34,7 @@ import java.sql.SQLException;
  * ----------------------------------------------
  * 2009.02.01   김태호             최초 생성
  * </pre>
+ * @since 2009.02.01
  */
 public abstract class AbstractDataIdGnrService extends AbstractIdGnrService implements EgovIdGnrService, DisposableBean {
 
@@ -60,6 +60,7 @@ public abstract class AbstractDataIdGnrService extends AbstractIdGnrService impl
 
     /**
      * DB 연결 Connection 얻기
+     *
      * @return Connection 정보
      * @throws SQLException Connection을 얻지 못했을 경우
      */
@@ -76,6 +77,7 @@ public abstract class AbstractDataIdGnrService extends AbstractIdGnrService impl
 
     /**
      * Configuration에 정의된 Datasource를 Setting
+     *
      * @param dataSource dataSource 정보
      */
     public void setDataSource(DataSource dataSource) {
@@ -84,6 +86,7 @@ public abstract class AbstractDataIdGnrService extends AbstractIdGnrService impl
 
     /**
      * Configuration에 정의된 Query를 Setting
+     *
      * @param query Query 정보
      */
     public void setQuery(String query) {

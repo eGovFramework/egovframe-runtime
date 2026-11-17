@@ -28,49 +28,48 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Data를 처리하다 에러시 Retry 시도 횟수 설정만큼 재시도 하는 과정을 테스트 
+ * Data를 처리하다 에러시 Retry 시도 횟수 설정만큼 재시도 하는 과정을 테스트
+ *
  * @author 배치실행개발팀
- * @since 2012. 07.30
  * @version 1.0
- * @see
- * 
- * <pre>
+ * @see <pre>
  * == 개정이력(Modification Information) ==
- *   
+ *
  *   수정일               수정자               수정내용
  *  -------      --------     ---------------------------
  *  2012. 07.30  배치실행개발팀    최초 생성
  *
  * </pre>
-*/
+ * @since 2012. 07.30
+ */
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"/org/egovframe/batch/simple-job-launcher-context.xml"
-		, "/org/egovframe/batch/job-runner-context.xml"
-		, "/org/egovframe/batch/jobs/retrySample.xml"})
+@ContextConfiguration(locations = {"/org/egovframe/batch/simple-job-launcher-context.xml"
+        , "/org/egovframe/batch/job-runner-context.xml"
+        , "/org/egovframe/batch/jobs/retrySample.xml"})
 public class EgovRetrySampleFunctionalTests {
 
-	//ItemReader
-	@Autowired
-	private GeneratingTradeItemReader itemGenerator;
+    //ItemReader
+    @Autowired
+    private GeneratingTradeItemReader itemGenerator;
 
-	//ItemWriter
-	@Autowired
-	private EgovRetrySampleItemWriter<?> itemProcessor;
+    //ItemWriter
+    @Autowired
+    private EgovRetrySampleItemWriter<?> itemProcessor;
 
-	//배치작업을  test하기 위한 JobLauncherTestUtils
-	@Autowired
-	@Qualifier("jobLauncherTestUtils")
-	private JobLauncherTestUtils jobLauncherTestUtils;
+    //배치작업을  test하기 위한 JobLauncherTestUtils
+    @Autowired
+    @Qualifier("jobLauncherTestUtils")
+    private JobLauncherTestUtils jobLauncherTestUtils;
 
-	/**
-	 * 배치작업 테스트
-	 */
-	@Test
-	public void testLaunchJob() throws Exception {
-		jobLauncherTestUtils.launchJob();
-		//items processed = items read + 2 exceptions
-		assertEquals(itemGenerator.getLimit() + 2, itemProcessor.getCounter());
-	}
+    /**
+     * 배치작업 테스트
+     */
+    @Test
+    public void testLaunchJob() throws Exception {
+        jobLauncherTestUtils.launchJob();
+        //items processed = items read + 2 exceptions
+        assertEquals(itemGenerator.getLimit() + 2, itemProcessor.getCounter());
+    }
 
 }

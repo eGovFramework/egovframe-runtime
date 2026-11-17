@@ -15,11 +15,11 @@ import java.util.Map;
 
 public class CategoryPOIExcelView extends AbstractPOIExcelView {
 
-	private static final Logger LOGGER  = LoggerFactory.getLogger(CategoryPOIExcelView.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CategoryPOIExcelView.class);
 
-	@Override
-	@SuppressWarnings("unchecked")
-	protected void buildExcelDocument(Map<String, Object> model, XSSFWorkbook wb, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+    @Override
+    @SuppressWarnings("unchecked")
+    protected void buildExcelDocument(Map<String, Object> model, XSSFWorkbook wb, HttpServletRequest req, HttpServletResponse resp) throws Exception {
 
         LOGGER.debug("### buildExcelDocument start !!!");
 
@@ -27,7 +27,7 @@ public class CategoryPOIExcelView extends AbstractPOIExcelView {
         sheet.setDefaultColumnWidth(12);
 
         // put text in first cell
-		XSSFCell cell = getCell(sheet, 0, 0);
+        XSSFCell cell = getCell(sheet, 0, 0);
         setText(cell, "User List");
 
         // set header information
@@ -39,64 +39,64 @@ public class CategoryPOIExcelView extends AbstractPOIExcelView {
 
         LOGGER.debug("### buildExcelDocument cast");
 
-		Map<String, Object> map= (Map<String, Object>) model.get("categoryMap");
+        Map<String, Object> map = (Map<String, Object>) model.get("categoryMap");
         List<Object> categories = (List<Object>) map.get("category");
 
         boolean isVO = false;
 
         if (categories.size() > 0) {
-        	Object obj = categories.get(0);
-        	isVO = obj instanceof UsersVO;
+            Object obj = categories.get(0);
+            isVO = obj instanceof UsersVO;
         }
 
         for (int i = 0; i < categories.size(); i++) {
 
-        	if (isVO) {	// VO
+            if (isVO) {    // VO
 
-        		LOGGER.debug("### buildExcelDocument VO : {} started!!", i);
+                LOGGER.debug("### buildExcelDocument VO : {} started!!", i);
 
-        		UsersVO category = (UsersVO) categories.get(i);
+                UsersVO category = (UsersVO) categories.get(i);
 
-	            cell = getCell(sheet, 3 + i, 0);
-	            setText(cell, category.getId());
+                cell = getCell(sheet, 3 + i, 0);
+                setText(cell, category.getId());
 
-	            cell = getCell(sheet, 3 + i, 1);
-	            setText(cell, category.getName());
+                cell = getCell(sheet, 3 + i, 1);
+                setText(cell, category.getName());
 
-	            cell = getCell(sheet, 3 + i, 2);
-	            setText(cell, category.getDescription());
+                cell = getCell(sheet, 3 + i, 2);
+                setText(cell, category.getDescription());
 
-	            cell = getCell(sheet, 3 + i, 3);
-	            setText(cell, category.getUseYn());
+                cell = getCell(sheet, 3 + i, 3);
+                setText(cell, category.getUseYn());
 
-	            cell = getCell(sheet, 3 + i, 4);
-	            setText(cell, category.getRegUser());
+                cell = getCell(sheet, 3 + i, 4);
+                setText(cell, category.getRegUser());
 
-	            LOGGER.debug("### buildExcelDocument VO : {} end!!", i);
+                LOGGER.debug("### buildExcelDocument VO : {} end!!", i);
 
-        	 } else {	// Map
+            } else {    // Map
 
-        		LOGGER.debug("### buildExcelDocument Map : {} started!!", i);
+                LOGGER.debug("### buildExcelDocument Map : {} started!!", i);
 
-        		Map<String, String> category = (Map<String, String>) categories.get(i);
+                Map<String, String> category = (Map<String, String>) categories.get(i);
 
- 	            cell = getCell(sheet, 3 + i, 0);
- 	            setText(cell, category.get("id"));
+                cell = getCell(sheet, 3 + i, 0);
+                setText(cell, category.get("id"));
 
- 	            cell = getCell(sheet, 3 + i, 1);
- 	            setText(cell, category.get("name"));
+                cell = getCell(sheet, 3 + i, 1);
+                setText(cell, category.get("name"));
 
- 	            cell = getCell(sheet, 3 + i, 2);
- 	            setText(cell, category.get("description"));
+                cell = getCell(sheet, 3 + i, 2);
+                setText(cell, category.get("description"));
 
- 	            cell = getCell(sheet, 3 + i, 3);
- 	            setText(cell, category.get("useyn"));
+                cell = getCell(sheet, 3 + i, 3);
+                setText(cell, category.get("useyn"));
 
- 	            cell = getCell(sheet, 3 + i, 4);
- 	            setText(cell, category.get("reguser"));
+                cell = getCell(sheet, 3 + i, 4);
+                setText(cell, category.get("reguser"));
 
- 	            LOGGER.debug("### buildExcelDocument Map : {} end!!", i);
-        	 }
+                LOGGER.debug("### buildExcelDocument Map : {} end!!", i);
+            }
         }
     }
 

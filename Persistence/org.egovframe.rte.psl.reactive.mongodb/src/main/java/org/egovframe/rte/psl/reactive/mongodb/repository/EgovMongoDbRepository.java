@@ -28,7 +28,6 @@ import reactor.core.publisher.Mono;
  * <p>Desc.: MongoDB Repository 구현 클래스</p>
  *
  * @author ESFC
- * @since 2023.08.31
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -37,6 +36,7 @@ import reactor.core.publisher.Mono;
  * ----------------------------------------------
  * 2023.08.31   ESFC            최초 생성
  * </pre>
+ * @since 2023.08.31
  */
 public class EgovMongoDbRepository<T> extends ReactiveMongoTemplate {
 

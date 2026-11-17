@@ -39,8 +39,8 @@ import java.util.List;
 
 /**
  * 작업수행에 필요한 자료를 가져오기 위해 BATCH_STAGING 테이블을 Select 하는 리더
+ *
  * @author 배치실행개발팀
- * @since 2012. 07.25
  * @version 1.0
  * @see <pre>
  *      개정이력(Modification Information)
@@ -49,130 +49,132 @@ import java.util.List;
  *  ------- -------- ---------------------------
  *  2012. 07.25  배치실행개발팀     최초 생성
  *  </pre>
+ * @since 2012. 07.25
  */
 @SuppressWarnings("deprecation")
 public class EgovStagingItemReader<T> implements ItemReader<EgovProcessIndicatorItemWrapper<T>>, StepExecutionListener, InitializingBean, DisposableBean {
 
-	private static Log logger = LogFactory.getLog(EgovStagingItemReader.class);
-	//stepExecution
-	private StepExecution stepExecution;
+    private static Log logger = LogFactory.getLog(EgovStagingItemReader.class);
+    private final Object lock = new Object();
+    //stepExecution
+    private StepExecution stepExecution;
+    //초기화 프래그
+    private volatile boolean initialized = false;
+    //아이디가 저장될 변수
+    private volatile Iterator<Long> keys;
 
-	private final Object lock = new Object();
+    //DB 사용을 위한  JdbcTemplate
+    private JdbcTemplate jdbcTemplate;
 
-	//초기화 프래그
-	private volatile boolean initialized = false;
-	//아이디가 저장될 변수
-	private volatile Iterator<Long> keys;
-	
-	//DB 사용을 위한  JdbcTemplate
-	private JdbcTemplate jdbcTemplate;
+    /**
+     * dataSource 설정
+     *
+     * @param dataSource
+     */
+    public void setDataSource(DataSource dataSource) {
+        jdbcTemplate = new JdbcTemplate(dataSource);
+    }
 
-	/**
-	 * dataSource 설정
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		jdbcTemplate = new JdbcTemplate(dataSource);
-	}
+    /**
+     * 초기화
+     */
+    @Override
+    public void destroy() throws Exception {
+        initialized = false;
+        keys = null;
+    }
 
-	/**
-	 * 초기화
-	 */
-	@Override
-	public void destroy() throws Exception {
-		initialized = false;
-		keys = null;
-	}
+    /**
+     * 설정확인
+     */
+    @Override
+    public final void afterPropertiesSet() throws Exception {
+        Assert.notNull(jdbcTemplate, "You must provide a DataSource.");
+    }
 
-	/**
-	 * 설정확인
-	 */
-	@Override
-	public final void afterPropertiesSet() throws Exception {
-		Assert.notNull(jdbcTemplate, "You must provide a DataSource.");
-	}
+    /**
+     * BATCH_STAGING의 ID값을 가져온다.
+     *
+     * @return List<Long> :BATCH_STAGING의 Id값들
+     */
+    @SuppressWarnings("unchecked")
+    private List<Long> retrieveKeys() {
 
-	/**
-	 * BATCH_STAGING의 ID값을 가져온다.
-	 * @return List<Long> :BATCH_STAGING의 Id값들
-	 */
-	@SuppressWarnings("unchecked")
-	private List<Long> retrieveKeys() {
+        synchronized (lock) {
+            return jdbcTemplate.query("SELECT ID FROM BATCH_STAGING WHERE JOB_ID=? AND PROCESSED=? ORDER BY ID",
+                    new Object[]{stepExecution.getJobExecution().getJobId(), EgovStagingItemWriter.NEW},
+                    new RowMapper() {
+                        @Override
+                        public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                            return rs.getLong(1);
+                        }
+                    }
+            );
 
-		synchronized (lock) {
-			return jdbcTemplate.query("SELECT ID FROM BATCH_STAGING WHERE JOB_ID=? AND PROCESSED=? ORDER BY ID",
-					new Object[] {stepExecution.getJobExecution().getJobId(), EgovStagingItemWriter.NEW},
-					new RowMapper() {
-						@Override
-						public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
-							return rs.getLong(1);
-						}
-					}
-				);
+        }
 
-		}
+    }
 
-	}
+    /**
+     * BATCH_STAGING의 value값을 읽는다
+     *
+     * @return EgovProcessIndicatorItemWrapper : 결과값
+     */
+    @Override
+    public EgovProcessIndicatorItemWrapper<T> read() throws DataAccessException {
 
-	/**
-	 * BATCH_STAGING의 value값을 읽는다
-	 * @return EgovProcessIndicatorItemWrapper : 결과값
-	 */
-	@Override
-	public EgovProcessIndicatorItemWrapper<T> read() throws DataAccessException {
+        if (!initialized) {
+            throw new ReaderNotOpenException("Reader must be open before it can be used.");
+        }
 
-		if (!initialized) {
-			throw new ReaderNotOpenException("Reader must be open before it can be used.");
-		}
+        Long id = null;
+        synchronized (lock) {
+            if (keys.hasNext()) {
+                id = keys.next();
+            }
+        }
+        logger.debug("Retrieved key from list: " + id);
 
-		Long id = null;
-		synchronized (lock) {
-			if (keys.hasNext()) {
-				id = keys.next();
-			}
-		}
-		logger.debug("Retrieved key from list: " + id);
+        if (id == null) {
+            return null;
+        }
+        @SuppressWarnings("unchecked")
+        T result = (T) jdbcTemplate.queryForObject("SELECT VALUE FROM BATCH_STAGING WHERE ID=?"
+                , new Object[]{id}
+                , new RowMapper<Object>() {
+                    @Override
+                    public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        byte[] blob = rs.getBytes(1);
+                        return SerializationUtils.deserialize(blob);
+                    }
+                }
+        );
 
-		if (id == null) {
-			return null;
-		}
-		@SuppressWarnings("unchecked")
-		T result = (T) jdbcTemplate.queryForObject("SELECT VALUE FROM BATCH_STAGING WHERE ID=?"
-				, new Object[] {id}
-				, new RowMapper<Object>() {
-					@Override
-					public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
-						byte[] blob = rs.getBytes(1);
-						return SerializationUtils.deserialize(blob);
-					}
-				}
-				);
+        return new EgovProcessIndicatorItemWrapper<T>(id, result);
 
-		return new EgovProcessIndicatorItemWrapper<T>(id, result);
+    }
 
-	}
+    /**
+     * 배치작업 후 실행
+     */
+    @Override
+    public ExitStatus afterStep(StepExecution stepExecution) {
+        return null;
+    }
 
-	/**
-	 * 배치작업 후 실행
-	 */
-	@Override
-	public ExitStatus afterStep(StepExecution stepExecution) {
-		return null;
-	}
-
-	/**
-	 * 배치작업 전 실행
-	 */
-	@Override
-	public void beforeStep(StepExecution stepExecution) {
-		this.stepExecution = stepExecution;
-		synchronized (lock) {
-			if (keys == null) {
-				keys = retrieveKeys().iterator();
-				logger.info("Keys obtained for staging.");
-				initialized = true;
-			}
-		}
-	}
+    /**
+     * 배치작업 전 실행
+     */
+    @Override
+    public void beforeStep(StepExecution stepExecution) {
+        this.stepExecution = stepExecution;
+        synchronized (lock) {
+            if (keys == null) {
+                keys = retrieveKeys().iterator();
+                logger.info("Keys obtained for staging.");
+                initialized = true;
+            }
+        }
+    }
 
 }

@@ -26,11 +26,10 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 
 /**
  * RequestMatcherType 지정을 처리하는 factory bean 클래스
- * 
- *<p>Desc.: 설정 간소화 처리에 사용되는 내부 factory bean</p>
+ *
+ * <p>Desc.: 설정 간소화 처리에 사용되는 내부 factory bean</p>
  *
  * @author Vincent Han
- * @since 2014.03.12
  * @version 3.0
  * <pre>
  * 개정이력(Modification Information)
@@ -39,29 +38,30 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
  * ----------------------------------------------
  * 2014.03.12	한성곤				Spring Security 설정 간소화 기능 추가
  * </pre>
+ * @since 2014.03.12
  */
 public class RequestMatcherTypeFactoryBean implements FactoryBean<RequestMatcher>, ApplicationContextAware {
 
-	private ApplicationContext context;
-	
-	public RequestMatcher getObject() throws Exception {
-		SecurityConfig config = context.getBean(SecurityConfig.class);
-		if (config == null) {
-			throw new NoSuchBeanDefinitionException("No bean of type [SecurityConfig.class] is defined.");
-		}
-		return AnyRequestMatcher.INSTANCE;
-	}
+    private ApplicationContext context;
 
-	public Class<RequestMatcher> getObjectType() {
-		return RequestMatcher.class;
-	}
+    public RequestMatcher getObject() throws Exception {
+        SecurityConfig config = context.getBean(SecurityConfig.class);
+        if (config == null) {
+            throw new NoSuchBeanDefinitionException("No bean of type [SecurityConfig.class] is defined.");
+        }
+        return AnyRequestMatcher.INSTANCE;
+    }
 
-	public boolean isSingleton() {
-		return true;
-	}
-	
-	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		this.context = applicationContext;
-	}
-	
+    public Class<RequestMatcher> getObjectType() {
+        return RequestMatcher.class;
+    }
+
+    public boolean isSingleton() {
+        return true;
+    }
+
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.context = applicationContext;
+    }
+
 }

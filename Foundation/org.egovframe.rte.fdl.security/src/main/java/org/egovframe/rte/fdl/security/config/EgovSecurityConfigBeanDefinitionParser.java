@@ -22,11 +22,10 @@ import org.w3c.dom.Element;
 
 /**
  * egov-security schema namespace 'config' element 처리를 담당하는 bean definition parser 클래스
- * 
- *<p>Desc.: 설정 간소화 처리에 사용되는 bean definition parser</p>
+ *
+ * <p>Desc.: 설정 간소화 처리에 사용되는 bean definition parser</p>
  *
  * @author Vincent Han
- * @since 2014.03.12
  * @version 3.0
  * <pre>
  * 개정이력(Modification Information)
@@ -37,139 +36,140 @@ import org.w3c.dom.Element;
  * 2020.05.27	ESFC			CSRF Access Denied 처리 URL 추가
  * 2023.08.31	ESFC			Spring 표현 언어(SpEL) 설정 옵션 추가
  * </pre>
+ * @since 2014.03.12
  */
 public class EgovSecurityConfigBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
-	@Override
-	protected Class<?> getBeanClass(Element element) {
-		return SecurityConfig.class;
-	}
+    @Override
+    protected Class<?> getBeanClass(Element element) {
+        return SecurityConfig.class;
+    }
 
-	@Override
-	protected void doParse(Element element, BeanDefinitionBuilder bean) {
+    @Override
+    protected void doParse(Element element, BeanDefinitionBuilder bean) {
 
-		String loginUrl = element.getAttribute("loginUrl");
-		if (StringUtils.hasText(loginUrl)) {
-			bean.addPropertyValue("loginUrl", loginUrl);
-		}
+        String loginUrl = element.getAttribute("loginUrl");
+        if (StringUtils.hasText(loginUrl)) {
+            bean.addPropertyValue("loginUrl", loginUrl);
+        }
 
-		String logoutSuccessUrl = element.getAttribute("logoutSuccessUrl");
-		if (StringUtils.hasText(logoutSuccessUrl)) {
-			bean.addPropertyValue("logoutSuccessUrl", logoutSuccessUrl);
-		}
+        String logoutSuccessUrl = element.getAttribute("logoutSuccessUrl");
+        if (StringUtils.hasText(logoutSuccessUrl)) {
+            bean.addPropertyValue("logoutSuccessUrl", logoutSuccessUrl);
+        }
 
-		String loginFailureUrl = element.getAttribute("loginFailureUrl");
-		if (StringUtils.hasText(loginFailureUrl)) {
-			bean.addPropertyValue("loginFailureUrl", loginFailureUrl);
-		}
+        String loginFailureUrl = element.getAttribute("loginFailureUrl");
+        if (StringUtils.hasText(loginFailureUrl)) {
+            bean.addPropertyValue("loginFailureUrl", loginFailureUrl);
+        }
 
-		String accessDeniedUrl = element.getAttribute("accessDeniedUrl");
-		if (StringUtils.hasText(accessDeniedUrl)) {
-			bean.addPropertyValue("accessDeniedUrl", accessDeniedUrl);
-		}
+        String accessDeniedUrl = element.getAttribute("accessDeniedUrl");
+        if (StringUtils.hasText(accessDeniedUrl)) {
+            bean.addPropertyValue("accessDeniedUrl", accessDeniedUrl);
+        }
 
-		String dataSource = element.getAttribute("dataSource");
-		if (StringUtils.hasText(dataSource)) {
-			bean.addPropertyReference("dataSource", dataSource);
-		}
+        String dataSource = element.getAttribute("dataSource");
+        if (StringUtils.hasText(dataSource)) {
+            bean.addPropertyReference("dataSource", dataSource);
+        }
 
-		String jdbcUsersByUsernameQuery = element.getAttribute("jdbcUsersByUsernameQuery");
-		if (StringUtils.hasText(jdbcUsersByUsernameQuery)) {
-			bean.addPropertyValue("jdbcUsersByUsernameQuery", jdbcUsersByUsernameQuery);
-		}
+        String jdbcUsersByUsernameQuery = element.getAttribute("jdbcUsersByUsernameQuery");
+        if (StringUtils.hasText(jdbcUsersByUsernameQuery)) {
+            bean.addPropertyValue("jdbcUsersByUsernameQuery", jdbcUsersByUsernameQuery);
+        }
 
-		String jdbcAuthoritiesByUsernameQuery = element.getAttribute("jdbcAuthoritiesByUsernameQuery");
-		if (StringUtils.hasText(jdbcAuthoritiesByUsernameQuery)) {
-			bean.addPropertyValue("jdbcAuthoritiesByUsernameQuery", jdbcAuthoritiesByUsernameQuery);
-		}
+        String jdbcAuthoritiesByUsernameQuery = element.getAttribute("jdbcAuthoritiesByUsernameQuery");
+        if (StringUtils.hasText(jdbcAuthoritiesByUsernameQuery)) {
+            bean.addPropertyValue("jdbcAuthoritiesByUsernameQuery", jdbcAuthoritiesByUsernameQuery);
+        }
 
-		String jdbcMapClass = element.getAttribute("jdbcMapClass");
-		if (StringUtils.hasText(jdbcMapClass)) {
-			bean.addPropertyValue("jdbcMapClass", jdbcMapClass);
-		}
+        String jdbcMapClass = element.getAttribute("jdbcMapClass");
+        if (StringUtils.hasText(jdbcMapClass)) {
+            bean.addPropertyValue("jdbcMapClass", jdbcMapClass);
+        }
 
-		String requestMatcherType = element.getAttribute("requestMatcherType");
-		if (StringUtils.hasText(requestMatcherType)) {
-			bean.addPropertyValue("requestMatcherType", requestMatcherType);
-		}
+        String requestMatcherType = element.getAttribute("requestMatcherType");
+        if (StringUtils.hasText(requestMatcherType)) {
+            bean.addPropertyValue("requestMatcherType", requestMatcherType);
+        }
 
-		String hash = element.getAttribute("hash");
-		if (StringUtils.hasText(hash)) {
-			bean.addPropertyValue("hash", hash);
-		}
+        String hash = element.getAttribute("hash");
+        if (StringUtils.hasText(hash)) {
+            bean.addPropertyValue("hash", hash);
+        }
 
-		String hashBase64 = element.getAttribute("hashBase64");
-		if (StringUtils.hasText(hashBase64)) {
-			bean.addPropertyValue("hashBase64", hashBase64);
-		}
+        String hashBase64 = element.getAttribute("hashBase64");
+        if (StringUtils.hasText(hashBase64)) {
+            bean.addPropertyValue("hashBase64", hashBase64);
+        }
 
-		String concurrentMaxSessons = element.getAttribute("concurrentMaxSessons");
-		if (StringUtils.hasText(concurrentMaxSessons)) {
-			bean.addPropertyValue("concurrentMaxSessons", concurrentMaxSessons);
-		}
+        String concurrentMaxSessons = element.getAttribute("concurrentMaxSessons");
+        if (StringUtils.hasText(concurrentMaxSessons)) {
+            bean.addPropertyValue("concurrentMaxSessons", concurrentMaxSessons);
+        }
 
-		String concurrentExpiredUrl = element.getAttribute("concurrentExpiredUrl");
-		if (StringUtils.hasText(concurrentExpiredUrl)) {
-			bean.addPropertyValue("concurrentExpiredUrl", concurrentExpiredUrl);
-		}
+        String concurrentExpiredUrl = element.getAttribute("concurrentExpiredUrl");
+        if (StringUtils.hasText(concurrentExpiredUrl)) {
+            bean.addPropertyValue("concurrentExpiredUrl", concurrentExpiredUrl);
+        }
 
-		String errorIfMaximumExceeded = element.getAttribute("errorIfMaximumExceeded");
-		if (StringUtils.hasText(errorIfMaximumExceeded)) {
-			bean.addPropertyValue("errorIfMaximumExceeded", errorIfMaximumExceeded);
-		}
+        String errorIfMaximumExceeded = element.getAttribute("errorIfMaximumExceeded");
+        if (StringUtils.hasText(errorIfMaximumExceeded)) {
+            bean.addPropertyValue("errorIfMaximumExceeded", errorIfMaximumExceeded);
+        }
 
-		String defaultTargetUrl = element.getAttribute("defaultTargetUrl");
-		if (StringUtils.hasText(defaultTargetUrl)) {
-			bean.addPropertyValue("defaultTargetUrl", defaultTargetUrl);
-		}
+        String defaultTargetUrl = element.getAttribute("defaultTargetUrl");
+        if (StringUtils.hasText(defaultTargetUrl)) {
+            bean.addPropertyValue("defaultTargetUrl", defaultTargetUrl);
+        }
 
-		String alwaysUseDefaultTargetUrl = element.getAttribute("alwaysUseDefaultTargetUrl");
-		if (StringUtils.hasText(alwaysUseDefaultTargetUrl)) {
-			bean.addPropertyValue("alwaysUseDefaultTargetUrl", alwaysUseDefaultTargetUrl);
-			EgovSecurityConfigShare.alwaysUseDefaultTargetUrl = Boolean.parseBoolean(alwaysUseDefaultTargetUrl);
-		}
+        String alwaysUseDefaultTargetUrl = element.getAttribute("alwaysUseDefaultTargetUrl");
+        if (StringUtils.hasText(alwaysUseDefaultTargetUrl)) {
+            bean.addPropertyValue("alwaysUseDefaultTargetUrl", alwaysUseDefaultTargetUrl);
+            EgovSecurityConfigShare.alwaysUseDefaultTargetUrl = Boolean.parseBoolean(alwaysUseDefaultTargetUrl);
+        }
 
-		String useExpressions = element.getAttribute("useExpressions");
-		if (StringUtils.hasText(useExpressions)) {
-			bean.addPropertyValue("useExpressions", useExpressions);
-			EgovSecurityConfigShare.useExpressions = Boolean.parseBoolean(useExpressions);
-		}
+        String useExpressions = element.getAttribute("useExpressions");
+        if (StringUtils.hasText(useExpressions)) {
+            bean.addPropertyValue("useExpressions", useExpressions);
+            EgovSecurityConfigShare.useExpressions = Boolean.parseBoolean(useExpressions);
+        }
 
-		String sniff = element.getAttribute("sniff");
-		if (StringUtils.hasText(sniff)) {
-			bean.addPropertyValue("sniff", sniff);
-			EgovSecurityConfigShare.sniff = Boolean.parseBoolean(sniff);
-		}
+        String sniff = element.getAttribute("sniff");
+        if (StringUtils.hasText(sniff)) {
+            bean.addPropertyValue("sniff", sniff);
+            EgovSecurityConfigShare.sniff = Boolean.parseBoolean(sniff);
+        }
 
-		String xFrameOptions = element.getAttribute("xframeOptions");
-		if (StringUtils.hasText(xFrameOptions)) {
-			bean.addPropertyValue("xframeOptions", xFrameOptions);
-			EgovSecurityConfigShare.xFrameOptions = xFrameOptions;
-		}
+        String xFrameOptions = element.getAttribute("xframeOptions");
+        if (StringUtils.hasText(xFrameOptions)) {
+            bean.addPropertyValue("xframeOptions", xFrameOptions);
+            EgovSecurityConfigShare.xFrameOptions = xFrameOptions;
+        }
 
-		String xssProtection = element.getAttribute("xssProtection");
-		if (StringUtils.hasText(xssProtection)) {
-			bean.addPropertyValue("xssProtection", xssProtection);
-			EgovSecurityConfigShare.xssProtection = Boolean.parseBoolean(xssProtection);
-		}
+        String xssProtection = element.getAttribute("xssProtection");
+        if (StringUtils.hasText(xssProtection)) {
+            bean.addPropertyValue("xssProtection", xssProtection);
+            EgovSecurityConfigShare.xssProtection = Boolean.parseBoolean(xssProtection);
+        }
 
-		String cacheControl = element.getAttribute("cacheControl");
-		if (StringUtils.hasText(cacheControl)) {
-			bean.addPropertyValue("cacheControl", cacheControl);
-			EgovSecurityConfigShare.cacheControl = Boolean.parseBoolean(cacheControl);
-		}
+        String cacheControl = element.getAttribute("cacheControl");
+        if (StringUtils.hasText(cacheControl)) {
+            bean.addPropertyValue("cacheControl", cacheControl);
+            EgovSecurityConfigShare.cacheControl = Boolean.parseBoolean(cacheControl);
+        }
 
-		String csrf = element.getAttribute("csrf");
-		if (StringUtils.hasText(csrf)) {
-			bean.addPropertyValue("csrf", csrf);
-			EgovSecurityConfigShare.csrf = Boolean.parseBoolean(csrf);
-		}
+        String csrf = element.getAttribute("csrf");
+        if (StringUtils.hasText(csrf)) {
+            bean.addPropertyValue("csrf", csrf);
+            EgovSecurityConfigShare.csrf = Boolean.parseBoolean(csrf);
+        }
 
-		String csrfAccessDeniedUrl = element.getAttribute("csrfAccessDeniedUrl");
-		if (StringUtils.hasText(csrfAccessDeniedUrl)) {
-			bean.addPropertyValue("csrfAccessDeniedUrl", csrfAccessDeniedUrl);
-		}
+        String csrfAccessDeniedUrl = element.getAttribute("csrfAccessDeniedUrl");
+        if (StringUtils.hasText(csrfAccessDeniedUrl)) {
+            bean.addPropertyValue("csrfAccessDeniedUrl", csrfAccessDeniedUrl);
+        }
 
-	}
+    }
 
 }

@@ -10,12 +10,12 @@ import java.util.ArrayList;
 @Controller
 public class InterceptorTestController {
 
-	@RequestMapping("/test.do")
-	public void test(HttpServletRequest request, HttpServletResponse response) {
+    @RequestMapping("/test.do")
+    public void test(HttpServletRequest request, HttpServletResponse response) {
 
-		@SuppressWarnings("unchecked")
-		ArrayList<String> array = (ArrayList<String>) request.getAttribute("interceptor");
-		array.add("InterceptorTestController");
-		request.setAttribute("interceptor", array);
-	}
+        @SuppressWarnings("unchecked")
+        ArrayList<String> array = (ArrayList<String>) request.getAttribute("interceptor");
+        array.add("InterceptorTestController");
+        request.setAttribute("interceptor", array);
+    }
 }

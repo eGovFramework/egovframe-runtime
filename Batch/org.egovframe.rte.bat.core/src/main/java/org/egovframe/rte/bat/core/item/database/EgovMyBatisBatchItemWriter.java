@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2014 MOSPA(Ministry of Security and Public Administration).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,6 @@ import java.util.Map;
  * EgovResourceVariable,EgovJobVariableListener,EgovStepVariableListener 클래스를 이용한 변수 공유 기능 제공
  *
  * @author 장동한
- * @since 2017.09.06
  * @version 1.0
  * <pre>
  * 개정이력(Modification Information)
@@ -49,71 +48,98 @@ import java.util.Map;
  * ----------------------------------------------
  * 2017.09.06	장동한				최초 생성
  * 2018.01.15	장동한				EgovJobVariable, EgovStepVariable 적용
+ * 2026.10.25	PR #490 반영			Map item 엔트리가 파라미터에서 누락되는 문제 수정
  * </pre>
+ * @since 2017.09.06
  */
 public class EgovMyBatisBatchItemWriter<T> extends MyBatisBatchItemWriter<T> {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(EgovMyBatisBatchItemWriter.class);
-	
-	/** egovframework EgovResourceVariable */
-	private EgovResourceVariable resourceVariable = null;
-	
-	/** egovframework EgovJobVariableListener */
-	private EgovJobVariableListener jobVariable = null;
-	
-	/** egovframework EgovStepVariableListener */
-	private EgovStepVariableListener stepVariable = null;
+    private static final Logger LOGGER = LoggerFactory.getLogger(EgovMyBatisBatchItemWriter.class);
 
-	public EgovResourceVariable getResourceVariable() {
-		return resourceVariable;
-	}
+    /**
+     * egovframework EgovResourceVariable
+     */
+    private EgovResourceVariable resourceVariable = null;
 
-	public void setResourceVariable(EgovResourceVariable resourceVariable) {
-		this.resourceVariable = resourceVariable;
-	}
+    /**
+     * egovframework EgovJobVariableListener
+     */
+    private EgovJobVariableListener jobVariable = null;
 
-	public EgovJobVariableListener getJobVariable() {
-		return jobVariable;
-	}
+    /**
+     * egovframework EgovStepVariableListener
+     */
+    private EgovStepVariableListener stepVariable = null;
 
-	public void setJobVariable(EgovJobVariableListener jobVariable) {
-		this.jobVariable = jobVariable;
-	}
+    public EgovResourceVariable getResourceVariable() {
+        return resourceVariable;
+    }
 
-	public EgovStepVariableListener getStepVariable() {
-		return stepVariable;
-	}
+    public void setResourceVariable(EgovResourceVariable resourceVariable) {
+        this.resourceVariable = resourceVariable;
+    }
 
-	public void setStepVariable(EgovStepVariableListener stepVariable) {
-		this.stepVariable = stepVariable;
-	}
+    public EgovJobVariableListener getJobVariable() {
+        return jobVariable;
+    }
 
-	@Override
-	@SuppressWarnings("unchecked")
-	public void write(final List<? extends T> items) {
-		List<Object> list = new ArrayList<Object>();
-		Map<String, Object> map = null;
-		try {
-			for (T item : items) {
-				map = new HashMap<String, Object>();
-				BeanInfo beanInfo = Introspector.getBeanInfo(item.getClass());
-				if (resourceVariable != null)
-					map.putAll(resourceVariable.getVariableMap());
-				if (jobVariable != null)
-					map.putAll(jobVariable.getVariableMap());
-				if (stepVariable != null)
-					map.putAll(stepVariable.getVariableMap());
-				for (PropertyDescriptor pd : beanInfo.getPropertyDescriptors()) {
-					Method reader = pd.getReadMethod();
-					if (reader != null)
-						map.put(pd.getName(), reader.invoke(item));
-				}
-				list.add(map);
-			}
-		} catch (IntrospectionException | IllegalAccessException | InvocationTargetException e) {
-			ReflectionUtils.handleReflectionException(e);
-		}
-		super.write( (List<? extends T>)list );
-	}
+    public void setJobVariable(EgovJobVariableListener jobVariable) {
+        this.jobVariable = jobVariable;
+    }
+
+    public EgovStepVariableListener getStepVariable() {
+        return stepVariable;
+    }
+
+    public void setStepVariable(EgovStepVariableListener stepVariable) {
+        this.stepVariable = stepVariable;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public void write(final List<? extends T> items) {
+        List<Object> list = new ArrayList<Object>();
+        try {
+            for (T item : items) {
+                list.add(mergeSharedVariables(item));
+            }
+        } catch (IntrospectionException | IllegalAccessException | InvocationTargetException e) {
+            ReflectionUtils.handleReflectionException(e);
+        }
+        super.write((List<? extends T>) list);
+    }
+
+    /**
+     * item과 공유 변수(resourceVariable/jobVariable/stepVariable)를 병합한 파라미터 Map으로 변환한다.
+     * 공유 변수를 먼저 넣고 item 값을 나중에 넣으므로 키가 겹치면 item 값이 우선한다.
+     */
+    Map<String, Object> mergeSharedVariables(T item)
+            throws IntrospectionException, IllegalAccessException, InvocationTargetException {
+        Map<String, Object> map = new HashMap<String, Object>();
+        if (resourceVariable != null)
+            map.putAll(resourceVariable.getVariableMap());
+        if (jobVariable != null)
+            map.putAll(jobVariable.getVariableMap());
+        if (stepVariable != null)
+            map.putAll(stepVariable.getVariableMap());
+
+        if (item instanceof Map) {
+            // Map item(예: resultType="hashmap")은 BeanInfo 로 class, empty 만 나오므로 엔트리를 그대로 덮어쓴다
+            // MyBatis 는 Map 파라미터를 String 이름으로 조회하므로 String 키 엔트리만 병합한다
+            for (Map.Entry<?, ?> entry : ((Map<?, ?>) item).entrySet()) {
+                if (entry.getKey() instanceof String)
+                    map.put((String) entry.getKey(), entry.getValue());
+            }
+            return map;
+        }
+
+        BeanInfo beanInfo = Introspector.getBeanInfo(item.getClass());
+        for (PropertyDescriptor pd : beanInfo.getPropertyDescriptors()) {
+            Method reader = pd.getReadMethod();
+            if (reader != null)
+                map.put(pd.getName(), reader.invoke(item));
+        }
+        return map;
+    }
 
 }

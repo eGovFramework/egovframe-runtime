@@ -24,7 +24,7 @@ import java.util.List;
 
 /**
  * Bean의 초기화 데이터 제공 기능을 구현 클래스
- * @since 2014.01.22
+ *
  * @version 3.0
  * <pre>
  * 개정이력(Modification Information)
@@ -33,22 +33,21 @@ import java.util.List;
  * ----------------------------------------------
  * 2014.01.22   한성곤             Spring Security 3.2.X 업그레이드 적용 (기존 ResourcesMapFactoryBean  분리)
  * </pre>
+ * @since 2014.01.22
  */
 public class MethodResourcesMapFactoryBean implements FactoryBean<LinkedHashMap<String, List<ConfigAttribute>>> {
 
     private String resourceType;
+    private EgovSecuredObjectService securedObjectService;
+    private LinkedHashMap<String, List<ConfigAttribute>> resourcesMap;
 
     public void setResourceType(String resourceType) {
         this.resourceType = resourceType;
     }
 
-    private EgovSecuredObjectService securedObjectService;
-
     public void setSecuredObjectService(EgovSecuredObjectService securedObjectService) {
         this.securedObjectService = securedObjectService;
     }
-
-    private LinkedHashMap<String, List<ConfigAttribute>> resourcesMap;
 
     public void init() throws Exception {
         if ("method".equals(resourceType)) {
@@ -68,7 +67,7 @@ public class MethodResourcesMapFactoryBean implements FactoryBean<LinkedHashMap<
     }
 
     @SuppressWarnings("rawtypes")
-	public Class<LinkedHashMap> getObjectType() {
+    public Class<LinkedHashMap> getObjectType() {
         return LinkedHashMap.class;
     }
 

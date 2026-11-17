@@ -9,14 +9,14 @@ import java.util.List;
 @Repository("jobHistDAO")
 public class JobHistDAO extends EgovAbstractDAO {
 
-	@SuppressWarnings("deprecation")
-	public JobHistVO selectJobHist(String queryId, JobHistVO vo) {
-		return (JobHistVO) getSqlMapClientTemplate().queryForObject(queryId, vo);
-	}
+    @SuppressWarnings("deprecation")
+    public JobHistVO selectJobHist(String queryId, JobHistVO vo) {
+        return (JobHistVO) getSqlMapClientTemplate().queryForObject(queryId, vo);
+    }
 
-	@SuppressWarnings({ "unchecked", "deprecation" })
-	public List<JobHistVO> selectJobHistList(String queryId, JobHistVO vo) {
-		return getSqlMapClientTemplate().queryForList(queryId, vo);
-	}
+    @SuppressWarnings({"unchecked", "deprecation"})
+    public List<JobHistVO> selectJobHistList(String queryId, JobHistVO vo) {
+        return getSqlMapClientTemplate().queryForList(queryId, vo);
+    }
 
 }

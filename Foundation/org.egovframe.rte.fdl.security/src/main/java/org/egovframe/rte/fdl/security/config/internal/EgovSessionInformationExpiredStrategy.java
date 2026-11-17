@@ -10,11 +10,10 @@ import java.io.IOException;
 
 /**
  * SessionInformationExpiredStrategy를 처리하는 factory bean 클래스
- * 
- *<p>Desc.: MaximumSessionsFactoryBean Deprecated에 대한 대응</p>
+ *
+ * <p>Desc.: MaximumSessionsFactoryBean Deprecated에 대한 대응</p>
  *
  * @author 윤창원
- * @since 2019.12.02
  * @version 3.9
  * <pre>
  * 개정이력(Modification Information)
@@ -23,20 +22,21 @@ import java.io.IOException;
  * ----------------------------------------------
  * 2019.12.02	윤창원				SessionInformationExpiredStrategy를 처리하는 factory bean 클래스 생성
  * </pre>
+ * @since 2019.12.02
  */
 public class EgovSessionInformationExpiredStrategy implements SessionInformationExpiredStrategy {
 
-	private final String expiredUrl;
-	
-	public EgovSessionInformationExpiredStrategy(String expiredUrl) {
-		this.expiredUrl = expiredUrl;
-	}
-	
-	@Override
-	public void onExpiredSessionDetected(SessionInformationExpiredEvent event) throws IOException, ServletException {
-		HttpServletRequest request = event.getRequest();
-		HttpServletResponse response = event.getResponse();
-		response.sendRedirect(request.getContextPath() + expiredUrl);
-	}
+    private final String expiredUrl;
+
+    public EgovSessionInformationExpiredStrategy(String expiredUrl) {
+        this.expiredUrl = expiredUrl;
+    }
+
+    @Override
+    public void onExpiredSessionDetected(SessionInformationExpiredEvent event) throws IOException, ServletException {
+        HttpServletRequest request = event.getRequest();
+        HttpServletResponse response = event.getResponse();
+        response.sendRedirect(request.getContextPath() + expiredUrl);
+    }
 
 }

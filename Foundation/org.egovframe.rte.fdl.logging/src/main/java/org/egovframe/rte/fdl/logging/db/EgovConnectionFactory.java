@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 MOSPA(Ministry of Security and Public Administration).
+ * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,12 +21,11 @@ import java.sql.SQLException;
 
 /**
  * log4j2의 JDBCAppender에서 사용하는 Connection 객체를 생성해주는 클래스
- * 
+ *
  * <p>Spring의 dataSource 를 injection받아 싱글톤으로 만들고
  * JDBCAppender가 Connection객체를 호출할 수 있도록 getDatabaseConnection() 메소드를 제공한다.</p>
- * 
+ *
  * @author Daniela Kwon
- * @since 2014.04.15
  * @version 3.0
  * <pre>
  * 개정이력(Modification Information)
@@ -35,30 +34,33 @@ import java.sql.SQLException;
  * ----------------------------------------------
  * 2014.04.15	Daniela Kwon		최초생성
  * </pre>
+ * @since 2014.04.15
  */
 public class EgovConnectionFactory {
 
-	private static interface Singleton {
-        final EgovConnectionFactory INSTANCE = new EgovConnectionFactory();
+    private DataSource dataSource;
+
+    /**
+     * Spring에서 설정한 dataSource를 통해 Connection을 생성하고 리턴한다.
+     *
+     * @return Connection
+     * @throws SQLException
+     */
+    public static Connection getDatabaseConnection() throws SQLException {
+        return Singleton.INSTANCE.dataSource.getConnection();
     }
 
-	private DataSource dataSource;
+    /**
+     * DataSource를 설정한다.
+     *
+     * @param dataSource Spring에서 관리하는 DataSource
+     */
+    public void setDataSource(DataSource dataSource) {
+        Singleton.INSTANCE.dataSource = dataSource;
+    }
 
-	/**
-	 * dataSource 지정한다.
-	 * @param dataSource Spring에서 관리하는 dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		Singleton.INSTANCE.dataSource = dataSource;
-	}
-
-	/**
-	 * Spring에서 설정한 dataSource를 통해 Connection을 생성하고 리턴한다. 
-	 * @return Connection
-	 * @exception SQLException
-	 */
-	public static Connection getDatabaseConnection() throws SQLException {
-		return Singleton.INSTANCE.dataSource.getConnection();
+    private static interface Singleton {
+        final EgovConnectionFactory INSTANCE = new EgovConnectionFactory();
     }
 
 }

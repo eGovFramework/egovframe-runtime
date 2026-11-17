@@ -27,11 +27,8 @@ import java.util.Map;
  * 균일하게 분산되어 있으면 최적의 상태로 작동됨
  *
  * @author 배치실행개발팀
- * @since 2012. 07.30
  * @version 1.0
- * @see
- *
- *      <pre>
+ * @see <pre>
  * == 개정이력(Modification Information) ==
  *
  *   수정일               수정자               수정내용
@@ -39,79 +36,80 @@ import java.util.Map;
  *  2012. 07.30  배치실행개발팀    최초 생성
  *
  * </pre>
+ * @since 2012. 07.30
  */
 public class EgovColumnRangePartitioner implements Partitioner {
 
-	private JdbcTemplate jdbcTemplate;
+    private JdbcTemplate jdbcTemplate;
 
-	// table
-	private String table;
+    // table
+    private String table;
 
-	// column
-	private String column;
+    // column
+    private String column;
 
-	/**
-	 * Data 가 있는 SQL 테이블 이름 셋팅
-	 */
-	public void setTable(String table) {
-		this.table = table;
-	}
+    /**
+     * Data 가 있는 SQL 테이블 이름 셋팅
+     */
+    public void setTable(String table) {
+        this.table = table;
+    }
 
-	/**
-	 * 파티션을 위한 컬럼명 셋팅
-	 */
-	public void setColumn(String column) {
-		this.column = column;
-	}
+    /**
+     * 파티션을 위한 컬럼명 셋팅
+     */
+    public void setColumn(String column) {
+        this.column = column;
+    }
 
-	/**
-	 * DB 연결을 위한 DataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		jdbcTemplate = new JdbcTemplate(dataSource);
-	}
+    /**
+     * DB 연결을 위한 DataSource
+     */
+    public void setDataSource(DataSource dataSource) {
+        jdbcTemplate = new JdbcTemplate(dataSource);
+    }
 
-	/**
-	 * DB테이블을 파션하는 것은 컬럼안의 Data들이 "균일하게 분산" 되어 있다고 가정한다. ExecutionContext 값은
-	 * <code>minValue</code> 와 <code>maxValue</code> 의 키를 갖으며, 이 키를 기준으로 각각의
-	 * 파티션에서 고려해야할 값들의 범위가 정해진다.
-	 */
-	@SuppressWarnings("deprecation")
-	@Override
-	public Map<String, ExecutionContext> partition(int gridSize) {
-		// 테이블의 특정컬럼의 가장 작은 값
-		int min = jdbcTemplate.queryForObject("SELECT MIN(" + column + ") from " + table, Integer.class);
+    /**
+     * DB테이블을 파션하는 것은 컬럼안의 Data들이 "균일하게 분산" 되어 있다고 가정한다. ExecutionContext 값은
+     * <code>minValue</code> 와 <code>maxValue</code> 의 키를 갖으며, 이 키를 기준으로 각각의
+     * 파티션에서 고려해야할 값들의 범위가 정해진다.
+     */
+    @SuppressWarnings("deprecation")
+    @Override
+    public Map<String, ExecutionContext> partition(int gridSize) {
+        // 테이블의 특정컬럼의 가장 작은 값
+        int min = jdbcTemplate.queryForObject("SELECT MIN(" + column + ") from " + table, Integer.class);
 
-		//  테이블의 특정컬럼의 가장 큰 값
-		int max = jdbcTemplate.queryForObject("SELECT MAX(" + column + ") from " + table, Integer.class);
+        //  테이블의 특정컬럼의 가장 큰 값
+        int max = jdbcTemplate.queryForObject("SELECT MAX(" + column + ") from " + table, Integer.class);
 
-		// 하나의 Execution에서 지정될 Data의 범위(크기)
-		int targetSize = (max - min) / gridSize + 1;
+        // 하나의 Execution에서 지정될 Data의 범위(크기)
+        int targetSize = (max - min) / gridSize + 1;
 
-		Map<String, ExecutionContext> result = new HashMap<String, ExecutionContext>();
-		int number = 0;
-		int start = min;
-		// targetSize 만큼 의 Data
-		int end = start + targetSize - 1;
+        Map<String, ExecutionContext> result = new HashMap<String, ExecutionContext>();
+        int number = 0;
+        int start = min;
+        // targetSize 만큼 의 Data
+        int end = start + targetSize - 1;
 
-		// 파티션된 범위의 수만큼 ExecutionContext를 생성하고 minVlaue 와 maxValue를 셋팅
-		while (start <= max) {
+        // 파티션된 범위의 수만큼 ExecutionContext를 생성하고 minVlaue 와 maxValue를 셋팅
+        while (start <= max) {
 
-			ExecutionContext value = new ExecutionContext();
-			result.put("partition" + number, value);
+            ExecutionContext value = new ExecutionContext();
+            result.put("partition" + number, value);
 
-			if (end >= max) {
-				end = max;
-			}
-			value.putInt("minValue", start);
-			value.putInt("maxValue", end);
-			start += targetSize;
-			end += targetSize;
-			number++;
-		}
+            if (end >= max) {
+                end = max;
+            }
+            value.putInt("minValue", start);
+            value.putInt("maxValue", end);
+            start += targetSize;
+            end += targetSize;
+            number++;
+        }
 
-		return result;
+        return result;
 
-	}
+    }
 
 }

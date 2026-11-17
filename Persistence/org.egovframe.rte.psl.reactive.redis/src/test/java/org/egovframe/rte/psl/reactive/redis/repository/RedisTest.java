@@ -11,7 +11,7 @@ import reactor.test.StepVerifier;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes=RedisConfiguration.class)
+@ContextConfiguration(classes = RedisConfiguration.class)
 @Slf4j
 public class RedisTest {
 

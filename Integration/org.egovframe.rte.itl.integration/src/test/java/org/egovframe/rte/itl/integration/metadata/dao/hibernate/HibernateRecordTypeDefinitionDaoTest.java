@@ -19,32 +19,29 @@ import javax.sql.DataSource;
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations="/org/egovframe/rte/itl/integration/metadata/dao/hibernate/context.xml")
-@Transactional(readOnly=false)
-public class HibernateRecordTypeDefinitionDaoTest
-{
+@ContextConfiguration(locations = "/org/egovframe/rte/itl/integration/metadata/dao/hibernate/context.xml")
+@Transactional(readOnly = false)
+public class HibernateRecordTypeDefinitionDaoTest {
     @Autowired
     private HibernateRecordTypeDefinitionDao dao;
 
     @Autowired
     private DataSource dataSource;
-    
+
     @SuppressWarnings("deprecation")
-	@Before
-    public void before() throws Exception
-    {
+    @Before
+    public void before() throws Exception {
         ReplacementDataSet dataSet = new ReplacementDataSet(new FlatXmlDataSet(
                 ResourceUtils.getFile("classpath:org/egovframe/rte/itl/integration/metadata/dao/hibernate/dataset.xml")));
         dataSet.addReplacementObject("[null]", null);
 
         IDatabaseConnection connection = new SpringDatabaseDataSourceConnection(dataSource);
-        
+
         DatabaseOperation.CLEAN_INSERT.execute(connection, dataSet);
     }
-    
+
     @Test
-    public void testReadSucceeds() throws Exception
-    {
+    public void testReadSucceeds() throws Exception {
         RecordTypeDefinition rtd0 = dao.getRecordTypeDefinition("M1");
         assertNotNull(rtd0);
         assertTrue(rtd0.isValid());
@@ -54,7 +51,7 @@ public class HibernateRecordTypeDefinitionDaoTest
         assertEquals("string", rtd0.getField("a").getTypeId());
         assertEquals("integer", rtd0.getField("b").getTypeId());
         assertEquals("boolean", rtd0.getField("c").getTypeId());
-        
+
         RecordTypeDefinition rtd1 = dao.getRecordTypeDefinition("M2");
         assertNotNull(rtd1);
         assertTrue(rtd1.isValid());
@@ -63,7 +60,7 @@ public class HibernateRecordTypeDefinitionDaoTest
         assertEquals(2, rtd1.getFields().size(), 2);
         assertEquals("string", rtd1.getField("d").getTypeId());
         assertEquals("string", rtd1.getField("e").getTypeId());
-        
+
         RecordTypeDefinition rtd2 = dao.getRecordTypeDefinition("M3");
         assertNotNull(rtd2);
         assertTrue(rtd2.isValid());
@@ -72,7 +69,7 @@ public class HibernateRecordTypeDefinitionDaoTest
         assertEquals(2, rtd2.getFields().size(), 2);
         assertEquals("integer", rtd2.getField("f").getTypeId());
         assertEquals("integer", rtd2.getField("g").getTypeId());
-        
+
         RecordTypeDefinition rtd3 = dao.getRecordTypeDefinition("M4");
         assertNotNull(rtd3);
         assertTrue(rtd3.isValid());
@@ -84,8 +81,7 @@ public class HibernateRecordTypeDefinitionDaoTest
     }
 
     @Test
-    public void testReadFails() throws Exception
-    {
+    public void testReadFails() throws Exception {
         RecordTypeDefinition rtd = dao.getRecordTypeDefinition("x");
         assertNull(rtd);
     }

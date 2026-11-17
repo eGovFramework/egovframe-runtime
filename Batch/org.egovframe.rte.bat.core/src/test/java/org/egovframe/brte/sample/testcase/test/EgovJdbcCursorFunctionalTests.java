@@ -28,48 +28,49 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import javax.sql.DataSource;
 
 /**
-* DB 의 Table을 한 라인씩 읽어서 데이터처리를 수행하는 테스트
-* @author 배치실행개발팀
-* @since 2012. 06.27
-* @version 1.0
-* @see
-*/
+ * DB 의 Table을 한 라인씩 읽어서 데이터처리를 수행하는 테스트
+ *
+ * @author 배치실행개발팀
+ * @version 1.0
+ * @see
+ * @since 2012. 06.27
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations="/org/egovframe/batch/jobs/jdbcCursorIoJob.xml")
+@ContextConfiguration(locations = "/org/egovframe/batch/jobs/jdbcCursorIoJob.xml")
 public class EgovJdbcCursorFunctionalTests extends EgovAbstractIoSampleTests {
 
-	private JdbcTemplate jdbcTemplate;
+    private JdbcTemplate jdbcTemplate;
 
-	/**
-	 * datasource 설정
-	 *
-	 * @param dataSource
-	 */
-	@Autowired
-	public void setDataSource(DataSource dataSource) {
-		this.jdbcTemplate = new JdbcTemplate(dataSource);
-	}
+    /**
+     * datasource 설정
+     *
+     * @param dataSource
+     */
+    @Autowired
+    public void setDataSource(DataSource dataSource) {
+        this.jdbcTemplate = new JdbcTemplate(dataSource);
+    }
 
-	/**
-	 * 배치작업 테스트 전에 DB관련 작업
-	 */
-	@Before
-	public void setUp() {
-		jdbcTemplate.update("DELETE from CUSTOMER");
+    /**
+     * 배치작업 테스트 전에 DB관련 작업
+     */
+    @Before
+    public void setUp() {
+        jdbcTemplate.update("DELETE from CUSTOMER");
 
-		jdbcTemplate.update("INSERT INTO CUSTOMER (ID, VERSION, NAME, CREDIT) VALUES  (1, 0, 'customer1', 100000)");
-		jdbcTemplate.update("INSERT INTO CUSTOMER (ID, VERSION, NAME, CREDIT) VALUES  (2, 0, 'customer2', 100000)");
-		jdbcTemplate.update("INSERT INTO CUSTOMER (ID, VERSION, NAME, CREDIT) VALUES  (3, 0, 'customer3', 100000)");
-		jdbcTemplate.update("INSERT INTO CUSTOMER (ID, VERSION, NAME, CREDIT) VALUES  (4, 0, 'customer4', 100000)");
+        jdbcTemplate.update("INSERT INTO CUSTOMER (ID, VERSION, NAME, CREDIT) VALUES  (1, 0, 'customer1', 100000)");
+        jdbcTemplate.update("INSERT INTO CUSTOMER (ID, VERSION, NAME, CREDIT) VALUES  (2, 0, 'customer2', 100000)");
+        jdbcTemplate.update("INSERT INTO CUSTOMER (ID, VERSION, NAME, CREDIT) VALUES  (3, 0, 'customer3', 100000)");
+        jdbcTemplate.update("INSERT INTO CUSTOMER (ID, VERSION, NAME, CREDIT) VALUES  (4, 0, 'customer4', 100000)");
 
-	}
+    }
 
-	/**
-	 * 배치결과를 다시 읽을 때  reader 설정하는 메소드
-	 */
-	@Override
-	protected void pointReaderToOutput(ItemReader<CustomerCredit> reader) {
-		// no-op
-	}
+    /**
+     * 배치결과를 다시 읽을 때  reader 설정하는 메소드
+     */
+    @Override
+    protected void pointReaderToOutput(ItemReader<CustomerCredit> reader) {
+        // no-op
+    }
 
 }

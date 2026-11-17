@@ -10,18 +10,19 @@ import javax.annotation.Resource;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:/META-INF/spring/*.xml" })
+@ContextConfiguration(locations = {"classpath:/META-INF/spring/*.xml"})
 public class EgovDigestServiceTest {
-    @Resource(name="digestService")
+
+    @Resource(name = "digestService")
     EgovDigestService digestService;
 
     @Test
     public void testDigest() {
-		String data = "egovframe";
+        String data = "egovframe";
 
-		byte[] digested = digestService.digest(data.getBytes());
+        byte[] digested = digestService.digest(data.getBytes());
         System.out.println("encryptString >>> " + new String(digested));
 
-		assertTrue(digestService.matches(data.getBytes(), digested));
+        assertTrue(digestService.matches(data.getBytes(), digested));
     }
 }
