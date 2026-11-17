@@ -63,7 +63,7 @@
         <commons-pool2.version>2.13.1</commons-pool2.version>
 
         <!-- Database -->
-        <mariadb-java-client.version>3.5.8</mariadb-java-client.version>
+        <mariadb-java-client.version>3.5.11</mariadb-java-client.version>
         <postgresql.version>42.7.11</postgresql.version>
         <hsqldb.version>2.7.4</hsqldb.version>
 
