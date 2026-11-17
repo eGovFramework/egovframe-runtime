@@ -1,0 +1,104 @@
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <groupId>org.egovframe.rte</groupId>
+        <artifactId>egovframe-rte-root</artifactId>
+        <version>5.1.0</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>egovframe-rte-ai-springai</artifactId>
+    <packaging>jar</packaging>
+    <name>org.egovframe.rte.ai.springai</name>
+    <description>The eGovernment Standard Framework</description>
+    <url>https://www.egovframe.go.kr</url>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <dependencies>
+        <!-- 기반 모듈 -->
+        <dependency>
+            <groupId>org.egovframe.rte</groupId>
+            <artifactId>egovframe-rte-ai-core</artifactId>
+        </dependency>
+
+        <!-- Spring AI 1.1.8 — 직접 import 하는 아티팩트만 직접 선언 -->
+        <dependency>
+            <!-- Document · Reader/Transformer/Writer · TextSplitter -->
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-commons</artifactId>
+        </dependency>
+        <dependency>
+            <!-- ChatModel · Prompt · ChatMemory · OutputConverter -->
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-model</artifactId>
+        </dependency>
+        <dependency>
+            <!-- ChatClient · Call/StreamAdvisor -->
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-client-chat</artifactId>
+        </dependency>
+        <dependency>
+            <!-- Query · DocumentRetriever · QueryTransformer -->
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-rag</artifactId>
+        </dependency>
+        <dependency>
+            <!-- VectorStore · Filter.Expression · SimpleVectorStore(테스트) -->
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-vector-store</artifactId>
+        </dependency>
+        <dependency>
+            <!-- TransientAiException · NonTransientAiException -->
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-retry</artifactId>
+        </dependency>
+
+        <!-- Spring Framework : Spring AI 전이 버전을 실행환경 버전(6.2.19-egov.2)으로 정렬 (nearest-wins) -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+        </dependency>
+        <!-- StreamAdvisor 의 Flux -->
+        <dependency>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-core</artifactId>
+            <!-- 버전 : 루트 직접 선언(reactor.core.version = 3.7.19-egov.2) 관리, reactor-bom 2024.0.18 보다 우선. reactor.version 은 BOM 트레인 값 — 코어 버전으로 덮어쓰기 금지 -->
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+
+        <!-- test -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- 감사 채널 테스트 : slf4j 바인딩 필요 (log4j2-test.xml 의 EGOV_AI_AUDIT=INFO) -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j2-impl</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+</project>

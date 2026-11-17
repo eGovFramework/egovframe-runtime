@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2009-2026 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -177,9 +177,8 @@ public class SecuredObjectDAO {
 
             List<ConfigAttribute> configList = new LinkedList<>();
 
-            // 이미 requestMap 에 해당 Resource 에 대한 Role 이 하나 이상 맵핑되어 있었던 경우,
-            // sort_order 는 resource(Resource) 에 대해 매겨지므로 같은 Resource 에 대한 Role 맵핑은 연속으로 조회됨.
-            // 해당 맵핑 Role List (SecurityConfig) 의 데이터를 재활용하여 새롭게 데이터 구축
+            // 이미 Role 이 맵핑된 Resource : 기존 Role List (SecurityConfig) 재활용해 재구축
+            // (sort_order 는 Resource 단위이므로 같은 Resource 의 Role 맵핑은 연속 조회)
             if (!ObjectUtils.isEmpty(preResource) && presentResourceStr.equals(preResource)) {
                 List<ConfigAttribute> preAuthList = resourcesMap.get(presentResource);
                 for (ConfigAttribute configAttribute : preAuthList) {
@@ -190,8 +189,7 @@ public class SecuredObjectDAO {
 
             configList.add(new SecurityConfig((String) tempMap.get("authority")));
 
-            // 만약 동일한 Resource 에 대해 한개 이상의 Role 맵핑 추가인 경우
-            // 이전 resourceKey 에 현재 새로 계산된 Role 맵핑 리스트로 덮어쓰게 됨.
+            // 동일 Resource 에 Role 추가 맵핑 시 이전 resourceKey 를 새 Role 리스트로 덮어씀
             resourcesMap.put(presentResource, configList);
 
             // 이전 resource 비교위해 저장
@@ -216,7 +214,7 @@ public class SecuredObjectDAO {
         Map<String, Object> tempMap;
         List<ConfigAttribute> configList = new LinkedList<>();
 
-        // 같은 Uri 에 대한 Role 맵핑이므로 무조건 configList 에 add 함
+        // 같은 Uri 에 대한 Role 맵핑이므로 무조건 configList 에 add
         while (itr.hasNext()) {
             tempMap = itr.next();
             configList.add(new SecurityConfig((String) tempMap.get("authority")));

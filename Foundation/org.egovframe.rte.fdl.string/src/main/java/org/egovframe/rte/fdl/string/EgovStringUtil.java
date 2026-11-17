@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2009-2026 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -284,9 +284,7 @@ public final class EgovStringUtil {
      * search
      */
     public static int search(String source, String target) {
-        // source 또는 target이 null/빈 문자열이면 셀 대상이 없으므로 0을 반환한다.
-        // 특히 target이 빈 문자열이면 indexOf("")가 항상 0을 반환해
-        // i가 0에 고정되어 무한 루프에 빠지므로 반드시 먼저 걸러낸다.
+        // null·빈 문자열이면 0 (빈 target 은 indexOf("")가 항상 0이라 무한 루프)
         if (source == null || source.isEmpty() || target == null || target.isEmpty()) {
             return 0;
         }
@@ -534,10 +532,10 @@ public final class EgovStringUtil {
      * @param password  Password or other credentials to use in authenticating this username
      * @param algorithm Algorithm used to do the digest
      * @return encypted password based on the algorithm.
-     * @throws IllegalArgumentException 지원하지 않는 다이제스트 알고리즘인 경우. 예전에는 평문을 그대로 돌려줬다
-     * @deprecated 솔트 없는 1회 해시라 패스워드 저장·검증에는 부적합하다. 실행환경의
-     * {@code org.egovframe.rte.fdl.security.config.EgovIdSaltSha256PasswordEncoder}(솔트 SHA-256) 나
-     * Spring Security 의 {@code org.springframework.security.crypto.password.PasswordEncoder} 구현(bcrypt·PBKDF2)을 사용한다.
+     * @throws IllegalArgumentException 지원하지 않는 다이제스트 알고리즘인 경우
+     * @deprecated 솔트 없는 1회 해시로 패스워드 저장·검증에 부적합.
+     * {@code org.egovframe.rte.fdl.security.config.EgovIdSaltSha256PasswordEncoder}(솔트 SHA-256) 또는
+     * Spring Security {@code org.springframework.security.crypto.password.PasswordEncoder} 구현(bcrypt·PBKDF2) 사용
      */
     @Deprecated
     public static String encodePassword(String password, String algorithm) {
@@ -548,7 +546,7 @@ public final class EgovStringUtil {
             md = MessageDigest.getInstance(algorithm);
             //2017.02.15 장동한 시큐어코딩(ES)-부적절한 예외 처리[CWE-253, CWE-440, CWE-754]
         } catch (NoSuchAlgorithmException e) {
-            // 평문을 돌려주면 호출자가 해시로 오인해 그대로 저장한다. 실패는 예외로 알린다.
+            // 평문 반환 시 해시로 오인 저장되므로 예외 처리
             throw new IllegalArgumentException("Unsupported digest algorithm: " + algorithm, e);
         }
 

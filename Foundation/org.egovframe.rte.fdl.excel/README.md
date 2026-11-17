@@ -2,8 +2,8 @@
 
 **Apache POI**·**jxls-poi** 기반 **엑셀 업로드/다운로드·템플릿 렌더링**과 Spring MVC **AbstractExcelView** 계열을 제공합니다. `psl.dataaccess`·`fdl.filehandling`·`fdl.cmmn`과 연동해 DB 매핑 엑셀 처리가 가능합니다.
 
-- **Artifact**: `org.egovframe.rte:egovframe-rte-fdl-excel:5.0.0`
-- **Runtime**: Java 17 / Spring Framework 6.x / Jakarta Servlet 6.x
+- **Artifact**: `org.egovframe.rte:egovframe-rte-fdl-excel:5.1.0`
+- **Runtime**: Java 17 / Spring Framework 6.2 / Jakarta Servlet 6.0 (provided)
 
 ---
 
@@ -28,6 +28,8 @@ org/egovframe/rte/fdl/excel/
 │   └── EgovExcelServiceDAO.java
 └── util/
     ├── EgovExcelUtil.java
+    ├── EgovWorkbooks.java
+    ├── FormulaInjectionSanitizer.java
     ├── AbstractExcelView.java
     └── AbstractPOIExcelView.java
 ```
@@ -40,6 +42,8 @@ org/egovframe/rte/fdl/excel/
 |--------|------|
 | `EgovExcelService` / `Impl` | 엑셀 읽기·쓰기 비즈니스 API |
 | `EgovExcelUtil` | 셀·시트·스타일 등 저수준 헬퍼 |
+| `EgovWorkbooks` | 워크북 열기·생성·저장 (xls/xlsx 내용 기반 자동 감지, 대용량 스트리밍 쓰기) |
+| `FormulaInjectionSanitizer` | 셀 값 수식 주입(CWE-1236) 방지 |
 | `AbstractExcelView` / `AbstractPOIExcelView` | Spring MVC Excel 뷰 베이스 |
 | `EgovExcelMapping` | 컬럼-필드 매핑 메타 |
 
@@ -65,7 +69,7 @@ mvn test
 <dependency>
   <groupId>org.egovframe.rte</groupId>
   <artifactId>egovframe-rte-fdl-excel</artifactId>
-  <version>5.0.0</version>
+  <version>5.1.0</version>
 </dependency>
 ```
 

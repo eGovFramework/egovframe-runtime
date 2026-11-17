@@ -17,8 +17,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * 같은 연계 서비스 인스턴스에 대해 동시에 두 건의 sendSync 호출이 들어왔을 때,
  * 락을 기다리다 타임아웃한 두 번째 호출이 이후에도 doSend를 시도하지 않음을 확인한다.
- * (수정 전에는 이 두 번째 호출의 스레드가 interrupt를 무시하고 계속 락을 기다리다,
- * 첫 번째 호출이 끝난 뒤 아무도 기다리지 않는 상태에서 뒤늦게 doSend를 실행했다.)
  */
 public class MessageSenderLockContentionTest {
 
@@ -54,8 +52,7 @@ public class MessageSenderLockContentionTest {
                 "doSend must not have been attempted yet when TIME_OUT is returned");
 
         firstCaller.join(5000);
-        // 첫 호출이 끝나 락이 풀린 뒤에도, 두 번째 호출은 이미 인터럽트되어 doSend를
-        // 다시 시도하지 않아야 한다 (뒤늦은 "유령" 전송이 없어야 한다).
+        // 락 해제 후에도 인터럽트된 두 번째 호출은 doSend 미시도 ("유령" 전송 없음)
         Thread.sleep(SLOW_SERVICE_TIME);
         assertFalse(secondActuallyRan.get(),
                 "a TIME_OUT response must not be followed by a belated (phantom) send");

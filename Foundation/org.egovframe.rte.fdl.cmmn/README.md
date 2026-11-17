@@ -2,8 +2,8 @@
 
 **Foundation 공통(Common)** 레이어입니다. 서비스 베이스 클래스, 예외/예외 처리 연계, 호출 추적(Trace) AOP를 제공하며 다른 FDL·표준 컴포넌트가 자주 의존하는 허브 역할을 합니다.
 
-- **Artifact**: `org.egovframe.rte:egovframe-rte-fdl-cmmn:5.0.0`
-- **Runtime**: Java 17 / Spring Framework 6.x
+- **Artifact**: `org.egovframe.rte:egovframe-rte-fdl-cmmn:5.1.0`
+- **Runtime**: Java 17 / Spring Framework 6.2
 - **의존**: `egovframe-rte-fdl-logging`
 
 ---
@@ -24,17 +24,29 @@ org/egovframe/rte/fdl/cmmn/
 ├── EgovAbstractServiceImpl.java
 ├── aspect/
 │   └── ExceptionTransfer.java
+├── code/
+│   ├── EgovCode.java
+│   ├── EgovCodeCache.java
+│   ├── EgovCodeLoader.java
+│   ├── EgovInMemoryCodeLoader.java
+│   └── EgovJdbcCodeLoader.java
 ├── exception/
 │   ├── BaseException.java
 │   ├── BaseRuntimeException.java
 │   ├── EgovBizException.java
+│   ├── EgovBizRuntimeException.java
+│   ├── EgovErrorMessage.java
 │   ├── FdlException.java
 │   ├── handler/
-│   │   └── ExceptionHandler.java
+│   │   ├── ExceptionHandler.java
+│   │   └── EgovLoggingExceptionHandler.java
 │   └── manager/
 │       ├── AbstractExceptionHandleManager.java
 │       ├── DefaultExceptionHandleManager.java
 │       └── ExceptionHandlerService.java
+├── message/
+│   ├── EgovDbMessageSource.java
+│   └── EgovWildcardMessageSource.java
 └── trace/
     ├── LeaveaTrace.java
     ├── handler/
@@ -53,8 +65,10 @@ org/egovframe/rte/fdl/cmmn/
 | 구분 | 클래스/역할 |
 |------|-------------|
 | 서비스 템플릿 | `EgovAbstractServiceImpl` |
-| 예외 | `EgovBizException`, `FdlException`, `BaseException` 계열 |
-| 예외 처리 매니저 | `AbstractExceptionHandleManager`, `DefaultExceptionHandleManager`, `ExceptionHandlerService` |
+| 예외 | `EgovBizException`, `EgovBizRuntimeException`(unchecked), `FdlException`, `BaseException` 계열, `EgovErrorMessage`(구조화 오류 메시지) |
+| 예외 처리 매니저 | `AbstractExceptionHandleManager`, `DefaultExceptionHandleManager`, `ExceptionHandlerService`, `EgovLoggingExceptionHandler`(기본 로깅 핸들러) |
+| 공통코드 | `EgovCodeCache`(불변 스냅숏 캐시·`reload()`), `EgovCodeLoader` SPI, `EgovJdbcCodeLoader`, `EgovInMemoryCodeLoader` |
+| 메시지 소스 | `EgovWildcardMessageSource`(basename 와일드카드), `EgovDbMessageSource`(DB 메시지) |
 | AOP | `ExceptionTransfer` |
 | 추적 | `LeaveaTrace`, `TraceHandler`, `DefaultTraceHandleManager` 등 |
 
@@ -80,7 +94,7 @@ mvn test
 <dependency>
   <groupId>org.egovframe.rte</groupId>
   <artifactId>egovframe-rte-fdl-cmmn</artifactId>
-  <version>5.0.0</version>
+  <version>5.1.0</version>
 </dependency>
 ```
 

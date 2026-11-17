@@ -20,9 +20,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * {@link EgovARIACryptoServiceImpl}의 encrypt(File, String, File)가 대상 파일을 덮어쓰는지 검증한다.
  *
- * <p>암호화 결과를 append로 기록하면 대상 파일이 이미 존재할 때 Base64 문자열이 누적된다.
- * 이 경우 복호화는 Base64 패딩 이후를 무시하므로 앞서 기록된 암호문이 복원되고, 새로 기록한
- * 암호문은 조용히 버려진다. decrypt(File, String, File)와 동일하게 덮어쓰도록 맞춘다.</p>
+ * <p>append 기록 시 기존 파일에 Base64 가 누적되어 복호화가 이전 암호문을 복원 (새 암호문 유실).
+ * decrypt(File, String, File)와 동일하게 덮어쓰기.</p>
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = EgovCryptoTestConfig.class)

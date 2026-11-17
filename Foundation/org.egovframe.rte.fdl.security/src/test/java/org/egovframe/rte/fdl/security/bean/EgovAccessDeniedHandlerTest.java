@@ -16,7 +16,7 @@ public class EgovAccessDeniedHandlerTest {
     public void handle_fallsBackToDefaultUrl_whenCsrfAccessDeniedUrlBlank() throws Exception {
         EgovSecurityConfig config = new EgovSecurityConfig();
         config.setAccessDeniedUrl("/system/accessDenied.do");
-        // csrfAccessDeniedUrl은 의도적으로 미설정 상태(null)로 둔다.
+        // csrfAccessDeniedUrl은 의도적으로 미설정(null)
 
         EgovAccessDeniedHandler handler = new EgovAccessDeniedHandler(config);
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -30,7 +30,7 @@ public class EgovAccessDeniedHandlerTest {
     public void handle_fallsBackToDefaultUrl_whenAccessDeniedUrlBlank() throws Exception {
         EgovSecurityConfig config = new EgovSecurityConfig();
         config.setAccessDeniedUrl(" ");
-        // 일반 접근거부 분기(CSRF 아님)도 동일 가드를 타는지 확인한다.
+        // 일반 접근거부 분기(CSRF 아님)도 동일 가드 적용 확인
 
         EgovAccessDeniedHandler handler = new EgovAccessDeniedHandler(config);
         MockHttpServletRequest request = new MockHttpServletRequest();

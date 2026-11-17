@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.egovframe.rte</groupId>
         <artifactId>egovframe-rte-root</artifactId>
-        <version>5.0.0</version>
+        <version>5.1.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -23,52 +23,29 @@
         </license>
     </licenses>
 
-    <properties>
-        <org.egovframe.rte.version>5.0.0</org.egovframe.rte.version>
-        <jakarta.annotation.version>3.0.0</jakarta.annotation.version>
-        <jakarta.servlet.version>6.0.0</jakarta.servlet.version>
-        <jakarta.jakartaee.version>10.0.0</jakarta.jakartaee.version>
-        <commons.beanutils.version>1.11.0</commons.beanutils.version>
-        <commons.io.version>2.18.0</commons.io.version>
-        <commons.dbcp2.version>2.13.0</commons.dbcp2.version>
-        <commons.lang3.version>3.18.0</commons.lang3.version>
-        <poi.version>5.4.0</poi.version>
-        <poi.ooxml.version>5.4.0</poi.ooxml.version>
-        <jxls.poi.version>3.0.0</jxls.poi.version>
-        <yasson.version>3.0.4</yasson.version>
-        <mockito.version>5.17.0</mockito.version>
-        <hsqldb.version>2.7.4</hsqldb.version>
-        <log4jdbc.version>1.2</log4jdbc.version>
-    </properties>
-
     <dependencies>
         <!-- eGovFramework -->
         <dependency>
             <groupId>org.egovframe.rte</groupId>
             <artifactId>egovframe-rte-fdl-cmmn</artifactId>
-            <version>${org.egovframe.rte.version}</version>
         </dependency>
         <dependency>
             <groupId>org.egovframe.rte</groupId>
             <artifactId>egovframe-rte-fdl-filehandling</artifactId>
-            <version>${org.egovframe.rte.version}</version>
         </dependency>
         <dependency>
             <groupId>org.egovframe.rte</groupId>
             <artifactId>egovframe-rte-psl-dataaccess</artifactId>
-            <version>${org.egovframe.rte.version}</version>
         </dependency>
 
         <!-- Spring -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
-            <version>${spring.framework.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
-            <version>${spring.framework.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -76,75 +53,52 @@
         <dependency>
             <groupId>jakarta.annotation</groupId>
             <artifactId>jakarta.annotation-api</artifactId>
-            <version>${jakarta.annotation.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
-            <version>${jakarta.servlet.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.platform</groupId>
-            <artifactId>jakarta.jakartaee-api</artifactId>
-            <version>${jakarta.jakartaee.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <!-- Commons & Utils -->
-        <!-- CVE-2025-48734: 취약점 보완용 업데이트 -->
         <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
-            <version>${commons.beanutils.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>${commons.io.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-dbcp2</artifactId>
-            <version>${commons.dbcp2.version}</version>
             <scope>test</scope>
         </dependency>
-        <!--CVE-2025-48924: 취약점 보완용 업데이트 -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>${commons.lang3.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
-            <version>${poi.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
-            <version>${poi.ooxml.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jxls</groupId>
             <artifactId>jxls-poi</artifactId>
-            <version>${jxls.poi.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse</groupId>
-            <artifactId>yasson</artifactId>
-            <version>${yasson.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
-            <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -152,13 +106,11 @@
         <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
-            <version>${hsqldb.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.googlecode.log4jdbc</groupId>
             <artifactId>log4jdbc</artifactId>
-            <version>${log4jdbc.version}</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -172,7 +124,6 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>${junit.jupiter.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

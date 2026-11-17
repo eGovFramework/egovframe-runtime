@@ -35,7 +35,7 @@ public class EgovCassandraConfigurationTest {
         } catch (NullPointerException | IllegalArgumentException e) {
             fail("자격증명 검증이 연결 시도를 막았다: " + e);
         } catch (RuntimeException e) {
-            // 접속할 노드가 없어서 나는 실패는 이 테스트의 관심사가 아니다.
+            // 접속 노드 부재로 인한 실패는 이 테스트 관심사 아님
         } finally {
             if (session != null) {
                 session.close();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2009-2026 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,8 +51,7 @@ public class EgovSequenceGenerator {
     private static final int SALT_BYTE_LENGTH = 16;
 
     /**
-     * 난수 소스. 랜덤 문자열과 솔트 모두 이 하나의 SecureRandom 을 쓴다.
-     * SecureRandom 은 스레드 안전하므로 공유해도 되며, 호출마다 새로 만들면 시드 수집 비용만 든다.
+     * 난수 소스 : 랜덤 문자열·솔트 공용 SecureRandom (스레드 안전, 호출마다 생성 시 시드 수집 비용만 증가)
      */
     private static final SecureRandom RANDOM = new SecureRandom();
 

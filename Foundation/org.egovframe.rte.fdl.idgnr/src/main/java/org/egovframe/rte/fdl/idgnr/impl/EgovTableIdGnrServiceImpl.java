@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2009-2026 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -181,10 +181,7 @@ public class EgovTableIdGnrServiceImpl extends AbstractDataBlockIdGnrService {
                     Object nextId;
                     Object newNextId;
                     try {
-                        // mSemaphore(AbstractIdGnrService)는 같은 JVM 내 동시성만 막는다. 여러 WAS
-                        // 인스턴스가 같은 DB를 공유하는 배포에서는 서로 다른 JVM의 트랜잭션이 이 SELECT를
-                        // 동시에 실행해 같은 next_id를 읽어갈 수 있으므로, FOR UPDATE로 행 잠금을 걸어
-                        // 다른 트랜잭션이 UPDATE 커밋 전까지 대기하도록 한다(ID 블록 중복 할당 방지).
+                        // 다중 WAS 동시 SELECT 시 같은 next_id 할당 방지 : FOR UPDATE 행 잠금 (mSemaphore 는 JVM 내부만 보호)
                         String selectQuery = "SELECT " + nextIdFieldName + " FROM " + table + " WHERE " + tableNameFieldName + " = ? FOR UPDATE";
                         LOGGER.debug("Select Query : {}", selectQuery);
                         if (useBigDecimals) {
@@ -238,8 +235,7 @@ public class EgovTableIdGnrServiceImpl extends AbstractDataBlockIdGnrService {
             if (!retryOnRace) {
                 throw new FdlException(messageSource, "error.idgnr.select.idblock", new String[]{tableName}, race.getCause());
             }
-            // 같은 DB를 쓰는 다른 인스턴스가 같은 순간 초기 행을 만들었다. 실패한 트랜잭션은 되돌아갔으므로
-            // 새 트랜잭션에서 이제 존재하는 행을 잠그고(FOR UPDATE) 정상 경로로 다음 블록을 받는다.
+            // 다른 인스턴스가 초기 행 동시 생성 : 새 트랜잭션에서 FOR UPDATE 로 정상 경로 재시도
             LOGGER.debug("Initial row for [{}] was created concurrently - retrying in a new transaction", tableName);
             return allocateIdBlock(blockSize, useBigDecimals, false);
         } catch (RuntimeException re) {

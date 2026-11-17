@@ -2,8 +2,8 @@
 
 **Commons Configuration 2**와 Spring을 이용해 **프로퍼티·설정 소스**를 통합 로딩하고, 필요 시 **DB 기반 PropertySource**를 초기화합니다.
 
-- **Artifact**: `org.egovframe.rte:egovframe-rte-fdl-property:5.0.0`
-- **Runtime**: Java 17 / Spring Framework 6.x
+- **Artifact**: `org.egovframe.rte:egovframe-rte-fdl-property:5.1.0`
+- **Runtime**: Java 17 / Spring Framework 6.2
 - **의존**: `egovframe-rte-fdl-cmmn`
 
 ---
@@ -21,6 +21,7 @@
 ```
 org/egovframe/rte/fdl/property/
 ├── EgovPropertyService.java
+├── EgovServicePropertySource.java
 ├── impl/
 │   └── EgovPropertyServiceImpl.java
 └── db/
@@ -37,6 +38,7 @@ org/egovframe/rte/fdl/property/
 | 클래스 | 설명 |
 |--------|------|
 | `EgovPropertyService` / `Impl` | 설정 조회·통합 서비스 인터페이스 및 구현 |
+| `EgovServicePropertySource` | `EgovPropertyService` 값을 Spring `Environment`에 편입 (`@Value("${...}")` 사용) |
 | `DbPropertySource` | DB 테이블 등에서 key-value 형태로 프로퍼티 제공 |
 | `DBPropertySourceInitializer` | Spring `Environment`에 DB 소스 등록 |
 
@@ -62,7 +64,7 @@ mvn test
 <dependency>
   <groupId>org.egovframe.rte</groupId>
   <artifactId>egovframe-rte-fdl-property</artifactId>
-  <version>5.0.0</version>
+  <version>5.1.0</version>
 </dependency>
 ```
 

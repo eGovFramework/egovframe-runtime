@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2009-2026 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -477,7 +477,7 @@ public class EgovWebServiceContext implements EgovIntegrationContext, Applicatio
             }
             LOGGER.debug("### EgovWebServiceContext initClient() ResponseMessageType = {}", responseType);
 
-            // ServiceEndpointInterface 정보를 생성한다.
+            // ServiceEndpointInterface 정보 생성
             ServiceEndpointInterfaceInfo serviceEndpointInterfaceInfo = null;
             try {
                 serviceEndpointInterfaceInfo = new ServiceEndpointInterfaceInfoImpl(webServiceClientDefinition, requestType, responseType);

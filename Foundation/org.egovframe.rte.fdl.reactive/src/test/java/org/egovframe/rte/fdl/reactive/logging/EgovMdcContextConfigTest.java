@@ -40,8 +40,8 @@ public class EgovMdcContextConfigTest {
     }
 
     /**
-     * userId=A 를 worker 스레드의 MDC 에 남긴 뒤, 같은 worker 스레드에서 값 없이 완료되는
-     * 시퀀스를 구독한다. 두 번째 시퀀스의 종료 콜백은 자신의 Context 값인 B 를 봐야 한다.
+     * worker 스레드 MDC 에 userId=A 를 남긴 뒤 같은 스레드에서 값 없이 완료되는 시퀀스 구독
+     * : 두 번째 시퀀스 종료 콜백은 자신의 Context 값 B 를 봐야 함
      */
     @Test
     public void completionOfNextSequenceSeesItsOwnContext() {

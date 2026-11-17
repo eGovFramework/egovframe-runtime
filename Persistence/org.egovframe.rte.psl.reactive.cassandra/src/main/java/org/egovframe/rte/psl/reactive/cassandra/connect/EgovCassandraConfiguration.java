@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2009-2026 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -103,9 +103,8 @@ public class EgovCassandraConfiguration {
                 .withLocalDatacenter(getDataCenterName())
                 .withKeyspace(getKeyspaceName())
                 .addContactPoint(InetSocketAddress.createUnresolved(getContactPoint(), getPort()));
-        // 자격증명을 설정하지 않으면 인증 없이 접속한다. 형제 EgovRedisConfiguration도 같은 처리다.
-        // 비어 있다는 판정은 드라이버의 Strings.requireNotEmpty와 같은 기준(null 또는 길이 0)을 쓴다.
-        // 한쪽만 설정된 경우는 설정 실수이므로 드라이버가 그대로 검증하도록 넘긴다.
+        // 자격증명 미설정 시 인증 없이 접속 (EgovRedisConfiguration 과 동일, 빈 값 판정은 드라이버 Strings.requireNotEmpty 기준)
+        // 한쪽만 설정 : 설정 실수이므로 드라이버 검증에 위임
         boolean hasUsername = getUsername() != null && !getUsername().isEmpty();
         boolean hasPassword = getPassword() != null && !getPassword().isEmpty();
         if (hasUsername || hasPassword) {

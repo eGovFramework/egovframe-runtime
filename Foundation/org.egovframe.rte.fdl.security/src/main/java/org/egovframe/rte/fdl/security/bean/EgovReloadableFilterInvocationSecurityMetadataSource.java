@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2009-2026 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,9 +69,8 @@ public class EgovReloadableFilterInvocationSecurityMetadataSource implements Fil
     public void reload() {
         LinkedHashMap<RequestMatcher, List<ConfigAttribute>> reloadedMap = securedObjectService.getRolesAndUrl();
         Iterator<Entry<RequestMatcher, List<ConfigAttribute>>> iterator = reloadedMap.entrySet().iterator();
-        // 새 맵을 완성한 뒤 참조를 원자적으로 교체한다.
-        // 기존 requestMap을 clear() 후 다시 채우면, 재적재 중인 빈/부분 맵을 요청 스레드가
-        // 순회하여 ConcurrentModificationException 또는 일시적 권한 소실(인가 오판)이 발생할 수 있다.
+        // 새 맵 완성 후 원자적 참조 교체
+        // (clear() 후 재적재 시 요청 스레드의 ConcurrentModificationException·일시적 권한 소실 방지)
         Map<RequestMatcher, Collection<ConfigAttribute>> reloaded = new LinkedHashMap<>();
         while (iterator.hasNext()) {
             Entry<RequestMatcher, List<ConfigAttribute>> entry = iterator.next();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2009-2026 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package org.egovframe.rte.fdl.access.config;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * egov-access schema namespace 처리를 담당하는 bean 클래스
+ * egov-access properties 설정 정보를 보관하는 bean 클래스
  *
  * <p>Desc.: 설정 간소화 처리에 사용되는 bean으로 설정에 대한 정보를 보관</p>
  *

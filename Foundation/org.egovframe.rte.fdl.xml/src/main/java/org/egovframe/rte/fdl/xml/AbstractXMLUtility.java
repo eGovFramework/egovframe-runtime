@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2009-2026 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,7 +70,7 @@ public abstract class AbstractXMLUtility {
      */
     private static final String CONFIG_PATH = "classpath:META-INF/spring/egovxmlCfg.xml";
     /**
-     * 기본 저장 경로. 경로를 지정하지 않은 저장 API 가 파일명을 바로 이어 붙인다.
+     * 기본 저장 경로 (경로 미지정 저장 API 가 파일명을 바로 이어 붙임).
      */
     private final String savedPath;
     /**
@@ -89,8 +89,7 @@ public abstract class AbstractXMLUtility {
     /**
      * AbstractXMLUtility 생성자 — {@code egovxmlCfg.xml} 의 {@code xmlconfig} 빈에서 기본 저장 경로를 읽는다.
      *
-     * <p>설정을 읽기 위해 여는 컨텍스트는 값을 읽은 뒤 바로 닫는다. 이전에는 인스턴스마다 만든 컨텍스트를
-     * 닫지 않고 필드로 보관해 유틸 객체를 만든 횟수만큼 컨텍스트가 남았다.</p>
+     * <p>설정 조회용 컨텍스트는 읽은 뒤 바로 닫음 (인스턴스마다 컨텍스트 잔존 방지)</p>
      */
     public AbstractXMLUtility() {
         try (FileSystemXmlApplicationContext context = new FileSystemXmlApplicationContext(CONFIG_PATH)) {
@@ -99,9 +98,9 @@ public abstract class AbstractXMLUtility {
     }
 
     /**
-     * 기본 저장 경로를 직접 주입받는 생성자 — 설정 파일({@code egovxmlCfg.xml})과 Spring 컨텍스트 없이 동작한다.
+     * 기본 저장 경로 직접 주입 생성자 (설정 파일 {@code egovxmlCfg.xml}·Spring 컨텍스트 불필요).
      *
-     * @param savedPath 경로를 지정하지 않은 저장 API 의 기본 위치. 파일명이 바로 이어 붙으므로 경로 구분자로 끝나야 한다
+     * @param savedPath 경로 미지정 저장 API 의 기본 위치 (파일명이 바로 붙으므로 경로 구분자로 끝나야 함)
      */
     protected AbstractXMLUtility(String savedPath) {
         this.savedPath = savedPath;
@@ -356,9 +355,7 @@ public abstract class AbstractXMLUtility {
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 
         DOMSource source = new DOMSource(doc);
-        // OutputStream을 try-with-resources로 관리해 transform 성공·예외와 무관하게 닫는다.
-        // 기존 코드는 스트림을 닫지 않아 반복 저장 시 파일 디스크립터가 누적되고,
-        // Windows에서는 파일 잠금이 지속될 수 있었다.
+        // try-with-resources : 반복 저장 시 FD 누적·Windows 파일 잠금 방지 (리소스 누수)
         try (OutputStream outputStream = Files.newOutputStream(Paths.get(path))) {
             StreamResult result = new StreamResult(outputStream);
             transformer.transform(source, result);

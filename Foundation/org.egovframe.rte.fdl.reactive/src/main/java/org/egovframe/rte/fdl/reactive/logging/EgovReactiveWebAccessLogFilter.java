@@ -39,11 +39,9 @@ import java.util.concurrent.atomic.AtomicReference;
  * <pre>method=GET uri=/api/list status=200 elapsedMs=12 requestId=… clientIp=… userId=- [error=SimpleName]</pre>
  *
  * <ul>
- *   <li>{@code doFinally} 에서 기록하므로 오류·취소로 끝난 요청도 남는다. 오류는 status 500 과 {@code error=} 로 표시하고
- *       정상 INFO, 오류·5xx 는 WARN 으로 남긴다</li>
- *   <li>requestId·clientIp·userId 는 exchange 속성({@link #ATTR_REQUEST_ID}·{@link #ATTR_CLIENT_IP}·{@link #ATTR_USER_ID})이
- *       있으면 그 값을 쓰고, 없으면 각각 {@code ServerHttpRequest.getId()}·원격 주소·{@code -} 를 쓴다. 게이트웨이 식별자나
- *       프록시 헤더를 해석하는 필터가 있으면 이 필터보다 안쪽(더 큰 order)에 두고 속성을 채우면 된다</li>
+ *   <li>{@code doFinally} 에서 기록 (오류·취소 요청 포함, 오류는 status 500 + {@code error=}). 정상 INFO, 오류·5xx WARN</li>
+ *   <li>requestId·clientIp·userId : exchange 속성({@link #ATTR_REQUEST_ID}·{@link #ATTR_CLIENT_IP}·{@link #ATTR_USER_ID}) 우선,
+ *       없으면 {@code ServerHttpRequest.getId()}·원격 주소·{@code -} (게이트웨이·프록시 헤더 해석 필터는 더 큰 order 로 배치)</li>
  *   <li>쿼리스트링은 기본으로 기록하지 않고(민감 파라미터 유출 방지), 제외 패턴은 Ant 형식(애플리케이션 내 경로 기준)</li>
  *   <li>기록 실패는 요청 처리에 전파되지 않는다</li>
  * </ul>
@@ -176,7 +174,7 @@ public class EgovReactiveWebAccessLogFilter implements WebFilter, Ordered {
             boolean failed = error != null || (code != null && code.is5xxServerError());
             emit(failed, line.toString());
         } catch (RuntimeException e) {
-            // 접근 기록 실패가 요청 처리에 새지 않도록 격리한다
+            // 접근 기록 실패는 요청 처리와 격리
             LOGGER.debug("Failed to write web access log", e);
         }
     }

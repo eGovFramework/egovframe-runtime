@@ -31,8 +31,7 @@ import org.junit.jupiter.api.Test;
 /**
  * {@link EgovLocaleFormats} 단위 테스트.
  *
- * <p>로케일을 <b>명시 지정</b>해 검증한다 — JVM 기본 로케일에 기대면 실행 환경에 따라
- * 결과가 갈려 테스트가 흔들린다.</p>
+ * <p>로케일 <b>명시 지정</b> (JVM 기본 로케일 의존 시 환경별 결과 차이)</p>
  *
  * <pre>
  * &lt;&lt; 개정이력(Modification Information) &gt;&gt;

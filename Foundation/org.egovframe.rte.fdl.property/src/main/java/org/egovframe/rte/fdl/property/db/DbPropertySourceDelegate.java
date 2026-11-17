@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2009-2026 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -82,7 +82,7 @@ public class DbPropertySourceDelegate {
                         skippedRowCount, PROPERTY_SOURCE_KEY, skippedColumnLabels);
             }
         }
-        // 조회와 변환이 모두 끝난 설정을 반영해 실패 시 기존 값을 보존한다.
+        // 조회·변환 완료 후 반영 (실패 시 기존 값 보존)
         properties = Collections.unmodifiableMap(loadedProperties);
     }
 

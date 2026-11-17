@@ -35,7 +35,7 @@ public class TypedMessageTest {
 
     @Test
     public void testSetAttachmentsRejectsNullValueAmongMultipleEntries() {
-        // 여러 entry 중 뒤쪽 하나만 value가 null이어도 검증을 통과해선 안 된다.
+        // 뒤쪽 entry 하나만 value 가 null 이어도 검증 실패해야 함
         TypedMessage message = new TypedMessage(bodyType);
         Map<String, Object> attachments = new HashMap<String, Object>();
         attachments.put("first", "ok");

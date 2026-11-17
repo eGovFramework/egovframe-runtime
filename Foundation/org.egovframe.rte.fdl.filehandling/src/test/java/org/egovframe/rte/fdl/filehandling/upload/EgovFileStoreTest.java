@@ -142,7 +142,7 @@ class EgovFileStoreTest {
 		assertEquals(EgovUploadPolicy.Reason.SIZE_EXCEEDED, ex.getReason());
 		assertEquals(0, countFiles(root));
 
-		// Path 입력은 복사 전에 걸러진다
+		// Path 입력은 복사 전 차단
 		Path src = tmp.resolve("src.bin");
 		Files.write(src, twoKb);
 		assertThrows(EgovUploadRejectedException.class, () -> store.store(src, "big.bin"));

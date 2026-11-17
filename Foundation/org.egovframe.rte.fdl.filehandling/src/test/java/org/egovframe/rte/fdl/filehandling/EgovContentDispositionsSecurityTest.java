@@ -45,7 +45,7 @@ public class EgovContentDispositionsSecurityTest {
         for (String name : HOSTILE) {
             String header = EgovContentDispositions.attachment(name);
             String quoted = header.substring(header.indexOf("filename=\"") + "filename=\"".length());
-            // 폴백 filename 값 안에 이스케이프되지 않은 " 가 있으면 파라미터 경계가 무너진다
+            // 폴백 filename 값에 이스케이프 안 된 " 가 있으면 파라미터 경계 붕괴
             int end = quoted.indexOf("\"; filename*=");
             String value = (end >= 0) ? quoted.substring(0, end) : quoted.substring(0, quoted.lastIndexOf('"'));
             assertFalse(value.replace(BS + BS, "").replace(BS + "\"", "").contains("\""),
@@ -62,7 +62,7 @@ public class EgovContentDispositionsSecurityTest {
 
     @Test
     public void RFC5987_attr_char_밖의_문자는_전부_인코딩된다() {
-        // ' * % 는 attr-char 가 아니므로 filename* 값에 그대로 나타나면 안 된다
+        // ' * % 는 attr-char 아님 — filename* 값에 그대로 노출 금지
         String header = EgovContentDispositions.attachment("한글 it's*100%.txt");
         String star = header.substring(header.indexOf("filename*=UTF-8''") + "filename*=UTF-8''".length());
         assertFalse(star.contains("'") || star.contains("*") || star.contains(" "), star);

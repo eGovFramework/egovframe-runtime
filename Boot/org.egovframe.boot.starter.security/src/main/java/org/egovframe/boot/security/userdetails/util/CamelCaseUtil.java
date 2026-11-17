@@ -1,0 +1,73 @@
+/*
+ * Copyright 2009-2026 MOIS(Ministry of the Interior and Safety).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.egovframe.boot.security.userdetails.util;
+
+/**
+ * 언더스코어 컬럼명을 camelCase 로 변환하는 유틸리티.
+ *
+ * @author 유지보수
+ * @version 5.1
+ * <pre>
+ * 개정이력(Modification Information)
+ *
+ * 수정일       수정자    수정내용
+ * ------------------------------------------------------------
+ * 2025.06.01   유지보수  최초 생성
+ * 2026.10.23   유지보수  null · 빈 문자열 처리
+ * </pre>
+ * @since 2025.06.01
+ */
+public final class CamelCaseUtil {
+
+    private CamelCaseUtil() {
+    }
+
+    public static String convert2CamelCase(String underScore) {
+        // null · 빈 문자열은 그대로 반환
+        if (underScore == null || underScore.isEmpty()) {
+            return underScore;
+        }
+
+        if (isSkipCase(underScore)) {
+            return underScore;
+        }
+
+        StringBuilder result = new StringBuilder();
+        boolean nextUpper = false;
+        int len = underScore.length();
+
+        for (int i = 0; i < len; i++) {
+            char currentChar = underScore.charAt(i);
+            if (currentChar == '_') {
+                nextUpper = true;
+            } else {
+                if (nextUpper) {
+                    result.append(Character.toUpperCase(currentChar));
+                    nextUpper = false;
+                } else {
+                    result.append(Character.toLowerCase(currentChar));
+                }
+            }
+        }
+
+        return result.toString();
+    }
+
+    private static boolean isSkipCase(String underScore) {
+        return underScore.indexOf('_') < 0 && Character.isLowerCase(underScore.charAt(0));
+    }
+
+}

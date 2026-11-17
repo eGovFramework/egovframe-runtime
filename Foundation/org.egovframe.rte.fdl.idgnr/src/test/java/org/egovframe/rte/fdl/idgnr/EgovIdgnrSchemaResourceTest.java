@@ -57,7 +57,7 @@ class EgovIdgnrSchemaResourceTest {
     private static EgovTableIdGnrServiceImpl defaultTableService(DataSource dataSource, GenericApplicationContext context, String tableName) throws Exception {
         EgovTableIdGnrServiceImpl service = new EgovTableIdGnrServiceImpl();
         service.setDataSource(dataSource);
-        service.setTableName(tableName);      // table=ids, table_name/next_id 컬럼은 구현 기본값 그대로 — 스크립트와 일치해야 한다
+        service.setTableName(tableName);      // table=ids, table_name/next_id 컬럼은 구현 기본값 — 스크립트와 일치 필요
         service.setBlockSize(2);
         service.setApplicationContext(context);
         service.afterPropertiesSet();

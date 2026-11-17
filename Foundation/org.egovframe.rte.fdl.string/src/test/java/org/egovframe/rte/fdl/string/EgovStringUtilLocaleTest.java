@@ -10,9 +10,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * 식별자 변환 메서드들이 JVM 기본 로케일과 무관하게 동작하는지 검증한다.
  *
- * <p>터키어·아제르바이잔어 로케일에서는 인자 없는 toUpperCase()/toLowerCase()가
- * i ↔ İ(U+0130) / I ↔ ı(U+0131)로 변환한다. 같은 저장소의 CamelCaseUtil은
- * Character 단위 변환을 써서 이 문제가 없다.</p>
+ * <p>터키어·아제르바이잔어 로케일 : 인자 없는 toUpperCase()/toLowerCase()가
+ * i ↔ İ(U+0130) / I ↔ ı(U+0131) 변환 (CamelCaseUtil 은 Character 단위라 무관)</p>
  */
 public class EgovStringUtilLocaleTest {
 

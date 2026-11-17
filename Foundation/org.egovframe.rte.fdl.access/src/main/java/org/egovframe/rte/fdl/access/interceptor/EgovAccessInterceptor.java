@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2009-2026 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,8 +53,7 @@ public class EgovAccessInterceptor implements HandlerInterceptor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EgovAccessInterceptor.class);
 
-    // getPathWithinApplication()이 요청 경로를 디코딩하고 contextPath 접두사만 정확히 제거해준다.
-    // (기존의 String.replace(contextPath, "")는 문자열 내 모든 occurrence를 치환해 경로가 왜곡될 수 있었음)
+    // getPathWithinApplication() : 요청 경로 디코딩 + contextPath 접두사만 제거 (String.replace 의 경로 왜곡 방지)
     private static final UrlPathHelper URL_PATH_HELPER = new UrlPathHelper();
 
     private final EgovAccessConfig config;
@@ -65,9 +64,8 @@ public class EgovAccessInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
-        // 1) UrlPathHelper: 요청 경로를 디코딩(%2e%2e 등)하고 contextPath는 접두사 위치에서만 제거.
-        // 2) StringUtils.cleanPath: "." / ".." 세그먼트와 중복 슬래시를 정규화해, 인코딩·경로 조작으로
-        //    Ant/정규식 인가 패턴을 우회하려는 시도가 정규화 전 원문 그대로 매칭되지 않도록 함.
+        // 디코딩(%2e%2e 등)·contextPath 제거 후 cleanPath 로 "."/".."·중복 슬래시 정규화
+        // (인코딩·경로 조작으로 Ant/정규식 인가 패턴 우회 방지)
         String requestUrl = StringUtils.cleanPath(URL_PATH_HELPER.getPathWithinApplication(request));
 
         // 인증 체크

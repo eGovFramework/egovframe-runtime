@@ -1,9 +1,9 @@
 # 전자정부 표준프레임워크 실행환경 (eGovFrame Runtime)
 
-[![eGovFrame](https://img.shields.io/badge/eGovFrame-5.0.2-134F8C?labelColor=white&logo=data:image/svg%2Bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNzMuMjgyIDE3My4yODIiPjxwYXRoIGZpbGw9IiNmZmYiIGQ9Ik0xNzMuMjgyIDg2LjY1YzAgNDcuODQ0LTM4Ljc5NCA4Ni42MzItODYuNjQ2IDg2LjYzMkMzOC43OTkgMTczLjI4MiAwIDEzNC40OTQgMCA4Ni42NSAwIDM4Ljc4OCAzOC43OTkgMCA4Ni42MzYgMGM0Ny44NTIgMCA4Ni42NDYgMzguNzg4IDg2LjY0NiA4Ni42NSIvPjxwYXRoIGZpbGw9IiMwMDM3NjQiIGQ9Ik0xMjcuMzg5IDgwLjU5OGMtMTMuNzkxLTkuMzY1LTMxLjQzOS01LjU0Mi00MC43MTcgOC41MzMtNy43MiAxMS43NjctMTkuNDA1IDEzLjIzNS0yMy45MDYgMTMuMjM1LTE0Ljc1MSAwLTI0LjgyNC0xMC4zNjctMjcuODE4LTIxLjA5NWgtLjAxYy0uMDM5LS4xMDgtLjA1OS0uMi0uMDktLjMwNy0uMDI1LS4xMi0uMDU2LS4yMzMtLjA4OS0uMzY2LTEuMTc3LTQuNDY3LTEuNDY3LTYuNjA5LTEuNDY3LTExLjM2OCAwLTI1LjY1IDI2LjMyMS01NC4yMTMgNjQuMjE1LTU0LjIxMyAzOC44MjkgMCA2MS4wNSAyOS41NDUgNjYuNzggNDUuOTc5LS4xMDctLjI5NS0uMjA5LS41ODEtLjI5MS0uODc3LTExLjAxNS0zMi4xMjUtNDEuNDc0LTU1LjIxNi03Ny4zNTctNTUuMjE2LTQ1LjEzIDAtODEuNzI5IDM2LjU5LTgxLjcyOSA4MS43MzkgMCA0MC4zNTEgMjkuMTA4IDc0Ljg5MSA2OS40NzkgNzQuODkxIDMyLjE5NyAwIDUzLjg0Mi0xOC4wNTIgNjMuNzU3LTQyLjkzIDUuNDUtMTMuNjE0IDEuNTk1LTI5LjYwNS0xMC43NTctMzguMDA1Ii8%2BPHBhdGggZmlsbD0iI2U0MDMyZSIgZD0iTTE2NC43ODggNjIuNTg5Yy00Ljc3Ny0xNi4wMjYtMjcuMTUzLTQ3LjU3MS02Ny4yODItNDcuNTcxLTM3Ljg5NCAwLTY0LjIxNCAyOC41NjMtNjQuMjE0IDU0LjIxMiAwIDQuNzU5LjI5IDYuOTAxIDEuNDY2IDExLjM2OC0uNDg5LTEuOTUxLS43NC0zLjkwOC0uNzQtNS44MjMgMC0yNi43MjEgMjYuNzQxLTQ1LjIyNyA1NC4yNDgtNDUuMjI3IDM3LjIxOCAwIDY3LjM4OCAzMC4xNzQgNjcuMzg4IDY3LjM5IDAgMjkuMTczLTE2Ljc4NSA1NC40MzctNDEuMTc5IDY2LjU2NXYuMDIzYzMxLjQ1NS0xMS4zOTEgNTMuOTA4LTQxLjUxMiA1My45MDgtNzYuODg0IDAtOC4zNzgtMS4xMjctMTUuNzU5LTMuNTk1LTI0LjA1MyIvPjwvc3ZnPg%3D%3D)](https://www.egovframe.go.kr)
+[![eGovFrame](https://img.shields.io/badge/eGovFrame-5.1.0--Beta2-134F8C?labelColor=white&logo=data:image/svg%2Bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNzMuMjgyIDE3My4yODIiPjxwYXRoIGZpbGw9IiNmZmYiIGQ9Ik0xNzMuMjgyIDg2LjY1YzAgNDcuODQ0LTM4Ljc5NCA4Ni42MzItODYuNjQ2IDg2LjYzMkMzOC43OTkgMTczLjI4MiAwIDEzNC40OTQgMCA4Ni42NSAwIDM4Ljc4OCAzOC43OTkgMCA4Ni42MzYgMGM0Ny44NTIgMCA4Ni42NDYgMzguNzg4IDg2LjY0NiA4Ni42NSIvPjxwYXRoIGZpbGw9IiMwMDM3NjQiIGQ9Ik0xMjcuMzg5IDgwLjU5OGMtMTMuNzkxLTkuMzY1LTMxLjQzOS01LjU0Mi00MC43MTcgOC41MzMtNy43MiAxMS43NjctMTkuNDA1IDEzLjIzNS0yMy45MDYgMTMuMjM1LTE0Ljc1MSAwLTI0LjgyNC0xMC4zNjctMjcuODE4LTIxLjA5NWgtLjAxYy0uMDM5LS4xMDgtLjA1OS0uMi0uMDktLjMwNy0uMDI1LS4xMi0uMDU2LS4yMzMtLjA4OS0uMzY2LTEuMTc3LTQuNDY3LTEuNDY3LTYuNjA5LTEuNDY3LTExLjM2OCAwLTI1LjY1IDI2LjMyMS01NC4yMTMgNjQuMjE1LTU0LjIxMyAzOC44MjkgMCA2MS4wNSAyOS41NDUgNjYuNzggNDUuOTc5LS4xMDctLjI5NS0uMjA5LS41ODEtLjI5MS0uODc3LTExLjAxNS0zMi4xMjUtNDEuNDc0LTU1LjIxNi03Ny4zNTctNTUuMjE2LTQ1LjEzIDAtODEuNzI5IDM2LjU5LTgxLjcyOSA4MS43MzkgMCA0MC4zNTEgMjkuMTA4IDc0Ljg5MSA2OS40NzkgNzQuODkxIDMyLjE5NyAwIDUzLjg0Mi0xOC4wNTIgNjMuNzU3LTQyLjkzIDUuNDUtMTMuNjE0IDEuNTk1LTI5LjYwNS0xMC43NTctMzguMDA1Ii8%2BPHBhdGggZmlsbD0iI2U0MDMyZSIgZD0iTTE2NC43ODggNjIuNTg5Yy00Ljc3Ny0xNi4wMjYtMjcuMTUzLTQ3LjU3MS02Ny4yODItNDcuNTcxLTM3Ljg5NCAwLTY0LjIxNCAyOC41NjMtNjQuMjE0IDU0LjIxMiAwIDQuNzU5LjI5IDYuOTAxIDEuNDY2IDExLjM2OC0uNDg5LTEuOTUxLS43NC0zLjkwOC0uNzQtNS44MjMgMC0yNi43MjEgMjYuNzQxLTQ1LjIyNyA1NC4yNDgtNDUuMjI3IDM3LjIxOCAwIDY3LjM4OCAzMC4xNzQgNjcuMzg4IDY3LjM5IDAgMjkuMTczLTE2Ljc4NSA1NC40MzctNDEuMTc5IDY2LjU2NXYuMDIzYzMxLjQ1NS0xMS4zOTEgNTMuOTA4LTQxLjUxMiA1My45MDgtNzYuODg0IDAtOC4zNzgtMS4xMjctMTUuNzU5LTMuNTk1LTI0LjA1MyIvPjwvc3ZnPg%3D%3D)](https://www.egovframe.go.kr)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue?logo=apache&logoColor=white)](https://www.apache.org/licenses/LICENSE-2.0.txt)
 [![Java](https://img.shields.io/badge/Java-17-orange?logo=openjdk&logoColor=white)](https://openjdk.org/projects/jdk/17/)
-[![Spring Framework](https://img.shields.io/badge/Spring%20Framework-6.2.11-brightgreen?logo=spring&logoColor=white)](https://spring.io/projects/spring-framework)
+[![Spring Framework](https://img.shields.io/badge/Spring%20Framework-6.2.19--egov.2-brightgreen?logo=spring&logoColor=white)](https://spring.io/projects/spring-framework)
 [![Maven](https://img.shields.io/badge/Maven-3.6+-red?logo=apachemaven&logoColor=white)](https://maven.apache.org/)
 
 전자정부 표준프레임워크의 런타임 컴포넌트를 제공하는 멀티 모듈 Maven 프로젝트입니다.
@@ -13,6 +13,7 @@
 - [소개](#소개)
 - [주요 기능](#주요-기능)
 - [프로젝트 구조](#프로젝트-구조)
+- [주요 라이브러리 버전](#주요-라이브러리-버전)
 - [요구사항](#요구사항)
 - [빌드 및 설치](#빌드-및-설치)
 - [라이브러리별 특징 및 기능](#라이브러리별-특징-및-기능)
@@ -28,13 +29,19 @@
 
 ### 주요 특징
 
-- **계층화된 아키텍처**: Foundation, Integration, Persistence, Presentation 레이어로 구성
-- **Spring Framework 기반**: Spring 6.2.11 기반의 최신 기술 스택 적용
+- **계층화된 아키텍처**: Foundation, Integration, Persistence, Presentation, Batch 레이어와 AI 영역으로 구성 (그 외 Boot 스타터 4종 · 적용 프로젝트용 Parent POM 2종)
+- **Spring Framework 기반**: Spring 6.2.19-egov.2, Spring Security 6.5.11-egov.2, Spring Batch 5.2.6-egov.2 등 최신 기술 스택 적용
 - **Java 17 지원**: 최신 Java 기능 활용
 - **멀티 모듈 구조**: 필요한 모듈만 선택적으로 사용 가능
 - **리액티브 프로그래밍 지원**: Spring WebFlux 기반 리액티브 모듈 제공
+- **AI 지원**: 프레임워크 중립 AI 기반 모듈과 Spring AI · LangChain4j 어댑터 제공
 
 ## 주요 기능
+
+### AI 영역
+- **AI Core**: Spring AI · LangChain4j 타입에 의존하지 않는 기반 부품 (문서 추출, 텍스트 분할·정규화, 개인정보 마스킹, 프롬프트 인젝션 가드, 어휘 검색·RRF 융합, 감사 등)
+- **Spring AI 어댑터**: Spring AI 확장점(DocumentReader/Transformer, DocumentRetriever, Advisor 등)에 AI Core 부품 연결
+- **LangChain4j 어댑터**: LangChain4j 확장점(ETL, RAG, 메모리, 가드레일, 관측 등)에 AI Core 부품 연결
 
 ### Foundation Layer (기반 레이어)
 - **공통 서비스**: 예외 처리, 로깅, 메일 발송
@@ -72,44 +79,83 @@
 ## 프로젝트 구조
 
 ```
-egovframe-runtime/
+egovframe-runtime-5.1.0/
+├── AI/
+│   ├── org.egovframe.rte.ai.core/                # AI 기반(프레임워크 중립)
+│   ├── org.egovframe.rte.ai.langchain4j/         # LangChain4j 어댑터
+│   └── org.egovframe.rte.ai.springai/            # Spring AI 어댑터
 ├── Batch/
-│   └── org.egovframe.rte.bat.core/          # 배치 처리
+│   └── org.egovframe.rte.bat.core/               # 배치 처리
 ├── Foundation/
-│   ├── org.egovframe.rte.fdl.access/        # 접근 제어
-│   ├── org.egovframe.rte.fdl.cmmn/          # 공통 서비스
-│   ├── org.egovframe.rte.fdl.crypto/        # 암호화
-│   ├── org.egovframe.rte.fdl.excel/         # Excel 처리
-│   ├── org.egovframe.rte.fdl.filehandling/  # 파일 처리
-│   ├── org.egovframe.rte.fdl.idgnr/         # ID 생성
-│   ├── org.egovframe.rte.fdl.logging/       # 로깅
-│   ├── org.egovframe.rte.fdl.property/      # 속성 관리
-│   ├── org.egovframe.rte.fdl.reactive/      # 리액티브 지원
-│   ├── org.egovframe.rte.fdl.security/      # 보안
-│   ├── org.egovframe.rte.fdl.string/        # 문자열 처리
-│   └── org.egovframe.rte.fdl.xml/           # XML 처리
+│   ├── org.egovframe.rte.fdl.access/             # 접근 제어
+│   ├── org.egovframe.rte.fdl.cmmn/               # 공통 서비스
+│   ├── org.egovframe.rte.fdl.crypto/             # 암호화
+│   ├── org.egovframe.rte.fdl.excel/              # Excel 처리
+│   ├── org.egovframe.rte.fdl.filehandling/       # 파일 처리
+│   ├── org.egovframe.rte.fdl.idgnr/              # ID 생성
+│   ├── org.egovframe.rte.fdl.logging/            # 로깅
+│   ├── org.egovframe.rte.fdl.property/           # 속성 관리
+│   ├── org.egovframe.rte.fdl.reactive/           # 리액티브 지원
+│   ├── org.egovframe.rte.fdl.security/           # 보안
+│   ├── org.egovframe.rte.fdl.string/             # 문자열 처리
+│   └── org.egovframe.rte.fdl.xml/                # XML 처리
 ├── Integration/
-│   ├── org.egovframe.rte.itl.integration/   # 시스템 연계
-│   └── org.egovframe.rte.itl.webservice/    # 웹 서비스
+│   ├── org.egovframe.rte.itl.integration/        # 시스템 연계
+│   └── org.egovframe.rte.itl.webservice/         # 웹 서비스
 ├── Persistence/
-│   ├── org.egovframe.rte.psl.data.jpa/      # JPA
-│   ├── org.egovframe.rte.psl.data.mongodb/  # MongoDB
-│   ├── org.egovframe.rte.psl.dataaccess/    # 데이터 접근
-│   ├── org.egovframe.rte.psl.reactive.cassandra/  # Reactive Cassandra
+│   ├── org.egovframe.rte.psl.data.jpa/           # JPA
+│   ├── org.egovframe.rte.psl.data.mongodb/       # MongoDB
+│   ├── org.egovframe.rte.psl.dataaccess/         # 데이터 접근
+│   ├── org.egovframe.rte.psl.reactive.cassandra/ # Reactive Cassandra
 │   ├── org.egovframe.rte.psl.reactive.mongodb/   # Reactive MongoDB
 │   ├── org.egovframe.rte.psl.reactive.r2dbc/     # Reactive R2DBC
 │   └── org.egovframe.rte.psl.reactive.redis/     # Reactive Redis
 ├── Presentation/
-│   ├── org.egovframe.rte.ptl.mvc/           # Spring MVC
-│   └── org.egovframe.rte.ptl.reactive/      # Spring WebFlux
-└── pom.xml                                   # 루트 POM
+│   ├── org.egovframe.rte.ptl.mvc/                # Spring MVC
+│   └── org.egovframe.rte.ptl.reactive/           # Spring WebFlux
+├── Boot/                                         # Spring Boot 스타터 (부모 : 루트 POM)
+│   ├── org.egovframe.boot.starter.access/        # 접근 제어
+│   ├── org.egovframe.boot.starter.crypto/        # 암호화
+│   ├── org.egovframe.boot.starter.logging/       # 로깅·추적
+│   └── org.egovframe.boot.starter.security/      # 보안
+├── Parent/                                       # 적용 프로젝트용 부모 POM
+│   ├── org.egovframe.boot.starter.parent/        # egovframe-boot-starter-parent (Spring Boot 3.5.16)
+│   └── org.egovframe.web.config.parent/          # egovframe-web-config-parent (Jakarta EE 9.1)
+└── pom.xml                                       # 루트 POM (egovframe-rte-root 5.1.0)
 ```
+
+## 주요 라이브러리 버전
+
+루트 `pom.xml`(`egovframe-rte-root` 5.1.0)의 `properties` / `dependencyManagement` 기준입니다. `dependencyManagement` 는 직접 선언 135개(실행환경 `egovframe-rte-*` 27개 · `egovframe-boot-starter-*` 4개 포함) + BOM import 12개로 구성됩니다.
+
+| 구분 | 라이브러리 | 버전 |
+|------|-----------|------|
+| AI | Spring AI / LangChain4j | 1.1.8 (egov 빌드 5종 `commons`·`model`·`template-st`·`pdf-document-reader`·`transformers` 은 1.1.8-egov.1) / 1.18.1 |
+| AI | PDFBox / Jedis / hwplib / hwpxlib | 3.0.7 / 6.0.0 / 1.1.9 / 1.0.8 |
+| Spring | Spring Framework | 6.2.19-egov.2 (eGov 자체 빌드) |
+| Spring | Spring Security | 6.5.11-egov.2 (eGov 자체 빌드) |
+| Spring | Spring Batch | 5.2.6-egov.2 (eGov 자체 빌드) |
+| Spring | Spring Data (릴리스 트레인) | 2025.0.13 (Commons 3.5.13, MongoDB 4.5.13) |
+| Spring | Spring Data JPA | 3.5.13-egov.2 (eGov 자체 빌드, 개별 관리) |
+| Spring | Spring Integration | 6.5.10-egov.2 (eGov 자체 빌드) |
+| Reactive | Reactor (BOM) / Reactor Core | 2024.0.18 (Spring Framework 6.2 · Boot 3.5.16 기준) / 3.7.19-egov.2 (eGov 자체 빌드, 개별 관리) |
+| Reactive | Reactor Netty | 1.2.18 (직접 선언 고정 — 1.3.x 는 Netty 4.2 전용) |
+| Observability | Micrometer / Micrometer Tracing | 1.15.12 (micrometer-* 직접 선언 고정. `commons`·`observation`·`core`·`registry-statsd` 는 1.15.12-egov.2 eGov 자체 빌드) / 1.5.12 (`micrometer-tracing`·`-bridge-brave` 는 1.5.12-egov.2 eGov 자체 빌드) |
+| 기타 BOM | Netty / Jackson | 4.1.138.Final / 2.21.8 |
+| Persistence | Hibernate ORM / MyBatis | 6.6.58.Final / 3.5.19 |
+| Logging | Log4j2 / SLF4J | 2.26.1 / 2.0.20 |
+| Commons | Lang3 / IO / Codec | 3.20.0 / 2.22.0 / 1.22.1 |
+| Jakarta | Servlet / Validation / Persistence | 6.0.0 / 3.1.1 / 3.1.0 |
+| Etc | POI / Lombok / CXF | 5.5.1 / 1.18.48 / 4.2.3 |
+| Test | JUnit / Mockito | 5.12.2 (Spring Boot 3.5.16 기준) / 5.24.0 |
+
+> Spring Boot 는 BOM 을 import 하지 않고 Boot 스타터(`Boot/*`)가 쓰는 아티팩트만 3.5.16 으로 개별 관리합니다. Spring Cloud · Spring LDAP · Spring for Apache Kafka 는 런타임 pom 에 선언되어 있지 않으며, 앱 또는 `egovframe-boot-starter-parent`(Spring Boot 3.5.16) / `egovframe-web-config-parent` 에서 가져옵니다.
 
 ## 요구사항
 
 - **Java**: JDK 17 이상
 - **Maven**: 3.6 이상
-- **Spring Framework**: 6.2.11
+- **Spring Framework**: 6.2.19-egov.2
 - **빌드 도구**: Maven
 
 ## 빌드 및 설치
@@ -121,7 +167,7 @@ egovframe-runtime/
 git clone <repository-url>
 cd <repository-directory>
 
-# 전체 프로젝트 빌드 및 설치
+# 전체 프로젝트 빌드 및 설치 (AI 모듈 포함)
 mvn clean install
 ```
 
@@ -131,6 +177,15 @@ mvn clean install
 # 특정 모듈 빌드 예시
 cd Foundation/org.egovframe.rte.fdl.cmmn
 mvn clean install
+```
+
+### AI 모듈 빌드
+
+AI 모듈은 루트 POM의 `<modules>`에 포함되어 있어 전체 빌드에 함께 빌드됩니다. AI 모듈만 빌드하려면 루트에서 `-pl`을 사용합니다.
+
+```bash
+# 루트에서 AI 모듈 3개만 빌드 (ai.core 가 어댑터보다 먼저 빌드됨)
+mvn clean install -pl AI/org.egovframe.rte.ai.core,AI/org.egovframe.rte.ai.langchain4j,AI/org.egovframe.rte.ai.springai
 ```
 
 ### 테스트 실행
@@ -159,12 +214,16 @@ mvn test
 
 ## 라이브러리별 특징 및 기능
 
-버전 **5.0.0** 기준 Maven 좌표는 `org.egovframe.rte:<artifactId>:5.0.0` 형태입니다. 상세 사용법은 일부 모듈(`/Foundation/.../README.md`)에 별도 문서가 있습니다.
+버전 **5.1.0** 기준 Maven 좌표는 `org.egovframe.rte:<artifactId>:5.1.0` 형태입니다. 상세 사용법은 각 모듈 디렉터리의 `README.md`(`Foundation/` · `AI/` · `Boot/` · `Parent/` 등)를 참고합니다.
 
 ### 요약 표
 
 | 계층 | 디렉터리(모듈) | Artifact ID | 한 줄 설명 |
 |------|----------------|-------------|------------|
+| AI | `ai.core` | `egovframe-rte-ai-core` | 프레임워크 중립 AI 기반(문서 추출·청킹·PII 마스킹·가드·검색 융합) |
+| AI | `ai.langchain4j` | `egovframe-rte-ai-langchain4j` | `ai.core` 의 LangChain4j 어댑터 |
+| AI | `ai.springai` | `egovframe-rte-ai-springai` | `ai.core` 의 Spring AI 어댑터 |
+| Batch | `bat.core` | `egovframe-rte-bat-core` | Spring Batch 확장 Item·리스너·실행기 |
 | Foundation | `fdl.logging` | `egovframe-rte-fdl-logging` | Log4j2·SLF4J 기반 공통 로깅 스택 |
 | Foundation | `fdl.cmmn` | `egovframe-rte-fdl-cmmn` | 서비스·트랜잭션·AOP 등 공통 기반 |
 | Foundation | `fdl.string` | `egovframe-rte-fdl-string` | 문자열·인코딩 등 유틸리티 |
@@ -188,7 +247,8 @@ mvn test
 | Persistence | `psl.reactive.redis` | `egovframe-rte-psl-reactive-redis` | Spring Data Redis·Lettuce 리액티브 |
 | Presentation | `ptl.mvc` | `egovframe-rte-ptl-mvc` | Spring MVC 뷰·검증·태그 확장 |
 | Presentation | `ptl.reactive` | `egovframe-rte-ptl-reactive` | WebFlux 기반 표현 계층·검증 |
-| Batch | `bat.core` | `egovframe-rte-bat-core` | Spring Batch 확장 Item·리스너·실행기 |
+
+> 위 27개 외에 Boot 스타터 4종(`org.egovframe.boot:egovframe-boot-starter-{access,crypto,logging,security}`, `Boot/*/README.md`)과 적용 프로젝트용 Parent POM 2종(`egovframe-boot-starter-parent` · `egovframe-web-config-parent`, `Parent/*/README.md`)이 같은 버전으로 함께 빌드·배포됩니다.
 
 ---
 
@@ -332,6 +392,33 @@ mvn test
 
 ---
 
+### AI 영역 (`AI/`)
+
+> 루트 POM의 `<modules>`와 `dependencyManagement`에서 다른 모듈과 함께 일괄 관리되며, 사용 시 버전을 생략할 수 있습니다. AI 라이브러리 버전(Spring AI 1.1.8, LangChain4j 1.18.1 등)은 루트 `properties`에서 관리하고 `egovframe-boot-starter-parent` 5.1.0 · `egovframe-web-config-parent` 5.1.0과 동일하게 유지합니다.
+
+| 모듈 | Artifact ID | 한 줄 설명 |
+|------|-------------|------------|
+| `ai.core` | `egovframe-rte-ai-core` | Spring AI · LangChain4j에 의존하지 않는 AI 기반 부품 |
+| `ai.langchain4j` | `egovframe-rte-ai-langchain4j` | LangChain4j 어댑터 |
+| `ai.springai` | `egovframe-rte-ai-springai` | Spring AI 어댑터 |
+
+#### `egovframe-rte-ai-core`
+
+- **특징**: 두 프레임워크 어댑터가 공통으로 호출하는 단일 원천. 컴파일 의존은 로깅 API(`slf4j-api`)로 한정하고(다른 실행환경 모듈에 의존하지 않음), 문서 파서(hwplib·hwpxlib·POI·PDFBox)와 어휘 검색 클라이언트(Jedis·spring-jdbc)는 `optional`입니다.
+- **기능**: 문서 추출(`document`), 텍스트 분할·정규화(`text`), 수집 파이프라인(`ingest`), 개인정보 마스킹(`pii`), 프롬프트·응답 처리(`prompt`·`response`), 가드(`guard`), 검색(`retrieval`), 감사(`audit`).
+
+#### `egovframe-rte-ai-langchain4j`
+
+- **특징**: `ai.core` 부품을 LangChain4j 확장점에 연결하는 얇은 어댑터. LangChain4j 1.18.1 기준.
+- **기능**: ETL(`etl`), RAG(`rag`), 대화 메모리(`memory`), 가드레일(`guardrail`), 관측(`observability`), 응답(`response`).
+
+#### `egovframe-rte-ai-springai`
+
+- **특징**: `ai.core` 부품을 Spring AI 확장점에 연결하는 얇은 어댑터. Spring AI 1.1.8 기준이며 벡터 저장소 · 모델 클라이언트 · Spring Boot는 사용하는 앱이 선택합니다.
+- **기능**: ETL(`etl`), RAG(`rag`), 가드(`guard`), 응답(`response`).
+
+---
+
 ## 사용 예시
 
 ### Maven 의존성 추가
@@ -340,7 +427,7 @@ mvn test
 <dependency>
     <groupId>org.egovframe.rte</groupId>
     <artifactId>egovframe-rte-fdl-cmmn</artifactId>
-    <version>5.0.0</version>
+    <version>5.1.0</version>
 </dependency>
 ```
 
@@ -360,7 +447,7 @@ public class SampleService extends EgovAbstractServiceImpl {
 이 프로젝트는 [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0.txt) 라이선스를 따릅니다.
 
 ```
-Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+Copyright 2009-2026 MOIS(Ministry of the Interior and Safety).
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -400,4 +487,4 @@ limitations under the License.
 
 ---
 
-**전자정부 표준프레임워크 런타임 5.0.0** - 공공기관 정보시스템 개발을 위한 표준화된 컴포넌트 제공
+**전자정부 표준프레임워크 런타임 5.1.0** - 공공기관 정보시스템 개발을 위한 표준화된 컴포넌트 제공

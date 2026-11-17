@@ -29,8 +29,7 @@ import org.junit.jupiter.api.Test;
 /**
  * {@link EgovHangulSearchUtil} 단위 테스트.
  *
- * <p>초성 산출의 유니코드 경계와 검색 계약을 고정한다 — 겹자음·종성이 있는 음절, 음절 범위의 양 끝,
- * 자모 하나는 음절이 아니라는 점, 질의에 완성형 음절이 섞였을 때의 정규화.</p>
+ * <p>초성 산출 유니코드 경계·검색 계약 고정 (겹자음·종성 음절, 음절 범위 양 끝, 단독 자모, 완성형 음절 질의 정규화)</p>
  *
  * <pre>
  * &lt;&lt; 개정이력(Modification Information) &gt;&gt;
@@ -176,7 +175,7 @@ class EgovHangulSearchUtilTest {
 			assertEquals(List.of("국세청"), 초성으로_거르기("ㄱㅅㅊ"));
 			assertEquals(List.of("고용노동부"), 초성으로_거르기("ㄱㅇ"));
 			assertEquals(List.of("기획재정부"), 초성으로_거르기("ㄱㅎ"));
-			// 앞에서만 찾지 않는다 — 기획재정부(ㄱㅎㅈㅈㅂ)의 가운데에도 "ㅎㅈ"가 있다
+			// 앞부분만 검색하지 않음 — 기획재정부(ㄱㅎㅈㅈㅂ) 가운데의 "ㅎㅈ"도 일치
 			assertEquals(List.of("행정안전부", "기획재정부"), 초성으로_거르기("ㅎㅈ"));
 			assertEquals(List.of("국세청", "조달청"), 초성으로_거르기("ㅊ"));
 			assertEquals(List.of(), 초성으로_거르기("ㅋㅋ"));

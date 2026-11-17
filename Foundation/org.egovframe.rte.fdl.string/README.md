@@ -2,9 +2,9 @@
 
 문자열·날짜·숫자·객체 관련 **공통 유틸리티**를 제공합니다. Spring `ApplicationContext`와 함께 사용되는 경량 FDL 모듈입니다.
 
-- **Artifact**: `org.egovframe.rte:egovframe-rte-fdl-string:5.0.0`
-- **Runtime**: Java 17 / Spring Framework 6.x
-- **의존**: `egovframe-rte-fdl-logging`, `commons-codec`
+- **Artifact**: `org.egovframe.rte:egovframe-rte-fdl-string:5.1.0`
+- **Runtime**: Java 17 / Spring Framework 6.2
+- **의존**: `egovframe-rte-fdl-logging`, `commons-codec`, `icu4j`(optional, 음력 변환 사용 시)
 
 ---
 
@@ -22,7 +22,14 @@ org/egovframe/rte/fdl/string/
 ├── EgovStringUtil.java
 ├── EgovDateUtil.java
 ├── EgovNumericUtil.java
-└── EgovObjectUtil.java
+├── EgovObjectUtil.java
+├── EgovOutputEncoder.java
+├── EgovLocaleFormats.java
+├── EgovLunarDate.java
+├── EgovLunarDates.java
+├── EgovHangulSearchUtil.java
+├── EgovKoreanCurrencyUtil.java
+└── EgovKoreanParticles.java
 ```
 
 ---
@@ -35,6 +42,12 @@ org/egovframe/rte/fdl/string/
 | `EgovDateUtil` | 날짜/시간 포맷·계산 |
 | `EgovNumericUtil` | 숫자 파싱·검증 |
 | `EgovObjectUtil` | 객체 비교·toString 등 공통 처리 |
+| `EgovOutputEncoder` | 출력 컨텍스트별(HTML 본문·속성·JavaScript·URL) 인코딩 |
+| `EgovLocaleFormats` | 로케일별 숫자·통화·백분율·날짜 형식화 |
+| `EgovLunarDates` / `EgovLunarDate` | 양력↔음력 변환 (ICU4J 필요) |
+| `EgovHangulSearchUtil` | 한글 초성 추출·초성 검색 |
+| `EgovKoreanCurrencyUtil` | 숫자 금액 → 한글 금액 표기 |
+| `EgovKoreanParticles` | 받침 유무에 맞는 조사 선택 |
 
 ---
 
@@ -58,7 +71,7 @@ mvn test
 <dependency>
   <groupId>org.egovframe.rte</groupId>
   <artifactId>egovframe-rte-fdl-string</artifactId>
-  <version>5.0.0</version>
+  <version>5.1.0</version>
 </dependency>
 ```
 

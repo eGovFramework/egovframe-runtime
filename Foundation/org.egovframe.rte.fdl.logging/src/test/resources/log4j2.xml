@@ -2,7 +2,7 @@
 <Configuration status="error">
 
     <Properties>
-        <!-- SMTPAppender를 위한 프로퍼티 설정 -->
+        <!-- SMTPAppender용 프로퍼티 설정 -->
         <Property name="smtp.subject">Error Log</Property>
         <Property name="smtp.to">logging@egovframe.com</Property>
         <Property name="smtp.from">log4j@log4j.org</Property>
@@ -37,17 +37,17 @@
             <PatternLayout>
                 <Pattern>%d %5p [%c] %m%n</Pattern>
             </PatternLayout>
-            <!-- TriggeringPolicy 설정 - 로그 생성에 대한 규칙을 나타냄
+            <!-- TriggeringPolicy 설정 - 로그 생성 규칙
                     *size 단위 생략시 Byte -->
             <Policies>
                 <SizeBasedTriggeringPolicy size="1000"/>
             </Policies>
-            <!-- RolloverStrategy(DefaultRolloverStrategy) 설정 - 파일 생성에 대한 규칙을 나타냄
+            <!-- RolloverStrategy(DefaultRolloverStrategy) 설정 - 파일 생성 규칙
                     *fileIndex=max(default), min=1(default), max 속성 지정 -->
             <DefaultRolloverStrategy max="3" fileIndex="min"/>
         </RollingFile>
 
-        <!-- DailyRolling을 위한 RollingFile Appender 설정
+        <!-- DailyRolling용 RollingFile Appender 설정
                 *fileName=target파일이름, filePattern=history파일 생성규칙, append=true(default) -->
         <RollingFile name="dailyRollingFile" fileName="./logs/daily/dailyRollingSample.log"
                      filePattern="./logs/daily/dailyRollingSample.log.%d{yyyy-MM-dd-HH-mm-ss}">
@@ -76,7 +76,7 @@
          -->
 
         <!-- Socket Appender 설정
-                *객체 형태로 로그를 전달 -->
+                *객체 형태로 로그 전달 -->
         <!--
         <Socket name="socket" host="localhost" port="4448" protocol="TCP"
             reconnectionDelay="5000">
@@ -84,8 +84,8 @@
         </Socket>
          -->
 
-        <!-- SMPT Appender 설정
-                * log4j2.xml 맨 위의 <Properties> 설정을 확인하고 변경한다 -->
+        <!-- SMTP Appender 설정
+                * 맨 위 <Properties> 설정 확인 후 변경 -->
         <!--
         <SMTP name="mail" subject="${smtp.subject}" to="${smtp.to}" from="${smtp.from}"
             smtpHost="${smtp.host}" smtpPort="${smtp.port}" bufferSize="100">

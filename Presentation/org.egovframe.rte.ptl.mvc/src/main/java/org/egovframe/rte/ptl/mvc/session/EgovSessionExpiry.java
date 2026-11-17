@@ -105,8 +105,7 @@ public final class EgovSessionExpiry {
 			throw new IllegalArgumentException("session must not be null");
 		}
 		int interval = session.getMaxInactiveInterval();
-		// interval 이 0 이하이면 만료 없음(서블릿 규약). 곱셈은 long 으로 — int 연산은
-		// 약 24.8일을 넘기면 넘침이 생기고, 음수일 때는 과거 시각이 되어 즉시 만료로 오판된다.
+		// interval 0 이하 : 만료 없음 (서블릿 규약). 곱셈은 long (int 는 약 24.8일 초과 시 넘침 → 즉시 만료 오판)
 		long expiry = (interval <= 0) ? UNLIMITED : serverTime + (long) interval * 1000L;
 		return new EgovSessionExpiry(serverTime, expiry, interval);
 	}

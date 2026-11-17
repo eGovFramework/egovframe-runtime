@@ -39,9 +39,8 @@ import org.junit.jupiter.api.Test;
 /**
  * {@link EgovLoggingExceptionHandler} 단위 테스트.
  *
- * <p>핵심은 <b>로거 이름이 발생 위치(packageName)로 잡히는지</b>다 — 공통컴포넌트 원본은
- * 핸들러 클래스 이름으로 로거를 고정해 업무별 로그 제어가 불가능했다. 실제 로그 이벤트를
- * 붙잡아 확인한다.</p>
+ * <p>핵심 : <b>로거 이름이 발생 위치(packageName)로 잡히는지</b> (업무별 로그 제어).
+ * 실제 로그 이벤트를 붙잡아 확인.</p>
  *
  * <pre>
  * &lt;&lt; 개정이력(Modification Information) &gt;&gt;

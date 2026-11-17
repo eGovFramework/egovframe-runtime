@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2009-2026 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,8 +69,8 @@ import java.util.Set;
  * 형식을 선택할 수 있다.</p>
  *
  * <p>자기 HTTP 상태를 가진 Spring 표준 예외({@link ErrorResponse} — 405·415·404·필수 파라미터 누락·깨진 본문·
- * 본문 크기 초과 등)는 그 상태와 헤더(405 의 허용 메서드 등)로 응답한다. 종전에는 미분류로 보아 500 이었다
- * (정합성 결함 수정 — 5.0.x 대비 동작 변경). 기본 형식의 {@code code} 는 상태에 대응하는 오류 코드이고, 대응이
+ * 본문 크기 초과 등)는 그 상태와 헤더(405 의 허용 메서드 등)로 응답한다
+ * (5.0.x 는 500 — 정합성 결함 수정, 동작 변경). 기본 형식의 {@code code} 는 상태에 대응하는 오류 코드이고, 대응이
  * 없으면 4xx 는 E001·5xx 는 E021 을 쓰되 {@code status} 는 실제 값이다. 설명은 일반화 문구이며 요청 경로·값을
  * 되비추지 않는다. 입력 검증 실패({@link WebExchangeBindException}·프레임워크 메서드 파라미터 검증)는 400 과
  * 필드 오류 목록 {@code errors}(필드·메시지, 거부 값 없음)로, 형 불일치는 E002 로 응답한다 — 서블릿 MVC 오류
@@ -158,8 +158,7 @@ public class EgovExceptionHandler implements WebExceptionHandler {
     public Mono<Void> handle(ServerWebExchange exchange, Throwable ex) {
         ServerHttpResponse response = exchange.getResponse();
         if (response.isCommitted()) {
-            // 이미 전송이 시작된 응답(스트리밍·SSE 도중 등)은 상태·본문을 다시 쓸 수 없다 —
-            // 오류를 그대로 흘려 서버의 기본 처리(연결 종료)에 맡긴다
+            // 커밋된 응답(스트리밍·SSE 도중 등) : 상태·본문 재작성 불가, 오류 전파 (서버 기본 처리 : 연결 종료)
             LOGGER.debug("Response already committed, propagating error: {}", ex.toString());
             return Mono.error(ex);
         }
@@ -182,7 +181,7 @@ public class EgovExceptionHandler implements WebExceptionHandler {
                 && inputException.getCause() instanceof TypeMismatchException typeMismatch) {
             return typeMismatchResponse(response, inputException, typeMismatch, locale(exchange));
         } else if (ex instanceof ErrorResponse errorResponse) {
-            // 반환값 검증 실패(프레임워크가 500 으로 분류)도 여기서 5xx 일반화로 처리된다
+            // 반환값 검증 실패(프레임워크가 500 으로 분류)도 여기서 5xx 일반화로 처리
             return standardResponse(response, errorResponse, ex);
         } else {
             EgovErrorCode egovErrorCode = EgovErrorCode.INTERNAL_SERVER_ERROR;
@@ -219,11 +218,11 @@ public class EgovExceptionHandler implements WebExceptionHandler {
         int status = egovResponse.getStatus();
         String code = egovResponse.getCode();
         String message = egovResponse.getMessage();
-        // 표준 예외는 HttpStatus 에 없는 상태를 가질 수 있어 HttpStatusCode 로 설정한다
+        // 표준 예외는 HttpStatus 에 없는 상태를 가질 수 있어 HttpStatusCode 로 설정
         response.setStatusCode(HttpStatusCode.valueOf(status));
         Map<String, Object> body = new LinkedHashMap<>();
         if (problemDetailEnabled) {
-            // RFC 9457 Problem Details — 표준 필드 뒤에 실행환경 확장 필드(code, timestamp)를 둔다
+            // RFC 9457 Problem Details — 표준 필드 뒤에 실행환경 확장 필드(code, timestamp) 배치
             response.getHeaders().setContentType(PROBLEM_JSON_UTF8);
             body.put("type", "about:blank");
             body.put("title", (title != null) ? title : reasonPhrase(status));
@@ -246,7 +245,7 @@ public class EgovExceptionHandler implements WebExceptionHandler {
         try {
             payload = OBJECT_MAPPER.writeValueAsBytes(body);
         } catch (JsonProcessingException e) {
-            // 문자열·정수와 문자열 맵 목록만 담는 맵이라 실제로는 일어나지 않지만, 응답 없이 끝나지 않도록 최소 본문으로 대체한다
+            // 문자열·정수와 문자열 맵 목록만 담는 맵이라 실제 발생하지 않지만 응답 누락 방지를 위해 최소 본문으로 대체
             LOGGER.error("Failed to serialize error response body", e);
             payload = ("{\"status\":" + status + "}").getBytes(StandardCharsets.UTF_8);
         }
@@ -335,7 +334,7 @@ public class EgovExceptionHandler implements WebExceptionHandler {
         List<Map<String, String>> errors = new ArrayList<>();
         for (FieldError fieldError : ex.getFieldErrors()) {
             if (fieldError.isBindingFailure()) {
-                // 원본(입력값·타입명 포함)은 서버 로그로만 남긴다
+                // 원본(입력값·타입명 포함)은 서버 로그로만 기록
                 LOGGER.debug("Binding failure on field '{}': {}", fieldError.getField(), fieldError.getDefaultMessage());
             }
             errors.add(errorEntry(fieldError.getField(), resolveMessage(fieldError, locale)));

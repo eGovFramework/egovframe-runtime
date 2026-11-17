@@ -111,8 +111,7 @@ public class CacheModelMapperTest {
         // check
         checkResult(vo, resultVO3);
 
-        // 결과 객체의 instance 가 다름 (cache 를 사용하지 않으면 매번
-        // 새로운 결과 객체가 만들어짐)
+        // 결과 객체의 instance 가 다름 (cache 미사용 시 매번 새 결과 객체 생성)
         assertNotSame(resultVO, resultVO3);
 
         // EMP 추가 insert -> <flushOnExecute

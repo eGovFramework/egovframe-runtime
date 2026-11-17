@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2009-2026 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -127,12 +127,12 @@ public class EgovSchedulerRunner {
         paths.add(contextPath);
         paths.add(schedulerJobPath);
 
-        // 모든 XML 파일을 ContextPath에 등록한다.
+        // Job XML 경로 전체를 context 위치 목록에 추가
         paths.addAll(jobPaths);
 
         String[] locations = paths.toArray(new String[paths.size()]);
 
-        // ApplicationContext를 생성한다.
+        // ApplicationContext 생성
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(locations, false);
         context.refresh();
         LOGGER.debug("### EgovSchedulerRunner start() Running Time: {} seconds ", delayTime / 1000);
@@ -158,7 +158,7 @@ public class EgovSchedulerRunner {
             context.close();
         } else {
             try {
-                // 설정한 시간만큼 대기하고, 그 사이에 Scheduler가 수행된다.
+                // 설정 시간만큼 대기, 그 사이 Scheduler 수행
                 LOGGER.debug("### EgovSchedulerRunner start() Sleeping Time: {} seconds ", realDelayTIme / 1000);
                 Thread.sleep(realDelayTIme);
                 LOGGER.debug("### EgovSchedulerRunner start() Sleeping End ");

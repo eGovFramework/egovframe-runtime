@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2009-2026 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,8 +60,7 @@ public class EgovFileUtil {
             manager = VFS.getManager();
             basefile = manager.resolveFile(System.getProperty("user.dir"));
         } catch (FileSystemException e) {
-            // debug 로 삼키면 이후 모든 호출이 원인을 알 수 없는 NullPointerException 이 된다.
-            // 사용 시점에는 manager()/basefile() 가드가 원인을 담은 IllegalStateException 을 던진다.
+            // warn 기록 (사용 시점에 manager()/basefile() 가드가 IllegalStateException, 원인 불명 NPE 방지)
             LOGGER.warn("EgovFileUtil VFS initialization failed - subsequent calls will fail: {}", e.getMessage());
         }
     }

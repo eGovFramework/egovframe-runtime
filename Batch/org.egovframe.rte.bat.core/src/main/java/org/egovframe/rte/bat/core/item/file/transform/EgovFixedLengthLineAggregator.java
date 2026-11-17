@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2009-2026 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -83,10 +83,8 @@ public class EgovFixedLengthLineAggregator<T> extends ExtractorLineAggregator<T>
      */
     @Override
     protected String doAggregate(Object[] fields) {
-        // 멀티스레드 step에서 LineAggregator 빈이 공유되면 이 인스턴스도 공유된다.
-        // 기존 코드는 동기화 없이 paddingList를 지연 생성해, 콜드 캐시에 동시 진입한 스레드들이
-        // 서로 다른(또는 서로의 add()가 섞인) 리스트를 만들다 손상된 패딩 결과를 낼 수 있었다.
-        // double-checked locking + 지역변수로 완성한 뒤 발행하여 부분초기화 상태가 외부에 보이지 않게 한다.
+        // 멀티스레드 step 공유 빈 : 비동기 지연 생성 시 add() 가 섞인 paddingList 로 패딩 손상
+        // double-checked locking + 지역변수로 완성 후 발행 (부분초기화 비노출)
         if (paddingList == null) {
             synchronized (this) {
                 if (paddingList == null) {
@@ -108,7 +106,7 @@ public class EgovFixedLengthLineAggregator<T> extends ExtractorLineAggregator<T>
     private String aggregateFixedLength(int[] fieldValueLength, Object[] fields) {
         int fieldsLength = fields.length;
 
-        //1. XML에서 지정한 field 범위 길이 갯수(ranges)와 field 갯수(fields)가 일치하는 지 검사.
+        //1. XML 지정 field 범위 길이 개수(ranges)와 field 개수(fields) 일치 여부 검사
         if (fieldsLength != fieldRanges.length) {
             Assert.state(fieldsLength == fieldRanges.length, "The number of field's ranges: " + fieldRanges.length + " is must match the number of field: " + fieldsLength);
         }
@@ -132,7 +130,7 @@ public class EgovFixedLengthLineAggregator<T> extends ExtractorLineAggregator<T>
                     }
                 }
             } else {
-                //2. VO의 field 길이가 XML에서 지정한 field 범위 길이를 벗어나면 예외 발생.
+                //2. VO 의 field 길이가 XML 지정 field 범위 길이를 벗어나면 예외
                 Assert.state(fieldRanges[k] >= fieldValueLength[k], "Supplied text: " + fields[k] + " is longer than defined length: " + fieldRanges[k]);
             }
         }

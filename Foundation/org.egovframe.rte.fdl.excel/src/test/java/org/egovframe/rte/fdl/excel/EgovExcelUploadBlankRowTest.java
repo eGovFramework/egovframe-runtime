@@ -60,7 +60,7 @@ public class EgovExcelUploadBlankRowTest {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             Sheet sheet = wb.createSheet("emp");
             createHeaderRow(sheet, 0);
-            // 1행은 만들지 않아 빈 행으로 둔다
+            // 1행 미생성 — 빈 행
             createDataRows(sheet, 2, 5);
 
             excelService.uploadExcel(QUERY_ID, sheet, 2, 0);
@@ -77,7 +77,7 @@ public class EgovExcelUploadBlankRowTest {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             Sheet sheet = wb.createSheet("emp");
             createDataRows(sheet, 0, 2);
-            // 2행은 만들지 않아 빈 행으로 둔다
+            // 2행 미생성 — 빈 행
             createDataRows(sheet, 3, 2, 1003);
 
             assertDoesNotThrow(() -> excelService.uploadExcel(QUERY_ID, sheet, 0, 0));
@@ -94,7 +94,7 @@ public class EgovExcelUploadBlankRowTest {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             Sheet sheet = wb.createSheet("emp");
             createHeaderRow(sheet, 0);
-            // 1행은 만들지 않아 빈 행으로 둔다
+            // 1행 미생성 — 빈 행
             createDataRows(sheet, 2, 5);
 
             excelService.uploadExcel(QUERY_ID, sheet, 2, 2);

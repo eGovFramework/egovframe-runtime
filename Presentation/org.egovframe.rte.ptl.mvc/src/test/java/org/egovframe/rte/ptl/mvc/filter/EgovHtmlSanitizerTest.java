@@ -52,7 +52,7 @@ class EgovHtmlSanitizerTest {
 	@Test
 	@DisplayName("변형 공격(<scr<script>ipt>)도 파서 기반 정제라 무력화된다")
 	void 변형_공격_무력화() {
-		// 문자열 치환식 필터가 뚫리는 고전 우회 — 파서 기반 화이트리스트는 뚫리지 않는다
+		// 문자열 치환식 필터가 뚫리는 고전 우회 — 파서 기반 화이트리스트는 차단
 		String result = EgovHtmlSanitizer.sanitize("<scr<script>ipt>alert('xss')</scr</script>ipt>");
 		assertFalse(result.contains("<script"), "변형 공격 잔존: " + result);
 	}

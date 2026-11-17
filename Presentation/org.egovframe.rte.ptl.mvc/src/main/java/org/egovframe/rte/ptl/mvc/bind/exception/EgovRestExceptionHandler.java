@@ -62,17 +62,15 @@ import java.util.Set;
 /**
  * REST 응답용 기본 예외 핸들러 — <b>동작하는 기본 구현</b> + RFC 9457(ProblemDetail) 정렬.
  *
- * <p>기존 {@link AbstractAnnotationExceptionHandler}는 전 메서드가 abstract 인 시그니처 골격이라
- * 사용자가 전부 직접 구현해야 했다(잔여 모듈 점검 8-B-4). 본 클래스는 실행환경 예외 계층
- * 을 RFC 9457 {@code application/problem+json} 응답으로 매핑하는 기본 구현을 제공한다:</p>
+ * <p>{@link AbstractAnnotationExceptionHandler}(전 메서드 abstract 골격, 잔여 모듈 점검 8-B-4)의 기본 구현 :
+ * 실행환경 예외 계층을 RFC 9457 {@code application/problem+json} 응답으로 매핑한다:</p>
  *
  * <ul>
  *   <li>{@link EgovBizException}(업무 예외) → 400 + 예외 메시지 + {@code messageKey} 확장 필드</li>
  *   <li><b>제약 위반</b>({@code @Valid} 본문·바인딩 {@link BindException} 계열,
  *       {@code @Validated} 파라미터 {@link ConstraintViolationException}) → <b>400</b> +
  *       {@code errors} 확장 필드(필드명·메시지 — <b>거부된 값은 싣지 않는다</b>: 입력
- *       반사·민감값 노출 방지). 종전에는 {@code Exception} 폴백으로 500 이 되던 정합성
- *       결함의 수정이다(고지). 메시지는 {@link #setMessageSource(MessageSource)}
+ *       반사·민감값 노출 방지, 종전 500 폴백은 정합성 결함). 메시지는 {@link #setMessageSource(MessageSource)}
  *       연동 시 코드 해석 우선, 미연동이면 제약의 기본 메시지</li>
  *   <li><b>형 변환 실패</b>(바인딩 중 {@code typeMismatch} 필드 오류 · 단일 값 {@link TypeMismatchException})와
  *       <b>읽을 수 없는 본문</b>({@link HttpMessageNotReadableException}) → <b>400</b> + 일반화 메시지.
@@ -82,9 +80,8 @@ import java.util.Set;
  *       {@code @Validated} 없이 파라미터 제약이 위반된 경우) → 제약 위반과 같은 400 필드 오류 형식</li>
  *   <li><b>자기 HTTP 상태를 가진 Spring 표준 예외</b>({@link ErrorResponse} 구현 — 405 메서드 불허·415 미디어
  *       타입·400 필수 파라미터 누락·404 매핑 없는 경로·413 업로드 크기 초과 등) → <b>그 상태와 헤더</b>(예: 405 의
- *       {@code Allow})를 그대로 쓰고 detail 은 상태별 일반화 문구. 종전에는 {@code Exception} 폴백으로 500 이
- *       되던 정합성 결함의 수정이다(고지). Spring 기본 detail 은 요청 경로 등
- *       입력을 되비출 수 있어 싣지 않는다</li>
+ *       {@code Allow})를 그대로 쓰고 detail 은 상태별 일반화 문구(Spring 기본 detail 은 요청 경로 등 입력 반사 우려).
+ *       종전 500 폴백은 정합성 결함</li>
  *   <li><b>인증·인가 예외</b>(Spring Security {@code AccessDeniedException}·{@code AuthenticationException} 계열)
  *       → 응답을 쓰지 않고 <b>같은 예외를 다시 던져</b> 보안 계층({@code ExceptionTranslationFilter})이 401·403·로그인
  *       유도로 처리하게 한다. 판별은 클래스 이름으로 하므로 본 모듈은 Spring Security 에 의존하지 않는다</li>
@@ -174,7 +171,7 @@ public class EgovRestExceptionHandler {
         List<Map<String, String>> errors = new ArrayList<>();
         for (FieldError fieldError : e.getFieldErrors()) {
             if (fieldError.isBindingFailure()) {
-                // 원본(입력값·타입명 포함)은 서버 로그로만 남긴다
+                // 원본(입력값·타입명 포함)은 서버 로그로만 기록
                 LOGGER.debug("Binding failure on field '{}': {}", fieldError.getField(), fieldError.getDefaultMessage());
             }
             errors.add(errorEntry(fieldError.getField(), resolveMessage(fieldError)));
@@ -216,7 +213,7 @@ public class EgovRestExceptionHandler {
 
     /**
      * 단일 값 형 변환 실패({@code @PathVariable}·{@code @RequestParam} 등) — 400 + 일반화 메시지.
-     * 종전에는 {@code Exception} 폴백으로 500 이 되고 스택이 ERROR 로 기록되던 클라이언트 오류다.
+     * 클라이언트 오류 (종전 {@code Exception} 폴백 500·ERROR 로그 방지).
      *
      * @since 5.1
      */
@@ -372,7 +369,7 @@ public class EgovRestExceptionHandler {
         boolean bindingFailure = (error instanceof FieldError) && ((FieldError) error).isBindingFailure();
         if (messageSource != null) {
             try {
-                // 형 변환 실패는 코드만 해석한다 — 기본 메시지(입력값·타입명 포함)로 폴백하지 않기 위해서다
+                // 형 변환 실패는 코드만 해석 — 기본 메시지(입력값·타입명 포함) 폴백 방지
                 MessageSourceResolvable resolvable = bindingFailure
                         ? new DefaultMessageSourceResolvable(error.getCodes(), error.getArguments())
                         : error;
@@ -381,8 +378,7 @@ public class EgovRestExceptionHandler {
                 // 코드·기본 메시지 모두 없음 — 아래 기본 메시지 경로로 폴백
             }
         }
-        // 형 변환 실패의 기본 메시지는 거부된 입력값과 자바 타입명을 담는다(입력 반사·내부 정보 노출) —
-        // 응답에는 일반화 메시지를 싣고 원본은 handleBindException 이 debug 로그로 남긴다
+        // 형 변환 실패 기본 메시지 : 입력값·자바 타입명 포함 (입력 반사·내부 정보 노출) → 일반화 메시지 응답 (원본은 debug 로그)
         return bindingFailure ? BINDING_FAILURE_DETAIL : error.getDefaultMessage();
     }
 

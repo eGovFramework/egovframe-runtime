@@ -29,8 +29,8 @@ import org.junit.jupiter.api.Test;
 /**
  * {@link EgovLunarDates} · {@link EgovLunarDate} 단위 테스트.
  *
- * <p>알려진 명절 날짜로 변환을 검증하고, <b>공통컴포넌트 원본(EgovDateUtil)의 침묵 실패</b>
- * (잘못된 입력 → 빈 Map, 없는 윤달 → 다른 날짜로 미끄러짐)를 예외 계약으로 고정한다.</p>
+ * <p>명절 날짜로 변환 검증, <b>공통컴포넌트 원본(EgovDateUtil)의 침묵 실패</b>
+ * (잘못된 입력 → 빈 Map, 없는 윤달 → 다른 날짜)를 예외 계약으로 고정</p>
  *
  * <pre>
  * &lt;&lt; 개정이력(Modification Information) &gt;&gt;
@@ -86,8 +86,7 @@ class EgovLunarDatesTest {
 		@Test
 		@DisplayName("한국 기준(단기력)으로 계산한다 — 중국 기준 ChineseCalendar 라면 실패한다")
 		void 한국_기준_역법() {
-			// 2001-04-24: 단기력(한국)은 음력 4/1, ChineseCalendar(중국)는 4/2 —
-			// 합삭 시각이 자정 부근이라 월 시작이 하루 갈리는 구간이다(2000~2026 실측 418일).
+			// 2001-04-24 : 단기력(한국) 음력 4/1, ChineseCalendar(중국) 4/2 (합삭이 자정 부근, 2000~2026 실측 418일)
 			assertEquals(EgovLunarDate.of(2001, 4, 1),
 					EgovLunarDates.toLunar(LocalDate.of(2001, 4, 24)));
 		}
@@ -141,7 +140,7 @@ class EgovLunarDatesTest {
 		@Test
 		@DisplayName("2017년은 한국 윤5월이다 — 중국력(윤6월)이라면 실패한다")
 		void 이천십칠년_윤오월() {
-			// 한·중 윤달 위치가 다른 해로 알려진 사례 — 계통 오차가 아니라 역법 차이의 크기를 보여준다.
+			// 한·중 윤달 위치가 다른 해 (계통 오차가 아닌 역법 차이)
 			EgovLunarDate june25 = EgovLunarDates.toLunar(LocalDate.of(2017, 6, 25));
 			assertTrue(june25.isLeapMonth(), "2017-06-25 는 윤5월 구간이어야 한다: " + june25);
 			assertEquals(5, june25.getMonth());
@@ -171,7 +170,7 @@ class EgovLunarDatesTest {
 		@Test
 		@DisplayName("존재하지 않는 윤달은 예외다 (원본은 다른 날짜로 조용히 미끄러졌다)")
 		void 없는_윤달() {
-			// 2026년에는 윤1월이 없다.
+			// 2026년에는 윤1월 없음
 			assertThrows(IllegalArgumentException.class,
 					() -> EgovLunarDates.toSolar(EgovLunarDate.ofLeapMonth(2026, 1, 1)));
 		}
@@ -179,7 +178,7 @@ class EgovLunarDatesTest {
 		@Test
 		@DisplayName("존재하지 않는 30일은 예외다")
 		void 없는_30일() {
-			// 2025년 음력 4월은 29일까지다(작은달).
+			// 2025년 음력 4월은 29일까지(작은달)
 			assertThrows(IllegalArgumentException.class,
 					() -> EgovLunarDates.toSolar(EgovLunarDate.of(2025, 4, 30)));
 		}

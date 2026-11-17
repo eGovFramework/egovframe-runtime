@@ -1,9 +1,9 @@
 # egovframe-rte-fdl-security
 
-`egovframe-rte-fdl-security`는 **Spring Security 6.x** 기반으로 **폼 로그인·세션·URL(요청) 단위 접근제어**를 구성하고, **DB에서 URL–권한 매핑·사용자·역할 계층**을 읽어 쓰도록 돕는 라이브러리입니다.
+`egovframe-rte-fdl-security`는 **Spring Security 6.5** 기반으로 **폼 로그인·세션·URL(요청) 단위 접근제어**를 구성하고, **DB에서 URL–권한 매핑·사용자·역할 계층**을 읽어 쓰도록 돕는 라이브러리입니다.
 
-- **Artifact**: `org.egovframe.rte:egovframe-rte-fdl-security:5.0.0`
-- **Runtime**: Java 17, Spring Framework 6.x, Spring Security 6.x
+- **Artifact**: `org.egovframe.rte:egovframe-rte-fdl-security:5.1.0`
+- **Runtime**: Java 17, Spring Framework 6.2, Spring Security 6.5
 
 ---
 
@@ -15,14 +15,16 @@ org/egovframe/rte/fdl/security/
 ├── bean/             # Reloadable 메타데이터 소스, 핸들러, FactoryBean
 ├── secureobject/     # URL·역할 JDBC 서비스, DAO, RequestMatcher
 └── userdetails/      # EgovUserDetails, JDBC 매핑, 역할 계층 FactoryBean, 헬퍼
-    └── jdbc/
+    ├── hierarchicalroles/
+    ├── jdbc/
+    └── util/
 ```
 
 ---
 
 ## 주요 동작 개요
 
-- **인증**: `DaoAuthenticationProvider` + `EgovJdbcUserDetailsManager`(JDBC 사용자/권한 조회) + 설정에 따른 `PasswordEncoder`(BCrypt, SHA 계열, MD5, LDAP, noop 등).
+- **인증**: `DaoAuthenticationProvider`(ID salt 방식은 `EgovDaoAuthenticationProvider`) + `EgovJdbcUserDetailsManager`(JDBC 사용자/권한 조회) + 설정에 따른 `PasswordEncoder`(BCrypt(기본), SHA 계열, `egov-sha256`, MD5, LDAP, noop 등).
 - **URL 인가**: `FilterSecurityInterceptor` + `EgovReloadableFilterInvocationSecurityMetadataSource`로 **요청 URL과 매칭되는 권한**을 판단. `reload()` 시 DB 변경을 런타임에 반영 가능.
 - **permitAll**: `permitAllList`(CSV)는 PathPattern 또는 정규식(`\A`, `^`, `\Z`, `$` 포함 시 `RegexRequestMatcher`)으로 처리.
 - **그 외**: 동시 세션 제한, CSRF/헤더(XFO, XSS, Cache-Control), 로그인 실패·접근 거부 핸들러 등.
@@ -39,6 +41,8 @@ org/egovframe/rte/fdl/security/
 | **`EgovSecurityConfig`** | `egov-security-config.properties`에 대응하는 설정 POJO(로그인 URL, JDBC 쿼리, `sqlRolesAndUrl`, `permitAllList`, CSRF, 동시 세션, 해시 방식 등). |
 | **`EgovSecurityConfigReader`** | properties → `EgovSecurityConfig` 매핑. 기본 경로: `egovframework/egovProps/conf/egov-security-config.properties`. `Globals.SecurityConfigPath`로 경로 지정 가능. |
 | **`EgovSecurityMetadataCache`** | URL 리소스 맵 등 메타데이터 캐시용. |
+| **`EgovDaoAuthenticationProvider`** | 사용자 ID를 salt로 쓰는 비밀번호 검증 `AuthenticationProvider` (`hash=egov-sha256`/`eccp`). |
+| **`EgovIdSaltSha256PasswordEncoder`** | 사용자 ID salt 기반 SHA-256 비밀번호 인코더. |
 | **`EgovMultipleRoleAuthorizationManager`** | 동일 URL에 여러 권한이 매핑된 경우 **OR**로 허용하고, `RoleHierarchy`가 있으면 도달 가능 권한까지 고려하는 `AuthorizationManager`(URL 인가 확장 시 활용 가능). |
 
 ### Bean·필터 (`org.egovframe.rte.fdl.security.bean`)
@@ -82,7 +86,7 @@ org/egovframe/rte/fdl/security/
 <dependency>
   <groupId>org.egovframe.rte</groupId>
   <artifactId>egovframe-rte-fdl-security</artifactId>
-  <version>5.0.0</version>
+  <version>5.1.0</version>
 </dependency>
 ```
 
@@ -270,7 +274,7 @@ mvn test
 <dependency>
   <groupId>org.egovframe.rte</groupId>
   <artifactId>egovframe-rte-fdl-security</artifactId>
-  <version>5.0.0</version>
+  <version>5.1.0</version>
 </dependency>
 ```
 

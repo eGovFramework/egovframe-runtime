@@ -153,9 +153,7 @@ public class EgovArchivesTest {
 
     @Test
     public void tar_왕복은_100바이트_초과_긴_이름을_POSIX_확장으로_보존한다() throws Exception {
-        // tar 기본 헤더의 name 필드는 100바이트다. 그것을 넘기되 파일시스템 한계 안에 들어야 한다 —
-        // ext4 등은 파일명 상한이 255"바이트"라 한글(UTF-8 3바이트)로는 85자를 넘길 수 없다.
-        // 36자 = 108바이트: tar 의 100바이트는 넘고 255바이트에는 못 미친다.
+        // 한글 36자 = 108바이트 : tar name 필드(100바이트) 초과, ext4 파일명 상한(255바이트) 이내
         String longName = "긴이름".repeat(12) + ".txt";
         Path src = tempDir.resolve("tarsrc");
         Files.createDirectories(src.resolve("sub"));
@@ -228,7 +226,7 @@ public class EgovArchivesTest {
                 () -> EgovArchives.unzip(zip, tempDir.resolve("bytes-out"),
                         StandardCharsets.UTF_8, EgovExtractLimits.of(100, 15)));
 
-        // 한도를 명시적으로 풀면 통과한다
+        // 한도 명시 해제 시 통과
         assertEquals(3, EgovArchives.unzip(zip, tempDir.resolve("bytes-ok"),
                 StandardCharsets.UTF_8, EgovExtractLimits.unlimited()));
     }

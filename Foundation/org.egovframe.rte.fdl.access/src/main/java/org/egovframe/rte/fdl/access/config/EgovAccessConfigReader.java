@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2009-2026 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -95,8 +95,7 @@ public class EgovAccessConfigReader {
                 try (InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
                     props.load(reader);
                 }
-                // 파일에 명시되지 않은 키(globalAuthen, excludeList 등)는 안전한 기본값을 유지하도록
-                // 빈 인스턴스가 아니라 createDefaultConfig()를 베이스로 덮어쓴다.
+                // 미지정 키(globalAuthen, excludeList 등)는 안전한 기본값 유지 : createDefaultConfig() 위에 덮어씀
                 return mapPropertiesToBean(props, createDefaultConfig());
             }
         } catch (IOException e) {
@@ -118,9 +117,7 @@ public class EgovAccessConfigReader {
     }
 
     // 2026.02.28 KISA 보안취약점 조치
-    // properties 설정 파일을 읽어 기존 bean(기본값이 채워진 상태) 위에 덮어쓴다.
-    // 파일에 없는 키는 bean에 이미 설정된 기본값(createDefaultConfig())이 그대로 유지되어,
-    // globalAuthen 등 안전 관련 필드가 누락되어도 인가 로직이 조용히 무력화되지 않는다.
+    // properties 값을 기본값 bean 위에 덮어씀 (키 누락 시에도 globalAuthen 등 인가 설정 무력화 방지)
     private static EgovAccessConfig mapPropertiesToBean(Properties props, EgovAccessConfig bean) {
         for (String key : props.stringPropertyNames()) {
             String value = props.getProperty(key);

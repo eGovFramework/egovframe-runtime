@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2009-2026 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -146,8 +146,7 @@ public class TypedMap implements Map<String, Object> {
         if (inner.containsValue(arg0)) {
             return true;
         }
-        // put()이 field type으로 변환해 담으므로, 넣은 값 그대로 물어도 찾을 수 있어야 한다.
-        // 어느 field에 해당하는지는 알 수 없으므로 field 별 변환 결과와 차례로 비교한다.
+        // put()이 field type으로 변환해 저장 : field 별 변환 결과와 차례로 비교
         for (Entry<String, Object> entry : inner.entrySet()) {
             Object converted;
             try {

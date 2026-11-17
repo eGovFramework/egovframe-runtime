@@ -27,8 +27,7 @@ public class LoggerHierarchyTest {
     @Test
     public void testLoggerHierarchy() {
         // Logger targetLogger = LogManager.getLogger("LogTestSample"); 과 동일
-        // log4j2.xml에는 "LogTestSample" 이름의 Logger가 존재하지 않으므로
-        // Named Hierarchy에 따라 이름이 가장 많이 매칭되는 "egovframework" 이름의 Logger설정을 따른다.
+        // "LogTestSample" Logger 는 log4j2.xml 에 없으므로 Named Hierarchy 상 "egovframework" Logger 설정 적용
         Logger targetLogger = (Logger) logTestSample.getTargetLogger();
         assertEquals("org.egovframe.rte.fdl.logging.sample.LogTestSample", targetLogger.getName());
 
@@ -43,9 +42,7 @@ public class LoggerHierarchyTest {
         assertEquals(targetLogger.isAdditive(), egovLogger.isAdditive());  // getAdditivity() - log4j1.x
 
         // 로그 출력
-        // 현재 org.egovframe 로그 레벨이 log4j2.xml 에 DEBUG 로 정의돼 있으므로
-        // 해당 로거 설정을 따르는 logTestSample 의 메서드를 실행하면
-        // DEBUG, INFO, WARN, ERROR, FATAL 에 대한 모든 로그가 출력됨
+        // org.egovframe 로그 레벨이 DEBUG 이므로 DEBUG~FATAL 모든 로그 출력
         logTestSample.executeSomeLogic();
     }
 

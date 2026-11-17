@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2009-2026 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,9 +37,7 @@ public final class CamelCaseUtil {
     }
 
     public static String convert2CamelCase(String underScore) {
-        // null 또는 빈 문자열은 변환할 대상이 없으므로 그대로 반환한다.
-        // (빈 문자열일 때 isSkipCase의 charAt(0)에서 StringIndexOutOfBoundsException이,
-        //  null일 때 NullPointerException이 발생하던 문제를 방지한다.)
+        // null·빈 문자열은 그대로 반환 (isSkipCase charAt(0) StringIndexOutOfBoundsException·NPE 방지)
         if (underScore == null || underScore.isEmpty()) {
             return underScore;
         }

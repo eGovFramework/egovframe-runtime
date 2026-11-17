@@ -24,9 +24,8 @@ import java.util.List;
 /**
  * {@link EgovPropertyService} 의 프로퍼티를 Spring {@code Environment} 에 편입하는 PropertySource.
  *
- * <p>{@code EgovPropertyService} 로 읽는 값은 Spring {@code Environment} 와 연결되어 있지 않아 {@code @Value} 나
- * 플레이스홀더에서 보이지 않는다. 이 클래스를 {@code Environment} 의 PropertySources 에 등록하면 같은 값을
- * {@code @Value("${...}")} 와 {@code resolvePlaceholders} 에서 쓸 수 있다.</p>
+ * <p>{@code Environment} 의 PropertySources 에 등록 시 {@code @Value("${...}")}·{@code resolvePlaceholders} 에서 사용 가능
+ * (미등록 시 {@code EgovPropertyService} 값은 플레이스홀더에서 보이지 않음)</p>
  *
  * <pre>{@code
  * // ApplicationContextInitializer 나 초기화 코드에서
@@ -35,9 +34,8 @@ import java.util.List;
  * // 이후 @Value("${Globals.DbType}") 로 EgovPropertyService 값을 쓸 수 있다
  * }</pre>
  *
- * <p>조회는 같은 서비스 인스턴스에 위임하므로 {@code EgovPropertyServiceImpl.refreshPropertyFiles()} 로 다시 읽은 값이
- * 그대로 보인다. 단, {@code @Value} 로 주입된 필드는 주입 시점의 값이 고정되며 갱신 반영은 {@code Environment} 를
- * 직접 조회할 때 기준이다.</p>
+ * <p>조회는 같은 서비스 인스턴스에 위임 ({@code refreshPropertyFiles()} 결과 즉시 반영).
+ * 단, {@code @Value} 주입 필드는 주입 시점 값 고정 (갱신 반영은 {@code Environment} 직접 조회 시)</p>
  *
  * @author 실행환경 개발팀
  * @since 5.1
@@ -61,7 +59,7 @@ public class EgovServicePropertySource extends EnumerablePropertySource<EgovProp
     }
 
     /**
-     * 없는 키는 예외 대신 null 을 돌려줘 다음 PropertySource 로 넘어가게 한다(PropertySource 계약).
+     * 없는 키는 null 반환 (다음 PropertySource 로 위임, PropertySource 계약).
      */
     @Override
     public Object getProperty(String name) {

@@ -104,7 +104,7 @@ class EgovEscapableDelimitedLineTokenizerEmptyColumnTest {
                 {"a,\"b,\",", List.of("a", "\"b,\"", "")},
                 {"\"b,\",", List.of("\"b,\"", "")},
                 {"\"a,b,\",", List.of("\"a,b,\"", "")},
-                // 따옴표 필드가 구분자로 끝나도 뒤 컬럼을 삼키지 않는다.
+                // 따옴표 필드가 구분자로 끝나도 뒤 컬럼을 삼키지 않아야 함
                 {"\"b,\",c", List.of("\"b,\"", "c")}
         };
 

@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.egovframe.rte</groupId>
         <artifactId>egovframe-rte-root</artifactId>
-        <version>5.0.0</version>
+        <version>5.1.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -23,27 +23,17 @@
         </license>
     </licenses>
 
-    <properties>
-        <org.egovframe.rte.version>5.0.0</org.egovframe.rte.version>
-        <jakarta.annotation.version>3.0.0</jakarta.annotation.version>
-        <jakarta.jakartaee.version>10.0.0</jakarta.jakartaee.version>
-        <ehcache.version>3.10.8</ehcache.version>
-        <jaxen.version>2.0.0</jaxen.version>
-    </properties>
-
     <dependencies>
         <!-- eGovFramework -->
         <dependency>
             <groupId>org.egovframe.rte</groupId>
             <artifactId>egovframe-rte-fdl-logging</artifactId>
-            <version>${org.egovframe.rte.version}</version>
         </dependency>
 
         <!-- Spring -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context-support</artifactId>
-            <version>${spring.framework.version}</version>
             <exclusions>
                 <!-- Exclude Commons Logging in favor of SLF4j -->
                 <exclusion>
@@ -55,7 +45,6 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
-            <version>${spring.framework.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -63,20 +52,13 @@
         <dependency>
             <groupId>jakarta.annotation</groupId>
             <artifactId>jakarta.annotation-api</artifactId>
-            <version>${jakarta.annotation.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.platform</groupId>
-            <artifactId>jakarta.jakartaee-api</artifactId>
-            <version>${jakarta.jakartaee.version}</version>
-            <scope>provided</scope>
+            <scope>test</scope>
         </dependency>
 
         <!-- Commons & Utils -->
         <dependency>
             <groupId>org.ehcache</groupId>
             <artifactId>ehcache</artifactId>
-            <version>${ehcache.version}</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -92,7 +74,6 @@
         <dependency>
             <groupId>jaxen</groupId>
             <artifactId>jaxen</artifactId>
-            <version>${jaxen.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -100,7 +81,6 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>${junit.jupiter.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

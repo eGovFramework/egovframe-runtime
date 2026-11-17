@@ -65,7 +65,7 @@ class EgovWildcardMessageSourceTest {
 		@Test
 		@DisplayName("로케일 접미가 없는 파일에서 예외가 나지 않는다 (원본은 substring(0, -1))")
 		void 로케일_없는_파일() {
-			// common.properties 처럼 접미가 없는 파일이 섞여 있어도 확장이 끝까지 진행된다.
+			// common.properties 처럼 접미 없는 파일이 섞여도 확장 끝까지 진행
 			messageSource.setBasenames("classpath*:/egov-wildcard-test/*.properties");
 
 			assertEquals("default", messageSource.getMessage("greeting", null, Locale.FRENCH));
@@ -85,7 +85,7 @@ class EgovWildcardMessageSourceTest {
 		@Test
 		@DisplayName("해석할 수 없는 패턴은 조용히 넘어가지 않는다 (원본은 debug 로그로 삼켰다)")
 		void 입출력_오류_비침묵() {
-			// 존재하지 않는 스킴은 IOException 을 유발한다.
+			// 존재하지 않는 스킴은 IOException 발생
 			assertThrows(UncheckedIOException.class,
 					() -> messageSource.setBasenames("nosuchscheme://*.properties"));
 		}
@@ -128,8 +128,7 @@ class EgovWildcardMessageSourceTest {
 		@Test
 		@DisplayName("접두 디렉터리 이름이 하위 경로에 반복돼도 메시지가 유실되지 않는다")
 		void 접두_디렉터리_이름_반복() {
-			// dupdir/sub/dupdir/nested.properties — 상대 경로를 마지막 일치로 구하면 안쪽 dupdir 을 잡아
-			// basename 이 classpath:/dupdir/nested 로 틀어지고 메시지가 조용히 사라진다
+			// dupdir/sub/dupdir/nested.properties : 마지막 일치 기준이면 basename 이 classpath:/dupdir/nested 로 틀어져 메시지 유실
 			messageSource.setBasenames("classpath*:/dupdir/**/*.properties");
 
 			assertEquals("nested-ok", messageSource.getMessage("nested.key", null, Locale.ROOT));

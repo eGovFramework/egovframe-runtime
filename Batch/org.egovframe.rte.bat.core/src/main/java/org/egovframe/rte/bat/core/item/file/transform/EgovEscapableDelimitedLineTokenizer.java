@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2009-2026 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -157,7 +157,7 @@ public class EgovEscapableDelimitedLineTokenizer extends EgovAbstractLineTokeniz
                         tokens.add(arrLine[ii]);
                     }
                 } else {
-                    // 이어붙이는 셀에서는 닫는 따옴표가 0번에 올 수 있으므로 셀 처음부터 찾는다.
+                    // 이어붙이는 셀에서는 닫는 따옴표가 0번에 올 수 있으므로 셀 처음부터 탐색
                     closeIndex = findCloseIndex(arrLine[ii], quoteCharacter, 0);
                     incompleteToken += this.delimiter + arrLine[ii];
                     if (closeIndex >= 0) {
@@ -167,8 +167,7 @@ public class EgovEscapableDelimitedLineTokenizer extends EgovAbstractLineTokeniz
                         flagEndQuote = false;
                     }
                 }
-                // 마지막까지 Quote로 닫히지 않는경우 예외처리 후 토큰에 나머지를 넘긴다.
-                // CSV Syntax Error로 컬럼갯수가 맞지 않아 Exception 발생 : Incorrect number
+                // 끝까지 Quote 미종료 시 나머지를 토큰으로 (CSV Syntax Error 로 컬럼 수 불일치 시 Incorrect number 예외)
                 if (ii + 1 == arrLine.length && !flagEndQuote) {
                     tokens.add(incompleteToken);
                 }

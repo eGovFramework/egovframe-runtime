@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2009-2026 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,8 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * EgovResourceReleaserTest 클래스
  * <p>
  * 리소스 정리 유틸리티({@link EgovResourceReleaser})의 단위 테스트.
- * Mockito 등 목킹 프레임워크 없이 순수 Java 스텁/Proxy 로 각 분기(null 안전,
- * 정상 close 호출, 미지원 Wrapper 예외)를 결정적으로 검증한다.
+ * 순수 Java 스텁/Proxy 로 분기 검증 (null 안전, 정상 close, 미지원 Wrapper 예외)
  * <p>
  * == 개정이력(Modification Information) ==
  * <p>

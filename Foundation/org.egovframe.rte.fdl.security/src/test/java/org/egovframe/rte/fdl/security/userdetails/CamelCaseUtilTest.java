@@ -31,8 +31,7 @@ public class CamelCaseUtilTest {
     }
 
     /**
-     * 빈 문자열은 charAt(0)에서, null은 NullPointerException이 발생하던 것을
-     * 그대로 반환하도록 가드를 추가했다.
+     * null·빈 문자열은 그대로 반환 (charAt(0) 예외·NPE 방지 가드).
      */
     @Test
     public void convert2CamelCaseEmptyAndNull() {

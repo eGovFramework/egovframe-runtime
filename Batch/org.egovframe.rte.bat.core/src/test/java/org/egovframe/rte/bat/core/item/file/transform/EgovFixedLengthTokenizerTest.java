@@ -57,12 +57,12 @@ public class EgovFixedLengthTokenizerTest {
 
     @Test
     public void testDoTokenizeOpenRangeTakesRemainder() {
-        // 마지막 range 가 max 값이 없으면(open) 나머지 문자열을 모두 취한다.
+        // 마지막 range 에 max 값이 없으면(open) 나머지 문자열 전부 취함
         EgovFixedLengthTokenizer tokenizer =
                 newTokenizer(new Range(1, 3), new Range(4));
 
         assertEquals(Arrays.asList("ABC", "DEFG"), tokenizer.doTokenize("ABCDEFG"));
-        // open 이므로 maxRange 를 초과하는 더 긴 라인도 예외 없이 나머지를 취한다.
+        // open 이므로 maxRange 초과 라인도 예외 없이 나머지 취함
         assertEquals(Arrays.asList("ABC", "DEFGHIJKL"), tokenizer.doTokenize("ABCDEFGHIJKL"));
     }
 

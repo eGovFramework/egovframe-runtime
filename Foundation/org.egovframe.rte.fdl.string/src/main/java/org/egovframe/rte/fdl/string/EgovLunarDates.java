@@ -24,13 +24,11 @@ import com.ibm.icu.util.ULocale;
 /**
  * 양력({@link LocalDate})과 음력({@link EgovLunarDate})을 서로 변환하는 유틸 클래스.
  *
- * <p><b>NOTE:</b> ICU4J 의 <b>단기력(Dangi) 달력</b> — 한국 전통 역법 — 으로 계산한다.
- * 중국 기준인 {@code ChineseCalendar} 가 아니다: 두 역법은 기준 자오선이 달라 합삭 시각이
- * 자정 부근인 달의 월 시작이 하루 밀리며, <b>2000~2026년 실측으로 418일이 서로 다르다</b>.
- * 한국 음력에는 한국 기준 달력을 쓴다(공통컴포넌트 원본은 ChineseCalendar 를 썼다).</p>
+ * <p><b>NOTE:</b> ICU4J <b>단기력(Dangi) 달력</b>(한국 전통 역법) 사용, {@code ChineseCalendar} 아님
+ * (기준 자오선 차이로 합삭이 자정 부근인 달의 월 시작이 하루 밀림, <b>2000~2026년 실측 418일 차이</b>)</p>
  *
- * <p><b>icu4j 는 optional 의존</b>이라(원칙 3) 이 클래스를 쓰는 애플리케이션만 의존을
- * 선언하면 된다 — 선언 없이 호출하면 {@code NoClassDefFoundError: com/ibm/icu/...} 가 난다.</p>
+ * <p><b>icu4j 는 optional 의존</b>(원칙 3, 사용 시 앱에서 직접 선언, 미선언 시
+ * {@code NoClassDefFoundError: com/ibm/icu/...})</p>
  *
  * <pre>
  * &lt;dependency&gt;
@@ -46,16 +44,11 @@ import com.ibm.icu.util.ULocale;
  * EgovLunarDates.toSolar(EgovLunarDate.ofLeapMonth(2025, 6, 1)) → 2025-07-25 (윤6월)
  * </pre>
  *
- * <p><b>지원 범위</b> — 입력 연도(양력·음력 모두)는 {@value #MIN_YEAR}~{@value #MAX_YEAR}년이며
- * 그 밖은 {@code IllegalArgumentException} 이다. ICU 의 천문 계산은 먼 미래에서 일관성을 잃고
- * (실측: 64032년부터 왕복 불일치와 예외가 나타난다), ±580만 년 밖에서는 달력이 시각을 조용히
- * 한계값으로 고정해 <b>틀린 날짜를 예외 없이</b> 돌려준다. 사용자 입력이 그대로 들어오는 자리에서
- * 그런 결과가 새지 않도록 범위를 명시적으로 닫는다.</p>
+ * <p><b>지원 범위</b> — 입력 연도(양력·음력) {@value #MIN_YEAR}~{@value #MAX_YEAR}년, 그 밖은 {@code IllegalArgumentException}
+ * (ICU 천문 계산은 64032년부터 왕복 불일치·예외, ±580만 년 밖은 <b>틀린 날짜를 예외 없이</b> 반환)</p>
  *
- * <p><b>한계 고지</b> — ICU 의 천문 근사 계산이 한국천문연구원(KASI) 발표와 극단적인
- * 경계(합삭이 자정 수 초 이내)에서 다를 가능성은 이론상 남는다. 법정 공휴일 판정처럼
- * 공식 음력이 필요한 자리는 KASI 자료(공공데이터 특일 정보 API 등)를 원천으로 쓰고,
- * 이 클래스는 일반 표시 용도로 쓴다.</p>
+ * <p><b>한계 고지</b> — 극단적 경계(합삭이 자정 수 초 이내)에서 KASI 발표와 다를 수 있음.
+ * 법정 공휴일 판정 등 공식 음력은 KASI 자료(공공데이터 특일 정보 API 등) 사용, 이 클래스는 일반 표시용</p>
  *
  * <pre>
  * &lt;&lt; 개정이력(Modification Information) &gt;&gt;
@@ -84,12 +77,6 @@ public final class EgovLunarDates {
 	/** 지원하는 최대 연도(양력·음력 입력 공통). */
 	public static final int MAX_YEAR = 9999;
 
-	/**
-	 * 단기력의 {@code EXTENDED_YEAR} 와 서기 연도의 차 — 단군기원(檀紀, 기원전 2333년) 기산이다
-	 * (2025년 = 단기 4358년).
-	 */
-	private static final int EXTENDED_YEAR_OFFSET = 2333;
-
 	/** 하루의 밀리초. */
 	private static final long MILLIS_PER_DAY = 86_400_000L;
 
@@ -100,9 +87,8 @@ public final class EgovLunarDates {
 	}
 
 	/**
-	 * UTC 로 고정한 단기력 달력을 만든다 — 벽시계 해석이 JVM 기본 시간대를 따르면
-	 * epoch 일수 변환에서 하루가 밀린다(KST 자정 = UTC 전날 15시).
-	 * 역법 자체의 천문 기준(한국 자오선)은 달력 구현에 내장되어 있어 이 설정과 무관하다.
+	 * UTC 고정 단기력 달력 (JVM 기본 시간대면 epoch 일수 변환에서 하루 밀림, KST 자정 = UTC 전날 15시).
+	 * 천문 기준(한국 자오선)은 달력 구현에 내장되어 이 설정과 무관
 	 */
 	private static Calendar newCalendar() {
 		Calendar lunarCalendar = Calendar.getInstance(DANGI_LOCALE);
@@ -133,10 +119,12 @@ public final class EgovLunarDates {
 	 */
 	private static EgovLunarDate toLunarUnchecked(LocalDate solarDate) {
 		Calendar lunarCalendar = newCalendar();
-		// GregorianCalendar 경유 없이 epoch 일수로 직접 지정한다(UTC 자정 = UTC 달력 해석).
+		// GregorianCalendar 경유 없이 epoch 일수로 직접 지정(UTC 자정 = UTC 달력 해석)
 		lunarCalendar.setTimeInMillis(solarDate.toEpochDay() * MILLIS_PER_DAY);
 
-		int year = lunarCalendar.get(Calendar.EXTENDED_YEAR) - EXTENDED_YEAR_OFFSET;
+		// 음력 연도는 서기 기준 연도(related year)로 조회 — EXTENDED_YEAR 기산은 ICU 버전마다 상이
+		// (ICU 77 이하: 단군기원 기산 2025년 = 4358, ICU 78 이상: 서기 기산 2025년 = 2025)
+		int year = lunarCalendar.getRelatedYear();
 		int month = lunarCalendar.get(Calendar.MONTH) + 1;
 		int day = lunarCalendar.get(Calendar.DAY_OF_MONTH);
 		boolean leap = lunarCalendar.get(Calendar.IS_LEAP_MONTH) == 1;
@@ -147,9 +135,7 @@ public final class EgovLunarDates {
 	/**
 	 * 음력 날짜를 양력으로 변환한다.
 	 *
-	 * <p><b>존재하지 않는 날짜는 예외로 알린다</b> — 없는 윤달({@code 2026년 윤1월} 등)이나
-	 * 없는 30일을 지정하면 {@code IllegalArgumentException} 이다. 원본은 이런 입력을
-	 * 달력이 임의로 해석한 다른 날짜로 조용히 돌려줬다.</p>
+	 * <p><b>존재하지 않는 날짜는 예외</b> — 없는 윤달({@code 2026년 윤1월} 등)·없는 30일은 {@code IllegalArgumentException}</p>
 	 *
 	 * @param lunarDate 음력 날짜(필수, 연도 {@value #MIN_YEAR}~{@value #MAX_YEAR})
 	 * @return 양력 날짜
@@ -162,14 +148,14 @@ public final class EgovLunarDates {
 		}
 		requireSupportedYear(lunarDate.getYear(), "lunarDate");
 		Calendar lunarCalendar = newCalendar();
-		lunarCalendar.set(Calendar.EXTENDED_YEAR, lunarDate.getYear() + EXTENDED_YEAR_OFFSET);
+		lunarCalendar.setRelatedYear(lunarDate.getYear());
 		lunarCalendar.set(Calendar.MONTH, lunarDate.getMonth() - 1);
 		lunarCalendar.set(Calendar.DAY_OF_MONTH, lunarDate.getDay());
 		lunarCalendar.set(Calendar.IS_LEAP_MONTH, lunarDate.isLeapMonth() ? 1 : 0);
 
 		LocalDate solar = LocalDate.ofEpochDay(Math.floorDiv(lunarCalendar.getTimeInMillis(), MILLIS_PER_DAY));
 
-		// ICU 달력은 lenient 라 없는 날짜를 다른 날로 미끄러뜨린다 — 역변환 대조로 검증한다.
+		// ICU 달력은 lenient 라 없는 날짜를 다른 날로 보정 — 역변환 대조로 검증
 		EgovLunarDate roundTrip = toLunarUnchecked(solar);
 		if (!roundTrip.equals(lunarDate)) {
 			throw new IllegalArgumentException(

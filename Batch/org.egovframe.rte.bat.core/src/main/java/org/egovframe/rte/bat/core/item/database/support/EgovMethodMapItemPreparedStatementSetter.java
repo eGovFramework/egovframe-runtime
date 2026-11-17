@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2009-2026 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,8 +43,7 @@ import java.util.Map;
  */
 public class EgovMethodMapItemPreparedStatementSetter<T> extends EgovItemPreparedStatementSetter<T> {
 
-    // invokeGettterMethod(item, param, methodMap) 는 인자만 사용하는 무상태 호출이므로
-    // 행마다 새로 생성하지 않고 1회 생성하여 재사용한다.
+    // 무상태 호출(invokeGettterMethod)이므로 행마다 생성하지 않고 재사용
     private final EgovReflectionSupport<T> reflector = new EgovReflectionSupport<T>();
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2009-2026 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -253,10 +253,7 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
         InputStream streamToUse = null;
         // 2026.02.28 KISA 보안취약점 조치
         try {
-            // xlsx는 zip 포맷이라 압축률이 극단적인 zip bomb에 노출될 수 있다. POI 라이브러리 기본값
-            // (minInflateRatio=0.01)에만 암묵적으로 의존하지 않고, 신뢰할 수 없는 업로드 파일을 열기
-            // 직전 명시적으로 재적용해 같은 JVM의 다른 코드가 이 전역 설정을 완화했더라도 방어가
-            // 유지되도록 한다.
+            // xlsx zip bomb 방어 : 열기 직전 minInflateRatio 명시 재적용 (같은 JVM 의 전역 설정 완화 대비)
             ZipSecureFile.setMinInflateRatio(0.01d);
             LOGGER.debug("ExcelServiceImpl loadWorkbook(XSSF) ...");
             streamToUse = (fileIn != null && fileIn.markSupported()) ? fileIn : new BufferedInputStream(fileIn);
@@ -341,7 +338,7 @@ public class EgovExcelServiceImpl implements EgovExcelService, ApplicationContex
         if (fileIn == null) {
             throw new IllegalArgumentException("fileIn must not be null");
         }
-        // xlsx 는 zip 형식이라 zip bomb 방어 비율을 열기 직전에 POI 기본값으로 복원한다(loadWorkbook(InputStream, XSSFWorkbook) 과 동일).
+        // xlsx zip bomb 방어 : 열기 직전 POI 기본 비율 복원 (loadWorkbook(InputStream, XSSFWorkbook) 과 동일)
         ZipSecureFile.setMinInflateRatio(0.01d);
         try (Workbook wb = WorkbookFactory.create(fileIn)) {
             return uploadExcel(queryId, wb.getSheetAt(0), start, commitCnt);

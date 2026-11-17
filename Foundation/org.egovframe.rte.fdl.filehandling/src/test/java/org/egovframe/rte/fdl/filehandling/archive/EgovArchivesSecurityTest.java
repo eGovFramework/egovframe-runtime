@@ -60,8 +60,7 @@ public class EgovArchivesSecurityTest {
 
     @Test
     public void 드라이브_문자_엔트리는_어느_OS에서도_밖에_생기지_않는다() throws IOException {
-        // Windows: 드라이브 절대 경로라 차단(IAE). POSIX: 정규화 후 "C:/pwn.txt" 는 "C:" 라는 이름의
-        // 하위 디렉터리일 뿐이라 대상 안에 풀린다. 보안 속성은 양쪽 모두 "경계 밖에 없음" 이다.
+        // Windows : 드라이브 절대 경로 차단(IAE), POSIX : "C:" 하위 디렉터리로 대상 안에 해제 (양쪽 모두 경계 밖 없음)
         arrange();
         Path zip = zip(tempDir.resolve("drive.zip"), "C:" + BS + "pwn.txt");
         try {
@@ -77,8 +76,7 @@ public class EgovArchivesSecurityTest {
 
     @Test
     public void 역슬래시_상위_이동_엔트리는_POSIX에서도_차단된다() throws IOException {
-        // EgovArchives 는 엔트리 이름의 역슬래시를 / 로 정규화한 뒤 검사한다 — POSIX 에서
-        // "..\..\x" 가 이름 하나로 남아 통과하는 일이 없다(EgovFiles 단독 계약보다 엄격)
+        // 역슬래시를 / 로 정규화 후 검사 : POSIX 에서도 "..\..\x" 차단 (EgovFiles 단독 계약보다 엄격)
         arrange();
         Path zip = zip(tempDir.resolve("bs.zip"), ".." + BS + ".." + BS + "pwn.txt");
         assertThrows(IllegalArgumentException.class, () -> EgovArchives.unzip(zip, target));
@@ -97,8 +95,7 @@ public class EgovArchivesSecurityTest {
 
     @Test
     public void 기준_자신으로_정규화되는_파일_엔트리는_실패로_닫힌다() throws IOException {
-        // "sub/.." 는 정규화하면 대상 디렉터리 자신이라 탈출은 아니지만, 파일 엔트리로 디렉터리에
-        // 쓰려는 셈이라 입출력 실패로 닫힌다 — 어느 쪽이든 밖에는 아무것도 생기지 않는다
+        // "sub/.." = 대상 디렉터리 자신 : 탈출은 아니나 디렉터리에 파일 쓰기라 입출력 실패 (밖에 생성 없음)
         arrange();
         Path zip = zip(tempDir.resolve("self.zip"), "sub/..");
         assertThrows(RuntimeException.class, () -> EgovArchives.unzip(zip, target));
@@ -179,7 +176,7 @@ public class EgovArchivesSecurityTest {
     @Test
     @DisabledOnOs(OS.WINDOWS)
     public void 대상_디렉터리의_기존_파일_링크를_엔트리가_덮어쓰지_않는다() throws IOException {
-        // 엔트리 이름과 같은 자리에 밖의 파일을 가리키는 링크가 있으면, 열어서 쓰는 순간 밖의 파일이 덮어써진다
+        // 엔트리 이름 위치에 외부 파일을 가리키는 링크가 있으면 쓰기 시 외부 파일 덮어씀
         arrange();
         Path secret = Files.writeString(outside.resolve("secret.txt"), "TOP-SECRET");
         plantLink(target.resolve("flink.txt"), secret);

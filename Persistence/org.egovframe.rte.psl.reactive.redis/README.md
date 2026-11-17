@@ -2,7 +2,7 @@
 
 **Spring Data Redis**와 **Lettuce**를 이용한 **리액티브 Redis** 연동 모듈입니다. 캐시·세션·토큰 저장 등 인메모리 데이터를 논블로킹으로 다룹니다.
 
-- **Artifact**: `org.egovframe.rte:egovframe-rte-psl-reactive-redis:5.0.0`
+- **Artifact**: `org.egovframe.rte:egovframe-rte-psl-reactive-redis:5.1.0`
 - **Runtime**: Java 17 / Spring Data Redis / Lettuce / Jackson(직렬화)
 - **의존**: `egovframe-rte-fdl-cmmn`
 
@@ -11,7 +11,7 @@
 ## 특징
 
 - Lettuce **비동기/리액티브** API
-- `EgovRedisConfiguration`으로 커넥션 팩토리·템플릿 구성 표준화
+- `EgovRedisConfiguration`으로 커넥션 팩토리 구성 표준화
 
 ---
 
@@ -31,8 +31,8 @@ org/egovframe/rte/psl/reactive/redis/
 
 | 클래스 | 설명 |
 |--------|------|
-| `EgovRedisConfiguration` | Redis Standalone/Cluster 등 Bean 정의 |
-| `EgovRedisRepository` | Redis 접근 리포지토리 베이스 |
+| `EgovRedisConfiguration` | Redis Standalone(SSL 선택) Lettuce 리액티브 커넥션 팩토리 구성 |
+| `EgovRedisRepository` | `ReactiveRedisTemplate` 확장 리포지토리 베이스 |
 
 ---
 
@@ -56,7 +56,7 @@ mvn test
 <dependency>
   <groupId>org.egovframe.rte</groupId>
   <artifactId>egovframe-rte-psl-reactive-redis</artifactId>
-  <version>5.0.0</version>
+  <version>5.1.0</version>
 </dependency>
 ```
 

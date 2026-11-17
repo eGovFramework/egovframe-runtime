@@ -2,7 +2,7 @@
 
 전자정부 표준프레임워크 **배치** 확장 라이브러리입니다. **Spring Batch 5.x**를 기반으로 대용량 파일·DB 연동, 복합 Reader, 잡/스텝 리스너, 배치 실행 진입점을 제공합니다.
 
-- **Artifact**: `org.egovframe.rte:egovframe-rte-bat-core:5.0.0`
+- **Artifact**: `org.egovframe.rte:egovframe-rte-bat-core:5.1.0`
 - **Runtime**: Java 17 / Spring Framework 6.x / Spring Batch 5.x
 - **연관 모듈**: `egovframe-rte-fdl-cmmn`, `egovframe-rte-psl-dataaccess` (및 테스트용 `egovframe-rte-fdl-idgnr`)
 
@@ -14,7 +14,7 @@
 - **레거시 연계 파일 형식**: 고정 길이·구분자(이스케이프)·바이트 단위, 인덱스 파일 Reader/Writer
 - **DB·MyBatis 연동**: 페이징 Reader, Batch ItemWriter, `PreparedStatement` 세터 유틸
 - **운영 편의**: Job/Step/Chunk 전후 리스너, 출력 파일 리스너, 변수 리스너, 커맨드라인·스케줄 실행기
-- **기타**: Flow `Decider`, 이벤트 알림 트리거, 셸/삭제 Tasklet 지원
+- **기타**: Flow `Decider`, 이벤트 알림 트리거, 셸/삭제 Tasklet, DB 기반 자원 배타 락
 
 ---
 
@@ -35,6 +35,7 @@ src/main/java/org/egovframe/rte/bat/
     ├── event/                    # 배치 이벤트 알림
     ├── job/flow/               # EgovDecider
     ├── launch/support/         # EgovBatchRunner, CommandLine, Scheduler Runner
+    ├── operation/lock/         # DB 기반 자원 배타 락
     ├── listener/               # Job/Step/Chunk, 출력 파일 리스너
     ├── reflection/             # EgovReflectionSupport
     ├── step/                   # Tasklet (셸, 삭제)
@@ -44,7 +45,8 @@ src/main/java/org/egovframe/rte/bat/
         │   └── transform/      # Tokenizer, Aggregator, FieldExtractor
         ├── database/           # JdbcBatchItemWriter, MyBatis Reader/Writer
         │   └── support/        # PreparedStatement 세터
-        └── composite/          # 복합 Reader·Mapper·Provider
+        └── composite/          # 복합 Mapper
+            ├── provider/       # 복합 DataProvider
             └── reader/         # 페이징·커서·파일 복합 Reader
 ```
 
@@ -58,7 +60,7 @@ src/main/java/org/egovframe/rte/bat/
 |------|------|
 | **Tokenizer** | `EgovDelimitedLineTokenizer`, `EgovEscapableDelimitedLineTokenizer`, 고정 길이/바이트 (`EgovFixedLengthTokenizer`, `EgovFixedByteTokenizer` 등) |
 | **Mapper** | `EgovDefaultLineMapper`, `EgovByteLineMapper`, `EgovObjectMapper` |
-| **Reader/Writer** | `EgovFlatFileByteReader`, `EgovIndexFileReader` / `EgovIndexFileWriter`, `EgovPartitionFlatFileItemWriter` |
+| **Reader/Writer** | `EgovFlatFileByteReader`, `EgovIndexFileReader` / `EgovIndexFileWriter`, `EgovPartitionFlatFileItemWriter`, `EgovSafeFlatFileItemWriter` |
 | **Factory** | `EgovByteReaderFactory` |
 
 ### `core/item/database`
@@ -84,6 +86,10 @@ src/main/java/org/egovframe/rte/bat/
 - `EgovCommandLineRunner` — CLI 실행
 - `EgovSchedulerRunner`, `EgovSchedulerJCRunner` — 스케줄 연동
 
+### `core/operation/lock`
+
+- `EgovJdbcResourceLock`, `EgovResourceLockStepListener`, `EgovResourceLockException` — 여러 서버가 공유하는 배치 자원의 DB 기반 배타 락
+
 ### `core/step`
 
 - `TaskletShellStep`, `TaskletDeleteStep`, `ShellScriptSupport`
@@ -104,7 +110,7 @@ src/main/java/org/egovframe/rte/bat/
 - Spring Batch (`spring-batch-core`, `infrastructure`, `integration`, `test`)
 - Spring (`jdbc`, `tx`, `orm`, `oxm`, `webmvc`, `messaging`, `context-support` 등)
 - `egovframe-rte-fdl-cmmn`, `egovframe-rte-psl-dataaccess`
-- 테스트: HSQLDB, Quartz(테스트 스코프), Jakarta 메일/서블릿/검증(API) 등
+- 테스트: HSQLDB, Quartz(테스트 스코프), Jakarta Annotation/Persistence/Mail/Validation(API) 등
 
 자세한 버전과 의존성 목록은 루트 및 본 모듈 `pom.xml`을 참고하세요.
 
@@ -130,7 +136,7 @@ mvn test
 <dependency>
   <groupId>org.egovframe.rte</groupId>
   <artifactId>egovframe-rte-bat-core</artifactId>
-  <version>5.0.0</version>
+  <version>5.1.0</version>
 </dependency>
 ```
 

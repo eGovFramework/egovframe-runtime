@@ -104,7 +104,7 @@ public class EgovUuidV1ComplianceTest {
     @Test
     public void nodeIsLower48BitsOfHostId() throws Exception {
         assertEquals(NODE, uuidFromFreshJvm(FIXED_MILLIS, NODE).node());
-        // 48-bit 를 넘는 상위 bit 가 섞인 hostId 와 음수(전 bit set) hostId 도 하위 48-bit 로 정규화되어야 한다
+        // 48-bit 초과 상위 bit 가 섞인 hostId·음수(전 bit set) hostId 도 하위 48-bit 로 정규화
         assertEquals(NODE, uuidFromFreshJvm(FIXED_MILLIS, (0x1234L << 48) | NODE).node());
         assertEquals(NODE_MASK, uuidFromFreshJvm(FIXED_MILLIS, -1L).node());
     }

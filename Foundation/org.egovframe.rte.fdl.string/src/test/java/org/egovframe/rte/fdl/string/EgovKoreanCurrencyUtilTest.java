@@ -28,8 +28,7 @@ import org.junit.jupiter.api.Test;
 /**
  * {@link EgovKoreanCurrencyUtil} 단위 테스트.
  *
- * <p>자리 계수 1을 "일"로 적는 위·변조 방지 표기, 만·억·조·경 단위의 자리 건너뛰기, {@code Long.MAX_VALUE}
- * 경계, 기본 로케일(Locale)이 바뀌어도 숫자 구분자가 흔들리지 않는 점을 고정한다.</p>
+ * <p>고정 대상 : 자리 계수 1의 "일" 표기, 만·억·조·경 자리 건너뛰기, {@code Long.MAX_VALUE} 경계, 로케일 무관 숫자 구분자</p>
  *
  * <pre>
  * &lt;&lt; 개정이력(Modification Information) &gt;&gt;
@@ -107,9 +106,9 @@ class EgovKoreanCurrencyUtilTest {
 		@Test
 		@DisplayName("빈 단위를 건너뛰고 이어 붙인다")
 		void 단위_건너뛰기() {
-			// 1조 1원 — 억·만 자리가 통째로 비어 있다
+			// 1조 1원 — 억·만 자리 전체 공백
 			assertEquals("일조일", EgovKoreanCurrencyUtil.toKoreanReading(1000000000001L));
-			// 1억 2345원 — 만 자리가 비어 있다
+			// 1억 2345원 — 만 자리 공백
 			assertEquals("일억이천삼백사십오", EgovKoreanCurrencyUtil.toKoreanReading(100002345L));
 		}
 

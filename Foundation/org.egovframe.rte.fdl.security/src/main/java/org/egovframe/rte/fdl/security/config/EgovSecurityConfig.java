@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2009-2026 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * egov-security schema namespace 처리를 담당하는 bean 클래스
+ * egov-security properties 설정 정보를 보관하는 bean 클래스
  *
  * <p>Desc.: 설정 간소화 처리에 사용되는 bean으로 설정에 대한 정보를 보관</p>
  *
@@ -111,10 +111,8 @@ public class EgovSecurityConfig {
     private boolean xssProtection;
 
     /**
-     * 이름과 반대로 동작하는 필드이니 주의: {@code true}로 설정하면 보호적 Cache-Control/Pragma/Expires
-     * 응답 헤더가 오히려 <b>비활성화</b>된다(민감 페이지가 브라우저/프록시에 캐시될 위험, CWE-525).
-     * 기본값({@code false})에서는 헤더가 활성화되어 안전하다. "캐시 제어를 켠다"는 의미로 오해해 이
-     * 값을 {@code true}로 설정하지 않도록 주의할 것 — {@code true}로 설정 시 기동 로그에 경고가 남는다.
+     * 주의 : 이름과 반대 동작 ({@code true} 면 Cache-Control/Pragma/Expires 보호 헤더 <b>비활성화</b>, CWE-525).
+     * 기본값({@code false})이 안전 ({@code true} 설정 시 기동 로그 경고)
      */
     @JsonProperty("cacheControl")
     private boolean cacheControl;

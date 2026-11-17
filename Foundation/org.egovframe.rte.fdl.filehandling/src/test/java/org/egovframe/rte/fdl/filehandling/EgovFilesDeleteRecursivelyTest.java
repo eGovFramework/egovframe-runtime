@@ -14,8 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
- * EgovFiles.deleteRecursively 가 깨진(대상 없는) 심볼릭 링크를 "없는 대상"으로 오판해
- * 링크 파일 자체를 지우지 않고 조용히 0 을 반환하던 문제의 회귀 테스트.
+ * EgovFiles.deleteRecursively 회귀 테스트 : 깨진(대상 없는) 심볼릭 링크 자체 삭제.
  */
 public class EgovFilesDeleteRecursivelyTest {
 

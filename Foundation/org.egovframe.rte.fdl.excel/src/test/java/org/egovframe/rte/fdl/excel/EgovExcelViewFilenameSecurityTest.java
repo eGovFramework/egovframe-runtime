@@ -71,7 +71,7 @@ public class EgovExcelViewFilenameSecurityTest {
     @Test
     public void 인용부호는_이스케이프되어_파라미터_경계가_유지된다() throws Exception {
         String header = render(new XlsView(), "a\"; filename=\"b.exe", false).getHeader("Content-Disposition");
-        // 이스케이프된 \" 와 \\ 를 걷어내면 quoted-string 을 감싸는 인용부호 2개만 남아야 한다
+        // 이스케이프된 \" 와 \\ 제거 후 quoted-string 을 감싸는 인용부호 2개만 남아야 함
         String stripped = header.replace(BS + BS, "").replace(BS + "\"", "");
         assertEquals(2, stripped.length() - stripped.replace("\"", "").length(), "인용부호 경계가 깨짐: " + header);
         assertTrue(header.startsWith("attachment; filename=\""), header);

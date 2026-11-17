@@ -2,8 +2,8 @@
 
 다른 런타임 모듈이 공통으로 사용하는 **로깅 기반** 라이브러리입니다. **Apache Log4j 2**와 **SLF4J** 브리지를 중심으로 연동 리소스 정리·DB 커넥션 팩토리 유틸을 제공합니다.
 
-- **Artifact**: `org.egovframe.rte:egovframe-rte-fdl-logging:5.0.0`
-- **Runtime**: Java 17 / Spring Framework 6.x
+- **Artifact**: `org.egovframe.rte:egovframe-rte-fdl-logging:5.1.0`
+- **Runtime**: Java 17 / Spring Framework 6.2
 
 ---
 
@@ -23,6 +23,7 @@ org/egovframe/rte/fdl/logging/
 │   └── EgovConnectionFactory.java
 └── util/
     ├── EgovJdkLogger.java
+    ├── EgovRequestIds.java
     └── EgovResourceReleaser.java
 ```
 
@@ -34,6 +35,7 @@ org/egovframe/rte/fdl/logging/
 |--------|------|
 | `EgovJdkLogger` | `java.util.logging`과의 연계 보조 |
 | `EgovResourceReleaser` | AutoCloseable 등 리소스 안전 해제 |
+| `EgovRequestIds` | 요청 식별자(`X-Request-Id` 등) 형식 검증, 위반·없음 시 UUID 생성 |
 | `EgovConnectionFactory` | DataSource/Connection 획득 추상화 (로깅·진단 시나리오) |
 
 > 대부분의 로그 출력 정책은 애플리케이션의 `log4j2.xml` 등 설정으로 제어합니다.
@@ -60,7 +62,7 @@ mvn test
 <dependency>
   <groupId>org.egovframe.rte</groupId>
   <artifactId>egovframe-rte-fdl-logging</artifactId>
-  <version>5.0.0</version>
+  <version>5.1.0</version>
 </dependency>
 ```
 

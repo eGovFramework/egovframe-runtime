@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2009-2026 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,6 +77,9 @@ import java.util.*;
 @EnableWebSecurity
 public class EgovSecurityConfiguration {
 
+    /** hash 미지정(빈 값) 시 기본 비밀번호 인코더 : BCrypt */
+    private static final String DEFAULT_HASH = "bcrypt";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(EgovSecurityConfiguration.class);
 
     @Autowired
@@ -85,8 +88,7 @@ public class EgovSecurityConfiguration {
     private EgovSecurityConfig securityConfig;
 
     /**
-     * 설정 파일 리더 Bean. Globals.SecurityConfigPath는 서비스의 globals.properties에서 읽으며,
-     * ApplicationContext를 ResourceLoader로 전달하여 서비스 classpath/리소스 기준으로 파일을 찾는다.
+     * 설정 파일 리더 Bean (Globals.SecurityConfigPath 는 globals.properties, ApplicationContext 를 ResourceLoader 로 전달).
      */
     @Bean
     public EgovSecurityConfigReader egovSecurityConfigReader(
@@ -132,8 +134,7 @@ public class EgovSecurityConfiguration {
      * 동일 URL에 대한 중복 제거 후 구체성 계산으로 추가 정렬 (2차 정렬)
      */
     private static Map<RequestMatcher, Collection<String>> loadUrlAuthorizationsFromDb(EgovSecurityConfig props, JdbcTemplate jdbc, PathPatternRequestMatcher.Builder pp) {
-        // DB 조회 결과를 순서대로 저장하기 위해 LinkedHashMap 사용
-        // SQL의 ORDER BY 절에 의해 정렬된 순서가 그대로 유지됨
+        // LinkedHashMap : SQL ORDER BY 순서 유지
         Map<String, Collection<String>> urlToAuthorities = new LinkedHashMap<>();
 
         // URL 패턴의 원래 순서를 보존하기 위한 리스트
@@ -153,8 +154,7 @@ public class EgovSecurityConfiguration {
             });
         }
 
-        // URL 패턴을 구체성에 따라 정렬 (더 구체적인 패턴이 먼저 오도록)
-        // DB의 ORDER BY로 이미 정렬되었지만, 구체성 계산으로 추가 최적화
+        // URL 패턴 구체성 내림차순 정렬 (DB ORDER BY 이후 2차 정렬)
         urlOrder.sort((url1, url2) -> {
             // 더 구체적인 패턴(길이가 길고 와일드카드가 적은)이 먼저 오도록 정렬
             int specificity1 = calculateUrlSpecificity(url1);
@@ -205,13 +205,14 @@ public class EgovSecurityConfiguration {
     @Bean
     public PasswordEncoder passwordEncoder(EgovSecurityConfig securityConfig) {
         String rawHash = securityConfig != null ? securityConfig.getHash() : null;
-        String securityHash = (rawHash == null || rawHash.trim().isEmpty()) ? "sha-256" : rawHash.trim().toLowerCase(Locale.ROOT);
+        String securityHash = (rawHash == null || rawHash.trim().isEmpty()) ? DEFAULT_HASH : rawHash.trim().toLowerCase(Locale.ROOT);
         boolean securityHashBase64 = securityConfig != null && securityConfig.isHashBase64();
         switch (securityHash) {
+            case "bcrypt":
+                return new BCryptPasswordEncoder();
             case "plaintext":
             case "noop":
                 return NoOpPasswordEncoder.getInstance();
-            case "eccp":
             case "egov-sha256":
                 return new EgovIdSaltSha256PasswordEncoder();
             case "ldap":
@@ -241,7 +242,7 @@ public class EgovSecurityConfiguration {
     @Bean
     public AuthenticationManager authenticationManager(EgovSecurityConfig securityConfig, PasswordEncoder passwordEncoder) {
         String rawHash = securityConfig != null ? securityConfig.getHash() : null;
-        String securityHash = (rawHash == null || rawHash.trim().isEmpty()) ? "sha-256" : rawHash.trim().toLowerCase(Locale.ROOT);
+        String securityHash = (rawHash == null || rawHash.trim().isEmpty()) ? DEFAULT_HASH : rawHash.trim().toLowerCase(Locale.ROOT);
 
         DaoAuthenticationProvider provider;
         if (isIdSaltHash(securityHash)) {
@@ -293,8 +294,7 @@ public class EgovSecurityConfiguration {
 
     /**
      * Role Hierarchy.
-     * sqlHierarchicalRoles 미설정 시에도 hierarchyStrings()가(HierarchyStringsFactoryBean 경유)
-     * 안전 기본값("ROLE_ADMIN > ROLE_USER > ROLE_ANONYMOUS")을 반환하므로 null을 반환하지 않는다.
+     * null 반환 없음 (sqlHierarchicalRoles 미설정 시 기본값 "ROLE_ADMIN > ROLE_USER > ROLE_ANONYMOUS").
      */
     @Bean
     public RoleHierarchy roleHierarchy(EgovSecurityConfig securityConfig) {
@@ -420,7 +420,7 @@ public class EgovSecurityConfiguration {
             if (!permitAll.isEmpty()) {
                 auth.requestMatchers(permitAll.toArray(new RequestMatcher[0])).permitAll();
             }
-            // 나머지 URL은 FilterSecurityInterceptor가 databaseSecurityMetadataSource로 요청 시점에 조회 후 판단 (reload 반영)
+            // 나머지 URL : FilterSecurityInterceptor 가 요청 시점 조회 (reload 반영)
             auth.anyRequest().authenticated();
         });
 

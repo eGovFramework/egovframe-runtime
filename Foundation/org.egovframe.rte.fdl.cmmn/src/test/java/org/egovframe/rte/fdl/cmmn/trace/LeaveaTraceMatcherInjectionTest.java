@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LeaveaTraceMatcherInjectionTest {
 
-    // matcher가 주입되지 않은 매니저에는 LeaveaTrace 의 기본 matcher 를 주입해야 후처리 핸들러가 실행된다.
+    // matcher 미주입 매니저에 LeaveaTrace 기본 matcher 를 주입해야 후처리 핸들러 실행
     @Test
     public void testInjectDefaultMatcherWhenManagerHasNone() {
         LeaveaTrace trace = new LeaveaTrace();
@@ -30,7 +30,7 @@ public class LeaveaTraceMatcherInjectionTest {
         assertEquals("trace test message", handler.lastMessage);
     }
 
-    // 사용자가 명시 주입한 matcher 는 기본 matcher 로 덮어쓰지 않는다.
+    // 사용자가 명시 주입한 matcher 는 기본 matcher 로 덮어쓰지 않음
     @Test
     public void testKeepUserDefinedMatcher() {
         LeaveaTrace trace = new LeaveaTrace();
@@ -49,7 +49,7 @@ public class LeaveaTraceMatcherInjectionTest {
         assertEquals("trace custom message", handler.lastMessage);
     }
 
-    // 패턴이 일치하지 않으면 matcher 주입 여부와 무관하게 핸들러를 호출하지 않는다.
+    // 패턴 불일치 시 matcher 주입 여부와 무관하게 핸들러 미호출
     @Test
     public void testHandlerNotCalledWhenPatternMismatch() {
         LeaveaTrace trace = new LeaveaTrace();

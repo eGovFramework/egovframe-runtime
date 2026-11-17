@@ -102,7 +102,7 @@ public class HTMLTagFilterSecurityTest {
         config.addInitParameter("excludePaths", "/api/*, /health");
         filter.init(config);
 
-        // 제외 대상이 "아닌" 경로들은 여전히 래핑(인코딩)돼야 한다 — 접미 트릭으로 필터를 우회할 수 없다
+        // 제외 대상이 "아닌" 경로는 여전히 래핑(인코딩)돼야 함 — 접미 트릭으로 필터 우회 불가
         String[] notExcluded = { "/apix/things", "/health-check", "/board/list", "/health/sub" };
         for (String path : notExcluded) {
             MockHttpServletRequest request = new MockHttpServletRequest("POST", path);

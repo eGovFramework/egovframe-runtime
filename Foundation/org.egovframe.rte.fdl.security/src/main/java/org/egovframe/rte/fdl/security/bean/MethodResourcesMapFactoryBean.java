@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2009-2026 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,9 +26,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
- * @deprecated DB 기반 method 권한은 Spring Security 6.x에서 지원되지 않아 이 빈은 항상 빈 맵만
- * 반환한다(사실상 no-op). 레거시 설정에서 이 빈을 참조해 메서드 보안이 동작한다고 가정하면 안 되며,
- * {@code @PreAuthorize}/{@code @PostAuthorize} 등 어노테이션 기반 메서드 보안으로 이전하라.
+ * @deprecated Spring Security 6.x 의 DB 기반 method 권한 미지원으로 항상 빈 맵 반환 (no-op).
+ * {@code @PreAuthorize}/{@code @PostAuthorize} 등 어노테이션 기반 메서드 보안으로 이전
  */
 @Deprecated
 public class MethodResourcesMapFactoryBean implements FactoryBean<LinkedHashMap<String, List<ConfigAttribute>>> {

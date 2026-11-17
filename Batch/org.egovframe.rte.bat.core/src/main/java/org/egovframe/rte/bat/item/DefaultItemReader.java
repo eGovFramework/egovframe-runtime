@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2009-2026 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -300,7 +300,7 @@ public class DefaultItemReader<T> implements ItemStreamReader<T> {
     }
 
     // 2026.03.24 KISA 보안취약점 조치
-    // makeItemReader 초기화 실패 시 생성된 reader의 자원을 해제한다.
+    // makeItemReader 초기화 실패 시 생성된 reader 자원 해제
     private void closeReaderOnFailure() {
         if (this.reader != null) {
             try {

@@ -39,7 +39,7 @@ public class SimpleMessageTest {
 
     @Test
     public void testSetBodyRejectsNullValueAmongMultipleEntries() {
-        // 여러 entry 중 뒤쪽 하나만 value가 null이어도 검증을 통과해선 안 된다.
+        // 뒤쪽 entry 하나만 value 가 null 이어도 검증 실패해야 함
         SimpleMessage message = new SimpleMessage();
         Map<String, Object> body = new HashMap<String, Object>();
         body.put("first", "ok");

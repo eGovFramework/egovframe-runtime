@@ -15,9 +15,8 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 /**
- * MDC 감사자 테스트 구성 — {@code @EnableJpaAuditing} + {@link EgovMdcAuditorAware} 빈. 기존 {@code JpaConfiguration} 의 컴포넌트 스캔에
- * 잡히지 않도록 {@code @Configuration} 을 붙이지 않는다(lite 구성 — {@code @ContextConfiguration} 이 직접 등록). 임베디드 DB 는 고유 이름을 써
- * 다른 컨텍스트의 {@code create-drop} 과 격리한다.
+ * MDC 감사자 테스트 구성 — {@code @EnableJpaAuditing} + {@link EgovMdcAuditorAware} 빈. {@code @Configuration} 미부착
+ * ({@code JpaConfiguration} 스캔 제외, {@code @ContextConfiguration} 직접 등록), 임베디드 DB 고유 이름으로 {@code create-drop} 격리.
  */
 @EnableJpaRepositories(basePackages = "org.egovframe.rte.psl.data.jpa.crud")
 @EnableJpaAuditing
@@ -47,7 +46,7 @@ public class MdcAuditingConfiguration {
 		emf.setPackagesToScan("org.egovframe.rte.psl.data.jpa.crud");
 		emf.setJpaVendorAdapter(vendorAdapter);
 		emf.setJpaProperties(properties);
-		// JpaConfiguration 과 같은 이유 — Hibernate SessionFactory 와 JPA 3.2 SchemaManager 의 시그니처 충돌 회피
+		// JPA 3.2 API 유입 시 Hibernate SessionFactory 의 SchemaManager 시그니처 충돌 회피 (JpaConfiguration 과 동일)
 		emf.setEntityManagerFactoryInterface(EntityManagerFactory.class);
 		return emf;
 	}

@@ -124,7 +124,7 @@ class EgovR2dbcRepositoryConverterTest {
     @Test
     void 기존_연결_팩토리_생성자는_종전처럼_기본_변환기로_조립된다() {
         EgovR2dbcRepository<CodedItem> legacy = new EgovR2dbcRepository<>(connectionFactory);
-        // 종전 조립은 앱 커스텀 변환기를 모른다 — 값 타입을 중첩 엔티티로 보고 거부한다. Boot 부품 생성자가 필요한 이유다
+        // 기본 조립 : 커스텀 변환기 미인식 → 값 타입을 중첩 엔티티로 보고 거부 (Boot 부품 생성자 필요 이유)
         Throwable thrown = assertThrows(RuntimeException.class,
                 () -> legacy.insertData(new CodedItem(new Code("C-03"))).block());
         Throwable root = thrown;

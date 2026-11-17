@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TraceHandleManagerLogMessageTest {
 
-    // 진입 로그는 로거가 달린 클래스와 실행 중인 메소드를 가리켜야 한다.
+    // 진입 로그는 로거 소유 클래스와 실행 중인 메소드를 가리켜야 함
     @Test
     public void testDefaultManagerLogsItsOwnEntry() {
         List<String> messages = capture(DefaultTraceHandleManager.class,
@@ -24,7 +24,7 @@ public class TraceHandleManagerLogMessageTest {
                 "DefaultTraceHandleManager 로거가 남긴 진입 로그가 자기 클래스·메소드를 가리켜야 한다. 실제 = " + messages);
     }
 
-    // 사용자가 상속하는 확장점의 기본 구현도 같은 규칙을 따라야 한다.
+    // 사용자 상속 확장점의 기본 구현도 같은 규칙 적용
     @Test
     public void testAbstractManagerLogsItsOwnEntry() {
         List<String> messages = capture(AbstractTraceHandleManager.class,

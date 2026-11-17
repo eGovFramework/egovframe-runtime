@@ -2,15 +2,15 @@
 
 업무 키·일련번호 등 **고유 ID 채번**을 표준화합니다. DB 시퀀스·채번 테이블·UUID·전략 패턴을 지원합니다.
 
-- **Artifact**: `org.egovframe.rte:egovframe-rte-fdl-idgnr:5.0.0`
-- **Runtime**: Java 17 / Spring Framework 6.x
+- **Artifact**: `org.egovframe.rte:egovframe-rte-fdl-idgnr:5.1.0`
+- **Runtime**: Java 17 / Spring Framework 6.2
 - **의존**: `egovframe-rte-fdl-cmmn`
 
 ---
 
 ## 특징
 
-- **다중 채번 방식**: 시퀀스, 테이블 블록, UUID
+- **다중 채번 방식**: 시퀀스, 테이블 블록, UUID(v1·v7)
 - **전략 패턴**: `EgovIdGnrStrategy`로 규칙 교체 가능
 - **Spring 연동**: `AbstractIdGnrService` 계열로 Bean 주입·트랜잭션과 결합
 
@@ -29,6 +29,7 @@ org/egovframe/rte/fdl/idgnr/
     ├── EgovSequenceIdGnrServiceImpl.java
     ├── EgovTableIdGnrServiceImpl.java
     ├── EgovUUIdGnrServiceImpl.java
+    ├── EgovUuidV7GnrServiceImpl.java
     ├── Base64.java
     └── strategy/
         └── EgovIdGnrStrategyImpl.java
@@ -42,7 +43,8 @@ org/egovframe/rte/fdl/idgnr/
 |--------|------|
 | `EgovSequenceIdGnrServiceImpl` | DB 시퀀스 기반 채번 |
 | `EgovTableIdGnrServiceImpl` | 채번 테이블(블록 단위 포함) |
-| `EgovUUIdGnrServiceImpl` | UUID 생성 |
+| `EgovUUIdGnrServiceImpl` | UUID(v1) 생성 |
+| `EgovUuidV7GnrServiceImpl` | UUID v7(RFC 9562) 생성 — 시간순 정렬, PK 채번에 적합 |
 | `EgovIdGnrStrategy` / `EgovIdGnrStrategyImpl` | 채번 정책 커스터마이징 |
 
 ---
@@ -67,7 +69,7 @@ mvn test
 <dependency>
   <groupId>org.egovframe.rte</groupId>
   <artifactId>egovframe-rte-fdl-idgnr</artifactId>
-  <version>5.0.0</version>
+  <version>5.1.0</version>
 </dependency>
 ```
 

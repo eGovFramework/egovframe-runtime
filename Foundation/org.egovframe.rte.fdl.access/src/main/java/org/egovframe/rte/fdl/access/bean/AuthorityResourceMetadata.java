@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2009-2026 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,11 +64,7 @@ public class AuthorityResourceMetadata {
     }
 
     public void reload() throws Exception {
-        // 새 리스트를 만들어 static 참조를 원자적으로 교체한다.
-        // 기존에는 authorityList/resourceMap을 clear()+add()로 제자리 변이했는데,
-        // getAuthorities()/getRoles()가 요청마다 같은 리스트를 순회·반환하므로
-        // 갱신과 동시에 ConcurrentModificationException이 발생하거나 부분(빈) 상태가
-        // 읽힐 수 있었다. 참조 교체 방식은 읽는 쪽이 항상 완전한 스냅샷만 보게 한다.
+        // 새 리스트로 static 참조 원자적 교체 : 조회 중 ConcurrentModificationException·부분 상태 방지 (항상 완전한 스냅샷)
         authorityList = new ArrayList<>(egovAccessService.getAuthorityUser());
         resourceMap = new ArrayList<>(egovAccessService.getRoleAndUrl());
     }

@@ -55,9 +55,7 @@ public class EgovTableIdGnrServiceInitialRowRaceTest {
         try (Connection conn = dataSource.getConnection()) {
             ScriptUtils.executeSqlScript(conn, new ClassPathResource("/META-INF/testdata/testdb.sql"));
         }
-        // 잠금 모드(LOCKS)에서는 loser 의 SELECT 가 테이블 공유 잠금을 잡아 winner 의 INSERT 가 대기하므로
-        // 다중 인스턴스 배포에서 실제로 일어나는 순서(양쪽 SELECT → 한쪽 INSERT 커밋 → 다른 쪽 INSERT)를
-        // 재현하려면 MVCC 가 필요하다.
+        // MVCC : 다중 인스턴스 순서(양쪽 SELECT → 한쪽 INSERT 커밋 → 다른 쪽 INSERT) 재현 (LOCKS 는 공유 잠금으로 INSERT 대기)
         setTransactionControl("MVCC");
     }
 
@@ -84,7 +82,7 @@ public class EgovTableIdGnrServiceInitialRowRaceTest {
         assertEquals(BLOCK_SIZE, loserId, "경합에서 진 쪽은 실패하지 않고 다음 블록을 받는다");
         assertEquals(BLOCK_SIZE * 2L, readNextId(), "채번 테이블에는 두 블록이 모두 반영된다");
 
-        // 각자 받은 블록 안에서 계속 채번된다
+        // 각자 받은 블록 안에서 계속 채번
         assertEquals(1L, winner.getNextLongId());
         assertEquals(BLOCK_SIZE + 1L, loser.getNextLongId());
         assertNotEquals(winner.getNextLongId(), loser.getNextLongId());

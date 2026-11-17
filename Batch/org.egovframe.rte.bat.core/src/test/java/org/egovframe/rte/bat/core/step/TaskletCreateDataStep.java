@@ -38,7 +38,7 @@ public class TaskletCreateDataStep implements Tasklet, InitializingBean {
         int commitInterval = 10000;
         int commitCount = 0;
 
-        // 테스트 데이타를 생성한다.
+        // 테스트 데이터 생성
         int createCount = 10000;
         for (int ii = 0; ii < createCount; ii++) {
             now = new Date();

@@ -79,7 +79,7 @@ public class EgovSubmitTokenStore implements Serializable {
 		tokens.remove(tokenKey);
 		tokens.put(tokenKey, token);
 		while (tokens.size() > maxTokens) {
-			// LinkedHashMap 은 삽입 순서를 유지하므로 첫 항목이 가장 오래된 토큰이다
+			// LinkedHashMap 은 삽입 순서 유지 — 첫 항목이 가장 오래된 토큰
 			String oldest = tokens.keySet().iterator().next();
 			tokens.remove(oldest);
 		}

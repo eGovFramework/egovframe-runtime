@@ -79,8 +79,7 @@ class EgovStoredFileNamesTest {
 		@Test
 		@DisplayName("12시간제 충돌이 구조적으로 불가능하다 — 오전·오후가 같은 이름이 될 수 없다")
 		void 오전_오후_구분_불필요() {
-			// 원본은 hh(1~12) 를 써서 09:00 과 21:00 이 같은 문자열이 됐다.
-			// 저장명이 시각에 의존하지 않으므로 이 문제 자체가 성립하지 않는다.
+			// 저장명이 시각에 비의존 : hh(1~12) 로 인한 09:00·21:00 충돌 불가
 			Set<String> names = new HashSet<>();
 			for (int i = 0; i < 100; i++) {
 				names.add(EgovStoredFileNames.generateWithoutExtension());

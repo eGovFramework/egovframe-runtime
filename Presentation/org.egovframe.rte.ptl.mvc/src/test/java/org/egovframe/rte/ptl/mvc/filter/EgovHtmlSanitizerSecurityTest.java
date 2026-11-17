@@ -150,8 +150,7 @@ class EgovHtmlSanitizerSecurityTest {
 	@Test
 	@DisplayName("제어문자로 끝나는 raw-text 태그를 넣어도 내장 정책은 스크립트를 실행 형태로 남기지 않는다")
 	void 제어문자_꼬리_raw_text_태그도_내장정책에서_무력화() {
-		// 파서 불일치 계열 공격(태그 이름 뒤 제어문자) — 내장 Safelist 는 raw-text 태그를 허용하지 않으므로
-		// style/title/iframe/textarea/script 를 어떤 제어문자로 감싸도 실행 형태가 남지 않아야 한다
+		// 파서 불일치 공격(태그 이름 뒤 제어문자) : 내장 Safelist 는 raw-text 태그 불허 → 실행 형태 미잔존
 		String[] rawTags = { "style", "title", "iframe", "textarea", "noframes", "noembed", "xmp", "script" };
 		String[] tails = { SOH, TAB, LF, CR, NUL, "" };
 		for (EgovHtmlSanitizePolicy policy : EgovHtmlSanitizePolicy.values()) {

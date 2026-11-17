@@ -12,10 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * EgovReflectionSupport 의 멀티스레드 안전성 테스트.
  *
- * <p>FieldExtractor/ItemWriter 빈이 멀티스레드 step 에서 공유되면 그 안의
- * EgovReflectionSupport 인스턴스도 공유된다. 과거 generateGetterMethodMap 은
- * methods 를 먼저 대입한 뒤 methodMap 을 채워, 다른 스레드가 부분초기화 상태를
- * 사용하다 NPE 에 노출되었다(cold-start 경합). 본 테스트로 회귀를 방지한다.</p>
+ * <p>회귀 : 멀티스레드 step 공유 빈에서 generateGetterMethodMap 의 methods 선대입 → 부분초기화 methodMap 으로 NPE
+ * (cold-start 경합).</p>
  *
  * @author 기여자
  * @version 1.0
@@ -32,7 +30,7 @@ public class EgovReflectionSupportConcurrencyTest {
         ExecutorService pool = Executors.newFixedThreadPool(threads);
         try {
             for (int round = 0; round < rounds; round++) {
-                // 라운드마다 새 공유 인스턴스를 만들어 cold-start lazy-init 경합을 재현한다.
+                // 라운드마다 새 공유 인스턴스 생성, cold-start lazy-init 경합 재현
                 final EgovReflectionSupport<SampleVo> shared = new EgovReflectionSupport<SampleVo>();
                 final SampleVo item = new SampleVo("egov", 42);
                 final CountDownLatch startGate = new CountDownLatch(1);

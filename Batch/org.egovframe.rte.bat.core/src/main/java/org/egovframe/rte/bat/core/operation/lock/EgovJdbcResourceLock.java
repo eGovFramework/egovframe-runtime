@@ -125,8 +125,8 @@ public class EgovJdbcResourceLock {
             if (refreshed > 0) {
                 return true;
             }
-            // SELECT 와 UPDATE 사이에 소유권이 바뀌었다(만료 탈취·forceRelease). 영향 행 0건을 보유로 보고하면 두 프로세스가
-            // 동시에 락을 가졌다고 믿게 된다. 빈 자리면 다시 잡고, 다른 소유자가 잡았으면 아래 만료 탈취 판정으로 넘어간다.
+            // SELECT~UPDATE 사이 소유권 변경(만료 탈취·forceRelease) : 0건을 보유로 보면 이중 락
+            // 빈 자리면 재획득, 다른 소유자면 아래 만료 탈취 판정으로
             LOGGER.warn("Resource lock ownership changed during reentrant refresh: {} (owner {})", resourceId, ownerId);
             if (insertLock(resourceId, ownerId)) {
                 return true;

@@ -82,9 +82,9 @@ public class DataTypeMapperTest {
         assertEquals(vo.getCalendarType(), resultVO.getCalendarType());
         assertEquals(vo.getCharType(), resultVO.getCharType());
         assertEquals(vo.getDateType(), resultVO.getDateType());
-        // double 에 대한 delta 를 1e-15 로 주었음.
+        // double delta 1e-15
         assertEquals(vo.getDoubleType(), resultVO.getDoubleType(), 1e-15);
-        // float 에 대한 delta 를 1e-7 로 주었음.
+        // float delta 1e-7
         assertEquals(vo.getFloatType(), resultVO.getFloatType(), 1e-7);
         assertEquals(vo.getIntType(), resultVO.getIntType());
         assertEquals(vo.getLongType(), resultVO.getLongType());

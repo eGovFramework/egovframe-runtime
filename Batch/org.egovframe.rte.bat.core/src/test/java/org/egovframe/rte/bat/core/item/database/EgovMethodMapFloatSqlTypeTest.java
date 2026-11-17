@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2009-2026 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -124,7 +124,7 @@ class EgovMethodMapFloatSqlTypeTest {
         Map<String, Method> methodMap = support.getMethodMap();
         String[] sqlTypes = support.getSqlTypeArray(params, item);
 
-        // 산출부는 primitive 를 소문자 이름으로 낸다.
+        // 산출부는 primitive 를 소문자 이름으로 출력
         assertEquals("double", sqlTypes[0]);
         assertEquals("float", sqlTypes[1]);
 

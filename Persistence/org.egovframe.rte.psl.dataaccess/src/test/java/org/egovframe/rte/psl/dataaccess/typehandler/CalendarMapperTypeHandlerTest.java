@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2009-2026 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,10 +29,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 /**
  * {@link CalendarMapperTypeHandler} 단위 테스트.
  * <p>
- * 인덱스 기반 {@code getResult(ResultSet, int)} 는 컬럼명 기반 형제 메서드와 달리
- * NULL Timestamp 컬럼에 대한 가드가 없어 {@code Calendar.setTime(null)} 으로 인한
- * NullPointerException 을 유발했다. 본 테스트는 NULL 컬럼이 예외 없이 {@code null} 을
- * 반환하고, 비-NULL 컬럼은 종전과 동일하게 변환됨을 검증한다.
+ * 인덱스 기반 {@code getResult(ResultSet, int)} : NULL 컬럼은 {@code null} 반환
+ * ({@code Calendar.setTime(null)} NPE 방지), 비-NULL 컬럼은 정상 변환 검증.
  * </p>
  */
 public class CalendarMapperTypeHandlerTest {

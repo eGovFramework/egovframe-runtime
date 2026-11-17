@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2009-2026 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,8 +54,7 @@ public final class RteGenericValidator implements Serializable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RteGenericValidator.class);
 
-    // 성능: 상수 정규식은 매 호출마다 컴파일하지 않고 클래스 로딩 시 1회만 컴파일한다.
-    // (특수문자 집합 ~!@#$%^&*? 은 고정이므로 조합 검증 패턴도 상수다.)
+    // 성능 : 상수 정규식은 클래스 로딩 시 1회 컴파일 (특수문자 집합 ~!@#$%^&*? 고정)
     private static final String ALLOWED_SPECIAL_CHAR = "~!@#$%^&*?";
     private static final Pattern HTML_TAG_PATTERN = Pattern.compile("<[^<|>]*>");
     /** 순수 한글(자모 ㄱ-ㅎ·ㅏ-ㅣ + 완성형 가-힣) 판정 패턴 */
@@ -226,7 +225,7 @@ public final class RteGenericValidator implements Serializable {
     }
 
     /**
-     * 패스워드 점검 : 최소 3가지 조합. 영문자, 숫자, 특수문자 ~!@#$%^&*? 필수
+     * 패스워드 점검 : 최소 3가지 조합. 영문자, 숫자, 특수문자 ~!@#$%^&amp;*? 필수
      *
      * @param password
      * @return boolean 일치여부
@@ -239,7 +238,7 @@ public final class RteGenericValidator implements Serializable {
     }
 
     /**
-     * 패스워드 점검 : 최소 4가지 조합. 영문 대문자, 영문 소문자, 숫자, 특수문자 ~!@#$%^&*? 필수
+     * 패스워드 점검 : 최소 4가지 조합. 영문 대문자, 영문 소문자, 숫자, 특수문자 ~!@#$%^&amp;*? 필수
      *
      * @param password
      * @return

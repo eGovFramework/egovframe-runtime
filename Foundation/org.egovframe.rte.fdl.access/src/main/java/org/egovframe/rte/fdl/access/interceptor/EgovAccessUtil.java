@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2009-2026 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,11 +41,10 @@ import java.util.regex.Pattern;
  */
 public class EgovAccessUtil {
 
-    // AntPathMatcher는 match() 호출이 thread-safe하며 내부 토큰화 캐시를 재사용하도록 설계되어 있어 공유 인스턴스로 둔다.
+    // AntPathMatcher는 match() 호출이 thread-safe하고 내부 토큰화 캐시를 재사용 — 공유 인스턴스로 사용
     private static final AntPathMatcher ANT_PATH_MATCHER = new AntPathMatcher();
 
-    // 정규식 컴파일 결과(NFA)를 패턴 문자열로 캐싱해 매 요청마다의 재컴파일을 제거한다.
-    // 키는 관리자 권한 설정에서 오는 유한한 authUrl 패턴이라(요청 입력이 아님) 캐시 크기는 사실상 유계다.
+    // 컴파일된 Pattern 캐시 : 요청별 재컴파일 제거 (키는 관리자 설정 authUrl 이라 크기 유계)
     private static final ConcurrentMap<String, Pattern> PATTERN_CACHE = new ConcurrentHashMap<>();
 
     public static boolean antMatcher(String pattern, String inputString) {

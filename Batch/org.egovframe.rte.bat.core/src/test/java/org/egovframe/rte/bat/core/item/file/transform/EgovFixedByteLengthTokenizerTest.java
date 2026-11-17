@@ -36,7 +36,7 @@ public class EgovFixedByteLengthTokenizerTest {
 
     @Test
     public void testDoTokenizeAsciiWithExplicitEncoding() throws Exception {
-        // ASCII 는 UTF-8 에서 1byte 이므로 byte 절단이 문자 절단과 동일하다.
+        // ASCII 는 UTF-8 에서 1byte 이므로 byte 절단 = 문자 절단
         EgovFixedByteLengthTokenizer tokenizer =
                 newTokenizer(new Range(1, 3), new Range(4, 6), new Range(7, 10));
 
@@ -47,7 +47,7 @@ public class EgovFixedByteLengthTokenizerTest {
 
     @Test
     public void testDoTokenizeAsciiWithDefaultEncoding() throws Exception {
-        // 인코딩 미지정 시 byteEncoding(기본 charset)이 사용된다. ASCII 라 charset 에 무관하게 안전하다.
+        // 인코딩 미지정 시 byteEncoding(기본 charset) 사용. ASCII 라 charset 무관하게 안전
         EgovFixedByteLengthTokenizer tokenizer =
                 newTokenizer(new Range(1, 2), new Range(3, 4));
 
@@ -58,7 +58,7 @@ public class EgovFixedByteLengthTokenizerTest {
 
     @Test
     public void testDoTokenizeUtf8KoreanBoundary() throws Exception {
-        // UTF-8 에서 한글은 각 3byte. "가나다" = 9byte, range 도 byte 기준으로 지정한다.
+        // UTF-8 에서 한글은 각 3byte. "가나다" = 9byte, range 도 byte 기준
         EgovFixedByteLengthTokenizer tokenizer =
                 newTokenizer(new Range(1, 3), new Range(4, 6), new Range(7, 9));
 
@@ -69,7 +69,7 @@ public class EgovFixedByteLengthTokenizerTest {
 
     @Test
     public void testDoTokenizeEucKrKoreanBoundary() throws Exception {
-        // EUC-KR 에서 한글은 각 2byte. "가나다" = 6byte, range 도 byte 기준으로 지정한다.
+        // EUC-KR 에서 한글은 각 2byte. "가나다" = 6byte, range 도 byte 기준
         EgovFixedByteLengthTokenizer tokenizer =
                 newTokenizer(new Range(1, 2), new Range(3, 4), new Range(5, 6));
 

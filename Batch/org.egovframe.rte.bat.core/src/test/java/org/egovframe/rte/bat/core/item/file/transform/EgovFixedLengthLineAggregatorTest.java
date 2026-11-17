@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2009-2026 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,7 +58,7 @@ public class EgovFixedLengthLineAggregatorTest {
 
     @Test
     public void padsBeyondLegacyChunkBoundary() {
-        // 과거 구현의 PADDING_LISTSIZE(100) 분기 경계를 넘는 폭도 동일하게 패딩되어야 한다.
+        // 구 PADDING_LISTSIZE(100) 분기 경계를 넘는 폭도 동일 패딩
         String out = aggregator(250).doAggregate(new Object[]{"x"});
         assertEquals(250, out.length());
         assertEquals('x', out.charAt(0));

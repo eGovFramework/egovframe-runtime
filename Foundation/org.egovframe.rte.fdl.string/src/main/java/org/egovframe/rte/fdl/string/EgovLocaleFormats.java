@@ -25,10 +25,8 @@ import java.util.Locale;
 /**
  * 로케일에 맞는 숫자·통화·백분율·날짜 형식화 유틸 클래스.
  *
- * <p><b>NOTE:</b> JDK 의 {@link NumberFormat}·{@link DateTimeFormatter} 를 얇게 감싼 것이다 —
- * 인스턴스 생성·스타일 상수·스레드 안전성({@code NumberFormat} 은 공유 불가)의 잔손질을
- * 줄이는 것이 전부이며, 그 이상을 감추지 않는다. 형식을 세밀히 제어할 자리는 JDK API 를
- * 직접 쓴다.</p>
+ * <p><b>NOTE:</b> JDK {@link NumberFormat}·{@link DateTimeFormatter} 의 얇은 래퍼 (인스턴스 생성·스타일 상수·
+ * 스레드 안전성 처리, {@code NumberFormat} 은 공유 불가). 세밀한 제어는 JDK API 직접 사용</p>
  *
  * <pre>
  * EgovLocaleFormats.number(1234567.89)                    → "1,234,567.89"
@@ -38,11 +36,10 @@ import java.util.Locale;
  *                                                         → "2026년 9월 1일"
  * </pre>
  *
- * <p><b>계약</b> — 값이 {@code null} 이면 빈 문자열을 돌려준다(화면 표시용 — 예외로 화면을
- * 깨뜨리지 않는다). 로케일 인자를 생략하면 JVM 기본 로케일이다.</p>
+ * <p><b>계약</b> — {@code null} 값은 빈 문자열 (화면 표시용), 로케일 생략 시 JVM 기본 로케일</p>
  *
- * <p>날짜는 {@code java.time} 만 받는다 — 공통컴포넌트 원본(java.util.Date 기반)에서 옮겨올
- * 때는 {@code date.toInstant().atZone(zone).toLocalDate()} 로 변환해 넘긴다.</p>
+ * <p>날짜는 {@code java.time} 만 지원 ({@code java.util.Date} 는
+ * {@code date.toInstant().atZone(zone).toLocalDate()} 로 변환)</p>
  *
  * <pre>
  * &lt;&lt; 개정이력(Modification Information) &gt;&gt;
@@ -176,8 +173,7 @@ public final class EgovLocaleFormats {
 	/**
 	 * 로케일 관례의 일시 문자열로 만든다.
 	 *
-	 * <p>{@link FormatStyle#LONG}·{@link FormatStyle#FULL} 은 시간대 표기가 필요해
-	 * {@link LocalDateTime} 으로는 형식화할 수 없다 — SHORT·MEDIUM 을 쓴다.</p>
+	 * <p>SHORT·MEDIUM 만 지원 ({@link FormatStyle#LONG}·{@link FormatStyle#FULL} 은 시간대 필요로 {@link LocalDateTime} 불가)</p>
 	 *
 	 * @param dateTime 일시({@code null} 이면 빈 문자열)
 	 * @param style    길이({@link FormatStyle#SHORT} 또는 {@link FormatStyle#MEDIUM}, 필수)
@@ -193,7 +189,7 @@ public final class EgovLocaleFormats {
 	}
 
 	private static String format(Number value, NumberFormat numberFormat) {
-		// NumberFormat 은 스레드 안전하지 않다 — 매번 새 인스턴스를 받아 공유 문제를 차단한다.
+		// NumberFormat 은 스레드 안전하지 않음 — 매번 새 인스턴스로 공유 문제 차단
 		return (value == null) ? "" : numberFormat.format(value);
 	}
 

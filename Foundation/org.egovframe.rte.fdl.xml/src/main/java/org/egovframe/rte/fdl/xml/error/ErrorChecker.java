@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2009-2026 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +22,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * DefaultHandler를 상속하는 클래스로, XML 파서가 파싱을 할 때
- * 파싱하는 XML 문서에서 에러가 발생하면 에러 메시지를 받아
- * Set에 저장하는 역할을 한다
+ * DefaultHandler 상속 클래스 : XML 파싱 중 발생한 에러 메시지를 Set에 저장
  *
  * @author 개발프레임웍크 실행환경 개발팀 김종호
  * @version 1.0
@@ -45,9 +43,7 @@ public class ErrorChecker extends DefaultHandler {
     private final Set<String> errorReport = new HashSet<>();
 
     /**
-     * DefaultHandler의 error 메소드를 오버라이드하는 메소드로,
-     * XML 문서 파싱시 error 레벨에 해당하는 에러가 발생하면
-     * 파서가 error() 메소드에 에러 메시지를 전달한다.
+     * DefaultHandler.error 오버라이드 : 파싱 중 error 레벨 에러 메시지 수신
      *
      * @param e - SAXParseException
      */
@@ -56,9 +52,7 @@ public class ErrorChecker extends DefaultHandler {
     }
 
     /**
-     * DefaultHandler의 warning 메소드를 오버라이드하는 메소드로,
-     * XML 문서 파싱시 warning 레벨에 해당하는 에러가 발생하면
-     * 파서가 warning() 메소드에 에러 메시지를 전달한다.
+     * DefaultHandler.warning 오버라이드 : 파싱 중 warning 레벨 에러 메시지 수신
      *
      * @param e - SAXParseException
      */
@@ -67,9 +61,7 @@ public class ErrorChecker extends DefaultHandler {
     }
 
     /**
-     * DefaultHandler의 fatalError 메소드를 오버라이드하는 메소드로,
-     * XML 문서 파싱시 fatalError 레벨에 해당하는 에러가 발생하면
-     * 파서가 fatalError() 메소드에 에러 메시지를 전달한다.
+     * DefaultHandler.fatalError 오버라이드 : 파싱 중 fatalError 레벨 에러 메시지 수신
      *
      * @param e - SAXParseException
      */

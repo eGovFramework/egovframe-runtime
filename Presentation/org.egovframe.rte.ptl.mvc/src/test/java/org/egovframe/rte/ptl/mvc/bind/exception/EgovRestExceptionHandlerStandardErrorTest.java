@@ -32,8 +32,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 /**
  * EgovRestExceptionHandler — Spring 표준 예외 상태 보존·메서드 파라미터 검증·인증·인가 예외 위임 검증.
  *
- * <p>종전에는 모든 예외를 받는 처리기가 405·415·404·필수 파라미터 누락까지 500 으로 바꿨다(처리기가 없으면
- * Spring 이 올바른 4xx 를 준다). 같은 요청을 처리기 유무 두 MockMvc 에 보내 비교한다.</p>
+ * <p>405·415·404·필수 파라미터 누락이 500 으로 바뀌지 않는지, 처리기 유무 두 MockMvc 응답 비교.</p>
  */
 public class EgovRestExceptionHandlerStandardErrorTest {
 
@@ -112,8 +111,7 @@ public class EgovRestExceptionHandlerStandardErrorTest {
     }
 
     /**
-     * instance 는 Spring 이 비어 있을 때 요청 경로(쿼리 제외)로 채우는 RFC 9457 표준 멤버라 제외하고 본다
-     * (종전의 모든 응답과 공식 main 이 같다 — design D1, 적용 중 발견).
+     * instance 제외 비교 (Spring 이 요청 경로(쿼리 제외)로 채우는 RFC 9457 표준 멤버, design D1).
      */
     private String bodyWithoutInstance(MockHttpServletResponse response) throws Exception {
         ObjectNode node = (ObjectNode) body(response);

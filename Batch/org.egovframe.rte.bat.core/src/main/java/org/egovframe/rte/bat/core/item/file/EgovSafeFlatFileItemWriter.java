@@ -153,7 +153,7 @@ public class EgovSafeFlatFileItemWriter<T> extends FlatFileItemWriter<T> impleme
     public void write(Chunk<? extends T> items) throws Exception {
         if (maxFileSizeBytes > 0) {
             long chunkBytes = estimateChunkBytes(items);
-            // 롤백된 청크는 임시 파일에 쓰이지 않으므로 누적 카운터 대신 임시 파일의 실제 크기로 판정한다
+            // 롤백된 청크는 임시 파일에 쓰이지 않으므로 누적 카운터 대신 임시 파일 실제 크기로 판정
             long currentSize = tmpFile.length();
             if (currentSize + chunkBytes > maxFileSizeBytes) {
                 throw new WriteFailedException("Output file size limit exceeded for '" + finalFile.getName()

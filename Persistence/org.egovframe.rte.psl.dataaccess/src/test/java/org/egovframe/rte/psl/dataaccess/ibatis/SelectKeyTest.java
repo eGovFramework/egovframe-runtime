@@ -98,7 +98,7 @@ public class SelectKeyTest {
 
         EmpVO vo2 = makeVO();
 
-        // 처음 데이터 입력인 경우는 1000 으로 key 를 설정토록 작성하였음.
+        // 최초 데이터 입력 시 key 를 1000 으로 설정
         BigDecimal selectKey2 = empDAO.insertEmpUsingSelectKey("insertEmpUsingSelectKey", vo2);
 
         assertEquals(new BigDecimal(1000), selectKey2);

@@ -121,7 +121,7 @@ class EgovSessionExpiryCookieFilterTest {
 	@Test
 	@DisplayName("큰 세션 유지 시간도 넘침 없이 계산된다(int 곱셈 한계 초과)")
 	void 오버플로_방지() {
-		// int 로 계산하면 2,147,484초를 넘길 때 넘침이 발생한다
+		// int 로 계산하면 2,147,484초 초과 시 넘침 발생
 		int hugeSeconds = 3_000_000;
 		EgovSessionExpiry expiry = EgovSessionExpiry.of(sessionOf(hugeSeconds), 1_000_000L);
 

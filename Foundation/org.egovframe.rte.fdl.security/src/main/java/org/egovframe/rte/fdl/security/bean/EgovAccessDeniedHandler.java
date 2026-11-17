@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2009-2026 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,9 +50,8 @@ public class EgovAccessDeniedHandler implements AccessDeniedHandler {
             return;
         }
 
-        // accessDeniedException은 항상 non-null이므로, 예전처럼 일반 forward를 먼저 실행하면 응답이
-        // 이미 커밋되어 아래 CSRF 전용 forward가 도달 불가능했다(IllegalStateException 위험). CSRF
-        // 예외 여부를 먼저 판별해 목적지를 하나로 정하고 forward는 한 번만 수행한다.
+        // CSRF 예외 여부로 목적지를 먼저 정하고 forward 는 한 번만 수행
+        // (일반 forward 선실행 시 응답 커밋으로 CSRF forward 도달 불가, IllegalStateException 위험)
         boolean isCsrfFailure = accessDeniedException instanceof InvalidCsrfTokenException
                 || accessDeniedException instanceof MissingCsrfTokenException;
         String targetUrl = isCsrfFailure ? config.getCsrfAccessDeniedUrl() : config.getAccessDeniedUrl();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2009-2026 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ public class EgovSAXValidatorService extends AbstractXMLUtility {
     private static final Logger LOGGER = LoggerFactory.getLogger(EgovSAXValidatorService.class);
 
     /**
-     * 기본 저장 경로를 직접 주입받는 생성자 — 설정 파일과 Spring 컨텍스트 없이 동작한다.
+     * 기본 저장 경로 직접 주입 생성자 (설정 파일·Spring 컨텍스트 불필요).
      *
      * @param savedPath 경로를 지정하지 않은 저장 API 의 기본 위치(경로 구분자로 끝나야 한다)
      */
@@ -152,7 +152,7 @@ public class EgovSAXValidatorService extends AbstractXMLUtility {
         try {
             parser.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         } catch (SAXException ignored) {
-            // 일부 XMLReader 구현체는 secure processing feature를 지원하지 않을 수 있다.
+            // 일부 XMLReader 구현체는 secure processing feature 미지원
         }
 
         parser.setEntityResolver((publicId, systemId) -> {

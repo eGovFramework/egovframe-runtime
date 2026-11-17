@@ -12,12 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * EgovChunkPreProcessor / EgovChunkPostProcessor 의 확장점이
  * 프레임워크 호출 경로에서 실제로 실행되는지 확인하는 테스트.
  *
- * <p>두 클래스는 확장점을 인자 없는 beforeChunk() / afterChunk() 로 선언해 두었는데,
- * ChunkListener 가 호출하는 시그니처는 ChunkContext 를 받는 형태다. 그래서 인자 없는
- * 메소드는 상위 클래스를 재정의하지 못하는 별개 메소드가 되어 프레임워크가 영영
- * 호출하지 않았다. 형제인 EgovJobPreProcessor(beforeJob(JobExecution)) 나
- * EgovStepPreProcessor(beforeStep(StepExecution)) 는 프레임워크 시그니처를 그대로
- * 쓰고 있어 같은 문제가 없다.</p>
+ * <p>회귀 : 인자 없는 beforeChunk() / afterChunk() 는 ChunkListener 시그니처(ChunkContext)를 재정의하지 못해
+ * 프레임워크가 호출하지 않음 (EgovJobPreProcessor·EgovStepPreProcessor 는 프레임워크 시그니처 사용으로 해당 없음).</p>
  *
  * @author 기여자
  * @version 1.0
@@ -41,7 +37,7 @@ public class EgovChunkProcessorTest {
             }
         };
 
-        // 프레임워크(TaskletStep)가 호출하는 것과 같은 경로로 호출한다.
+        // 프레임워크(TaskletStep)와 같은 경로로 호출
         listener.beforeChunk(new ChunkContext(null));
 
         assertTrue(called.get(), "EgovChunkPreProcessor 의 beforeChunk 확장점이 호출되지 않았다.");

@@ -20,11 +20,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * 수식 셀에서 EgovExcelUtil.getValue 가 값을 돌려주는지 검증한다.
  * <p>
- * getValue 는 수식 셀의 캐시 결과 타입을 보지 않고 getRichStringCellValue 와
- * getNumericCellValue 를 연달아 호출했다. POI 는 캐시 결과 타입과 다른 접근자를 부르면
- * IllegalStateException 을 던지는데 catch 절은 IllegalArgumentException 만 잡았고
- * 둘은 상속 관계가 아니다. 그래서 캐시 결과가 숫자면 첫 번째 호출에서, 문자열이면 두 번째
- * 호출에서 예외가 그대로 새어 나갔고, 그 아래 폴백 분기는 도달할 수 없었다.
+ * 캐시 결과 타입과 다른 접근자 호출 시 POI 의 IllegalStateException 누출 방지
+ * (IllegalArgumentException catch 로는 잡히지 않음).
  */
 public class EgovExcelUtilFormulaCellTest {
 

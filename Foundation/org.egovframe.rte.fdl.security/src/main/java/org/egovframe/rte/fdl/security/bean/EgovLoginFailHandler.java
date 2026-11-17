@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2024 MOIS(Ministry of the Interior and Safety).
+ * Copyright 2009-2026 MOIS(Ministry of the Interior and Safety).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,9 +37,7 @@ public class EgovLoginFailHandler implements AuthenticationFailureHandler {
 
     private static final String DEFAULT_LOGIN_FAILURE_URL = "/index.html";
 
-    // 계정 존재 여부·잠금/비활성화/만료 등 실패 원인을 사용자에게 구분해 보여주면 계정 열거
-    // (CWE-203/204) 공격에 악용될 수 있다. 화면에는 원인과 무관하게 항상 이 일반 메시지만 노출하고,
-    // 실제 원인은 아래 LOGGER.debug 로그(서버 측)로만 확인한다.
+    // 계정 열거(CWE-203/204) 방지 : 화면에는 원인 무관 일반 메시지만 노출 (실제 원인은 서버 LOGGER.debug)
     private static final String GENERIC_LOGIN_FAIL_MSG = "Invalid username or password.";
 
     private final EgovSecurityConfig config;
@@ -76,7 +74,7 @@ public class EgovLoginFailHandler implements AuthenticationFailureHandler {
         } else {
             LOGGER.debug("### EgovLoginFailHandler onAuthenticationFailure : {}", exception.getClass().getSimpleName());
         }
-        // 원인과 무관하게 화면에는 항상 동일한 일반 메시지만 노출한다(계정 열거 방지).
+        // 원인 무관 동일 일반 메시지 노출 (계정 열거 방지)
         request.setAttribute("loginFailMsg", GENERIC_LOGIN_FAIL_MSG);
 
         RequestDispatcher dispatcher = request.getRequestDispatcher(failureUrl);
